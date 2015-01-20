@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Currency and Stock Widget</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="configure">Configure</string>
+    <string name="add_widget">Add widget</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="action_accept">Accept</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
+    <string name="add_quote">Add quote</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+
+    <string name="configure_menu_item_currency">Currency</string>
+    <string name="configure_menu_item_goods">Goods</string>
+    <string name="configure_menu_item_indices">Indices</string>
+    <string name="configure_menu_item_stock">Stock</string>
+
+    <string name="goods_copper">Copper</string>
+    <string name="goods_gold">Gold</string>
+    <string name="goods_palladium">Palladium</string>
+    <string name="goods_platinum">Platinum</string>
+    <string name="goods_silver">Silver</string>
+
+    <string name="select_quotes_type">Select the type of quotes</string>
+    
+    <array name="quotes_type_array">
+        <item>Currency</item>
+        <item>Goods</item>
+        <item>Indices</item>
+        <item>Stock</item>
+    </array>
+
+    <array name="currency_array">
+        <item>Russian ruble(RUB)</item>
+        <item>Afghan afghani(AFN)</item>
+        <item>Euro(EUR)</item>
+        <item>Albanian lek(ALL)</item>
+        <item>Algerian dinar(DZD)</item>
+        <item>Angolan kwanza(AOA)</item>
+        <item>East Caribbean dollar(XCD)</item>
+        <item>Argentine peso(ARS)</item>
+        <item>Armenian dram(AMD)</item>
+        <item>Aruban florin(AWG)</item>
+        <item>Australian dollar(AUD)</item>
+        <item>Azerbaijani manat(AZN)</item>
+        <item>Bahamian dollar(BSD)</item>
+        <item>Bahraini dinar(BHD)</item>
+        <item>Bangladeshi taka(BDT)</item>
+        <item>Barbadian dollar(BBD)</item>
+        <item>Belarusian ruble(BYR)</item>
+        <item>Belize dollar(BZD)</item>
+        <item>West African CFA franc(XOF)</item>
+        <item>Bermudian dollar(BMD)</item>
+        <item>Bhutanese ngultrum(BTN)</item>
+        <item>Indian rupee(INR)</item>
+        <item>Bolivian boliviano(BOB)</item>
+        <item>United States dollar(USD)</item>
+        <item>Bosnia and Herzegovina convertible mark(BAM)</item>
+        <item>Botswana pula(BWP)</item>
+        <item>Brazilian real(BRL)</item>
+        <item>Brunei dollar(BND)</item>
+        <item>Singapore dollar(SGD)</item>
+        <item>Bulgarian lev(BGN)</item>
+        <item>Burmese kyat(MMK)</item>
+        <item>Burundian franc(BIF)</item>
+        <item>Cambodian riel(KHR)</item>
+        <item>Central African CFA franc(XAF)</item>
+        <item>Canadian dollar(CAD)</item>
+        <item>Cape Verdean escudo(CVE)</item>
+        <item>Cayman Islands dollar(KYD)</item>
+        <item>Chilean peso(CLP)</item>
+        <item>Chinese yuan(CNY)</item>
+        <item>Colombian peso(COP)</item>
+        <item>Comorian franc(KMF)</item>
+        <item>Congolese franc(CDF)</item>
+        <item>New Zealand dollar(NZD)</item>
+        <item>Costa Rican colón(CRC)</item>
+        <item>Croatian kuna(HRK)</item>
+        <item>Cuban convertible peso(CUC)</item>
+        <item>Cuban peso(CUP)</item>
+        <item>Netherlands Antillean guilder(ANG)</item>
+        <item>Czech koruna(CZK)</item>
+        <item>Danish krone(DKK)</item>
+        <item>Djiboutian franc(DJF)</item>
+        <item>East Caribbean dollar(XCD)</item>
+        <item>Dominican peso(DOP)</item>
+    </array>
+
+</resources>
