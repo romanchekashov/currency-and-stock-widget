@@ -2,6 +2,8 @@
 <resources>
 
     <string name="app_name">Currency and Stock Widget</string>
+    <string name="medium_widget_name">Currency and Stock Widget 4x1</string>
+    <string name="large_widget_name">Currency and Stock Widget 4x2</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="configure">Configure</string>
     <string name="add_widget">Add widget</string>
@@ -13,6 +15,10 @@
     <string name="add_quote">Add quote</string>
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
+
+    <string name="action_quotes">Quotes</string>
+    <string name="action_display">Display</string>
+    <string name="action_settings">Settings</string>
 
     <string name="configure_menu_item_currency">Currency</string>
     <string name="configure_menu_item_goods">Goods</string>

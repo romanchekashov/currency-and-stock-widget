@@ -81,8 +81,6 @@ public class UpdateService extends Service {
 
             List<Setting> settings = dataSource.getAllSettings();
 
-            dataSource.close();
-
             dataFetcher.populateQuoteSet(settings);
 //            String currencyUrl = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.xchange%20where%20pair%20in%20('EURUSD'%2C'USDRUB'%2C'EURRUB'%2C'CNYRUB')%3B&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
 //            String goodsUrl = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quotes%20where%20symbol%20in%20(%22GCF15.CMX%22%2C%22PLF15.NYM%22%2C%22PAF15.NYM%22%2C%22SIF15.CMX%22%2C%22HGF15.CMX%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
@@ -104,13 +102,25 @@ public class UpdateService extends Service {
                     map.get(widgetId).add(symbolModelMap.get(setting.getQuoteSymbol()));
                 }
 
+                for (Map.Entry<Integer, List<Model>> me: map.entrySet()) {
+                    int widgetId = me.getKey();
+                    List<Model> models = me.getValue();
+
+                    for (int i = 0, l = models.size(); i < l; i++) {
+                        dataSource.addModelRec(widgetId, i, models.get(i));
+                    }
+                }
+
 //                models.addAll(handleJSON.readAndParseCurrencyJSON(dataFetcher.downloadUrl(currencyUrl)));
 //                models.addAll(handleJSON.readAndParseGoodsJSON(dataFetcher.downloadUrl(goodsUrl)));
 
                 return map;
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally {
+                dataSource.close();
             }
+
             return new HashMap<>();
         }
 

@@ -42,7 +42,7 @@ public class Model {
         this.change = (double)Math.round(change * 10000) / 10000;
         if (0 != (int)(rate * 10000)) {
             double pChange = change * 100 / rate;
-            percentChange = String.valueOf((float)Math.round(pChange * 10000) / 10000);
+            percentChange = String.valueOf((float)Math.round(pChange * 10000) / 10000) + "%";
         }
     }
 

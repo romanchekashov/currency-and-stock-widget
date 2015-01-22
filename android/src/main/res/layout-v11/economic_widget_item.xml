@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="0dp"
+    android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:layout_margin="5sp"
-    android:layout_weight="1">
+    android:layout_weight="1"
+    android:padding="5dp">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Medium Text"
+        android:text="Name"
         android:id="@+id/tvName"
         android:textColor="#ffffff"
         android:textSize="12sp" />
@@ -19,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
+        android:text="Rate"
         android:id="@+id/tvRate"
         android:textColor="#ffffff"
         android:textSize="18sp"
@@ -49,16 +50,16 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="change"
                 android:id="@+id/tvChange"
-                android:textColor="#ffffff"
+                android:textColor="#00ff00"
                 android:textSize="10sp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="change"
+                android:text="%change"
                 android:id="@+id/tvChangePercentage"
-                android:textColor="#ffffff"
+                android:textColor="#00ff00"
                 android:textSize="10sp" />
         </LinearLayout>
 

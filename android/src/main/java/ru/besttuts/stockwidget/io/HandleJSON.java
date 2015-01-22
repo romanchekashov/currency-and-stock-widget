@@ -21,12 +21,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
+import static ru.besttuts.stockwidget.util.LogUtils.LOGE;
+import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
+
 /**
  * Created by roman on 05.01.2015.
  */
 public class HandleJSON {
 
-    final String LOG_TAG = "EconomicWidget.HandleJSON";
+    private static final String TAG = makeLogTag(HandleJSON.class);
 
     private List<Currency> currencies = null;
     private String sUrl = null;
@@ -80,13 +84,9 @@ public class HandleJSON {
         return new ArrayList();
     }
 
-    public void readAndParseJSON(String in) {
-        try {
-            JSONObject reader = new JSONObject(in);
-
-            JSONArray results = reader.getJSONObject("query").getJSONObject("results").getJSONArray("results");
-
-            Object json = results.getJSONObject(0).get("rate");
+    private void readResultsJSONObject(JSONObject jsonObject) throws IOException, JSONException {
+        if (!jsonObject.isNull("rate")) {
+            Object json = jsonObject.get("rate");
             if (null != json) {
                 if (json instanceof JSONArray) {
                     JSONArray jsonArray = (JSONArray) json;
@@ -97,8 +97,8 @@ public class HandleJSON {
                     readCurrency((JSONObject) json);
                 }
             }
-
-            json = results.getJSONObject(1).get("quote");
+        } else if (!jsonObject.isNull("quote")) {
+            Object json = jsonObject.get("quote");
             if (null != json) {
                 if (json instanceof JSONArray) {
                     JSONArray jsonArray = (JSONArray) json;
@@ -109,10 +109,36 @@ public class HandleJSON {
                     readGood((JSONObject) json);
                 }
             }
+        }
+    }
 
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+    public void readAndParseJSON(String in) {
+        try {
+            JSONObject reader = new JSONObject(in);
+
+            if (reader.isNull("query") || reader.getJSONObject("query").isNull("results")) {
+                return;
+            }
+
+            Object oResults = reader.getJSONObject("query").getJSONObject("results").get("results");
+
+            if (oResults instanceof JSONArray) {
+                JSONArray results = (JSONArray) oResults;
+
+                for (int i = 0; i < results.length(); i++) {
+                    readResultsJSONObject(results.getJSONObject(i));
+                }
+
+            } else {
+                readResultsJSONObject((JSONObject) oResults);
+            }
+
+        } catch (JSONException jsone) {
+            LOGE(TAG, jsone.getMessage());
+            jsone.printStackTrace();
+        } catch (IOException ioe) {
+            LOGE(TAG, ioe.getMessage());
+            ioe.printStackTrace();
         }
 
     }
@@ -127,7 +153,7 @@ public class HandleJSON {
 
             currencies.add(currency);
 
-            Log.d(LOG_TAG, "readCurrencyArray: "+ currency.toString());
+            LOGD(TAG, "readCurrencyArray: " + currency.toString());
         }
 
         return currencies;
@@ -155,6 +181,7 @@ public class HandleJSON {
 
     public void run() {
 
+        InputStream in = null;
         try {
             URL url = new URL(sUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -165,20 +192,26 @@ public class HandleJSON {
             // Starts the query
             conn.connect();
 
-            InputStream in = conn.getInputStream();
+            in = conn.getInputStream();
 
             String data = HandleJSON.convertStreamToString(in);
             readAndParseJSON(data);
 
-            in.close();
-
         } catch (MalformedURLException e) {
             e.printStackTrace();
-            Log.e(LOG_TAG, e.getMessage());
+            LOGE(TAG, e.getMessage());
         } catch (ProtocolException e) {
+            LOGE(TAG, e.getMessage());
             e.printStackTrace();
         } catch (IOException e) {
+            LOGE(TAG, e.getMessage());
             e.printStackTrace();
+        } finally {
+            try {
+                if (null != in) in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
 
@@ -204,7 +237,7 @@ public class HandleJSON {
 
             goods.add(good);
 
-            Log.d(LOG_TAG, "readGoodArray: "+ good.toString());
+            LOGD(TAG, "readGoodArray: " + good.toString());
         }
 
         return goods;
@@ -254,11 +287,13 @@ public class HandleJSON {
             }
 
         } catch (MalformedURLException e) {
+            LOGE(TAG, e.getMessage());
             e.printStackTrace();
-            Log.e(LOG_TAG, e.getMessage());
         } catch (ProtocolException e) {
+            LOGE(TAG, e.getMessage());
             e.printStackTrace();
         } catch (IOException e) {
+            LOGE(TAG, e.getMessage());
             e.printStackTrace();
         }
 

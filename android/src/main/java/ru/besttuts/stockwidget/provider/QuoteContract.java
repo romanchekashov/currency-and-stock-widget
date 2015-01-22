@@ -18,6 +18,23 @@ public class QuoteContract {
         String SETTING_QUOTE_SYMBOL = "setting_quote_symbol";
     }
 
+    public interface ModelColumns {
+        /** Unique string identifying this setting: MODEL_WIDGET_ID + "_" + "MODEL_QUOTE_POSITION". */
+        String MODEL_ID = "model_id";
+        /** Unique string identifying this block of time. */
+        String MODEL_WIDGET_ID = "model_widget_id";
+        /** Title describing this block of time. */
+        String MODEL_QUOTE_POSITION = "model_quote_position";
+        /** Time when this block starts. */
+        String MODEL_NAME = "model_name";
+        /** Time when this block ends. */
+        String MODEL_RATE = "model_rate";
+        /** Type describing this block. */
+        String MODEL_CHANGE = "model_change";
+        /** Extra subtitle for the block. */
+        String MODEL_PERCENT_CHANGE = "model_percent_change";
+    }
+
     public interface CurrencyExchangeColumns {
         /** Unique string identifying this block of time. */
         String CURRENCY_EXCHANGE_ID = "currency_exchange_id";

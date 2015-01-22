@@ -110,10 +110,10 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
         // формируем столбцы сопоставления
         String[] from = new String[] { QuoteContract.SettingColumns.SETTING_QUOTE_SYMBOL,
                 QuoteContract.SettingColumns.SETTING_QUOTE_POSITION };
-        int[] to = new int[] { R.id.tvSymbol, R.id.tvPlace };
+        int[] to = new int[] { R.id.tvName, R.id.tvRate };
 
         // создааем адаптер и настраиваем список
-        scAdapter = new MySimpleCursorAdapter(getActivity(), R.layout.configure_quote_grid_item, null, from, to, 0);
+        scAdapter = new MySimpleCursorAdapter(getActivity(), R.layout.economic_widget_item, null, from, to, 0);
         gridView = (GridView) view.findViewById(R.id.gridView);
         gridView.setAdapter(scAdapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

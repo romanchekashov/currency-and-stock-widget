@@ -2,6 +2,8 @@
 <resources>
 
     <string name="app_name">Виджет валют и акций</string>
+    <string name="medium_widget_name">Виджет валют и акций 4x1</string>
+    <string name="large_widget_name">Виджет валют и акций 4x2</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="configure">Configure</string>
     <string name="add_widget">Add widget</string>
@@ -13,6 +15,10 @@
     <string name="add_quote">Добавить котировку</string>
     <string name="cancel">Отмена</string>
     <string name="delete">Удалить</string>
+
+    <string name="action_quotes">Котировки</string>
+    <string name="action_display">Отображение</string>
+    <string name="action_settings">Настройки</string>
 
     <string name="configure_menu_item_currency">Валюты</string>
     <string name="configure_menu_item_goods">Товары</string>

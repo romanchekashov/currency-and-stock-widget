@@ -26,6 +26,7 @@ public class QuoteDatabaseHelper extends SQLiteOpenHelper {
 
     public interface Tables {
         String SETTINGS = "currency_exchange";
+        String MODELS = "models";
         String CURRENCY_EXCHANGE = "currency_exchange";
         String STOCK = "stock";
         String GOODS = "goods";
@@ -42,11 +43,26 @@ public class QuoteDatabaseHelper extends SQLiteOpenHelper {
                 + SettingColumns.SETTING_QUOTE_TYPE + " TEXT NOT NULL,"
                 + SettingColumns.SETTING_QUOTE_SYMBOL + " TEXT NOT NULL,"
                 + "UNIQUE (" + SettingColumns.SETTING_ID + ") ON CONFLICT REPLACE)");
+
+        db.execSQL("CREATE TABLE " + Tables.MODELS + " ("
+                + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + ModelColumns.MODEL_ID + " TEXT NOT NULL,"
+                + ModelColumns.MODEL_WIDGET_ID + " INTEGER NOT NULL,"
+                + ModelColumns.MODEL_QUOTE_POSITION + " INTEGER NOT NULL,"
+                + ModelColumns.MODEL_NAME + " TEXT NOT NULL,"
+                + ModelColumns.MODEL_RATE + " NUMERIC(10,4) NOT NULL,"
+                + ModelColumns.MODEL_CHANGE + " NUMERIC(10,4) NOT NULL,"
+                + ModelColumns.MODEL_PERCENT_CHANGE + " TEXT NOT NULL,"
+                + "UNIQUE (" + ModelColumns.MODEL_ID + ") ON CONFLICT REPLACE)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        // This database is only a cache for online data, so its upgrade policy is
+        // to simply to discard the data and start over
+        db.execSQL("DROP TABLE IF EXISTS " + Tables.SETTINGS);
+        db.execSQL("DROP TABLE IF EXISTS " + Tables.MODELS);
+        onCreate(db);
     }
 
 }
