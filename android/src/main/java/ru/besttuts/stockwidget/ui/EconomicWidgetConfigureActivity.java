@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ActionProvider;
 import android.support.v7.app.ActionBarActivity;
@@ -112,26 +113,22 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
         switch (item.getItemId()) {
             case R.id.action_accept:
                 Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_place);
-                if(fragment instanceof PlaceStockItemsFragment) {
+                if(fragment instanceof SlidingTabsFragment) {
                     acceptBtnPressed();
-                } else if (fragment instanceof CurrencyExchangeFragment) {
-                    mDataSource.addSettingsRec(mAppWidgetId, widgetItemPosition,
-                            QuoteType.CURRENCY_EXCHANGE.toString(),
-                            ((CurrencyExchangeFragment) fragment).getSymbol());
+                } else {
+                    if (fragment instanceof CurrencyExchangeFragment) {
+                        mDataSource.addSettingsRec(mAppWidgetId, widgetItemPosition,
+                                QuoteType.CURRENCY_EXCHANGE.toString(),
+                                ((CurrencyExchangeFragment) fragment).getSymbol());
+                    } else if (fragment instanceof GoodsItemFragment) {
+                        mDataSource.addSettingsRec(mAppWidgetId, widgetItemPosition,
+                                QuoteType.GOODS.toString(),
+                                ((GoodsItemFragment) fragment).getSymbol());
+                    }
 
-                    fragment = PlaceStockItemsFragment.newInstance(mAppWidgetId, null);
+                    fragment = SlidingTabsFragment.newInstance(mAppWidgetId);
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_place, fragment).commit();
-
-                } else if (fragment instanceof GoodsItemFragment) {
-                    mDataSource.addSettingsRec(mAppWidgetId, widgetItemPosition,
-                            QuoteType.GOODS.toString(),
-                            ((GoodsItemFragment) fragment).getSymbol());
-
-                    fragment = PlaceStockItemsFragment.newInstance(mAppWidgetId, null);
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_place, fragment).commit();
-
                 }
                 if (null != fragment) {
                     Log.d(LOG_TAG, "onOptionsItemSelected: fragment: " + fragment.getClass().getName());
@@ -201,12 +198,10 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
             return;
         }
 
-        Fragment fragment = PlaceStockItemsFragment.newInstance(mAppWidgetId, null);
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-
+        Fragment fragment = SlidingTabsFragment.newInstance(mAppWidgetId);
         fragmentTransaction.add(R.id.fragment_place, fragment);
 //        fragmentTransaction.addToBackStack(null);
-
         fragmentTransaction.commit();
 
         // создаем объект для создания и управления версиями БД

@@ -2,13 +2,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/widget_margin"
-    android:background="#00ffffff">
+    android:id="@+id/relativeLayout">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#b42c3e50">
+        android:id="@+id/bgWidget"
+        android:background="#ff2c3e50">
 
         <LinearLayout
             android:orientation="horizontal"

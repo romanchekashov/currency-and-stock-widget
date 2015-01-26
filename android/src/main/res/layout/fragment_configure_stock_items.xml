@@ -10,6 +10,15 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="@string/add_quote"
+            android:id="@+id/btnAddQuote"
+            android:layout_alignParentRight="false"
+            android:background="@android:color/transparent"
+            android:textSize="22sp" />
+
         <GridView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -20,19 +29,12 @@
             android:gravity="center"
             android:horizontalSpacing="5dp"
             android:verticalSpacing="15dp"
-            android:layout_toLeftOf="@+id/btnAddQuote"
-            android:layout_alignParentLeft="true"
+            android:layout_alignParentLeft="false"
             android:paddingLeft="10dp"
             android:paddingTop="10dp"
-            android:paddingBottom="10dp" />
+            android:paddingBottom="10dp"
+            android:layout_below="@+id/btnAddQuote" />
 
-        <Button
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:text="@string/add_quote"
-            android:id="@+id/btnAddQuote"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true" />
     </RelativeLayout>
 
 </FrameLayout>

@@ -10,9 +10,10 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="action_accept">Accept</string>
+    <string name="refresh">Refresh</string>
     <string name="from">From</string>
     <string name="to">To</string>
-    <string name="add_quote">Add quote</string>
+    <string name="add_quote">+ Add quote</string>
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
 
@@ -95,5 +96,74 @@
         <item>East Caribbean dollar(XCD)</item>
         <item>Dominican peso(DOP)</item>
     </array>
+
+    <string name="pref_auto_update">Auto update</string>
+    <string name="pref_update_via">Update via</string>
+    <string name="pref_update_interval">Update interval</string>
+    <string name="pref_data">Data</string>
+    <string name="pref_clean_database">Clean database</string>
+    <string name="pref_widget_settings">Widget settings</string>
+    <string name="pref_bg_visibility">Background visibility</string>
+    <string name="pref_bg_color">Background color</string>
+
+    <string-array name="color_entries">
+        <item>turquoise</item>
+        <item>green_sea</item>
+        <item>emerland</item>
+        <item>nephritis</item>
+        <item>peter_river</item>
+        <item>belize_hole</item>
+        <item>amethyst</item>
+        <item>wisteria</item>
+        <item>wet_asphalt</item>
+        <item>midnight_blue</item>
+        <item>sun_flower</item>
+        <item>orange</item>
+        <item>carrot</item>
+        <item>pumpkin</item>
+        <item>alizarin</item>
+        <item>pomegranate</item>
+        <item>clouds</item>
+        <item>silver</item>
+        <item>concrete</item>
+        <item>asbestos</item>
+    </string-array>
+    <string-array name="color_entry_values">
+        <item>#1abc9c</item>
+        <item>#16a085</item>
+        <item>#2ecc71</item>
+        <item>#27ae60</item>
+        <item>#3498db</item>
+        <item>#2980b9</item>
+        <item>#9b59b6</item>
+        <item>#8e44ad</item>
+        <item>#34495e</item>
+        <item>#2c3e50</item>
+        <item>#f1c40f</item>
+        <item>#f39c12</item>
+        <item>#e67e22</item>
+        <item>#d35400</item>
+        <item>#e74c3c</item>
+        <item>#c0392b</item>
+        <item>#ecf0f1</item>
+        <item>#bdc3c7</item>
+        <item>#95a5a6</item>
+        <item>#7f8c8d</item>
+    </string-array>
+
+    <string-array name="alpha_entries">
+        <item>Fully transparent</item>
+        <item>25% visible</item>
+        <item>50% visible</item>
+        <item>75% visible</item>
+        <item>Fully opaque</item>
+    </string-array>
+    <string-array name="alpha_entry_values">
+        <item>00</item>
+        <item>40</item>
+        <item>80</item>
+        <item>C0</item>
+        <item>FF</item>
+    </string-array>
 
 </resources>

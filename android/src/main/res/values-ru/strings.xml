@@ -10,9 +10,10 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="action_accept">Подтвердить</string>
+    <string name="refresh">Обновить</string>
     <string name="from">С</string>
     <string name="to">На</string>
-    <string name="add_quote">Добавить котировку</string>
+    <string name="add_quote">+ Добавить котировку</string>
     <string name="cancel">Отмена</string>
     <string name="delete">Удалить</string>
 
@@ -96,5 +97,14 @@
         <item>East Caribbean dollar(XCD)</item>
         <item>Dominican peso(DOP)</item>
     </array>
+
+    <string name="pref_auto_update">Автоматическое обновление</string>
+    <string name="pref_update_via">Обновление через</string>
+    <string name="pref_update_interval">Интервал обновления</string>
+    <string name="pref_data">Данные</string>
+    <string name="pref_clean_database">Очистить базу данных</string>
+    <string name="pref_widget_settings">Настройки виджета</string>
+    <string name="pref_bg_visibility">Прозрачность фона</string>
+    <string name="pref_bg_color">Цвет фона</string>
 
 </resources>

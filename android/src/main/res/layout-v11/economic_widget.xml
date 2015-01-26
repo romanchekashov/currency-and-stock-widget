@@ -2,7 +2,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/widget_margin"
-    android:background="#b42c3e50">
+    android:background="#ff2c3e50"
+    android:id="@+id/bgWidget">
 
     <GridView
         android:layout_width="match_parent"

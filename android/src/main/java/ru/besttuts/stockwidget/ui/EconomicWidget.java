@@ -8,10 +8,12 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
@@ -19,6 +21,7 @@ import android.widget.RemoteViews;
 import ru.besttuts.stockwidget.BuildConfig;
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.model.Model;
+import ru.besttuts.stockwidget.provider.QuoteDataSource;
 import ru.besttuts.stockwidget.service.QuoteWidgetService;
 import ru.besttuts.stockwidget.service.UpdateService;
 
@@ -84,10 +87,15 @@ public class EconomicWidget extends AppWidgetProvider {
         // When the user deletes the widget, delete the preference associated with it.
         final int N = appWidgetIds.length;
         for (int i = 0; i < N; i++) {
+            QuoteDataSource dataSource = new QuoteDataSource(context);
+            dataSource.open();
+            dataSource.deleteModelsByWidgetId(appWidgetIds[i]);
+            dataSource.deleteSettingsByWidgetId(appWidgetIds[i]);
+            dataSource.close();
             EconomicWidgetConfigureActivity.deleteTitlePref(context, appWidgetIds[i]);
         }
 
-        LOGD(TAG, "onUpdate");
+        LOGD(TAG, "onDeleted: ");
         if(BuildConfig.DEBUG) {
             for (int i = 0; i < appWidgetIds.length; i++) {
                 LOGD(TAG, "widgetId = " + appWidgetIds[i]);
@@ -115,6 +123,8 @@ public class EconomicWidget extends AppWidgetProvider {
 
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.economic_widget);
+
+        readPrefsSettings(context, views); // считываем настройки виджета
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             setGrid(views, context, appWidgetId);
@@ -152,6 +162,13 @@ public class EconomicWidget extends AppWidgetProvider {
         }
         LOGD(TAG, "updateAppWidget: appWidgetId = " + appWidgetId);
 
+    }
+
+    private static void readPrefsSettings(Context context, RemoteViews views) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        String bgColor = "#" + sharedPref.getString("listBgVisibility", "80") +
+                sharedPref.getString("listBgColor", "#34495e").substring(1);
+        views.setInt(R.id.bgWidget, "setBackgroundColor", Color.parseColor(bgColor));
     }
 
     private static void setGrid(RemoteViews rv, Context context, int appWidgetId) {

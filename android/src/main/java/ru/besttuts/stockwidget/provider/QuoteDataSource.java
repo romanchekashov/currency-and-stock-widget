@@ -15,12 +15,15 @@ import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.model.Setting;
 
+import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
+import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
+
 /**
  * Created by roman on 14.01.2015.
  */
 public class QuoteDataSource {
 
-    private final static String LOG_TAG = "EconomicWidget.QuoteDataSource";
+    private static final String TAG = makeLogTag(QuoteDataSource.class);
 
     private final Context context;
 
@@ -63,7 +66,7 @@ public class QuoteDataSource {
                 values,
                 SQLiteDatabase.CONFLICT_REPLACE);
 
-        Log.d(LOG_TAG, "insertWithOnConflict rows count = " + count);
+        LOGD(TAG, "insertWithOnConflict rows count = " + count);
     }
 
     public void addModelRec(int mAppWidgetId, int widgetItemPosition, Model model) {
@@ -90,7 +93,7 @@ public class QuoteDataSource {
                 values,
                 SQLiteDatabase.CONFLICT_REPLACE);
 
-        Log.d(LOG_TAG, "insertWithOnConflict rows count = " + count);
+        LOGD(TAG, "insertWithOnConflict rows count = " + count);
     }
 
     public Cursor getCursorSettingsByWidgetId(int widgetId) {
@@ -176,13 +179,24 @@ public class QuoteDataSource {
     public void deleteSettingsByWidgetId(int widgetId) {
         int delCount = mDatabase.delete(QuoteDatabaseHelper.Tables.SETTINGS,
                 QuoteContract.SettingColumns.SETTING_WIDGET_ID + " = " + widgetId, null);
-        Log.i(LOG_TAG, "deleted rows count = " + delCount);
+        LOGD(TAG, "deleteSettingsByWidgetId: deleted rows count = " + delCount);
+    }
+
+    public void deleteModelsByWidgetId(int widgetId) {
+        int delCount = mDatabase.delete(QuoteDatabaseHelper.Tables.MODELS,
+                QuoteContract.ModelColumns.MODEL_WIDGET_ID + " = " + widgetId, null);
+        LOGD(TAG, "deleteModelsByWidgetId: deleted rows count = " + delCount);
     }
 
     public void deleteSettingsById(String settingId) {
         int delCount = mDatabase.delete(QuoteDatabaseHelper.Tables.SETTINGS,
                 QuoteContract.SettingColumns.SETTING_ID + " = '" + settingId + "'", null);
-        Log.i(LOG_TAG, "deleted rows count = " + delCount);
+        LOGD(TAG, "deleteSettingsById: deleted rows count = " + delCount);
+    }
+
+    public void deleteAll() {
+        mDatabase.delete(QuoteDatabaseHelper.Tables.SETTINGS, null, null);
+        mDatabase.delete(QuoteDatabaseHelper.Tables.MODELS, null, null);
     }
 
     // Методы для получения бизнес объектов
@@ -211,6 +225,7 @@ public class QuoteDataSource {
         do {
             Setting setting = transformCursorToSetting(cursor);
             settings.add(setting);
+            LOGD(TAG, "getAllSettings: " + setting.toString());
         } while (cursor.moveToNext());
 
         cursor.close();

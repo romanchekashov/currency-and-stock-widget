@@ -1,20 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <CheckBoxPreference
-        android:key="chb1"
-        android:summary="@string/action_settings"
-        android:title="@string/action_settings">
-    </CheckBoxPreference>
-    <EditTextPreference
-        android:key="address1"
-        android:summary="@string/action_settings"
-        android:title="@string/action_settings">
-    </EditTextPreference>
-    <ListPreference
-        android:entries="@array/quotes_type_array"
-        android:entryValues="@array/currency_array"
-        android:key="list1"
-        android:summary="@string/action_settings"
-        android:title="@string/action_settings">
-    </ListPreference>
+
+    <PreferenceCategory android:title="@string/pref_auto_update">
+        <ListPreference
+            android:entries="@array/quotes_type_array"
+            android:entryValues="@array/currency_array"
+            android:key="list1"
+            android:summary="@string/pref_update_via"
+            android:title="@string/pref_update_via">
+        </ListPreference>
+        <ListPreference
+            android:entries="@array/quotes_type_array"
+            android:entryValues="@array/currency_array"
+            android:key="list1"
+            android:summary="@string/pref_update_interval"
+            android:title="@string/pref_update_interval">
+        </ListPreference>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_widget_settings">
+        <ru.besttuts.stockwidget.ui.ColorPreference
+            android:entries="@array/color_entries"
+            android:entryValues="@array/color_entry_values"
+            android:defaultValue="#34495e"
+            android:key="listBgColor"
+            android:summary="@string/pref_bg_color"
+            android:title="@string/pref_bg_color">
+        </ru.besttuts.stockwidget.ui.ColorPreference>
+        <ListPreference
+            android:entries="@array/alpha_entries"
+            android:entryValues="@array/alpha_entry_values"
+            android:defaultValue="80"
+            android:key="listBgVisibility"
+            android:summary="@string/pref_bg_visibility"
+            android:title="@string/pref_bg_visibility">
+        </ListPreference>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_data">
+        <ru.besttuts.stockwidget.ui.DataCleanPreference
+            android:summary="@string/pref_clean_database"
+            android:title="@string/pref_clean_database">
+        </ru.besttuts.stockwidget.ui.DataCleanPreference>
+    </PreferenceCategory>
+
 </PreferenceScreen>
