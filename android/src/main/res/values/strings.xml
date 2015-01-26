@@ -33,7 +33,7 @@
     <string name="goods_silver">Silver</string>
 
     <string name="select_quotes_type">Select the type of quotes</string>
-    
+
     <array name="quotes_type_array">
         <item>Currency</item>
         <item>Goods</item>

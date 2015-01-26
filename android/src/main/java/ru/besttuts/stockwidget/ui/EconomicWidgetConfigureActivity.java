@@ -6,11 +6,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ActionProvider;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,10 +22,12 @@ import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
-import ru.besttuts.stockwidget.provider.QuoteDatabaseHelper;
 import ru.besttuts.stockwidget.service.UpdateService;
 
 import java.util.ArrayList;
+
+import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
+import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
 
 /**
@@ -37,25 +37,14 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
         implements GoodsItemFragment.OnFragmentInteractionListener,
         PlaceStockItemsFragment.OnFragmentInteractionListener {
 
-    final String LOG_TAG = "EconomicWidget.EconomicWidgetConfigureActivity";
+    private static final String TAG = makeLogTag(EconomicWidgetConfigureActivity.class);
 
-    QuoteDatabaseHelper mDbHelper;
+    private static final String PREFS_NAME = "ru.besttuts.stockwidget.ui.EconomicWidget";
+    private static final String PREF_PREFIX_KEY = "appwidget_";
 
     private QuoteDataSource mDataSource;
 
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
-//    EditText mAppWidgetText;
-    private static final String PREFS_NAME = "ru.besttuts.stockwidget.ui.EconomicWidget";
-    private static final String PREF_PREFIX_KEY = "appwidget_";
-
-    // Whether or not we are in dual-pane mode
-    boolean mIsDualPane = true;
-
-    // The fragment where the headlines are displayed
-    ConfigureMenuFragment mHeadlinesFragment;
-
-    // The fragment where the article is displayed (null if absent)
-    GoodsItemFragment mArticleFragment;
 
     // Порядковый номер котировки на виджете
     int widgetItemPosition = 0;
@@ -67,26 +56,21 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
         super();
     }
 
-    @Override
-    public void onConfigureMenuFragmentInteraction(QuoteType quoteType) {
-        switch (quoteType) {
-            case CURRENCY_EXCHANGE:
-                CurrencyExchangeFragment fragment = CurrencyExchangeFragment
-                        .newInstance(widgetItemPosition, quoteType.getValue());
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_place, fragment).commit();
+    public int getWidgetId() {
+        return mAppWidgetId;
+    }
 
-                break;
-            case GOODS:
-                GoodsItemFragment fragment1 = GoodsItemFragment
-                        .newInstance(widgetItemPosition, quoteType.getValue());
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_place, fragment1).commit();
-                break;
-            default:
-                Toast.makeText(EconomicWidgetConfigureActivity.this, "Not implemented!", Toast.LENGTH_SHORT);
-                break;
-        }
+    @Override
+    public void onConfigureMenuFragmentInteraction(int quoteTypeValue) {
+
+        Intent intent = new Intent(this, SecondConfigureActivity.class);
+        Bundle b = new Bundle();
+        b.putInt("widgetId", mAppWidgetId);
+        b.putInt("quoteTypeValue", quoteTypeValue);
+        b.putInt("widgetItemPosition", widgetItemPosition);
+        intent.putExtras(b);
+        startActivity(intent);
+
     }
 
     @Override
@@ -109,30 +93,10 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle presses on the action bar items
+        // Обработка нажатий на элемент ActionBar
         switch (item.getItemId()) {
             case R.id.action_accept:
-                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_place);
-                if(fragment instanceof SlidingTabsFragment) {
-                    acceptBtnPressed();
-                } else {
-                    if (fragment instanceof CurrencyExchangeFragment) {
-                        mDataSource.addSettingsRec(mAppWidgetId, widgetItemPosition,
-                                QuoteType.CURRENCY_EXCHANGE.toString(),
-                                ((CurrencyExchangeFragment) fragment).getSymbol());
-                    } else if (fragment instanceof GoodsItemFragment) {
-                        mDataSource.addSettingsRec(mAppWidgetId, widgetItemPosition,
-                                QuoteType.GOODS.toString(),
-                                ((GoodsItemFragment) fragment).getSymbol());
-                    }
-
-                    fragment = SlidingTabsFragment.newInstance(mAppWidgetId);
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_place, fragment).commit();
-                }
-                if (null != fragment) {
-                    Log.d(LOG_TAG, "onOptionsItemSelected: fragment: " + fragment.getClass().getName());
-                }
+                acceptBtnPressed();
                 return true;
             case R.id.menuQuotes:
                 Toast.makeText(getApplicationContext(), "menuQuotes", Toast.LENGTH_SHORT).show();
@@ -182,8 +146,6 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
 
         setContentView(R.layout.economic_widget_configure);
 
-        if (savedInstanceState != null) position = savedInstanceState.getInt("position");
-
         // Find the widget id from the intent.
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
@@ -198,19 +160,29 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
             return;
         }
 
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        Fragment fragment = SlidingTabsFragment.newInstance(mAppWidgetId);
-        fragmentTransaction.add(R.id.fragment_place, fragment);
+        if (savedInstanceState == null) {
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            Fragment fragment = SlidingTabsFragment.newInstance(mAppWidgetId);
+            fragmentTransaction.replace(R.id.fragment_place, fragment);
 //        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
+            fragmentTransaction.commit();
+        } else {
+            position = savedInstanceState.getInt("position");
+        }
 
         // создаем объект для создания и управления версиями БД
         mDataSource = new QuoteDataSource(this);
         mDataSource.open();
 //        mAppWidgetText.setText(loadTitlePref(EconomicWidgetConfigureActivity.this, mAppWidgetId));
 
-        Log.d(LOG_TAG, "onCreate");
+        LOGD(TAG, "onCreate");
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LOGD(TAG, "onResume");
     }
 
     @Override

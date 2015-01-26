@@ -48,43 +48,41 @@ public class EconomicWidget extends AppWidgetProvider {
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 
         // To prevent any ANR timeouts, we perform the update in a service
-        // Get all ids
+        // Получаем все идентификаторы
         ComponentName thisWidget = new ComponentName(context,
                 EconomicWidget.class);
         int[] allWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
 
-        // Build the intent to call the service
+        // Создаем intent для вызова сервиса
         Intent intent = new Intent(context.getApplicationContext(),
                 UpdateService.class);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, allWidgetIds);
 
-        // Update the widgets via the service
+        // Обновляем виджеты через сервис
         context.startService(intent);
 
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.economic_widget);
         views.setViewVisibility(R.id.ibRefresh, View.GONE);
         views.setViewVisibility(R.id.progressBar, View.VISIBLE);
-        for (int i = 0; i < allWidgetIds.length; i++) {
+
+        // Возможно активны несколько виджетов, поэтому обновляем их все
+        final int N = appWidgetIds.length;
+        for (int i = 0; i < N; i++) {
             appWidgetManager.updateAppWidget(allWidgetIds[i], views);
         }
 
-        LOGD(TAG, "onUpdate");
         if(BuildConfig.DEBUG) {
+            LOGD(TAG, "onUpdate");
             for (int i = 0; i < allWidgetIds.length; i++) {
                 LOGD(TAG, "widgetId = " + allWidgetIds[i]);
             }
         }
 
-//        // There may be multiple widgets active, so update all of them
-//        final int N = appWidgetIds.length;
-//        for (int i = 0; i < N; i++) {
-//            updateAppWidget(context, appWidgetManager, appWidgetIds[i]);
-//        }
     }
 
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
-        // When the user deletes the widget, delete the preference associated with it.
+        // Удаляем все данные ассоциированные с удаляемым виджетом.
         final int N = appWidgetIds.length;
         for (int i = 0; i < N; i++) {
             QuoteDataSource dataSource = new QuoteDataSource(context);
@@ -95,8 +93,8 @@ public class EconomicWidget extends AppWidgetProvider {
             EconomicWidgetConfigureActivity.deleteTitlePref(context, appWidgetIds[i]);
         }
 
-        LOGD(TAG, "onDeleted: ");
         if(BuildConfig.DEBUG) {
+            LOGD(TAG, "onDeleted: ");
             for (int i = 0; i < appWidgetIds.length; i++) {
                 LOGD(TAG, "widgetId = " + appWidgetIds[i]);
             }
@@ -113,6 +111,13 @@ public class EconomicWidget extends AppWidgetProvider {
         // Enter relevant functionality for when the last widget is disabled
     }
 
+    /**
+     * Обновляем отображение и данные виджета
+     * @param context
+     * @param appWidgetManager
+     * @param appWidgetId идентификатор виджета
+     * @param models новые данные
+     */
     public static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId, List<Model> models) {
 
@@ -121,7 +126,7 @@ public class EconomicWidget extends AppWidgetProvider {
 
         if (null == models) models = new ArrayList<>();
 
-        // Construct the RemoteViews object
+        // Создаем объект RemoteViews для взаимодействи с отображением виджета
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.economic_widget);
 
         readPrefsSettings(context, views); // считываем настройки виджета
@@ -154,12 +159,14 @@ public class EconomicWidget extends AppWidgetProvider {
         views.setViewVisibility(R.id.progressBar, View.GONE);
         views.setViewVisibility(R.id.ibRefresh, View.VISIBLE);
 
-        // Instruct the widget manager to update the widget
+        // Оповещаем менеджер вижетов о необходимости обновить виджет
         appWidgetManager.updateAppWidget(appWidgetId, views);
 
+        // для 11-ой и поздней версии оповещаем менеджер виджетов о изменении данных для GridView
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.gridView2);
         }
+
         LOGD(TAG, "updateAppWidget: appWidgetId = " + appWidgetId);
 
     }

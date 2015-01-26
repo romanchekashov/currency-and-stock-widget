@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -41,8 +42,6 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks<Cursor> {
 
     private static final String TAG = makeLogTag(PlaceStockItemsFragment.class);
-
-//    private final static String LOG_TAG = "EconomicWidget.PlaceStockItemsFragment";
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -113,7 +112,7 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
         int[] to = new int[] { R.id.tvName, R.id.tvRate };
 
         // создааем адаптер и настраиваем список
-        scAdapter = new MySimpleCursorAdapter(getActivity(), R.layout.economic_widget_item, null, from, to, 0);
+        scAdapter = new MySimpleCursorAdapter(getActivity(), R.layout.configure_quote_grid_item, null, from, to, 0);
         gridView = (GridView) view.findViewById(R.id.gridView);
         gridView.setAdapter(scAdapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -154,6 +153,17 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         LOGD(TAG, "onActivityCreated");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        LOGD(TAG, "onResume");
+        Loader loader = getActivity().getSupportLoaderManager().getLoader(URL_LOADER);
+        if (null != loader) {
+            LOGD(TAG, "Loader is " + loader);
+            loader.forceLoad();
+        }
     }
 
     @Override
@@ -212,15 +222,17 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
     // TODO: Rename method, update argument and hook method into UI event
     private void onQuoteTypeSelected(int quoteTypePos) {
         if (null == mListener) return;
+        mListener.onConfigureMenuFragmentInteraction(quoteTypePos);
 
-        switch (quoteTypePos) {
-            case 0:
-                mListener.onConfigureMenuFragmentInteraction(QuoteType.CURRENCY_EXCHANGE);
-                break;
-            case 1:
-                mListener.onConfigureMenuFragmentInteraction(QuoteType.GOODS);
-                break;
-        }
+
+//        switch (quoteTypePos) {
+//            case 0:
+//                mListener.onConfigureMenuFragmentInteraction(QuoteType.CURRENCY_EXCHANGE);
+//                break;
+//            case 1:
+//                mListener.onConfigureMenuFragmentInteraction(QuoteType.GOODS);
+//                break;
+//        }
     }
 
     @Override
@@ -258,7 +270,7 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onConfigureMenuFragmentInteraction(QuoteType quoteType);
+        public void onConfigureMenuFragmentInteraction(int quoteTypeValue);
 
         public void setWidgetItemPosition(int widgetItemPosition);
     }

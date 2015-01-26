@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.ui.view.SlidingTabLayout;
 
+import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
 /**
@@ -34,7 +35,7 @@ public class SlidingTabsFragment extends Fragment {
     private ViewPager mViewPager;
 
     private static final String ARG_WIDGET_ID = "widgetId";
-    private static int mWidgetId;
+    private int mWidgetId;
 
     public static SlidingTabsFragment newInstance(int widgetId) {
         SlidingTabsFragment fragment = new SlidingTabsFragment();
@@ -48,9 +49,15 @@ public class SlidingTabsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (null != savedInstanceState) {
-            mWidgetId = savedInstanceState.getInt(ARG_WIDGET_ID);
-        }
+        LOGD(TAG, "savedInstanceState = "+ savedInstanceState);
+        LOGD(TAG, "getArguments() = "+ getArguments());
+
+        mWidgetId = getArguments().getInt(ARG_WIDGET_ID);
+        LOGD(TAG, "mWidgetId = "+ mWidgetId);
+
+//        if (null != savedInstanceState) {
+//            mWidgetId = savedInstanceState.getInt(ARG_WIDGET_ID);
+//        }
     }
 
     @Override
@@ -63,7 +70,8 @@ public class SlidingTabsFragment extends Fragment {
         // BEGIN_INCLUDE (setup_viewpager)
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         mViewPager = (ViewPager) view.findViewById(R.id.viewpager);
-        mViewPager.setAdapter(new SlidingTabsPagerAdapter(getActivity().getSupportFragmentManager()));
+        mViewPager.setAdapter(new SlidingTabsPagerAdapter(
+                getActivity().getSupportFragmentManager(), mWidgetId));
         // END_INCLUDE (setup_viewpager)
 
         // BEGIN_INCLUDE (setup_slidingtablayout)
@@ -76,8 +84,11 @@ public class SlidingTabsFragment extends Fragment {
 
     class SlidingTabsPagerAdapter extends FragmentPagerAdapter {
 
-        SlidingTabsPagerAdapter(FragmentManager fm) {
+        private int mWidgetId;
+
+        SlidingTabsPagerAdapter(FragmentManager fm, int widgetId) {
             super(fm);
+            mWidgetId = widgetId;
         }
 
         @Override
