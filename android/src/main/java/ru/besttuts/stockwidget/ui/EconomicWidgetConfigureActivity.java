@@ -4,10 +4,13 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ActionProvider;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,6 +26,8 @@ import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
 import ru.besttuts.stockwidget.service.UpdateService;
+import ru.besttuts.stockwidget.util.NotificationManager;
+import ru.besttuts.stockwidget.util.Utils;
 
 import java.util.ArrayList;
 
@@ -35,7 +40,8 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
  */
 public class EconomicWidgetConfigureActivity extends ActionBarActivity
         implements GoodsItemFragment.OnFragmentInteractionListener,
-        PlaceStockItemsFragment.OnFragmentInteractionListener {
+        PlaceStockItemsFragment.OnFragmentInteractionListener,
+        NotificationManager.ColorChangedListener {
 
     private static final String TAG = makeLogTag(EconomicWidgetConfigureActivity.class);
 
@@ -144,7 +150,16 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
         // out of the widget placement if the user presses the back button.
         setResult(RESULT_CANCELED);
 
-        setContentView(R.layout.economic_widget_configure);
+        PreferenceManager.setDefaultValues(this, R.xml.preference_config, false);
+
+        NotificationManager.addListener(this);
+
+        changeColor();
+
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
+        getSupportActionBar().setIcon(R.drawable.ic_launcher);
+
+        setContentView(R.layout.activity_economic_widget_configure);
 
         // Find the widget id from the intent.
         Intent intent = getIntent();
@@ -189,6 +204,7 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
     protected void onDestroy() {
         super.onDestroy();
         if (null != mDataSource) mDataSource.close();
+        NotificationManager.removeListener(this);
     }
 
     void showQuoteFragment(QuoteType quoteType) {
@@ -250,6 +266,11 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.remove(PREF_PREFIX_KEY + appWidgetId);
         prefs.commit();
+    }
+
+    @Override
+    public void changeColor() {
+        Utils.onActivityCreateSetActionBarColor(getSupportActionBar());
     }
 
     public static class ConfigActionProvider extends ActionProvider {

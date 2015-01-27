@@ -1,4 +1,4 @@
-package ru.besttuts.stockwidget.ui;
+package ru.besttuts.stockwidget.ui.preferences;
 
 import android.content.Context;
 import android.preference.DialogPreference;

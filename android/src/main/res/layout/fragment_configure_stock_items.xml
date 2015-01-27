@@ -1,8 +1,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ru.besttuts.stockwidget.ui.ConfigureMenuFragment"
-    android:background="#ff2c3e50">
+    tools:context="ru.besttuts.stockwidget.ui.ConfigureMenuFragment">
 
     <!-- TODO: Update blank fragment layout -->
 
@@ -15,7 +14,6 @@
             android:layout_height="50dp"
             android:text="@string/add_quote"
             android:id="@+id/btnAddQuote"
-            android:layout_alignParentRight="false"
             android:background="@android:color/transparent"
             android:textSize="22sp" />
 
@@ -29,8 +27,6 @@
             android:gravity="center"
             android:horizontalSpacing="5dp"
             android:verticalSpacing="15dp"
-            android:layout_alignParentLeft="false"
-            android:paddingLeft="10dp"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:layout_below="@+id/btnAddQuote" />

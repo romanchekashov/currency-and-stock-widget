@@ -98,6 +98,8 @@
     </array>
 
     <string name="pref_auto_update">Auto update</string>
+    <string name="pref_theme">Theme</string>
+    <string name="pref_theme_change">Change theme</string>
     <string name="pref_update_via">Update via</string>
     <string name="pref_update_interval">Update interval</string>
     <string name="pref_data">Data</string>
@@ -164,6 +166,15 @@
         <item>80</item>
         <item>C0</item>
         <item>FF</item>
+    </string-array>
+
+    <string-array name="theme_entries">
+        <item>Light</item>
+        <item>Dark</item>
+    </string-array>
+    <string-array name="theme_entry_values">
+        <item>light</item>
+        <item>dark</item>
     </string-array>
 
 </resources>

@@ -11,6 +11,7 @@ import android.widget.Toast;
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
+import ru.besttuts.stockwidget.util.Utils;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
@@ -31,7 +32,7 @@ public class SecondConfigureActivity extends ActionBarActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.second_configure);
+        setContentView(R.layout.activity_second_configure);
 
         Bundle b = getIntent().getExtras();
         mAppWidgetId = b.getInt("widgetId");

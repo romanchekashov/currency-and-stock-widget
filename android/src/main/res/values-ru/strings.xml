@@ -106,5 +106,7 @@
     <string name="pref_widget_settings">Настройки виджета</string>
     <string name="pref_bg_visibility">Прозрачность фона</string>
     <string name="pref_bg_color">Цвет фона</string>
+    <string name="pref_theme">Тема</string>
+    <string name="pref_theme_change">Поменять тему</string>
 
 </resources>

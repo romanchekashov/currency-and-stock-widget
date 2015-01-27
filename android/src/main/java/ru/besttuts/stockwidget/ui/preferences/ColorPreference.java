@@ -1,4 +1,4 @@
-package ru.besttuts.stockwidget.ui;
+package ru.besttuts.stockwidget.ui.preferences;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.besttuts.stockwidget.R;
+import ru.besttuts.stockwidget.ui.ConfigPreferenceFragment;
 import ru.besttuts.stockwidget.ui.view.CircleView;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
@@ -31,8 +32,6 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 public class ColorPreference extends ListPreference {
 
     private static final String TAG = makeLogTag(ColorPreference.class);
-
-    private static String PREFS_KEY = "listBgColor";
 
     Context mContext;
     private LayoutInflater mInflater;
@@ -58,7 +57,8 @@ public class ColorPreference extends ListPreference {
         super.onPrepareDialogBuilder(builder);
         entries = getEntries();
         mEntryValues = getEntryValues();
-        mClickedDialogEntryIndex = findIndexOfValue(prefs.getString(PREFS_KEY, "#34495e"));
+        mClickedDialogEntryIndex = findIndexOfValue(prefs.getString(
+                ConfigPreferenceFragment.KEY_PREF_BG_COLOR, "#34495e"));
 
         if (entries == null || mEntryValues == null || entries.length != mEntryValues.length ) {
             throw new IllegalStateException("ListPreference requires an entries array " +
@@ -111,7 +111,8 @@ public class ColorPreference extends ListPreference {
     }
 
     public void SetResult(int position) {
-        editor.putString(PREFS_KEY, String.valueOf(mEntryValues[position]));
+        editor.putString(ConfigPreferenceFragment.KEY_PREF_BG_COLOR,
+                String.valueOf(mEntryValues[position]));
         editor.commit();
         this.getDialog().dismiss();
     }

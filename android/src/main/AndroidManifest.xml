@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application android:allowBackup="true" android:label="@string/app_name"
-        android:icon="@drawable/ic_launcher" android:theme="@style/AppTheme">
+        android:icon="@drawable/ic_launcher" android:theme="@style/AppTheme.Light">
 
         <!-- Widget service -->
         <service
@@ -27,7 +27,7 @@
 
         <activity
             android:name=".ui.EconomicWidgetConfigureActivity"
-            android:theme="@style/Theme.AppCompat.Light" >
+            android:theme="@style/AppTheme.Light" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
@@ -35,7 +35,7 @@
 
         <activity
             android:name=".ui.SecondConfigureActivity"
-            android:theme="@style/Theme.AppCompat.Light" />
+            android:theme="@style/AppTheme.Light" />
 
         <!-- Service to perform web API queries -->
         <service

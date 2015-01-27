@@ -173,8 +173,8 @@ public class EconomicWidget extends AppWidgetProvider {
 
     private static void readPrefsSettings(Context context, RemoteViews views) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        String bgColor = "#" + sharedPref.getString("listBgVisibility", "80") +
-                sharedPref.getString("listBgColor", "#34495e").substring(1);
+        String bgColor = "#" + sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_VISIBILITY, "80") +
+                sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_COLOR, "#34495e").substring(1);
         views.setInt(R.id.bgWidget, "setBackgroundColor", Color.parseColor(bgColor));
     }
 

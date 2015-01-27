@@ -1,6 +1,9 @@
 package ru.besttuts.stockwidget.ui;
 
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,6 +15,7 @@ import android.view.ViewGroup;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.ui.view.SlidingTabLayout;
+import ru.besttuts.stockwidget.util.NotificationManager;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
@@ -19,7 +23,8 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 /**
  * Created by roman on 24.01.2015.
  */
-public class SlidingTabsFragment extends Fragment {
+public class SlidingTabsFragment extends Fragment
+        implements NotificationManager.ColorChangedListener {
 
     private static final String TAG = makeLogTag(SlidingTabsFragment.class);
 
@@ -55,9 +60,17 @@ public class SlidingTabsFragment extends Fragment {
         mWidgetId = getArguments().getInt(ARG_WIDGET_ID);
         LOGD(TAG, "mWidgetId = "+ mWidgetId);
 
+        NotificationManager.addListener(this);
+
 //        if (null != savedInstanceState) {
 //            mWidgetId = savedInstanceState.getInt(ARG_WIDGET_ID);
 //        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        NotificationManager.removeListener(this);
     }
 
     @Override
@@ -79,7 +92,28 @@ public class SlidingTabsFragment extends Fragment {
         // it's PagerAdapter set.
         mSlidingTabLayout = (SlidingTabLayout) view.findViewById(R.id.sliding_tabs);
         mSlidingTabLayout.setViewPager(mViewPager);
+
+        changeColor();
         // END_INCLUDE (setup_slidingtablayout)
+    }
+
+    @Override
+    public void changeColor() {
+        if (null == mSlidingTabLayout) return;
+
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        final String color = sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_COLOR, "#34495e");
+        mSlidingTabLayout.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+            @Override
+            public int getIndicatorColor(int position) {
+                return Color.parseColor(color);
+            }
+
+            @Override
+            public int getDividerColor(int position) {
+                return Color.parseColor(color);
+            }
+        });
     }
 
     class SlidingTabsPagerAdapter extends FragmentPagerAdapter {

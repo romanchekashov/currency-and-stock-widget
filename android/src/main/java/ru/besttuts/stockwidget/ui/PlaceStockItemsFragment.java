@@ -6,8 +6,12 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -27,6 +31,7 @@ import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.provider.QuoteContract;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
+import ru.besttuts.stockwidget.util.NotificationManager;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
@@ -39,7 +44,8 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
  * Use the {@link ru.besttuts.stockwidget.ui.PlaceStockItemsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks<Cursor> {
+public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks<Cursor>,
+        NotificationManager.ColorChangedListener {
 
     private static final String TAG = makeLogTag(PlaceStockItemsFragment.class);
 
@@ -59,6 +65,8 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
 
     private GridView gridView;
     private SimpleCursorAdapter scAdapter;
+
+    private View view;
 
     // Identifies a particular Loader being used in this component
     private static final int URL_LOADER = 0;
@@ -92,6 +100,8 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
             mWidgetItemsNumber = getArguments().getInt(ARG_WIDGET_ITEMS_NUMBER);
         }
 
+        NotificationManager.addListener(this);
+
         mDataSource = new QuoteDataSource(getActivity());
         mDataSource.open();
 
@@ -104,7 +114,9 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
                              Bundle savedInstanceState) {
         LOGD(TAG, "onCreateView");
 
-        View view = inflater.inflate(R.layout.fragment_configure_stock_items, container, false);
+        view = inflater.inflate(R.layout.fragment_configure_stock_items, container, false);
+
+        changeColor();
 
         // формируем столбцы сопоставления
         String[] from = new String[] { QuoteContract.SettingColumns.SETTING_QUOTE_SYMBOL,
@@ -169,6 +181,7 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
     @Override
     public void onDestroy() {
         super.onDestroy();
+        NotificationManager.removeListener(this);
         LOGD(TAG, "onDestroy");
     }
 
@@ -202,6 +215,14 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
          * This prevents memory leaks.
          */
         scAdapter.changeCursor(null);
+    }
+
+    @Override
+    public void changeColor() {
+        // TODO: set color
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String color = sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_COLOR, "#34495e");
+        view.setBackgroundColor(Color.parseColor(color));
     }
 
     private class OnClickListenerImpl implements View.OnClickListener {

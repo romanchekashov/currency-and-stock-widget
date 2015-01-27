@@ -19,29 +19,29 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_widget_settings">
-        <ru.besttuts.stockwidget.ui.ColorPreference
+        <ru.besttuts.stockwidget.ui.preferences.ColorPreference
             android:entries="@array/color_entries"
             android:entryValues="@array/color_entry_values"
             android:defaultValue="#34495e"
-            android:key="listBgColor"
+            android:key="pref_listBgColor"
             android:summary="@string/pref_bg_color"
             android:title="@string/pref_bg_color">
-        </ru.besttuts.stockwidget.ui.ColorPreference>
+        </ru.besttuts.stockwidget.ui.preferences.ColorPreference>
         <ListPreference
             android:entries="@array/alpha_entries"
             android:entryValues="@array/alpha_entry_values"
             android:defaultValue="80"
-            android:key="listBgVisibility"
+            android:key="pref_listBgVisibility"
             android:summary="@string/pref_bg_visibility"
             android:title="@string/pref_bg_visibility">
         </ListPreference>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_data">
-        <ru.besttuts.stockwidget.ui.DataCleanPreference
+        <ru.besttuts.stockwidget.ui.preferences.DataCleanPreference
             android:summary="@string/pref_clean_database"
             android:title="@string/pref_clean_database">
-        </ru.besttuts.stockwidget.ui.DataCleanPreference>
+        </ru.besttuts.stockwidget.ui.preferences.DataCleanPreference>
     </PreferenceCategory>
 
 </PreferenceScreen>
