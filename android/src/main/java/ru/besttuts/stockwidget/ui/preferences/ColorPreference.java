@@ -58,7 +58,8 @@ public class ColorPreference extends ListPreference {
         entries = getEntries();
         mEntryValues = getEntryValues();
         mClickedDialogEntryIndex = findIndexOfValue(prefs.getString(
-                ConfigPreferenceFragment.KEY_PREF_BG_COLOR, "#34495e"));
+                ConfigPreferenceFragment.KEY_PREF_BG_COLOR,
+                ConfigPreferenceFragment.KEY_PREF_BG_COLOR_DEFAULT_VALUE));
 
         if (entries == null || mEntryValues == null || entries.length != mEntryValues.length ) {
             throw new IllegalStateException("ListPreference requires an entries array " +

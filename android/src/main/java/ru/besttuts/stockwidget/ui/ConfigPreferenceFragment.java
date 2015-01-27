@@ -3,7 +3,9 @@ package ru.besttuts.stockwidget.ui;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.PreferenceManager;
 
 import com.github.machinarius.preferencefragment.PreferenceFragment;
 
@@ -16,14 +18,34 @@ import ru.besttuts.stockwidget.util.NotificationManager;
 public class ConfigPreferenceFragment extends PreferenceFragment
         implements SharedPreferences.OnSharedPreferenceChangeListener {
 
+    public static final String KEY_PREF_UPDATE_VIA = "pref_listUpdateVia";
+    public static final String KEY_PREF_UPDATE_VIA_DEFAULT_VALUE_WI_FI = "wi-fi";
+
+    public static final String KEY_PREF_UPDATE_INTERVAL = "pref_listUpdateInterval";
+    public static final int KEY_PREF_UPDATE_INTERVAL_DEFAULT_VALUE = 1800000;
+
     public static final String KEY_PREF_BG_COLOR = "pref_listBgColor";
+    public static final String KEY_PREF_BG_COLOR_DEFAULT_VALUE = "#34495e";
 
     public static final String KEY_PREF_BG_VISIBILITY = "pref_listBgVisibility";
+    public static final String KEY_PREF_BG_VISIBILITY_DEFAULT_VALUE = "80";
 
     @Override
     public void onCreate(Bundle paramBundle) {
         super.onCreate(paramBundle);
         addPreferencesFromResource(R.xml.preference_config);
+
+        ListPreference listPreference = (ListPreference) findPreference(KEY_PREF_UPDATE_INTERVAL);
+        listPreference.setSummary(listPreference.getEntry());
+
+        listPreference = (ListPreference) findPreference(KEY_PREF_BG_COLOR);
+        listPreference.setSummary(listPreference.getEntry());
+
+        listPreference = (ListPreference) findPreference(KEY_PREF_BG_VISIBILITY);
+        listPreference.setSummary(listPreference.getEntry());
+
+        listPreference = (ListPreference) findPreference(KEY_PREF_UPDATE_VIA);
+        listPreference.setSummary(listPreference.getEntry());
     }
 
     @Override
@@ -43,11 +65,37 @@ public class ConfigPreferenceFragment extends PreferenceFragment
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(KEY_PREF_BG_COLOR)) {
-            Preference connectionPref = findPreference(key);
+            ListPreference listPreference = (ListPreference) findPreference(key);
             // Set summary to be the user-description for the selected value
-            connectionPref.setSummary(sharedPreferences.getString(key, "#34495e"));
+            listPreference.setSummary(listPreference.getEntry());
 
             NotificationManager.notifyColorChangedListeners();
+
+            return;
+        }
+
+        if (key.equals(KEY_PREF_BG_VISIBILITY)) {
+            ListPreference listPreference = (ListPreference) findPreference(key);
+            // Set summary to be the user-description for the selected value
+            listPreference.setSummary(listPreference.getEntry());
+
+            return;
+        }
+
+        if (key.equals(KEY_PREF_UPDATE_INTERVAL)) {
+            ListPreference listPreference = (ListPreference) findPreference(key);
+            // Set summary to be the user-description for the selected value
+            listPreference.setSummary(listPreference.getEntry());
+
+            return;
+        }
+
+        if (key.equals(KEY_PREF_UPDATE_VIA)) {
+            ListPreference listPreference = (ListPreference) findPreference(key);
+            // Set summary to be the user-description for the selected value
+            listPreference.setSummary(listPreference.getEntry());
+
+            return;
         }
     }
 }

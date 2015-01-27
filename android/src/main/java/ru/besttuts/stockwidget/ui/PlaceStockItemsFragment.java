@@ -221,7 +221,8 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
     public void changeColor() {
         // TODO: set color
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String color = sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_COLOR, "#34495e");
+        String color = sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_COLOR,
+                ConfigPreferenceFragment.KEY_PREF_BG_COLOR_DEFAULT_VALUE);
         view.setBackgroundColor(Color.parseColor(color));
     }
 

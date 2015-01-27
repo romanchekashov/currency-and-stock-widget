@@ -28,7 +28,8 @@ public class Utils {
     public static void onActivityCreateSetActionBarColor(ActionBar actionBar) {
         SharedPreferences sharedPref = PreferenceManager
                 .getDefaultSharedPreferences(actionBar.getThemedContext());
-        String color = sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_COLOR, "#34495e");
+        String color = sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_COLOR,
+                ConfigPreferenceFragment.KEY_PREF_BG_COLOR_DEFAULT_VALUE);
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor(color)));
     }
 

@@ -109,4 +109,30 @@
     <string name="pref_theme">Тема</string>
     <string name="pref_theme_change">Поменять тему</string>
 
+    <string-array name="update_interval_entries">
+        <item>5 минут</item>
+        <item>15 минут</item>
+        <item>30 минут</item>
+        <item>1 час</item>
+        <item>3 часа</item>
+        <item>6 часов</item>
+        <item>9 часов</item>
+        <item>12 часов</item>
+        <item>1 день</item>
+        <item>2 дня</item>
+        <item>Никогда</item>
+    </string-array>
+    <string-array name="alpha_entries">
+        <item>Прозрачный</item>
+        <item>25% прозрачности</item>
+        <item>50% прозрачности</item>
+        <item>75% прозрачности</item>
+        <item>Непрозрачный</item>
+    </string-array>
+
+    <string-array name="update_via_entries">
+        <item>Только Wi-Fi</item>
+        <item>В любой сети</item>
+    </string-array>
+
 </resources>

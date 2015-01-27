@@ -1,7 +1,7 @@
 package ru.besttuts.stockwidget.ui;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
+import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -10,11 +10,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 
@@ -41,6 +42,8 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 public class EconomicWidget extends AppWidgetProvider {
 
     private static final String TAG = makeLogTag(EconomicWidget.class);
+
+    private static final String UPDATE_ALL_WIDGETS = "update_all_widgets";
 
     public final static String BROADCAST_ACTION = "ru.besttuts.stockwidget";
 
@@ -104,11 +107,30 @@ public class EconomicWidget extends AppWidgetProvider {
     @Override
     public void onEnabled(Context context) {
         // Enter relevant functionality for when the first widget is created
+        Intent intent = new Intent(context, EconomicWidget.class);
+        intent.setAction(UPDATE_ALL_WIDGETS);
+        PendingIntent pIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) context
+                .getSystemService(Context.ALARM_SERVICE);
+
+        SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(context);
+        long interval = sharedPreferences.getInt(ConfigPreferenceFragment.KEY_PREF_UPDATE_INTERVAL,
+                ConfigPreferenceFragment.KEY_PREF_UPDATE_INTERVAL_DEFAULT_VALUE);
+
+        // TODO: Добавить изменение интервала оповещения при изменении в настройках!!!
+        alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis(), interval, pIntent);
     }
 
     @Override
     public void onDisabled(Context context) {
         // Enter relevant functionality for when the last widget is disabled
+        Intent intent = new Intent(context, EconomicWidget.class);
+        intent.setAction(UPDATE_ALL_WIDGETS);
+        PendingIntent pIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) context
+                .getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(pIntent);
     }
 
     /**
@@ -173,8 +195,10 @@ public class EconomicWidget extends AppWidgetProvider {
 
     private static void readPrefsSettings(Context context, RemoteViews views) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        String bgColor = "#" + sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_VISIBILITY, "80") +
-                sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_COLOR, "#34495e").substring(1);
+        String bgColor = "#" + sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_VISIBILITY,
+                ConfigPreferenceFragment.KEY_PREF_BG_VISIBILITY_DEFAULT_VALUE) +
+                sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_COLOR,
+                        ConfigPreferenceFragment.KEY_PREF_BG_COLOR_DEFAULT_VALUE).substring(1);
         views.setInt(R.id.bgWidget, "setBackgroundColor", Color.parseColor(bgColor));
     }
 
@@ -229,9 +253,51 @@ public class EconomicWidget extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-
         LOGD(TAG, "onReceive");
+        if (!intent.getAction().equalsIgnoreCase(UPDATE_ALL_WIDGETS)) return;
+        if (!isSyncAllowed(context)) return;
 
+        ComponentName thisAppWidget = new ComponentName(
+                context.getPackageName(), getClass().getName());
+        AppWidgetManager appWidgetManager = AppWidgetManager
+                .getInstance(context);
+        int ids[] = appWidgetManager.getAppWidgetIds(thisAppWidget);
+
+        onUpdate(context, appWidgetManager, ids);
+
+        LOGD(TAG, "onReceive: UPDATE_ALL_WIDGETS = " + UPDATE_ALL_WIDGETS);
+
+    }
+
+    public boolean isSyncAllowed(Context context) {
+        return isSyncAllowed(context, true);
+    }
+
+    // Checks the network connection and sets the wifiConnected and mobileConnected
+    // variables accordingly.
+    public boolean isSyncAllowed(Context context, boolean isCheckSharedPreferences) {
+        ConnectivityManager connMgr = (ConnectivityManager)
+                context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeInfo = connMgr.getActiveNetworkInfo();
+        if (activeInfo != null && activeInfo.isConnected()) {
+            boolean wifiConnected = activeInfo.getType() == ConnectivityManager.TYPE_WIFI;
+            boolean mobileConnected = activeInfo.getType() == ConnectivityManager.TYPE_MOBILE;
+
+            if (isCheckSharedPreferences) {
+                SharedPreferences sharedPreferences = PreferenceManager
+                        .getDefaultSharedPreferences(context);
+                if (ConfigPreferenceFragment.KEY_PREF_UPDATE_VIA_DEFAULT_VALUE_WI_FI
+                        .equalsIgnoreCase(sharedPreferences.getString(
+                                ConfigPreferenceFragment.KEY_PREF_UPDATE_VIA,
+                                ConfigPreferenceFragment.KEY_PREF_UPDATE_VIA_DEFAULT_VALUE_WI_FI))) {
+                    return wifiConnected;
+                }
+            }
+
+            return wifiConnected || mobileConnected;
+        }
+        return false;
     }
 
     @Override

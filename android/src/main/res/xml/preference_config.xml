@@ -3,16 +3,18 @@
 
     <PreferenceCategory android:title="@string/pref_auto_update">
         <ListPreference
-            android:entries="@array/quotes_type_array"
-            android:entryValues="@array/currency_array"
-            android:key="list1"
+            android:entries="@array/update_via_entries"
+            android:entryValues="@array/update_via_entry_values"
+            android:defaultValue="wi-fi"
+            android:key="pref_listUpdateVia"
             android:summary="@string/pref_update_via"
             android:title="@string/pref_update_via">
         </ListPreference>
         <ListPreference
-            android:entries="@array/quotes_type_array"
-            android:entryValues="@array/currency_array"
-            android:key="list1"
+            android:entries="@array/update_interval_entries"
+            android:entryValues="@array/update_interval_entry_values"
+            android:defaultValue="1800000"
+            android:key="pref_listUpdateInterval"
             android:summary="@string/pref_update_interval"
             android:title="@string/pref_update_interval">
         </ListPreference>

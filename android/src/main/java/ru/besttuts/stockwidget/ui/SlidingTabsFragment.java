@@ -102,7 +102,8 @@ public class SlidingTabsFragment extends Fragment
         if (null == mSlidingTabLayout) return;
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        final String color = sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_COLOR, "#34495e");
+        final String color = sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_COLOR,
+                ConfigPreferenceFragment.KEY_PREF_BG_COLOR_DEFAULT_VALUE);
         mSlidingTabLayout.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {

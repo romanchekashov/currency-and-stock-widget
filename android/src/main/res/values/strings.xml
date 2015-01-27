@@ -108,6 +108,33 @@
     <string name="pref_bg_visibility">Background visibility</string>
     <string name="pref_bg_color">Background color</string>
 
+    <string-array name="update_interval_entries">
+        <item>5 min</item>
+        <item>15 min</item>
+        <item>30 min</item>
+        <item>1 hour</item>
+        <item>3 hour</item>
+        <item>6 hour</item>
+        <item>9 hour</item>
+        <item>12 hour</item>
+        <item>1 day</item>
+        <item>2 days</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="update_interval_entry_values">
+        <item>300000</item>
+        <item>900000</item>
+        <item>1800000</item>
+        <item>3600000</item>
+        <item>10800000</item>
+        <item>21600000</item>
+        <item>32400000</item>
+        <item>43200000</item>
+        <item>86400000</item>
+        <item>172800000</item>
+        <item>0</item>
+    </string-array>
+
     <string-array name="color_entries">
         <item>turquoise</item>
         <item>green_sea</item>
@@ -168,13 +195,13 @@
         <item>FF</item>
     </string-array>
 
-    <string-array name="theme_entries">
-        <item>Light</item>
-        <item>Dark</item>
+    <string-array name="update_via_entries">
+        <item>Only when on Wi-Fi</item>
+        <item>On any network</item>
     </string-array>
-    <string-array name="theme_entry_values">
-        <item>light</item>
-        <item>dark</item>
+    <string-array name="update_via_entry_values">
+        <item>wi-fi</item>
+        <item>any</item>
     </string-array>
 
 </resources>
