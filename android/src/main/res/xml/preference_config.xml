@@ -24,7 +24,7 @@
         <ru.besttuts.stockwidget.ui.preferences.ColorPreference
             android:entries="@array/color_entries"
             android:entryValues="@array/color_entry_values"
-            android:defaultValue="#34495e"
+            android:defaultValue="#3498db"
             android:key="pref_listBgColor"
             android:summary="@string/pref_bg_color"
             android:title="@string/pref_bg_color">

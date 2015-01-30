@@ -51,25 +51,27 @@ public class SecondConfigureActivity extends ActionBarActivity
         LOGD(TAG, "quoteTypeValue = " + mQuoteTypeValue);
         LOGD(TAG, "widgetItemPosition = " + mWidgetItemPosition);
 
-        Fragment fragment = null;
-        switch (mQuoteTypeValue) {
-            case 0:
-                fragment = CurrencyExchangeFragment.newInstance(mWidgetItemPosition, mQuoteTypeValue);
-                getSupportActionBar().setTitle(R.string.configure_menu_item_currency);
-                break;
-            case 1:
-                fragment = GoodsItemFragment.newInstance(mWidgetItemPosition, mQuoteTypeValue);
-                getSupportActionBar().setTitle(R.string.configure_menu_item_goods);
-                break;
-        }
+        if (null == savedInstanceState) {
+            Fragment fragment = null;
+            switch (mQuoteTypeValue) {
+                case 0:
+                    fragment = CurrencyExchangeFragment.newInstance(mWidgetItemPosition, mQuoteTypeValue);
+                    getSupportActionBar().setTitle(R.string.configure_menu_item_currency);
+                    break;
+                case 1:
+                    fragment = GoodsItemFragment.newInstance(mWidgetItemPosition, mQuoteTypeValue);
+                    getSupportActionBar().setTitle(R.string.configure_menu_item_goods);
+                    break;
+            }
 
-        if (null == fragment) {
-            finish();
-            return;
-        }
+            if (null == fragment) {
+                finish();
+                return;
+            }
 
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.second_cont, fragment).commit();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.second_cont, fragment).commit();
+        }
 
         // создаем объект для создания и управления версиями БД
         mDataSource = new QuoteDataSource(this);

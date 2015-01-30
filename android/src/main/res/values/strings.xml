@@ -11,8 +11,8 @@
 
     <string name="action_accept">Accept</string>
     <string name="refresh">Refresh</string>
-    <string name="from">From</string>
-    <string name="to">To</string>
+    <string name="for_">For</string>
+    <string name="give">Give</string>
     <string name="add_quote">+ Add quote</string>
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
@@ -182,9 +182,9 @@
 
     <string-array name="alpha_entries">
         <item>Fully transparent</item>
-        <item>25% visible</item>
-        <item>50% visible</item>
-        <item>75% visible</item>
+        <item>25\uff05 visible</item>
+        <item>50\uff05 visible</item>
+        <item>75\uff05 visible</item>
         <item>Fully opaque</item>
     </string-array>
     <string-array name="alpha_entry_values">

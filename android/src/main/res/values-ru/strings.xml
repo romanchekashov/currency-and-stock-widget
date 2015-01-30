@@ -11,8 +11,8 @@
 
     <string name="action_accept">Подтвердить</string>
     <string name="refresh">Обновить</string>
-    <string name="from">С</string>
-    <string name="to">На</string>
+    <string name="for_">За</string>
+    <string name="give">Дают</string>
     <string name="add_quote">+ Добавить котировку</string>
     <string name="cancel">Отмена</string>
     <string name="delete">Удалить</string>
@@ -124,9 +124,9 @@
     </string-array>
     <string-array name="alpha_entries">
         <item>Прозрачный</item>
-        <item>25% прозрачности</item>
-        <item>50% прозрачности</item>
-        <item>75% прозрачности</item>
+        <item>25\uff05 прозрачности</item>
+        <item>50\uff05 прозрачности</item>
+        <item>75\uff05 прозрачности</item>
         <item>Непрозрачный</item>
     </string-array>
 

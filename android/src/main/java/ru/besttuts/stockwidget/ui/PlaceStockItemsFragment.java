@@ -132,7 +132,8 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 //                Toast.makeText(getActivity(), "" + position, Toast.LENGTH_SHORT).show();
                 if (null != mListener) mListener.setWidgetItemPosition(position);
-                DialogFragment dialog = new StockItemTypeDialogFragment(position);
+                StockItemTypeDialogFragment dialog = new StockItemTypeDialogFragment();
+                dialog.set(position, PlaceStockItemsFragment.this);
                 dialog.show(getActivity().getSupportFragmentManager(), "StockItemTypeDialogFragment");
             }
         });
@@ -152,7 +153,8 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
             @Override
             public void onClick(View v) {
                 if (null != mListener) mListener.setWidgetItemPosition(mWidgetItemsNumber);
-                DialogFragment dialog = new StockItemTypeDialogFragment(mWidgetItemsNumber + 1);
+                StockItemTypeDialogFragment dialog = new StockItemTypeDialogFragment();
+                dialog.set(mWidgetItemsNumber + 1, PlaceStockItemsFragment.this);
                 dialog.show(getActivity().getSupportFragmentManager(), "StockItemTypeDialogFragment");
             }
         });
@@ -236,9 +238,19 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
         @Override
         public void onClick(View v) {
             if (null != mListener) mListener.setWidgetItemPosition(widgetItemPosition);
-            DialogFragment dialog = new StockItemTypeDialogFragment(widgetItemPosition + 1);
+            StockItemTypeDialogFragment dialog = new StockItemTypeDialogFragment();
+            dialog.set(widgetItemPosition + 1, PlaceStockItemsFragment.this);
             dialog.show(getActivity().getSupportFragmentManager(), "StockItemTypeDialogFragment");
         }
+    }
+
+    private void deleteItem(int pos) {
+        Cursor cursor = (Cursor) scAdapter.getItem(pos);
+        // извлекаем id записи и удаляем соответствующую запись в БД
+        mDataSource.deleteSettingsById(cursor.getString(cursor
+                .getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_ID)));
+        // получаем новый курсор с данными
+        getActivity().getSupportLoaderManager().getLoader(URL_LOADER).forceLoad();
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -308,12 +320,16 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
         }
     }
 
-    class StockItemTypeDialogFragment extends DialogFragment {
+    public static class StockItemTypeDialogFragment extends DialogFragment {
 
         private int mPosition;
+        private PlaceStockItemsFragment mFragment;
 
-        StockItemTypeDialogFragment(int position) {
+        public StockItemTypeDialogFragment() {}
+
+        public void set(int position, PlaceStockItemsFragment fragment) {
             mPosition = position;
+            mFragment = fragment;
         }
 
         @NonNull
@@ -323,21 +339,20 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
             builder.setTitle(R.string.select_quotes_type)
                     .setItems(R.array.quotes_type_array, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
+
                             // The 'which' argument contains the index position
                             // of the selected item
-                            onQuoteTypeSelected(which);
+                            mFragment.onQuoteTypeSelected(which);
+
+                            // закрываем диалоговое окно
+                            StockItemTypeDialogFragment.this.dismiss();
                         }
                     });
 
             builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    Cursor cursor = (Cursor) scAdapter.getItem(mPosition);
-                    // извлекаем id записи и удаляем соответствующую запись в БД
-                    mDataSource.deleteSettingsById(cursor.getString(cursor
-                            .getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_ID)));
-                    // получаем новый курсор с данными
-                    getActivity().getSupportLoaderManager().getLoader(URL_LOADER).forceLoad();
+                    mFragment.deleteItem(mPosition);
                 }
             }).setNegativeButton(R.string.cancel, null);
 
