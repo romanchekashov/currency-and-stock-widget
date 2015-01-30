@@ -25,6 +25,7 @@
                 android:resource="@xml/economic_widget_info" />
         </receiver>
 
+        <!-- The main/home activity (it has no parent activity) -->
         <activity
             android:name=".ui.EconomicWidgetConfigureActivity"
             android:theme="@style/AppTheme.Light" >
@@ -33,9 +34,16 @@
             </intent-filter>
         </activity>
 
+        <!-- A child of the main activity -->
         <activity
             android:name=".ui.SecondConfigureActivity"
-            android:theme="@style/AppTheme.Light" />
+            android:theme="@style/AppTheme.Light"
+            android:parentActivityName=".ui.EconomicWidgetConfigureActivity" >
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.EconomicWidgetConfigureActivity" />
+        </activity>
 
         <!-- Service to perform web API queries -->
         <service

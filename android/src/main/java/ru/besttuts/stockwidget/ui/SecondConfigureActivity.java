@@ -1,7 +1,11 @@
 package ru.besttuts.stockwidget.ui;
 
+import android.appwidget.AppWidgetManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NavUtils;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,6 +38,10 @@ public class SecondConfigureActivity extends ActionBarActivity
 
         setContentView(R.layout.activity_second_configure);
 
+        Utils.onActivityCreateSetActionBarColor(getSupportActionBar());
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         Bundle b = getIntent().getExtras();
         mAppWidgetId = b.getInt("widgetId");
         mQuoteTypeValue = b.getInt("quoteTypeValue");
@@ -47,9 +55,11 @@ public class SecondConfigureActivity extends ActionBarActivity
         switch (mQuoteTypeValue) {
             case 0:
                 fragment = CurrencyExchangeFragment.newInstance(mWidgetItemPosition, mQuoteTypeValue);
+                getSupportActionBar().setTitle(R.string.configure_menu_item_currency);
                 break;
             case 1:
                 fragment = GoodsItemFragment.newInstance(mWidgetItemPosition, mQuoteTypeValue);
+                getSupportActionBar().setTitle(R.string.configure_menu_item_goods);
                 break;
         }
 
@@ -93,6 +103,24 @@ public class SecondConfigureActivity extends ActionBarActivity
                             ((GoodsItemFragment) fragment).getSymbol());
                 }
                 finish();
+                return true;
+            case android.R.id.home: // Respond to the action bar's Up/Home button
+                Intent upIntent = NavUtils.getParentActivityIntent(this);
+                upIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+
+                if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+                    // This activity is NOT part of this app's task, so create a new task
+                    // when navigating up, with a synthesized back stack.
+                    TaskStackBuilder.create(this)
+                            // Add all of this activity's parents to the back stack
+                            .addNextIntentWithParentStack(upIntent)
+                                    // Navigate up to the closest parent
+                            .startActivities();
+                } else {
+                    // This activity is part of this app's task, so simply
+                    // navigate up to the logical parent activity.
+                    NavUtils.navigateUpTo(this, upIntent);
+                }
                 return true;
             case R.id.menuQuotes:
                 Toast.makeText(getApplicationContext(), "menuQuotes", Toast.LENGTH_SHORT).show();
