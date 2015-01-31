@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ActionProvider;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -104,17 +105,17 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
             case R.id.action_accept:
                 acceptBtnPressed();
                 return true;
-            case R.id.menuQuotes:
-                Toast.makeText(getApplicationContext(), "menuQuotes", Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.menuDisplay:
-                Toast.makeText(getApplicationContext(), "menuDisplay", Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.menuSettings:
-                Toast.makeText(getApplicationContext(), "menuSettings", Toast.LENGTH_SHORT).show();
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_place, new ConfigPreferenceFragment()).commit();
-                return true;
+//            case R.id.menuQuotes:
+//                Toast.makeText(getApplicationContext(), "menuQuotes", Toast.LENGTH_SHORT).show();
+//                return true;
+//            case R.id.menuDisplay:
+//                Toast.makeText(getApplicationContext(), "menuDisplay", Toast.LENGTH_SHORT).show();
+//                return true;
+//            case R.id.menuSettings:
+//                Toast.makeText(getApplicationContext(), "menuSettings", Toast.LENGTH_SHORT).show();
+//                getSupportFragmentManager().beginTransaction()
+//                        .replace(R.id.fragment_place, new ConfigPreferenceFragment()).commit();
+//                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -152,14 +153,18 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
 
         PreferenceManager.setDefaultValues(this, R.xml.preference_config, false);
 
+
+        setContentView(R.layout.activity_economic_widget_configure);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         NotificationManager.addListener(this);
 
         changeColor();
 
 //        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
 //        getSupportActionBar().setIcon(R.drawable.ic_launcher);
-
-        setContentView(R.layout.activity_economic_widget_configure);
 
         // Find the widget id from the intent.
         Intent intent = getIntent();

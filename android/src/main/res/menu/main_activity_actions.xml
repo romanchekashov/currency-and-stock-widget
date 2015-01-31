@@ -3,20 +3,21 @@
 
     <!-- Search, should appear as action button -->
 
-    <item android:id="@+id/action_add_quote"
-        android:icon="@drawable/ic_action_new"
-        android:title="@string/add_quote"
-        yourapp:showAsAction="ifRoom"  />
-
     <item android:id="@+id/action_accept"
         android:icon="@drawable/ic_action_accept"
         android:title="@string/action_accept"
         yourapp:showAsAction="always"  />
 
+    <item android:id="@+id/action_add_quote"
+        android:icon="@drawable/ic_action_new"
+        android:title="@string/add_quote"
+        yourapp:showAsAction="always"  />
+
     <item android:id="@+id/action_refresh"
-        android:icon="@android:drawable/stat_notify_sync"
+        android:icon="@drawable/ic_action_refresh"
         android:title="@string/refresh"
         yourapp:showAsAction="ifRoom"  />
+<!--
 
     <item
         android:icon="@drawable/ic_action_overflow"
@@ -34,6 +35,7 @@
                 android:title="@string/action_settings" />
         </menu>
     </item>
+-->
 
 <!--
 

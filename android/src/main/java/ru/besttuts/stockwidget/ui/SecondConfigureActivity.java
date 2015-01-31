@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -37,6 +38,9 @@ public class SecondConfigureActivity extends ActionBarActivity
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_second_configure);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar2);
+        setSupportActionBar(toolbar);
 
         Utils.onActivityCreateSetActionBarColor(getSupportActionBar());
 
@@ -124,17 +128,17 @@ public class SecondConfigureActivity extends ActionBarActivity
                     NavUtils.navigateUpTo(this, upIntent);
                 }
                 return true;
-            case R.id.menuQuotes:
-                Toast.makeText(getApplicationContext(), "menuQuotes", Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.menuDisplay:
-                Toast.makeText(getApplicationContext(), "menuDisplay", Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.menuSettings:
-                Toast.makeText(getApplicationContext(), "menuSettings", Toast.LENGTH_SHORT).show();
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_place, new ConfigPreferenceFragment()).commit();
-                return true;
+//            case R.id.menuQuotes:
+//                Toast.makeText(getApplicationContext(), "menuQuotes", Toast.LENGTH_SHORT).show();
+//                return true;
+//            case R.id.menuDisplay:
+//                Toast.makeText(getApplicationContext(), "menuDisplay", Toast.LENGTH_SHORT).show();
+//                return true;
+//            case R.id.menuSettings:
+//                Toast.makeText(getApplicationContext(), "menuSettings", Toast.LENGTH_SHORT).show();
+//                getSupportFragmentManager().beginTransaction()
+//                        .replace(R.id.fragment_place, new ConfigPreferenceFragment()).commit();
+//                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

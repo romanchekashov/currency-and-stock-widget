@@ -1,11 +1,11 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme.Light" parent="@style/Theme.AppCompat.Light">
+    <style name="AppTheme.Light" parent="@style/Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="AppTheme.Dark" parent="@style/Theme.AppCompat">
+    <style name="AppTheme.Dark" parent="@style/Theme.AppCompat.NoActionBar">
         <!-- Customize your theme here. -->
     </style>
 </resources>
