@@ -89,14 +89,16 @@ public class GoodsItemFragment extends Fragment implements IQuoteTypeFragment, A
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        DummyContent.addItem(new DummyContent.DummyItem("1", String.format("%s(GCF15.CMX)",getString(R.string.goods_gold))));
-        DummyContent.addItem(new DummyContent.DummyItem("2", String.format("%s(SIF15.CMX)",getString(R.string.goods_silver))));
-        DummyContent.addItem(new DummyContent.DummyItem("3", String.format("%s(PLF15.NYM)",getString(R.string.goods_platinum))));
-        DummyContent.addItem(new DummyContent.DummyItem("4", String.format("%s(PAF15.NYM)",getString(R.string.goods_palladium))));
-        DummyContent.addItem(new DummyContent.DummyItem("5", String.format("%s(HGF15.CMX)", getString(R.string.goods_copper))));
-        // TODO: Change Adapter to display your content
-        mAdapter = new ArrayAdapter<DummyContent.DummyItem>(getActivity(),
-                R.layout.goods_list_item, R.id.tvGood, DummyContent.ITEMS);
+//        DummyContent.addItem(new DummyContent.DummyItem("1", String.format("%s(GCF15.CMX)",getString(R.string.goods_gold))));
+//        DummyContent.addItem(new DummyContent.DummyItem("2", String.format("%s(SIF15.CMX)",getString(R.string.goods_silver))));
+//        DummyContent.addItem(new DummyContent.DummyItem("3", String.format("%s(PLF15.NYM)",getString(R.string.goods_platinum))));
+//        DummyContent.addItem(new DummyContent.DummyItem("4", String.format("%s(PAF15.NYM)",getString(R.string.goods_palladium))));
+//        DummyContent.addItem(new DummyContent.DummyItem("5", String.format("%s(HGF15.CMX)", getString(R.string.goods_copper))));
+//        // TODO: Change Adapter to display your content
+//        mAdapter = new ArrayAdapter<CharSequence>(getActivity(), R.array.good_array,
+//                R.layout.goods_list_item, R.id.tvGood);
+        mAdapter = ArrayAdapter.createFromResource(getActivity(),
+                R.array.good_array, R.layout.goods_list_item);
     }
 
     @Override
@@ -136,7 +138,8 @@ public class GoodsItemFragment extends Fragment implements IQuoteTypeFragment, A
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         view.setSelected(true);
         if (null != mListener) {
-            String str = DummyContent.ITEMS.get(position).content;
+//            String str = DummyContent.ITEMS.get(position).content;
+            String str = (String) mAdapter.getItem(position);
             getArguments().putString(ARG_GOOD_ITEM, str.substring(str.lastIndexOf("(") + 1, str.length() - 1));
 
             Log.d(LOG_TAG, "onItemClick: " + getArguments().getString(ARG_GOOD_ITEM));

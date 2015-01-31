@@ -41,6 +41,14 @@
         <item>Stock</item>
     </array>
 
+    <array name="good_array">
+        <item>Gold(GCF15.CMX)</item>
+        <item>Silver(SIF15.CMX)</item>
+        <item>Platinum(PLF15.NYM)</item>
+        <item>Palladium(PAF15.NYM)</item>
+        <item>Copper(HGF15.CMX)</item>
+    </array>
+
     <array name="currency_array">
         <item>Russian ruble(RUB)</item>
         <item>Afghan afghani(AFN)</item>

@@ -156,8 +156,8 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
 
         changeColor();
 
-        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
-        getSupportActionBar().setIcon(R.drawable.ic_launcher);
+//        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
+//        getSupportActionBar().setIcon(R.drawable.ic_launcher);
 
         setContentView(R.layout.activity_economic_widget_configure);
 

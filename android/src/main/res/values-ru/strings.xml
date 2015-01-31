@@ -41,6 +41,13 @@
         <item>Акции</item>
     </array>
 
+    <array name="good_array">
+        <item>Золото(GCF15.CMX)</item>
+        <item>Серебро(SIF15.CMX)</item>
+        <item>Платина(PLF15.NYM)</item>
+        <item>Палладий(PAF15.NYM)</item>
+        <item>Медь(HGF15.CMX)</item>
+    </array>
 
     <array name="currency_array">
         <item>Russian ruble(RUB)</item>

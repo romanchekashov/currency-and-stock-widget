@@ -12,13 +12,14 @@
 
     <TextView
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:text="New Text"
         android:id="@+id/tvColorPrefs"
         android:layout_toRightOf="@+id/circleView"
         android:layout_toEndOf="@+id/circleView"
         android:gravity="center_vertical"
-        android:layout_alignBottom="@+id/circleView" />
+        android:textSize="24sp"
+        android:layout_marginLeft="15dp" />
 
     <RadioButton
         android:layout_width="wrap_content"
@@ -26,7 +27,6 @@
         android:id="@+id/rbColorPrefs"
         android:gravity="end"
         android:layout_alignParentRight="true"
-        android:layout_alignBottom="@+id/tvColorPrefs"
         android:checked="false"
         android:clickable="false" />
 </RelativeLayout>
