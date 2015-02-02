@@ -11,7 +11,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.model.QuoteType;
@@ -24,10 +23,10 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 /**
  * Created by roman on 07.01.2015.
  */
-public class SecondConfigureActivity extends ActionBarActivity
+public class QuotePickerActivity extends ActionBarActivity
         implements GoodsItemFragment.OnFragmentInteractionListener {
 
-    private static final String TAG = makeLogTag(SecondConfigureActivity.class);
+    private static final String TAG = makeLogTag(QuotePickerActivity.class);
     private QuoteDataSource mDataSource;
     private int mAppWidgetId;
     private int mQuoteTypeValue;

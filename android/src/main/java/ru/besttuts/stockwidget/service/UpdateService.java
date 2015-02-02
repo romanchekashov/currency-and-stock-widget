@@ -107,7 +107,7 @@ public class UpdateService extends Service {
                     List<Model> models = me.getValue();
 
                     for (int i = 0, l = models.size(); i < l; i++) {
-                        dataSource.addModelRec(widgetId, i, models.get(i));
+                        dataSource.addModelRec(models.get(i));
                     }
                 }
 

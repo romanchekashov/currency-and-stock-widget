@@ -21,10 +21,6 @@ public class QuoteContract {
     public interface ModelColumns {
         /** Unique string identifying this setting: MODEL_WIDGET_ID + "_" + "MODEL_QUOTE_POSITION". */
         String MODEL_ID = "model_id";
-        /** Unique string identifying this block of time. */
-        String MODEL_WIDGET_ID = "model_widget_id";
-        /** Title describing this block of time. */
-        String MODEL_QUOTE_POSITION = "model_quote_position";
         /** Time when this block starts. */
         String MODEL_NAME = "model_name";
         /** Time when this block ends. */

@@ -47,7 +47,7 @@ public class CurrencyExchangeFragment extends Fragment implements IQuoteTypeFrag
     }
 
     public CurrencyExchangeFragment() {
-        // Необходим пустой доступный всем конструктор
+        // Необходим пустой общедоступный конструктор
     }
 
     @Override

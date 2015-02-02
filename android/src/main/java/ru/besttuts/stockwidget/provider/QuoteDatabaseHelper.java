@@ -25,7 +25,7 @@ public class QuoteDatabaseHelper extends SQLiteOpenHelper {
     }
 
     public interface Tables {
-        String SETTINGS = "currency_exchange";
+        String SETTINGS = "settings";
         String MODELS = "models";
         String CURRENCY_EXCHANGE = "currency_exchange";
         String STOCK = "stock";
@@ -47,8 +47,6 @@ public class QuoteDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE " + Tables.MODELS + " ("
                 + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + ModelColumns.MODEL_ID + " TEXT NOT NULL,"
-                + ModelColumns.MODEL_WIDGET_ID + " INTEGER NOT NULL,"
-                + ModelColumns.MODEL_QUOTE_POSITION + " INTEGER NOT NULL,"
                 + ModelColumns.MODEL_NAME + " TEXT NOT NULL,"
                 + ModelColumns.MODEL_RATE + " NUMERIC(10,4) NOT NULL,"
                 + ModelColumns.MODEL_CHANGE + " NUMERIC(10,4) NOT NULL,"

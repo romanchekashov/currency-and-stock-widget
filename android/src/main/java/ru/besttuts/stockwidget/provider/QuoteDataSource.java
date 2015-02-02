@@ -14,6 +14,7 @@ import java.util.List;
 import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.model.Setting;
+import ru.besttuts.stockwidget.util.Utils;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
@@ -69,15 +70,35 @@ public class QuoteDataSource {
         LOGD(TAG, "insertWithOnConflict rows count = " + count);
     }
 
-    public void addModelRec(int mAppWidgetId, int widgetItemPosition, Model model) {
-
-        String id = mAppWidgetId + "_" + widgetItemPosition;
+    public void addModelRec(QuoteType type, String symbol) {
 
         // New value for one column
         ContentValues values = new ContentValues();
-        values.put(QuoteContract.ModelColumns.MODEL_ID, id);
-        values.put(QuoteContract.ModelColumns.MODEL_WIDGET_ID, mAppWidgetId);
-        values.put(QuoteContract.ModelColumns.MODEL_QUOTE_POSITION, widgetItemPosition);
+        values.put(QuoteContract.ModelColumns.MODEL_ID, symbol);
+        values.put(QuoteContract.ModelColumns.MODEL_NAME,
+                Utils.getModelNameFromResourcesBySymbol(context, type, symbol));
+        values.put(QuoteContract.ModelColumns.MODEL_RATE, 0);
+        values.put(QuoteContract.ModelColumns.MODEL_CHANGE, 0);
+        values.put(QuoteContract.ModelColumns.MODEL_PERCENT_CHANGE, "");
+
+        // Which row to update, based on the ID
+        String selection = QuoteContract.ModelColumns.MODEL_ID + " LIKE ?";
+        String[] selectionArgs = { symbol };
+
+        long count = mDatabase.insertWithOnConflict(
+                QuoteDatabaseHelper.Tables.MODELS,
+                null,
+                values,
+                SQLiteDatabase.CONFLICT_REPLACE);
+
+        LOGD(TAG, "insertWithOnConflict rows count = " + count);
+    }
+
+    public void addModelRec(Model model) {
+
+        // New value for one column
+        ContentValues values = new ContentValues();
+        values.put(QuoteContract.ModelColumns.MODEL_ID, model.getId());
         values.put(QuoteContract.ModelColumns.MODEL_NAME, model.getName());
         values.put(QuoteContract.ModelColumns.MODEL_RATE, model.getRate());
         values.put(QuoteContract.ModelColumns.MODEL_CHANGE, model.getChange());
@@ -85,7 +106,7 @@ public class QuoteDataSource {
 
         // Which row to update, based on the ID
         String selection = QuoteContract.ModelColumns.MODEL_ID + " LIKE ?";
-        String[] selectionArgs = { id };
+        String[] selectionArgs = { model.getId() };
 
         long count = mDatabase.insertWithOnConflict(
                 QuoteDatabaseHelper.Tables.MODELS,
@@ -122,32 +143,38 @@ public class QuoteDataSource {
         );
     }
 
+    /**
+     * Получаем Cursor настроек вместе с данными котировки, если они есть
+     * Пример использования INNER JOIN
+     *
+     * @param widgetId идентификатор виджета
+     * @return Cursor
+     */
+    public Cursor getCursorSettingsWithModelByWidgetId(int widgetId) {
+
+        String sqlQuery = "select * "
+                + "from "+QuoteDatabaseHelper.Tables.SETTINGS+" as s "
+                + "left join "+QuoteDatabaseHelper.Tables.MODELS+" as m "
+                + "on s.setting_quote_symbol = m.model_id "
+                + "where s.setting_widget_id = ? order by "
+                + QuoteContract.SettingColumns.SETTING_QUOTE_POSITION + " asc";
+
+        return mDatabase.rawQuery(sqlQuery, new String[] { String.valueOf(widgetId) });
+
+    }
+
     public Cursor getCursorModelsByWidgetId(int widgetId) {
-        // Define a projection that specifies which columns from the database
-        // you will actually use after this query.
-        String[] projection = {
-                BaseColumns._ID,
-                QuoteContract.ModelColumns.MODEL_ID,
-                QuoteContract.ModelColumns.MODEL_WIDGET_ID,
-                QuoteContract.ModelColumns.MODEL_QUOTE_POSITION,
-                QuoteContract.ModelColumns.MODEL_NAME,
-                QuoteContract.ModelColumns.MODEL_RATE,
-                QuoteContract.ModelColumns.MODEL_CHANGE,
-                QuoteContract.ModelColumns.MODEL_PERCENT_CHANGE
-        };
 
-        // How you want the results sorted in the resulting Cursor
-        String sortOrder = QuoteContract.ModelColumns.MODEL_QUOTE_POSITION + " ASC";
+        String sqlQuery = "select m._id, m.model_id, m.model_name, "
+                + "m.model_rate, m.model_change, m.model_percent_change "
+                + "from "+QuoteDatabaseHelper.Tables.SETTINGS+" as s "
+                + "inner join "+QuoteDatabaseHelper.Tables.MODELS+" as m "
+                + "on s.setting_quote_symbol = m.model_id "
+                + "where s.setting_widget_id = ? order by "
+                + QuoteContract.SettingColumns.SETTING_QUOTE_POSITION + " asc";
 
-        return mDatabase.query(
-                QuoteDatabaseHelper.Tables.MODELS,  // The table to query
-                projection,                               // The columns to return
-                QuoteContract.ModelColumns.MODEL_WIDGET_ID + " = " + widgetId, // The columns for the WHERE clause
-                null,                            // The values for the WHERE clause
-                null,                                     // don't group the rows
-                null,                                     // don't filter by row groups
-                sortOrder                                 // The sort order
-        );
+        return mDatabase.rawQuery(sqlQuery, new String[] { String.valueOf(widgetId) });
+
     }
 
     public Cursor getCursorAllSettings() {
@@ -179,19 +206,53 @@ public class QuoteDataSource {
     public void deleteSettingsByWidgetId(int widgetId) {
         int delCount = mDatabase.delete(QuoteDatabaseHelper.Tables.SETTINGS,
                 QuoteContract.SettingColumns.SETTING_WIDGET_ID + " = " + widgetId, null);
-        LOGD(TAG, "deleteSettingsByWidgetId: deleted rows count = " + delCount);
-    }
 
-    public void deleteModelsByWidgetId(int widgetId) {
-        int delCount = mDatabase.delete(QuoteDatabaseHelper.Tables.MODELS,
-                QuoteContract.ModelColumns.MODEL_WIDGET_ID + " = " + widgetId, null);
-        LOGD(TAG, "deleteModelsByWidgetId: deleted rows count = " + delCount);
+        LOGD(TAG, "deleteSettingsByWidgetId: deleted rows count = " + delCount);
+
+        // Если все записи Setting удалены, то удаляем все записи Model
+        if (0 == mDatabase.rawQuery("select _id from "+ QuoteDatabaseHelper.Tables.SETTINGS, null).getCount()) {
+            mDatabase.delete(QuoteDatabaseHelper.Tables.MODELS, null, null);
+        }
     }
 
     public void deleteSettingsById(String settingId) {
         int delCount = mDatabase.delete(QuoteDatabaseHelper.Tables.SETTINGS,
                 QuoteContract.SettingColumns.SETTING_ID + " = '" + settingId + "'", null);
         LOGD(TAG, "deleteSettingsById: deleted rows count = " + delCount);
+    }
+
+    public void deleteSettingsByIdAndUpdatePositions(String settingId, int position) {
+        LOGD(TAG, String.format("deleteSettingsById: settingId = %s, position = %d",
+                settingId, position));
+
+        deleteSettingsById(settingId);
+
+        Cursor cursor = mDatabase.rawQuery("select * from " + QuoteDatabaseHelper.Tables.SETTINGS
+                + " where setting_quote_position > ?"
+                + " order by setting_quote_position asc", new String[]{String.valueOf(position)});
+        if (null == cursor || 0 == cursor.getCount()) return;
+
+        cursor.moveToFirst();
+        do {
+            String widgetId = cursor.getString(cursor.getColumnIndexOrThrow(
+                    QuoteContract.SettingColumns.SETTING_WIDGET_ID));
+            String id = cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_ID));
+
+            ContentValues args = new ContentValues();
+            args.put(QuoteContract.SettingColumns.SETTING_ID, widgetId+"_"+position);
+            args.put(QuoteContract.SettingColumns.SETTING_QUOTE_POSITION, position);
+            mDatabase.update(QuoteDatabaseHelper.Tables.SETTINGS, args,
+                    QuoteContract.SettingColumns.SETTING_ID + " = '" + id + "'", null);
+
+//            mDatabase.rawQuery("update " + QuoteDatabaseHelper.Tables.SETTINGS
+//                    + " set setting_quote_position = ?"
+//                    + " where setting_id = ?", new String[]{String.valueOf(position), id});
+            position++;
+        } while (cursor.moveToNext());
+
+        cursor.close();
+
+        LOGD(TAG, "deleteSettingsByIdAndUpdatePositions");
     }
 
     public void deleteAll() {
@@ -249,7 +310,7 @@ public class QuoteDataSource {
         return list;
     }
 
-    private Setting transformCursorToSetting(Cursor cursor) {
+    public static Setting transformCursorToSetting(Cursor cursor) {
         Setting setting = new Setting();
         setting.setId(cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_ID)));
         setting.setWidgetId(cursor.getInt(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_WIDGET_ID)));
@@ -260,7 +321,7 @@ public class QuoteDataSource {
         return setting;
     }
 
-    private Model transformCursorToModel(Cursor cursor) {
+    public static Model transformCursorToModel(Cursor cursor) {
         Model model = new Model();
         model.setName(cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_NAME)));
         model.setRate(cursor.getDouble(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_RATE)));

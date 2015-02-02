@@ -3,6 +3,9 @@
     <color name="pressed_color">#4d90fe</color>
     <color name="default_color">#ffffff</color>
 
+    <color name="arrow_green">#00ff00</color>
+    <color name="arrow_red">#ff2a2a</color>
+
     <color name="turquoise">#1abc9c</color>
     <color name="green_sea">#16a085</color>
     <color name="emerland">#2ecc71</color>

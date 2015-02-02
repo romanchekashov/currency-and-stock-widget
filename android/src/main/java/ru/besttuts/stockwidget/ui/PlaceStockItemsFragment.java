@@ -5,33 +5,45 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import java.io.IOException;
+import java.util.Map;
 
 import ru.besttuts.stockwidget.R;
+import ru.besttuts.stockwidget.io.HandleJSON;
+import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.provider.QuoteContract;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
+import ru.besttuts.stockwidget.sync.RemoteYahooFinanceDataFetcher;
 import ru.besttuts.stockwidget.util.NotificationManager;
+import ru.besttuts.stockwidget.util.Utils;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
@@ -45,51 +57,44 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
  * create an instance of this fragment.
  */
 public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks<Cursor>,
-        NotificationManager.ColorChangedListener {
+        NotificationManager.ColorChangedListener, NotificationManager.OptionsItemSelectListener {
 
     private static final String TAG = makeLogTag(PlaceStockItemsFragment.class);
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    // параметры для инициализации фрагмента, e.g. ARG_ITEM_NUMBER
     private static final String ARG_WIDGET_ID = "widgetId";
-    private static final String ARG_WIDGET_ITEMS_NUMBER = "widgetItemsNumber";
 
-    // TODO: Rename and change types of parameters
     private int mWidgetId;
     private int mWidgetItemsNumber;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
     private QuoteDataSource mDataSource;
 
-    private GridView gridView;
-    private SimpleCursorAdapter scAdapter;
+    private SimpleCursorAdapter mSimpleCursorAdapter;
 
-    private View view;
+    private View mMainView;
 
-    // Identifies a particular Loader being used in this component
+    // Идентификатор загрузчика используемый в данном компоненте
     private static final int URL_LOADER = 0;
+
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
+     * Используйте этот фабричный метод для создания
+     * нового объекта этого фрагмента с предоставляемыми параметрами.
      *
-     * @param widgetId Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ConfigureMenuFragment.
+     * @param widgetId идентификатор виджета.
+     * @return Новый объект фрагмента PlaceStockItemsFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static PlaceStockItemsFragment newInstance(int widgetId, String param2) {
+    public static PlaceStockItemsFragment newInstance(int widgetId) {
         PlaceStockItemsFragment fragment = new PlaceStockItemsFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_WIDGET_ID, widgetId);
-        args.putInt(ARG_WIDGET_ITEMS_NUMBER, 0);
         fragment.setArguments(args);
         return fragment;
     }
 
     public PlaceStockItemsFragment() {
-        // Required empty public constructor
+        // Необходим пустой общедоступный конструктор
     }
 
     @Override
@@ -97,7 +102,6 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mWidgetId = getArguments().getInt(ARG_WIDGET_ID);
-            mWidgetItemsNumber = getArguments().getInt(ARG_WIDGET_ITEMS_NUMBER);
         }
 
         NotificationManager.addListener(this);
@@ -114,26 +118,30 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
                              Bundle savedInstanceState) {
         LOGD(TAG, "onCreateView");
 
-        view = inflater.inflate(R.layout.fragment_configure_stock_items, container, false);
+        // Вызываем и заполняем отображение для этого фрагмента
+        mMainView = inflater.inflate(R.layout.fragment_configure_stock_items, container, false);
 
         changeColor();
 
         // формируем столбцы сопоставления
-        String[] from = new String[] { QuoteContract.SettingColumns.SETTING_QUOTE_SYMBOL,
+        String[] from = new String[] { QuoteContract.ModelColumns.MODEL_NAME,
+                QuoteContract.ModelColumns.MODEL_RATE,
+                QuoteContract.ModelColumns.MODEL_CHANGE,
+                QuoteContract.ModelColumns.MODEL_PERCENT_CHANGE,
                 QuoteContract.SettingColumns.SETTING_QUOTE_POSITION };
-        int[] to = new int[] { R.id.tvName, R.id.tvRate };
+
+        int[] to = new int[] { R.id.tvName, R.id.tvRate, R.id.tvChange, R.id.tvChangePercentage,
+                R.id.tvPosition };
 
         // создааем адаптер и настраиваем список
-        scAdapter = new MySimpleCursorAdapter(getActivity(), R.layout.configure_quote_grid_item, null, from, to, 0);
-        gridView = (GridView) view.findViewById(R.id.gridView);
-        gridView.setAdapter(scAdapter);
+        mSimpleCursorAdapter = new MySimpleCursorAdapter(getActivity(), R.layout.configure_quote_grid_item, null, from, to, 0);
+        GridView gridView = (GridView) mMainView.findViewById(R.id.gridView);
+        gridView.setAdapter(mSimpleCursorAdapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Toast.makeText(getActivity(), "" + position, Toast.LENGTH_SHORT).show();
-                if (null != mListener) mListener.setWidgetItemPosition(position);
                 StockItemTypeDialogFragment dialog = new StockItemTypeDialogFragment();
-                dialog.set(position, PlaceStockItemsFragment.this);
+                dialog.set(position + 1, PlaceStockItemsFragment.this);
                 dialog.show(getActivity().getSupportFragmentManager(), "StockItemTypeDialogFragment");
             }
         });
@@ -148,31 +156,23 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
             loader.forceLoad();
         }
 
-        Button button = (Button) view.findViewById(R.id.btnAddQuote);
+        Button button = (Button) mMainView.findViewById(R.id.btnAddQuote);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (null != mListener) mListener.setWidgetItemPosition(mWidgetItemsNumber);
                 StockItemTypeDialogFragment dialog = new StockItemTypeDialogFragment();
                 dialog.set(mWidgetItemsNumber + 1, PlaceStockItemsFragment.this);
                 dialog.show(getActivity().getSupportFragmentManager(), "StockItemTypeDialogFragment");
             }
         });
 
-        // Inflate the layout for this fragment
-        return view;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        LOGD(TAG, "onActivityCreated");
+        return mMainView;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        LOGD(TAG, "onResume");
+        LOGD(TAG, "onResume: currentThread = " + Thread.currentThread());
         Loader loader = getActivity().getSupportLoaderManager().getLoader(URL_LOADER);
         if (null != loader) {
             LOGD(TAG, "Loader is " + loader);
@@ -184,6 +184,7 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
     public void onDestroy() {
         super.onDestroy();
         NotificationManager.removeListener(this);
+        if (null != mDataSource) mDataSource.close();
         LOGD(TAG, "onDestroy");
     }
 
@@ -194,29 +195,26 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        scAdapter.changeCursor(data);
-//        gridView.setAdapter(scAdapter);
-//        scAdapter.notifyDataSetChanged();
-//        gridView.postInvalidate();
-//        getActivity().runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                gridView.setVisibility(View.VISIBLE);
-//                gridView.invalidate();
-//            }
-//        });
+        mSimpleCursorAdapter.changeCursor(data);
         mWidgetItemsNumber = data.getCount();
-        getArguments().putInt(ARG_WIDGET_ITEMS_NUMBER, data.getCount());
-        LOGD(TAG, "swapCursor: cursor.getCount = " + getArguments().getInt(ARG_WIDGET_ITEMS_NUMBER));
+        mFetchQuote = null;
+        Button button = (Button) mMainView.findViewById(R.id.btnAddQuote);
+        if (0 < mWidgetItemsNumber) {
+            button.setVisibility(View.GONE);
+        } else {
+            button.setVisibility(View.VISIBLE);
+        }
+        LOGD(TAG, "onLoadFinished: currentThread = " + Thread.currentThread());
+        LOGD(TAG, "swapCursor: cursor.getCount = mWidgetItemsNumber = " + mWidgetItemsNumber);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         /*
-         * Clears out the adapter's reference to the Cursor.
-         * This prevents memory leaks.
+         * Удаляем ссылку на Cursor в адаптере.
+         * Это предотвращает утечку памяти.
          */
-        scAdapter.changeCursor(null);
+        mSimpleCursorAdapter.changeCursor(null);
     }
 
     @Override
@@ -225,48 +223,37 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String color = sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_COLOR,
                 ConfigPreferenceFragment.KEY_PREF_BG_COLOR_DEFAULT_VALUE);
-        view.setBackgroundColor(Color.parseColor(color));
+        mMainView.setBackgroundColor(Color.parseColor(color));
     }
 
-    private class OnClickListenerImpl implements View.OnClickListener {
-        private int widgetItemPosition;
-
-        private OnClickListenerImpl(int widgetItemPosition) {
-            this.widgetItemPosition = widgetItemPosition;
-        }
-
-        @Override
-        public void onClick(View v) {
-            if (null != mListener) mListener.setWidgetItemPosition(widgetItemPosition);
-            StockItemTypeDialogFragment dialog = new StockItemTypeDialogFragment();
-            dialog.set(widgetItemPosition + 1, PlaceStockItemsFragment.this);
-            dialog.show(getActivity().getSupportFragmentManager(), "StockItemTypeDialogFragment");
+    @Override
+    public void onOptionsItemSelectedInActivity(MenuItem item) {
+        // Обработка нажатий на элемент ActionBar
+        switch (item.getItemId()) {
+            case R.id.action_add_quote:
+                StockItemTypeDialogFragment dialog = new StockItemTypeDialogFragment();
+                dialog.set(mWidgetItemsNumber + 1, PlaceStockItemsFragment.this);
+                dialog.show(getActivity().getSupportFragmentManager(), "StockItemTypeDialogFragment");
+                break;
+            default:
+                break;
         }
     }
 
     private void deleteItem(int pos) {
-        Cursor cursor = (Cursor) scAdapter.getItem(pos);
+        Cursor cursor = (Cursor) mSimpleCursorAdapter.getItem(pos - 1);
         // извлекаем id записи и удаляем соответствующую запись в БД
-        mDataSource.deleteSettingsById(cursor.getString(cursor
-                .getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_ID)));
+        mDataSource.deleteSettingsByIdAndUpdatePositions(cursor.getString(cursor
+                .getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_ID)), pos);
         // получаем новый курсор с данными
         getActivity().getSupportLoaderManager().getLoader(URL_LOADER).forceLoad();
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    private void onQuoteTypeSelected(int quoteTypePos) {
+    private void onQuoteTypeSelected(int quoteTypePos, int position) {
         if (null == mListener) return;
-        mListener.onConfigureMenuFragmentInteraction(quoteTypePos);
 
+        mListener.showQuotePickerActivity(quoteTypePos, position);
 
-//        switch (quoteTypePos) {
-//            case 0:
-//                mListener.onConfigureMenuFragmentInteraction(QuoteType.CURRENCY_EXCHANGE);
-//                break;
-//            case 1:
-//                mListener.onConfigureMenuFragmentInteraction(QuoteType.GOODS);
-//                break;
-//        }
     }
 
     @Override
@@ -293,10 +280,9 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
     }
 
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
+     *
+     * Этот интерфейс должен быть реализован Activity, которые содержат этот фрагмент,
+     * чтобы этот фрагмент мог общаться с Activity и фрагментами содержащимися в ней.
      * <p/>
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
@@ -304,10 +290,16 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onConfigureMenuFragmentInteraction(int quoteTypeValue);
 
-        public void setWidgetItemPosition(int widgetItemPosition);
+        /**
+         *
+         * @param quoteTypeValue цифровое значение типа котировки
+         * @param position Порядковый номер котировки на виджете.
+         */
+        public void showQuotePickerActivity(int quoteTypeValue, int position);
     }
+
+    FetchQuote mFetchQuote;
 
     class MySimpleCursorAdapter extends SimpleCursorAdapter {
         MySimpleCursorAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
@@ -316,11 +308,70 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            return super.getView(position, convertView, parent);
+            View view = super.getView(position, convertView, parent);
+            Cursor cursor = (Cursor) getItem(position);
+            String symbol = cursor.getString(cursor.getColumnIndexOrThrow(
+                    QuoteContract.ModelColumns.MODEL_ID));
+            LOGD(TAG, "getView: symbol = " + symbol + " currentThread = " + Thread.currentThread());
+
+            ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progressBar2);
+            LinearLayout layout = (LinearLayout) view.findViewById(R.id.lLayoutRate);
+
+            if (null == symbol || symbol.isEmpty()) {
+                QuoteType quoteType = QuoteType.valueOf(cursor.getString(cursor
+                        .getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_QUOTE_TYPE)));
+                symbol = cursor.getString(cursor.getColumnIndexOrThrow(
+                        QuoteContract.SettingColumns.SETTING_QUOTE_SYMBOL));
+                ((TextView) view.findViewById(R.id.tvName)).setText(
+                        Utils.getModelNameFromResourcesBySymbol(getActivity(), quoteType, symbol));
+
+
+                layout.setVisibility(View.GONE);
+                progressBar.setVisibility(View.VISIBLE);
+
+                if (null == mFetchQuote) {
+                    LOGD(TAG, "before FetchQuote: getView: currentThread = " + Thread.currentThread());
+                    LOGD(TAG, String.format("getView: quoteType = %s, symbol = %s", quoteType, symbol));
+
+                    mFetchQuote = (FetchQuote) new FetchQuote(getActivity())
+                            .execute(new String[]{String.valueOf(quoteType), symbol});
+                }
+
+                return view;
+            }
+
+            progressBar.setVisibility(View.GONE);
+            layout.setVisibility(View.VISIBLE);
+
+            Model model = QuoteDataSource.transformCursorToModel(cursor);
+            ((TextView) view.findViewById(R.id.tvName)).setText(model.getName());
+            ((TextView) view.findViewById(R.id.tvRate)).setText(model.getRateToString());
+
+            TextView tvChange = (TextView) view.findViewById(R.id.tvChange);
+            tvChange.setText(model.getChangeToString());
+
+            TextView tvChangePercentage = (TextView) view.findViewById(R.id.tvChangePercentage);
+            tvChangePercentage.setText(model.getPercentChange());
+
+            ImageView imageView = (ImageView) view.findViewById(R.id.imageView);
+
+            int color = getResources().getColor(R.color.arrow_green);
+            if (0 < model.getChange()) {
+                imageView.setImageResource(R.drawable.ic_widget_green_arrow_up);
+            } else {
+                imageView.setImageResource(R.drawable.ic_widget_green_arrow_down);
+                color = getResources().getColor(R.color.arrow_red);
+            }
+            tvChange.setTextColor(color);
+            tvChangePercentage.setTextColor(color);
+
+            return view;
         }
     }
 
     public static class StockItemTypeDialogFragment extends DialogFragment {
+
+        private static final String ARG_POSITION = "position";
 
         private int mPosition;
         private PlaceStockItemsFragment mFragment;
@@ -332,9 +383,28 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
             mFragment = fragment;
         }
 
+        @Override
+        public void onSaveInstanceState(Bundle outState) {
+            super.onSaveInstanceState(outState);
+            outState.putInt(ARG_POSITION, mPosition);
+            // сохраняем ссылку на фрагмент с котором будем взаимодействовать в дальнейшем
+            setTargetFragment(mFragment, 0);
+        }
+
         @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
+            if (null != savedInstanceState) {
+                mPosition = savedInstanceState.getInt(ARG_POSITION);
+            }
+            if (null == mFragment) {
+                /**
+                 * Получаем ссылку на фрагмент PlaceStockItemsFragment.
+                 * Она сохраняется при поворотах экрана!
+                 */
+                mFragment = (PlaceStockItemsFragment) getTargetFragment();
+            }
+
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle(R.string.select_quotes_type)
                     .setItems(R.array.quotes_type_array, new DialogInterface.OnClickListener() {
@@ -342,7 +412,7 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
 
                             // The 'which' argument contains the index position
                             // of the selected item
-                            mFragment.onQuoteTypeSelected(which);
+                            mFragment.onQuoteTypeSelected(which, mPosition);
 
                             // закрываем диалоговое окно
                             StockItemTypeDialogFragment.this.dismiss();
@@ -373,7 +443,9 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
 
         @Override
         public Cursor loadInBackground() {
-            Cursor cursor = mDataSource.getCursorSettingsByWidgetId(mWidgetId);
+            Cursor cursor = mDataSource.getCursorSettingsWithModelByWidgetId(mWidgetId);
+
+            LOGD(TAG, "loadInBackground: currentThread = " + Thread.currentThread());
 
             LOGD(TAG, "loadInBackground: cursor.getCount: " + cursor.getCount());
 //            try {
@@ -384,6 +456,70 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
             return cursor;
         }
 
+    }
+
+    private class FetchQuote extends AsyncTask<String, Void, Model> {
+
+        private final Context mContext;
+
+        private FetchQuote(Context context) {
+            mContext = context;
+        }
+
+        @Override
+        protected Model doInBackground(String... params) { //TODO: Написать Unit-тесты!!!
+
+            RemoteYahooFinanceDataFetcher dataFetcher = new RemoteYahooFinanceDataFetcher();
+            QuoteDataSource dataSource = new QuoteDataSource(mContext);
+            dataSource.open();
+
+            QuoteType quoteType = QuoteType.valueOf(params[0]);
+            String symbol = params[1];
+
+            LOGD(TAG, String.format("FetchQuote.doInBackground: quoteType = %s, symbol = %s", quoteType, symbol));
+
+            dataFetcher.populateQuoteSet(quoteType, symbol);
+
+            HandleJSON handleJSON = new HandleJSON();
+            try {
+                handleJSON.readAndParseJSON(dataFetcher.downloadQuotes());
+
+                Map<String, Model> symbolModelMap = handleJSON.getSymbolModelMap();
+
+                for (Model model: symbolModelMap.values()) {
+                    dataSource.addModelRec(model);
+                    LOGD(TAG, "FetchQuote.doInBackground: currentThread = " + Thread.currentThread());
+
+                    return model;
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                dataSource.close();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Model model) {
+            if (null == model) return;
+
+            LOGD(TAG, "FetchQuote.onPostExecute: currentThread = " + Thread.currentThread());
+            FragmentActivity activity = getActivity();
+            if (null == activity) return;
+
+            LoaderManager loaderManager = activity.getSupportLoaderManager();
+            if (null == loaderManager) return;
+
+            Loader loader = loaderManager.getLoader(URL_LOADER);
+            if (null != loader) {
+                LOGD(TAG, "Loader is " + loader);
+                loader.forceLoad();
+            }
+
+        }
     }
 
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="5sp"
     android:layout_weight="1"
@@ -16,53 +16,78 @@
         android:textColor="#ffffff"
         android:textSize="12sp" />
 
-    <TextView
-        android:layout_width="match_parent"
+    <ProgressBar
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Rate"
-        android:id="@+id/tvRate"
-        android:textColor="#ffffff"
-        android:textSize="18sp"
-        android:textStyle="bold|italic" />
+        android:id="@+id/progressBar2"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp" />
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:id="@+id/lLayoutRate">
 
-        <ImageView
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:id="@+id/imageView"
-            android:src="@drawable/ic_widget_green_arrow_up"
-            android:background="#00ffffff"
-            android:layout_gravity="center_vertical" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Rate"
+            android:id="@+id/tvRate"
+            android:textColor="#ffffff"
+            android:textSize="18sp"
+            android:textStyle="bold|italic" />
 
         <LinearLayout
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="change"
-                android:id="@+id/tvChange"
-                android:textColor="#00ff00"
-                android:textSize="10sp" />
+            <ImageView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:id="@+id/imageView"
+                android:src="@drawable/ic_widget_green_arrow_up"
+                android:background="#00ffffff"
+                android:layout_gravity="center_vertical" />
 
-            <TextView
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="%change"
-                android:id="@+id/tvChangePercentage"
-                android:textColor="#00ff00"
-                android:textSize="10sp" />
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="change"
+                    android:id="@+id/tvChange"
+                    android:textColor="#00ff00"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="%change"
+                    android:id="@+id/tvChangePercentage"
+                    android:textColor="#00ff00"
+                    android:textSize="10sp" />
+            </LinearLayout>
+
         </LinearLayout>
-
     </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Small Text"
+        android:id="@+id/tvPosition"
+        android:layout_gravity="center_horizontal" />
 
 </LinearLayout>

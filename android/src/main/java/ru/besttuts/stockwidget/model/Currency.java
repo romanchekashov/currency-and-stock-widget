@@ -4,19 +4,10 @@ package ru.besttuts.stockwidget.model;
  * Created by roman on 05.01.2015.
  */
 public class Currency extends Model {
-    private String id;
     private String date;
     private String time;
     private String ask;
     private String bid;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getDate() {
         return date;

@@ -2,6 +2,7 @@ package ru.besttuts.stockwidget.sync;
 
 import android.util.Log;
 
+import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.model.Setting;
 
 import java.io.IOException;
@@ -44,6 +45,17 @@ public class RemoteYahooFinanceDataFetcher {
 //    public String getYahooFinanceMultiQueryUrl() {
 //        return String.format(baseYahooUrlreturnJson, getYahooFinanceXchangeQuery());
 //    }
+
+    public void populateQuoteSet(QuoteType type, String symbol) {
+        switch (type) {
+            case CURRENCY_EXCHANGE:
+                currencyExchangeSet.add(symbol);
+                break;
+            case GOODS:
+                goodSet.add(symbol);
+                break;
+        }
+    }
 
     public void populateQuoteSet(List<Setting> settings) {
         for (Setting setting: settings) {

@@ -131,7 +131,7 @@ public class SlidingTabsFragment extends Fragment
             Fragment fragment = null;
             switch (position) {
                 case 0:
-                    fragment = PlaceStockItemsFragment.newInstance(mWidgetId, null);
+                    fragment = PlaceStockItemsFragment.newInstance(mWidgetId);
                     break;
                 case 1:
                     fragment = new ConfigPreferenceFragment();

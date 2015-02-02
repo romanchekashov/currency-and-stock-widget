@@ -41,6 +41,12 @@
         <item>Акции</item>
     </array>
 
+    <string name="gcf15_cmx">Золото</string>
+    <string name="sif15_cmx">Серебро</string>
+    <string name="plf15_nym">Платина</string>
+    <string name="paf15_nym">Палладий</string>
+    <string name="hgf15_cmx">Медь</string>
+
     <array name="good_array">
         <item>Золото(GCF15.CMX)</item>
         <item>Серебро(SIF15.CMX)</item>

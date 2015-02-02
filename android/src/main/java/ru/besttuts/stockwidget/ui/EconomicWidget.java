@@ -90,7 +90,6 @@ public class EconomicWidget extends AppWidgetProvider {
         for (int i = 0; i < N; i++) {
             QuoteDataSource dataSource = new QuoteDataSource(context);
             dataSource.open();
-            dataSource.deleteModelsByWidgetId(appWidgetIds[i]);
             dataSource.deleteSettingsByWidgetId(appWidgetIds[i]);
             dataSource.close();
             EconomicWidgetConfigureActivity.deleteTitlePref(context, appWidgetIds[i]);
@@ -115,8 +114,9 @@ public class EconomicWidget extends AppWidgetProvider {
 
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(context);
-        long interval = sharedPreferences.getInt(ConfigPreferenceFragment.KEY_PREF_UPDATE_INTERVAL,
-                ConfigPreferenceFragment.KEY_PREF_UPDATE_INTERVAL_DEFAULT_VALUE);
+        long interval = Integer.parseInt(sharedPreferences.getString(
+                ConfigPreferenceFragment.KEY_PREF_UPDATE_INTERVAL,
+                ConfigPreferenceFragment.KEY_PREF_UPDATE_INTERVAL_DEFAULT_VALUE));
 
         // TODO: Добавить изменение интервала оповещения при изменении в настройках!!!
         alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis(), interval, pIntent);

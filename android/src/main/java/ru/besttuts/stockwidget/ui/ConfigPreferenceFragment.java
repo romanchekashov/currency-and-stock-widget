@@ -22,7 +22,7 @@ public class ConfigPreferenceFragment extends PreferenceFragment
     public static final String KEY_PREF_UPDATE_VIA_DEFAULT_VALUE_WI_FI = "wi-fi";
 
     public static final String KEY_PREF_UPDATE_INTERVAL = "pref_listUpdateInterval";
-    public static final int KEY_PREF_UPDATE_INTERVAL_DEFAULT_VALUE = 1800000;
+    public static final String KEY_PREF_UPDATE_INTERVAL_DEFAULT_VALUE = "1800000";
 
     public static final String KEY_PREF_BG_COLOR = "pref_listBgColor";
     public static final String KEY_PREF_BG_COLOR_DEFAULT_VALUE = "#3498db";

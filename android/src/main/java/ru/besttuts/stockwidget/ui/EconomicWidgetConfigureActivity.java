@@ -4,13 +4,11 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ActionProvider;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -20,7 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.model.Model;
@@ -53,9 +50,6 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
 
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
 
-    // Порядковый номер котировки на виджете
-    int widgetItemPosition = 0;
-
     // Текущий, выбранный тип котировки
     int position = 0;
 
@@ -68,21 +62,16 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
     }
 
     @Override
-    public void onConfigureMenuFragmentInteraction(int quoteTypeValue) {
+    public void showQuotePickerActivity(int quoteTypeValue, int position) {
 
-        Intent intent = new Intent(this, SecondConfigureActivity.class);
+        Intent intent = new Intent(this, QuotePickerActivity.class);
         Bundle b = new Bundle();
         b.putInt("widgetId", mAppWidgetId);
         b.putInt("quoteTypeValue", quoteTypeValue);
-        b.putInt("widgetItemPosition", widgetItemPosition);
+        b.putInt("widgetItemPosition", position);
         intent.putExtras(b);
         startActivity(intent);
 
-    }
-
-    @Override
-    public void setWidgetItemPosition(int widgetItemPosition) {
-        this.widgetItemPosition = widgetItemPosition;
     }
 
     @Override
@@ -104,6 +93,9 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
         switch (item.getItemId()) {
             case R.id.action_accept:
                 acceptBtnPressed();
+                return true;
+            case R.id.action_add_quote:
+                NotificationManager.notifyOptionsItemSelected(item);
                 return true;
 //            case R.id.menuQuotes:
 //                Toast.makeText(getApplicationContext(), "menuQuotes", Toast.LENGTH_SHORT).show();
@@ -222,7 +214,7 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
 //                        .replace(R.id.cont, details).commit();
 //            }
 //        } else {
-//            startActivity(new Intent(this, SecondConfigureActivity.class)
+//            startActivity(new Intent(this, QuotePickerActivity.class)
 //                    .putExtra("quoteTypeValue", quoteType.getValue())
 //                    .putExtra("widgetItemPosition", widgetItemPosition));
 //        }

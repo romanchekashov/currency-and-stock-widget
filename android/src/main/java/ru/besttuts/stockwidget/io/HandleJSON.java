@@ -245,6 +245,7 @@ public class HandleJSON {
 
     private Good readGood(JSONObject o) throws JSONException, IOException {
         Good good = new Good();
+        good.setId(o.getString("symbol"));
         good.setSymbol(o.getString("symbol"));
         good.setRate(o.getDouble("LastTradePriceOnly"));
         good.setChange(o.getDouble("Change"));

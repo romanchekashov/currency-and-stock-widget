@@ -1,5 +1,7 @@
 package ru.besttuts.stockwidget.util;
 
+import android.view.MenuItem;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,33 +10,86 @@ import java.util.List;
  */
 public class NotificationManager {
 
-    public interface ColorChangedListener {
+    public interface Listener {
+    }
+
+    public interface ColorChangedListener extends Listener {
         void changeColor();
     }
 
-    private static List<ColorChangedListener> listeners = new ArrayList<>();
-
-    public static void addListener(ColorChangedListener listener) {
-        if (null == listeners) listeners = new ArrayList<>();
-
-        listeners.add(listener);
+    public interface OptionsItemSelectListener extends Listener {
+        void onOptionsItemSelectedInActivity(MenuItem item);
     }
 
-    public static void removeListener(ColorChangedListener listener) {
-        if (null == listeners || listeners.isEmpty()) {
+    private static List<ColorChangedListener> colorChangedListeners = new ArrayList<>();
+    private static List<OptionsItemSelectListener> optionsItemSelectListeners = new ArrayList<>();
+
+    public static void addListener(Listener listener) {
+        if (listener instanceof ColorChangedListener) {
+            addColorChangedListener((ColorChangedListener) listener);
+        }
+        if (listener instanceof OptionsItemSelectListener) {
+            addOptionsItemSelectListener((OptionsItemSelectListener) listener);
+        }
+    }
+
+    public static void removeListener(Listener listener) {
+        if (listener instanceof ColorChangedListener) {
+            removeColorChangedListener((ColorChangedListener) listener);
+        }
+        if (listener instanceof OptionsItemSelectListener) {
+            removeOptionsItemSelectListener((OptionsItemSelectListener) listener);
+        }
+    }
+
+    public static void addColorChangedListener(ColorChangedListener listener) {
+        if (null == colorChangedListeners) colorChangedListeners = new ArrayList<>();
+
+        colorChangedListeners.add(listener);
+    }
+
+    public static void removeColorChangedListener(ColorChangedListener listener) {
+        if (null == colorChangedListeners || colorChangedListeners.isEmpty()) {
             return;
         }
 
-        listeners.remove(listener);
+        colorChangedListeners.remove(listener);
     }
 
     public static void notifyColorChangedListeners() {
-        if (null == listeners || listeners.isEmpty()) {
+        if (null == colorChangedListeners || colorChangedListeners.isEmpty()) {
             return;
         }
 
-        for (ColorChangedListener listener: listeners) {
+        for (ColorChangedListener listener: colorChangedListeners) {
             listener.changeColor();
         }
     }
+
+    // --------------------------------------------------------------------------
+
+    public static void addOptionsItemSelectListener(OptionsItemSelectListener listener) {
+        if (null == optionsItemSelectListeners) optionsItemSelectListeners = new ArrayList<>();
+
+        optionsItemSelectListeners.add(listener);
+    }
+
+    public static void removeOptionsItemSelectListener(OptionsItemSelectListener listener) {
+        if (null == optionsItemSelectListeners || optionsItemSelectListeners.isEmpty()) {
+            return;
+        }
+
+        optionsItemSelectListeners.remove(listener);
+    }
+
+    public static void notifyOptionsItemSelected(MenuItem item) {
+        if (null == optionsItemSelectListeners || optionsItemSelectListeners.isEmpty()) {
+            return;
+        }
+
+        for (OptionsItemSelectListener listener: optionsItemSelectListeners) {
+            listener.onOptionsItemSelectedInActivity(item);
+        }
+    }
+
 }

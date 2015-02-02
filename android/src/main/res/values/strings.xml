@@ -41,6 +41,12 @@
         <item>Stock</item>
     </array>
 
+    <string name="gcf15_cmx">Gold</string>
+    <string name="sif15_cmx">Silver</string>
+    <string name="plf15_nym">Platinum</string>
+    <string name="paf15_nym">Palladium</string>
+    <string name="hgf15_cmx">Copper</string>
+
     <array name="good_array">
         <item>Gold(GCF15.CMX)</item>
         <item>Silver(SIF15.CMX)</item>
