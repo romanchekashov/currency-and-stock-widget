@@ -40,7 +40,18 @@
             android:id="@+id/tvSyncTime"
             android:textColor="#ffffffff"
             android:textSize="10sp"
-            android:layout_weight="10" />
+            android:layout_weight="10"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true" >
+            <requestFocus
+                android:duplicateParentState="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true" />
+        </TextView>
 
         <LinearLayout
             android:orientation="vertical"
@@ -74,7 +85,8 @@
             android:layout_alignParentBottom="true"
             android:background="#00ffffff"
             android:focusable="false"
-            android:layout_weight="45" />
+            android:layout_weight="45"
+            android:focusableInTouchMode="false" />
     </LinearLayout>
 
 </RelativeLayout>

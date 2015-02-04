@@ -87,6 +87,8 @@ public class ConfigPreferenceFragment extends PreferenceFragment
             // Set summary to be the user-description for the selected value
             listPreference.setSummary(listPreference.getEntry());
 
+            EconomicWidget.setAlarm(getActivity());
+
             return;
         }
 

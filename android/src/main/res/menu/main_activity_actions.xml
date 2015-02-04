@@ -17,6 +17,11 @@
         android:icon="@drawable/ic_action_refresh"
         android:title="@string/refresh"
         yourapp:showAsAction="ifRoom"  />
+
+    <item android:id="@+id/action_github"
+        android:icon="@drawable/github"
+        android:title="GitHub.com"
+        yourapp:showAsAction="ifRoom"  />
 <!--
 
     <item

@@ -4,19 +4,18 @@ import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
+import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.io.HandleJSON;
 import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.Setting;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
 import ru.besttuts.stockwidget.sync.RemoteYahooFinanceDataFetcher;
 import ru.besttuts.stockwidget.ui.EconomicWidget;
+import ru.besttuts.stockwidget.ui.EconomicWidgetConfigureActivity;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,48 +23,64 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
+import static ru.besttuts.stockwidget.util.LogUtils.LOGE;
+import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
+
 public class UpdateService extends Service {
 
-    final String LOG_TAG = "EconomicWidget.UpdateService";
+    private static final String TAG = makeLogTag(UpdateService.class);
 
     public UpdateService() {
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, final int startId) {
-        Log.d(LOG_TAG, "onStartCommand");
+        LOGD(TAG, "onStartCommand");
 
         final Context context = this.getApplicationContext();
         final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         final int[] allWidgetIds = intent
                 .getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
 
-        ConnectivityManager connMgr = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        boolean hasInternet = intent.getBooleanExtra(EconomicWidget.ARG_HAS_INTERNET, true);
 
-        if (networkInfo != null && networkInfo.isConnected()) {
-            new FetchStockData(context, appWidgetManager, allWidgetIds, startId).execute();
-        } else {
-            Toast.makeText(context, "No network connection available.", Toast.LENGTH_LONG);
-        }
+        new FetchStockData(context, appWidgetManager, allWidgetIds, startId, hasInternet).execute();
 
         return super.onStartCommand(intent, flags, startId);
     }
 
     private class FetchStockData extends AsyncTask<Void, Void, Map<Integer, List<Model>>> {
 
-        private final Context context;
+        private final Context mContext;
         private final AppWidgetManager appWidgetManager;
         private final int[] allWidgetIds;
         private final int startId;
+        private final boolean hasInternet;
 
         private FetchStockData(Context context, AppWidgetManager appWidgetManager,
-                               int[] allWidgetIds, int startId) {
-            this.context = context;
+                               int[] allWidgetIds, int startId, boolean hasInternet) {
+            this.mContext = context;
             this.appWidgetManager = appWidgetManager;
             this.allWidgetIds = allWidgetIds;
             this.startId = startId;
+            this.hasInternet = hasInternet;
+        }
+
+        private Map<Integer, List<Model>> getCachedData() {
+            Map<Integer, List<Model>> map = new HashMap<>();
+            QuoteDataSource dataSource = new QuoteDataSource(mContext);
+            dataSource.open();
+
+            final int N = allWidgetIds.length;
+            for (int i = 0; i < N; i++) {
+                int appWidgetId = allWidgetIds[i];
+                map.put(appWidgetId, dataSource.getModelsByWidgetId(appWidgetId));
+            }
+
+            dataSource.close();
+
+            return map;
         }
 
         @Override
@@ -75,8 +90,12 @@ public class UpdateService extends Service {
                 return new HashMap<>();
             }
 
+            if (!hasInternet) {
+                return getCachedData();
+            }
+
             RemoteYahooFinanceDataFetcher dataFetcher = new RemoteYahooFinanceDataFetcher();
-            QuoteDataSource dataSource = new QuoteDataSource(context);
+            QuoteDataSource dataSource = new QuoteDataSource(mContext);
             dataSource.open();
 
             List<Setting> settings = dataSource.getAllSettings();
@@ -114,14 +133,31 @@ public class UpdateService extends Service {
 //                models.addAll(handleJSON.readAndParseCurrencyJSON(dataFetcher.downloadUrl(currencyUrl)));
 //                models.addAll(handleJSON.readAndParseGoodsJSON(dataFetcher.downloadUrl(goodsUrl)));
 
+                // при успешном получении данных, удаляем статус о проблемах соединения
+//                final int N = allWidgetIds.length;
+//                for (int i = 0; i < N; i++) {
+//                    EconomicWidgetConfigureActivity.deleteConnectionStatusPref(mContext,
+//                            allWidgetIds[i]);
+//                }
+                EconomicWidget.connectionStatus = null;
+
                 return map;
             } catch (IOException e) {
-                e.printStackTrace();
+                // TODO обработать ошибку и выводить в статус
+//                e.printStackTrace();
+                LOGE(TAG, e.getMessage());
+//                final int N = allWidgetIds.length;
+//                for (int i = 0; i < N; i++) {
+//                    EconomicWidgetConfigureActivity.saveConnectionStatusPref(mContext,
+//                            allWidgetIds[i], "connection problem");
+//                }
+                EconomicWidget.connectionStatus =
+                        mContext.getString(R.string.connection_status_default_problem);
             } finally {
                 dataSource.close();
             }
 
-            return new HashMap<>();
+            return getCachedData();
         }
 
         @Override
@@ -131,11 +167,12 @@ public class UpdateService extends Service {
             // There may be multiple widgets active, so update all of them
             final int N = allWidgetIds.length;
             for (int i = 0; i < N; i++) {
-                EconomicWidget.updateAppWidget(context, appWidgetManager, allWidgetIds[i], map.get(allWidgetIds[i]));
+                EconomicWidget.updateAppWidget(mContext, appWidgetManager, allWidgetIds[i],
+                        map.get(allWidgetIds[i]), hasInternet);
             }
-            Log.d(LOG_TAG, "Load Yahoo Finance Thread#" + startId + " end, stopSelfResult("
+            LOGD(TAG, "Load Yahoo Finance Thread#" + startId + " end, stopSelfResult("
                     + startId + ") = " + stopSelfResult(startId));
-            Log.d(LOG_TAG, "onPostExecute: Current thread: " + Thread.currentThread().getName());
+            LOGD(TAG, "onPostExecute: Current thread: " + Thread.currentThread().getName());
         }
     }
 
@@ -149,6 +186,6 @@ public class UpdateService extends Service {
     public void onDestroy() {
         super.onDestroy();
 
-        Log.d(LOG_TAG, "onDestroy: Current thread: " + Thread.currentThread().getName());
+        LOGD(TAG, "onDestroy: Current thread: " + Thread.currentThread().getName());
     }
 }

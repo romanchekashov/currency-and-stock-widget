@@ -9,6 +9,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -18,6 +19,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import ru.besttuts.stockwidget.BuildConfig;
 import ru.besttuts.stockwidget.R;
@@ -43,6 +45,8 @@ public class EconomicWidget extends AppWidgetProvider {
 
     private static final String TAG = makeLogTag(EconomicWidget.class);
 
+    public static final String ARG_HAS_INTERNET = "hasInternet";
+
     private static final String UPDATE_ALL_WIDGETS = "update_all_widgets";
 
     public final static String BROADCAST_ACTION = "ru.besttuts.stockwidget";
@@ -50,16 +54,35 @@ public class EconomicWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 
+        onUpdate(context, appWidgetManager, appWidgetIds, isSyncAllowed(context, false));
+
+    }
+
+    private void onUpdate(Context context, AppWidgetManager appWidgetManager,
+                          int[] appWidgetIds, boolean hasInternet) {
         // To prevent any ANR timeouts, we perform the update in a service
         // Получаем все идентификаторы
         ComponentName thisWidget = new ComponentName(context,
                 EconomicWidget.class);
         int[] allWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
 
+        if (!hasInternet && (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)) {
+//            Toast.makeText(context, "Wi-Fi disabled!", Toast.LENGTH_SHORT).show();
+
+            // Возможно активны несколько виджетов, поэтому обновляем их все
+            final int N = appWidgetIds.length;
+            for (int i = 0; i < N; i++) {
+                EconomicWidget.updateAppWidget(context, appWidgetManager,
+                        appWidgetIds[i], null, hasInternet);
+            }
+            return;
+        }
+
         // Создаем intent для вызова сервиса
         Intent intent = new Intent(context.getApplicationContext(),
                 UpdateService.class);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, allWidgetIds);
+        intent.putExtra(ARG_HAS_INTERNET, hasInternet);
 
         // Обновляем виджеты через сервис
         context.startService(intent);
@@ -80,7 +103,6 @@ public class EconomicWidget extends AppWidgetProvider {
                 LOGD(TAG, "widgetId = " + allWidgetIds[i]);
             }
         }
-
     }
 
     @Override
@@ -103,14 +125,7 @@ public class EconomicWidget extends AppWidgetProvider {
         }
     }
 
-    @Override
-    public void onEnabled(Context context) {
-        // Enter relevant functionality for when the first widget is created
-        Intent intent = new Intent(context, EconomicWidget.class);
-        intent.setAction(UPDATE_ALL_WIDGETS);
-        PendingIntent pIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
-        AlarmManager alarmManager = (AlarmManager) context
-                .getSystemService(Context.ALARM_SERVICE);
+    public static void setAlarm(Context context) {
 
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(context);
@@ -118,19 +133,80 @@ public class EconomicWidget extends AppWidgetProvider {
                 ConfigPreferenceFragment.KEY_PREF_UPDATE_INTERVAL,
                 ConfigPreferenceFragment.KEY_PREF_UPDATE_INTERVAL_DEFAULT_VALUE));
 
-        // TODO: Добавить изменение интервала оповещения при изменении в настройках!!!
-        alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis(), interval, pIntent);
-    }
+        if (0 == interval) {
+            cancelAlarm(context);
+            return;
+        }
 
-    @Override
-    public void onDisabled(Context context) {
-        // Enter relevant functionality for when the last widget is disabled
+        // Enter relevant functionality for when the first widget is created
         Intent intent = new Intent(context, EconomicWidget.class);
         intent.setAction(UPDATE_ALL_WIDGETS);
         PendingIntent pIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
         AlarmManager alarmManager = (AlarmManager) context
                 .getSystemService(Context.ALARM_SERVICE);
-        alarmManager.cancel(pIntent);
+
+        // TODO: Добавить изменение интервала оповещения при изменении в настройках!!!
+        alarmManager.setRepeating(AlarmManager.RTC,
+                System.currentTimeMillis(), interval, pIntent);
+
+        LOGD(TAG, String.format("setAlarm: alarmManager(%s), interval = %d",
+                alarmManager, interval));
+
+    }
+
+    public static void cancelAlarm(Context context) {
+
+        Intent intent = new Intent(context, EconomicWidget.class);
+        intent.setAction(UPDATE_ALL_WIDGETS);
+        PendingIntent pIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) context
+                .getSystemService(Context.ALARM_SERVICE);
+
+        if (alarmManager!= null) {
+            alarmManager.cancel(pIntent);
+        }
+
+        LOGD(TAG, String.format("cancelAlarm: alarmManager(%s)", alarmManager));
+    }
+
+    /**
+     * Вызывается при создании первого экземпляра виджета.
+     * @param context
+     */
+    @Override
+    public void onEnabled(Context context) {
+
+        ComponentName receiver = new ComponentName(context, BootReceiver.class);
+        PackageManager pm = context.getPackageManager();
+        // включаем слушатель события перезагрузки системы
+        pm.setComponentEnabledSetting(receiver,
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                PackageManager.DONT_KILL_APP);
+
+        setAlarm(context);
+
+        LOGD(TAG, "onEnabled");
+
+    }
+
+    /**
+     * Вызывается при удалении последнего экземпляра виджета.
+     * @param context
+     */
+    @Override
+    public void onDisabled(Context context) {
+
+        ComponentName receiver = new ComponentName(context, BootReceiver.class);
+        PackageManager pm = context.getPackageManager();
+        // выключаем слушатель события перезагрузки системы
+        pm.setComponentEnabledSetting(receiver,
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.DONT_KILL_APP);
+
+        cancelAlarm(context);
+
+        LOGD(TAG, "onDisabled");
+
     }
 
     /**
@@ -139,12 +215,13 @@ public class EconomicWidget extends AppWidgetProvider {
      * @param appWidgetManager
      * @param appWidgetId идентификатор виджета
      * @param models новые данные
+     * @param hasInternet
      */
     public static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                int appWidgetId, List<Model> models) {
+                                       int appWidgetId, List<Model> models, boolean hasInternet) {
 
-        LOGD(TAG, "updateAppWidget: minHeight = " + appWidgetManager.getAppWidgetInfo(appWidgetId).minHeight);
-        LOGD(TAG, "updateAppWidget: minWidth = " + appWidgetManager.getAppWidgetInfo(appWidgetId).minWidth);
+//        LOGD(TAG, "updateAppWidget: minHeight = " + appWidgetManager.getAppWidgetInfo(appWidgetId).minHeight);
+//        LOGD(TAG, "updateAppWidget: minWidth = " + appWidgetManager.getAppWidgetInfo(appWidgetId).minWidth);
 
         if (null == models) models = new ArrayList<>();
 
@@ -159,24 +236,21 @@ public class EconomicWidget extends AppWidgetProvider {
             setWidgetViewForApi10(views, context, models);
         }
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm dd.MM.yy");
-        views.setTextViewText(R.id.tvSyncTime, dateFormat.format(Calendar.getInstance().getTime()));
+        if (hasInternet && null == connectionStatus) { // TODO connectionStatus always null!!! Need fix(correction)
+            SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm dd.MM.yy");
+            String time = dateFormat.format(Calendar.getInstance().getTime());
+            views.setTextViewText(R.id.tvSyncTime, time);
+            views.setTextColor(R.id.tvSyncTime, Color.WHITE);
+            EconomicWidgetConfigureActivity.saveLastUpdateTimePref(context, appWidgetId, time);
+        } else {
+            String time = EconomicWidgetConfigureActivity.loadLastUpdateTimePref(context, appWidgetId);
+            views.setTextViewText(R.id.tvSyncTime, time + " - " + connectionStatus);
+            int color = context.getResources().getColor(R.color.arrow_red);
+            views.setTextColor(R.id.tvSyncTime, color);
+        }
 
-        // Конфигурационный экран (первая зона)
-        Intent configIntent = new Intent(context, EconomicWidgetConfigureActivity.class);
-        configIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_CONFIGURE);
-        configIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-        PendingIntent pIntent = PendingIntent.getActivity(context, appWidgetId,
-                configIntent, 0);
-        views.setOnClickPendingIntent(R.id.ibSettings, pIntent);
-
-        // Обновление виджета (вторая зона)
-        Intent updateIntent = new Intent(context, EconomicWidget.class);
-        updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-        updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,
-                new int[] { appWidgetId });
-        pIntent = PendingIntent.getBroadcast(context, appWidgetId, updateIntent, 0);
-        views.setOnClickPendingIntent(R.id.ibRefresh, pIntent);
+        setConfigBtn(context, appWidgetId, views);
+        setRefreshBtn(context, appWidgetId, views);
 
         views.setViewVisibility(R.id.progressBar, View.GONE);
         views.setViewVisibility(R.id.ibRefresh, View.VISIBLE);
@@ -193,6 +267,28 @@ public class EconomicWidget extends AppWidgetProvider {
 
     }
 
+    private static void setRefreshBtn(Context context, int appWidgetId, RemoteViews views) {
+
+        // Обновление виджета (вторая зона)
+        Intent updateIntent = new Intent(context, EconomicWidget.class);
+        updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,
+                new int[] { appWidgetId });
+        PendingIntent pIntent = PendingIntent.getBroadcast(context, appWidgetId, updateIntent, 0);
+        views.setOnClickPendingIntent(R.id.ibRefresh, pIntent);
+    }
+
+    private static void setConfigBtn(Context context, int appWidgetId, RemoteViews views) {
+
+        // Конфигурационный экран (первая зона)
+        Intent configIntent = new Intent(context, EconomicWidgetConfigureActivity.class);
+        configIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_CONFIGURE);
+        configIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        PendingIntent pIntent = PendingIntent.getActivity(context, appWidgetId,
+                configIntent, 0);
+        views.setOnClickPendingIntent(R.id.ibSettings, pIntent);
+    }
+
     private static void readPrefsSettings(Context context, RemoteViews views) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         String bgColor = "#" + sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_VISIBILITY,
@@ -202,6 +298,7 @@ public class EconomicWidget extends AppWidgetProvider {
         views.setInt(R.id.bgWidget, "setBackgroundColor", Color.parseColor(bgColor));
     }
 
+    @SuppressLint("NewApi")
     private static void setGrid(RemoteViews rv, Context context, int appWidgetId) {
         Intent adapter = new Intent(context, QuoteWidgetService.class);
         adapter.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
@@ -229,15 +326,17 @@ public class EconomicWidget extends AppWidgetProvider {
             viewItem.setTextViewText(R.id.tvChange, model.getChangeToString());
             viewItem.setTextViewText(R.id.tvChangePercentage, model.getPercentChange());
 
+            int color = context.getResources().getColor(R.color.arrow_green);
             if (0 < model.getChange()) {
                 viewItem.setImageViewResource(R.id.imageView, R.drawable.ic_widget_green_arrow_up);
-                viewItem.setTextColor(R.id.tvChange, Color.parseColor("#00ff00"));
-                viewItem.setTextColor(R.id.tvChangePercentage, Color.parseColor("#00ff00"));
             } else {
                 viewItem.setImageViewResource(R.id.imageView, R.drawable.ic_widget_green_arrow_down);
-                viewItem.setTextColor(R.id.tvChange, Color.parseColor("#ff2a2a"));
-                viewItem.setTextColor(R.id.tvChangePercentage, Color.parseColor("#ff2a2a"));
+                color = context.getResources().getColor(R.color.arrow_red);
             }
+
+            viewItem.setTextColor(R.id.tvChange, color);
+            viewItem.setTextColor(R.id.tvChangePercentage, color);
+
             views.addView(viewId, viewItem);
             i++;
             if (3 == i) {
@@ -255,15 +354,14 @@ public class EconomicWidget extends AppWidgetProvider {
         super.onReceive(context, intent);
         LOGD(TAG, "onReceive");
         if (!intent.getAction().equalsIgnoreCase(UPDATE_ALL_WIDGETS)) return;
-        if (!isSyncAllowed(context)) return;
 
         ComponentName thisAppWidget = new ComponentName(
                 context.getPackageName(), getClass().getName());
         AppWidgetManager appWidgetManager = AppWidgetManager
                 .getInstance(context);
-        int ids[] = appWidgetManager.getAppWidgetIds(thisAppWidget);
+        int appWidgetIds[] = appWidgetManager.getAppWidgetIds(thisAppWidget);
 
-        onUpdate(context, appWidgetManager, ids);
+        onUpdate(context, appWidgetManager, appWidgetIds, isSyncAllowed(context));
 
         LOGD(TAG, "onReceive: UPDATE_ALL_WIDGETS = " + UPDATE_ALL_WIDGETS);
 
@@ -272,6 +370,8 @@ public class EconomicWidget extends AppWidgetProvider {
     public boolean isSyncAllowed(Context context) {
         return isSyncAllowed(context, true);
     }
+
+    public static volatile String connectionStatus;
 
     // Checks the network connection and sets the wifiConnected and mobileConnected
     // variables accordingly.
@@ -291,12 +391,18 @@ public class EconomicWidget extends AppWidgetProvider {
                         .equalsIgnoreCase(sharedPreferences.getString(
                                 ConfigPreferenceFragment.KEY_PREF_UPDATE_VIA,
                                 ConfigPreferenceFragment.KEY_PREF_UPDATE_VIA_DEFAULT_VALUE_WI_FI))) {
+                    if (!wifiConnected) {
+                        connectionStatus = context.getString(R.string.connection_status_no_wifi);
+                    }
                     return wifiConnected;
                 }
             }
 
-            return wifiConnected || mobileConnected;
+            boolean isConnected = wifiConnected || mobileConnected;
+
+            return isConnected;
         }
+        connectionStatus = context.getString(R.string.connection_status_no_internet);
         return false;
     }
 
@@ -317,6 +423,7 @@ public class EconomicWidget extends AppWidgetProvider {
         LOGD(TAG, "onAppWidgetOptionsChanged: maxheight_dp = " + maxheight_dp);
 
     }
+
 }
 
 

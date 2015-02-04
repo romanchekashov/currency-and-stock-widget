@@ -4,6 +4,7 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -27,7 +28,9 @@ import ru.besttuts.stockwidget.service.UpdateService;
 import ru.besttuts.stockwidget.util.NotificationManager;
 import ru.besttuts.stockwidget.util.Utils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
@@ -96,6 +99,11 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
                 return true;
             case R.id.action_add_quote:
                 NotificationManager.notifyOptionsItemSelected(item);
+                return true;
+            case R.id.action_github:
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("https://github.com/romanchekashov/currency-and-stock-widget"));
+                startActivity(browserIntent);
                 return true;
 //            case R.id.menuQuotes:
 //                Toast.makeText(getApplicationContext(), "menuQuotes", Toast.LENGTH_SHORT).show();
@@ -230,7 +238,7 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
 
             // It is the responsibility of the configuration activity to update the app widget
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-            EconomicWidget.updateAppWidget(context, appWidgetManager, mAppWidgetId, new ArrayList<Model>());
+            EconomicWidget.updateAppWidget(context, appWidgetManager, mAppWidgetId, new ArrayList<Model>(), true);
 
             // Make sure we pass back the original appWidgetId
             Intent resultValue = new Intent();
@@ -244,6 +252,44 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
     static void saveTitlePref(Context context, int appWidgetId, String text) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.putString(PREF_PREFIX_KEY + appWidgetId, text);
+        prefs.commit();
+    }
+
+    static void saveLastUpdateTimePref(Context context, int appWidgetId, String text) {
+        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
+        prefs.putString(PREF_PREFIX_KEY + appWidgetId + "_lastupdatetime", text);
+        prefs.commit();
+    }
+    static String loadLastUpdateTimePref(Context context, int appWidgetId) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
+        String titleValue = prefs.getString(PREF_PREFIX_KEY + appWidgetId + "_lastupdatetime", null);
+        if (titleValue != null) {
+            return titleValue;
+        } else {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm dd.MM.yy");
+
+            return dateFormat.format(Calendar.getInstance().getTime());
+        }
+    }
+    static void deleteLastUpdateTimePref(Context context, int appWidgetId) {
+        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
+        prefs.remove(PREF_PREFIX_KEY + appWidgetId + "_lastupdatetime");
+        prefs.commit();
+    }
+
+    public static void saveConnectionStatusPref(Context context, int appWidgetId, String text) {
+        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
+        prefs.putString(PREF_PREFIX_KEY + appWidgetId + "_connectionstatus", text);
+        prefs.commit();
+    }
+    public static String loadConnectionStatusPref(Context context, int appWidgetId) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
+        String titleValue = prefs.getString(PREF_PREFIX_KEY + appWidgetId + "_connectionstatus", null);
+        return titleValue;
+    }
+    public static void deleteConnectionStatusPref(Context context, int appWidgetId) {
+        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
+        prefs.remove(PREF_PREFIX_KEY + appWidgetId + "_connectionstatus");
         prefs.commit();
     }
 
