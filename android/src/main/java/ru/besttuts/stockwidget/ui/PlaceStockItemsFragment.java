@@ -480,7 +480,7 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
 
             dataFetcher.populateQuoteSet(quoteType, symbol);
 
-            HandleJSON handleJSON = new HandleJSON();
+            HandleJSON handleJSON = new HandleJSON(mContext);
             try {
                 handleJSON.readAndParseJSON(dataFetcher.downloadQuotes());
 

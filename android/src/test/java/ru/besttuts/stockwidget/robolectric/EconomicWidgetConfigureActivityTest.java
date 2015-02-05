@@ -22,6 +22,7 @@ import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.model.Setting;
 import ru.besttuts.stockwidget.sync.RemoteYahooFinanceDataFetcher;
+import ru.besttuts.stockwidget.util.CurrencyXmlParser;
 
 /**
  * Created by roman on 16.01.2015.
@@ -42,6 +43,16 @@ public class EconomicWidgetConfigureActivityTest {
 
     @After
     public void tearDown() throws Exception {
+    }
+
+    @Test
+    public void testGenerateCurrency() throws Exception {
+
+        String currencyUrl = "http://www.currency-iso.org/dam/downloads/table_a1.xml";
+        String filePath = "D:\\ideaWorkspace\\currency-and-stock-widget\\android\\src\\main\\res\\values\\currency.xml";
+        CurrencyXmlParser currencyXmlParser = new CurrencyXmlParser();
+        currencyXmlParser.loadXmlAnrWriteToFile(currencyUrl, filePath);
+
     }
 
     @Test
@@ -68,6 +79,7 @@ public class EconomicWidgetConfigureActivityTest {
 
     @Test
     public void testGenerateUrl() throws Exception {
+/*
 
         String[] currencies = new String[]{"RUB", "USD", "EUR", "AFN", "ALL", "DZD", "AOA", "XCD", "AMD", "BBD"};
         String[] goods = new String[]{"GCF15.CMX", "SIF15.CMX", "PLF15.NYM", "PAF15.NYM", "HGF15.CMX"};
@@ -102,7 +114,8 @@ public class EconomicWidgetConfigureActivityTest {
 
         dataFetcher.populateQuoteSet(settings);
 
-        HandleJSON handleJSON = new HandleJSON();
+        // TODO решить проблему с контекстом
+        HandleJSON handleJSON = new HandleJSON(null);
         handleJSON.readAndParseJSON(dataFetcher.downloadQuotes());
 
         Map<String, Model> symbolModelMap = handleJSON.getSymbolModelMap();
@@ -125,6 +138,7 @@ public class EconomicWidgetConfigureActivityTest {
                 println(model.toString());
             }
         }
+*/
 
 //        String data = dataFetcher.downloadUrl(currencyUrl);
 

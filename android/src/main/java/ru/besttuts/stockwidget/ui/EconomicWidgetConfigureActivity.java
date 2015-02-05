@@ -277,21 +277,21 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
         prefs.commit();
     }
 
-    public static void saveConnectionStatusPref(Context context, int appWidgetId, String text) {
-        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
-        prefs.putString(PREF_PREFIX_KEY + appWidgetId + "_connectionstatus", text);
-        prefs.commit();
-    }
-    public static String loadConnectionStatusPref(Context context, int appWidgetId) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
-        String titleValue = prefs.getString(PREF_PREFIX_KEY + appWidgetId + "_connectionstatus", null);
-        return titleValue;
-    }
-    public static void deleteConnectionStatusPref(Context context, int appWidgetId) {
-        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
-        prefs.remove(PREF_PREFIX_KEY + appWidgetId + "_connectionstatus");
-        prefs.commit();
-    }
+//    public static void saveConnectionStatusPref(Context context, int appWidgetId, String text) {
+//        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
+//        prefs.putString(PREF_PREFIX_KEY + appWidgetId + "_connectionstatus", text);
+//        prefs.commit();
+//    }
+//    public static String loadConnectionStatusPref(Context context, int appWidgetId) {
+//        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
+//        String titleValue = prefs.getString(PREF_PREFIX_KEY + appWidgetId + "_connectionstatus", null);
+//        return titleValue;
+//    }
+//    public static void deleteConnectionStatusPref(Context context, int appWidgetId) {
+//        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
+//        prefs.remove(PREF_PREFIX_KEY + appWidgetId + "_connectionstatus");
+//        prefs.commit();
+//    }
 
     // Read the prefix from the SharedPreferences object for this widget.
     // If there is no preference saved, get the default from a resource

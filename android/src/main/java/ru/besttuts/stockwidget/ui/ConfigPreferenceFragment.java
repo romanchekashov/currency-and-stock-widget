@@ -66,7 +66,7 @@ public class ConfigPreferenceFragment extends PreferenceFragment
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(KEY_PREF_BG_COLOR)) {
             ListPreference listPreference = (ListPreference) findPreference(key);
-            // Set summary to be the user-description for the selected value
+            // Set Ccy to be the user-description for the selected value
             listPreference.setSummary(listPreference.getEntry());
 
             NotificationManager.notifyColorChangedListeners();
@@ -76,7 +76,7 @@ public class ConfigPreferenceFragment extends PreferenceFragment
 
         if (key.equals(KEY_PREF_BG_VISIBILITY)) {
             ListPreference listPreference = (ListPreference) findPreference(key);
-            // Set summary to be the user-description for the selected value
+            // Set Ccy to be the user-description for the selected value
             listPreference.setSummary(listPreference.getEntry());
 
             return;
@@ -84,7 +84,7 @@ public class ConfigPreferenceFragment extends PreferenceFragment
 
         if (key.equals(KEY_PREF_UPDATE_INTERVAL)) {
             ListPreference listPreference = (ListPreference) findPreference(key);
-            // Set summary to be the user-description for the selected value
+            // Set Ccy to be the user-description for the selected value
             listPreference.setSummary(listPreference.getEntry());
 
             EconomicWidget.setAlarm(getActivity());
@@ -94,7 +94,7 @@ public class ConfigPreferenceFragment extends PreferenceFragment
 
         if (key.equals(KEY_PREF_UPDATE_VIA)) {
             ListPreference listPreference = (ListPreference) findPreference(key);
-            // Set summary to be the user-description for the selected value
+            // Set Ccy to be the user-description for the selected value
             listPreference.setSummary(listPreference.getEntry());
 
             return;

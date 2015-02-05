@@ -26,18 +26,18 @@
 
     <item
         android:icon="@drawable/ic_action_overflow"
-        android:title="@string/action_settings"
+        android:CtryNm="@string/action_settings"
         yourapp:showAsAction="ifRoom">
         <menu>
             <item
                 android:id="@+id/menuQuotes"
-                android:title="@string/action_quotes" />
+                android:CtryNm="@string/action_quotes" />
             <item
                 android:id="@+id/menuDisplay"
-                android:title="@string/action_display" />
+                android:CtryNm="@string/action_display" />
             <item
                 android:id="@+id/menuSettings"
-                android:title="@string/action_settings" />
+                android:CtryNm="@string/action_settings" />
         </menu>
     </item>
 -->
@@ -45,7 +45,7 @@
 <!--
 
     <item android:id="@+id/my_menu_item"
-        android:title="@string/action_settings"
+        android:CtryNm="@string/action_settings"
         yourapp:showAsAction="ifRoom"
         android:actionProviderClass="ru.besttuts.stockwidget.ui.EconomicWidgetConfigureActivity.ConfigActionProvider" />
 -->

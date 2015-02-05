@@ -50,6 +50,11 @@
     <string name="plf15_nym">Платина</string>
     <string name="paf15_nym">Палладий</string>
     <string name="hgf15_cmx">Медь</string>
+    <string name="bzh15_nym">Brent</string>
+    <string name="ngh15_nym">Газ</string>
+    <string name="ch15_cbt">Кукуруза</string>
+    <string name="sh15_cbt">Соя</string>
+    <string name="zwh15_cbt">Пшеница</string>
 
     <array name="good_array">
         <item>Золото(GCF15.CMX)</item>
@@ -57,62 +62,11 @@
         <item>Платина(PLF15.NYM)</item>
         <item>Палладий(PAF15.NYM)</item>
         <item>Медь(HGF15.CMX)</item>
-    </array>
-
-    <array name="currency_array">
-        <item>Russian ruble(RUB)</item>
-        <item>Afghan afghani(AFN)</item>
-        <item>Euro(EUR)</item>
-        <item>Albanian lek(ALL)</item>
-        <item>Algerian dinar(DZD)</item>
-        <item>Angolan kwanza(AOA)</item>
-        <item>East Caribbean dollar(XCD)</item>
-        <item>Argentine peso(ARS)</item>
-        <item>Armenian dram(AMD)</item>
-        <item>Aruban florin(AWG)</item>
-        <item>Australian dollar(AUD)</item>
-        <item>Azerbaijani manat(AZN)</item>
-        <item>Bahamian dollar(BSD)</item>
-        <item>Bahraini dinar(BHD)</item>
-        <item>Bangladeshi taka(BDT)</item>
-        <item>Barbadian dollar(BBD)</item>
-        <item>Belarusian ruble(BYR)</item>
-        <item>Belize dollar(BZD)</item>
-        <item>West African CFA franc(XOF)</item>
-        <item>Bermudian dollar(BMD)</item>
-        <item>Bhutanese ngultrum(BTN)</item>
-        <item>Indian rupee(INR)</item>
-        <item>Bolivian boliviano(BOB)</item>
-        <item>United States dollar(USD)</item>
-        <item>Bosnia and Herzegovina convertible mark(BAM)</item>
-        <item>Botswana pula(BWP)</item>
-        <item>Brazilian real(BRL)</item>
-        <item>Brunei dollar(BND)</item>
-        <item>Singapore dollar(SGD)</item>
-        <item>Bulgarian lev(BGN)</item>
-        <item>Burmese kyat(MMK)</item>
-        <item>Burundian franc(BIF)</item>
-        <item>Cambodian riel(KHR)</item>
-        <item>Central African CFA franc(XAF)</item>
-        <item>Canadian dollar(CAD)</item>
-        <item>Cape Verdean escudo(CVE)</item>
-        <item>Cayman Islands dollar(KYD)</item>
-        <item>Chilean peso(CLP)</item>
-        <item>Chinese yuan(CNY)</item>
-        <item>Colombian peso(COP)</item>
-        <item>Comorian franc(KMF)</item>
-        <item>Congolese franc(CDF)</item>
-        <item>New Zealand dollar(NZD)</item>
-        <item>Costa Rican colón(CRC)</item>
-        <item>Croatian kuna(HRK)</item>
-        <item>Cuban convertible peso(CUC)</item>
-        <item>Cuban peso(CUP)</item>
-        <item>Netherlands Antillean guilder(ANG)</item>
-        <item>Czech koruna(CZK)</item>
-        <item>Danish krone(DKK)</item>
-        <item>Djiboutian franc(DJF)</item>
-        <item>East Caribbean dollar(XCD)</item>
-        <item>Dominican peso(DOP)</item>
+        <item>Нефть Brent(BZH15.NYM)</item>
+        <item>Натуральный газ(NGH15.NYM)</item>
+        <item>Кукуруза(CH15.CBT)</item>
+        <item>Соя(SH15.CBT)</item>
+        <item>Пшеница(ZWH15.CBT)</item>
     </array>
 
     <string name="pref_auto_update">Автоматическое обновление</string>

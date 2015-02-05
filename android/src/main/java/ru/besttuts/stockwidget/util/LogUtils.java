@@ -22,7 +22,7 @@ import ru.besttuts.stockwidget.BuildConfig;
 import ru.besttuts.stockwidget.Config;
 
 public class LogUtils {
-    private static final String LOG_PREFIX = "quotewidget_";
+    private static final String LOG_PREFIX = "qw_";
     private static final int LOG_PREFIX_LENGTH = LOG_PREFIX.length();
     private static final int MAX_LOG_TAG_LENGTH = 23;
 

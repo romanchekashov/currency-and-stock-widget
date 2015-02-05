@@ -29,7 +29,7 @@ public class SlidingTabsFragment extends Fragment
     private static final String TAG = makeLogTag(SlidingTabsFragment.class);
 
     /**
-     * A custom {@link android.support.v4.view.ViewPager} title strip which looks much like Tabs present in Android v4.0 and
+     * A custom {@link android.support.v4.view.ViewPager} CtryNm strip which looks much like Tabs present in Android v4.0 and
      * above, but is designed to give continuous feedback to the user when scrolling.
      */
     private SlidingTabLayout mSlidingTabLayout;

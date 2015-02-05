@@ -105,7 +105,7 @@ public class UpdateService extends Service {
 //            String goodsUrl = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quotes%20where%20symbol%20in%20(%22GCF15.CMX%22%2C%22PLF15.NYM%22%2C%22PAF15.NYM%22%2C%22SIF15.CMX%22%2C%22HGF15.CMX%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
 
 //            List<Model> models = new ArrayList<>();
-            HandleJSON handleJSON = new HandleJSON();
+            HandleJSON handleJSON = new HandleJSON(mContext);
             try {
                 handleJSON.readAndParseJSON(dataFetcher.downloadQuotes());
 

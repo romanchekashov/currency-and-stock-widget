@@ -1,10 +1,13 @@
 package ru.besttuts.stockwidget.io;
 
+import android.content.Context;
 import android.util.Log;
 
 import ru.besttuts.stockwidget.model.Currency;
 import ru.besttuts.stockwidget.model.Good;
 import ru.besttuts.stockwidget.model.Model;
+import ru.besttuts.stockwidget.model.QuoteType;
+import ru.besttuts.stockwidget.util.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,7 +40,11 @@ public class HandleJSON {
 
     private Map<String, Model> symbolModelMap = new HashMap<>();
 
-    public HandleJSON() { }
+    private Context mContext;
+
+    public HandleJSON(Context context) {
+        mContext = context;
+    }
 
     static String convertStreamToString(InputStream is) {
         java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
@@ -166,11 +173,17 @@ public class HandleJSON {
             currency.setName(o.getString("Name").replace(" to ", "/"));
         }
         currency.setRate(o.getDouble("Rate"));
-        Double ask = Double.parseDouble(o.getString("Ask"));
-        Double bid = Double.parseDouble(o.getString("Bid"));
-        currency.setChange(ask - bid);
 
-        symbolModelMap.put(o.getString("id"), currency);
+        try {
+            Double ask = Double.parseDouble(o.getString("Ask"));
+            Double bid = Double.parseDouble(o.getString("Bid"));
+            currency.setChange(ask - bid);
+
+            symbolModelMap.put(o.getString("id"), currency);
+
+        } catch (NumberFormatException e) {
+            LOGE(TAG, e.getMessage());
+        }
 
         return currency;
     }
@@ -217,16 +230,6 @@ public class HandleJSON {
 
     }
 
-    public static Map<String, String> QUOTE_SYMBOL_RUS = new HashMap<>();
-
-    static {
-        QUOTE_SYMBOL_RUS.put("HGF15.CMX", "Медь");
-        QUOTE_SYMBOL_RUS.put("GCF15.CMX", "Золото");
-        QUOTE_SYMBOL_RUS.put("PAF15.NYM", "Палладий");
-        QUOTE_SYMBOL_RUS.put("PLF15.NYM", "Платина");
-        QUOTE_SYMBOL_RUS.put("SIF15.CMX", "Серебро");
-    }
-
     private List readGoodArray(JSONArray rate) throws JSONException, IOException {
         List<Good> goods = new ArrayList();
 
@@ -250,7 +253,8 @@ public class HandleJSON {
         good.setRate(o.getDouble("LastTradePriceOnly"));
         good.setChange(o.getDouble("Change"));
         good.setPercentChange(o.getString("ChangeinPercent"));
-        good.setName(QUOTE_SYMBOL_RUS.get(o.getString("symbol")));
+        good.setName(Utils.getModelNameFromResourcesBySymbol(mContext,
+                QuoteType.GOODS, o.getString("symbol")));
 
         symbolModelMap.put(o.getString("symbol"), good);
 
