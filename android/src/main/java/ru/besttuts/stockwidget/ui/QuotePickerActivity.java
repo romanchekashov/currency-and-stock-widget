@@ -1,16 +1,23 @@
 package ru.besttuts.stockwidget.ui;
 
+import android.app.SearchManager;
 import android.appwidget.AppWidgetManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.model.QuoteType;
@@ -45,25 +52,26 @@ public class QuotePickerActivity extends ActionBarActivity
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Bundle b = getIntent().getExtras();
-        mAppWidgetId = b.getInt("widgetId");
-        mQuoteTypeValue = b.getInt("quoteTypeValue");
-        mWidgetItemPosition = b.getInt("widgetItemPosition");
-
-        LOGD(TAG, "widgetId = " + mAppWidgetId);
-        LOGD(TAG, "quoteTypeValue = " + mQuoteTypeValue);
-        LOGD(TAG, "widgetItemPosition = " + mWidgetItemPosition);
-
         if (null == savedInstanceState) {
+            Bundle b = getIntent().getExtras();
+            mAppWidgetId = b.getInt(EconomicWidgetConfigureActivity.ARG_WIDGET_ID);
+            mQuoteTypeValue = b.getInt(EconomicWidgetConfigureActivity.ARG_QUOTE_TYPE_VALUE);
+            mWidgetItemPosition = b.getInt(EconomicWidgetConfigureActivity.ARG_WIDGET_ITEM_POSITION);
+
+            LOGD(TAG, "widgetId = " + mAppWidgetId);
+            LOGD(TAG, "quoteTypeValue = " + mQuoteTypeValue);
+            LOGD(TAG, "widgetItemPosition = " + mWidgetItemPosition);
+
             Fragment fragment = null;
             switch (mQuoteTypeValue) {
                 case 0:
                     fragment = CurrencyExchangeFragment.newInstance(mWidgetItemPosition, mQuoteTypeValue);
-                    getSupportActionBar().setTitle(R.string.configure_menu_item_currency);
                     break;
                 case 1:
                     fragment = GoodsItemFragment.newInstance(mWidgetItemPosition, mQuoteTypeValue);
-                    getSupportActionBar().setTitle(R.string.configure_menu_item_goods);
+                    break;
+                case 4:
+                    fragment = MyQuotesFragment.newInstance(mAppWidgetId);
                     break;
             }
 
@@ -74,6 +82,25 @@ public class QuotePickerActivity extends ActionBarActivity
 
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.second_cont, fragment).commit();
+        } else {
+            mAppWidgetId = savedInstanceState.getInt(
+                    EconomicWidgetConfigureActivity.ARG_WIDGET_ID);
+            mQuoteTypeValue = savedInstanceState.getInt(
+                    EconomicWidgetConfigureActivity.ARG_QUOTE_TYPE_VALUE);
+            mWidgetItemPosition = savedInstanceState.getInt(
+                    EconomicWidgetConfigureActivity.ARG_WIDGET_ITEM_POSITION);
+        }
+
+        switch (mQuoteTypeValue) {
+            case 0:
+                getSupportActionBar().setTitle(R.string.configure_menu_item_currency);
+                break;
+            case 1:
+                getSupportActionBar().setTitle(R.string.configure_menu_item_goods);
+                break;
+            case 4:
+                getSupportActionBar().setTitle(R.string.configure_menu_my_quotes);
+                break;
         }
 
         // создаем объект для создания и управления версиями БД
@@ -83,17 +110,44 @@ public class QuotePickerActivity extends ActionBarActivity
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(EconomicWidgetConfigureActivity.ARG_WIDGET_ID, mAppWidgetId);
+        outState.putInt(EconomicWidgetConfigureActivity.ARG_QUOTE_TYPE_VALUE, mQuoteTypeValue);
+        outState.putInt(EconomicWidgetConfigureActivity.ARG_WIDGET_ITEM_POSITION, mWidgetItemPosition);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.second_activity_actions, menu);
+
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem register = menu.findItem(R.id.action_show_search);
+        if (4 != mQuoteTypeValue) {
+            register.setVisible(false);
+        }
+
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Обработка нажатий на элемент ActionBar
         switch (item.getItemId()) {
+            case R.id.action_show_search:
+                Intent intent = new Intent(this, SearchableQuoteActivity.class);
+                Bundle b = new Bundle();
+                b.putInt(EconomicWidgetConfigureActivity.ARG_WIDGET_ID, mAppWidgetId);
+                b.putInt(EconomicWidgetConfigureActivity.ARG_QUOTE_TYPE_VALUE, mQuoteTypeValue);
+                intent.putExtras(b);
+                startActivity(intent);
+                return true;
             case R.id.action_accept:
                 Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.second_cont);
                 LOGD(TAG, "onOptionsItemSelected: fragment: " + fragment.getClass().getName());
@@ -127,9 +181,7 @@ public class QuotePickerActivity extends ActionBarActivity
                     NavUtils.navigateUpTo(this, upIntent);
                 }
                 return true;
-//            case R.id.menuQuotes:
-//                Toast.makeText(getApplicationContext(), "menuQuotes", Toast.LENGTH_SHORT).show();
-//                return true;
+
 //            case R.id.menuDisplay:
 //                Toast.makeText(getApplicationContext(), "menuDisplay", Toast.LENGTH_SHORT).show();
 //                return true;

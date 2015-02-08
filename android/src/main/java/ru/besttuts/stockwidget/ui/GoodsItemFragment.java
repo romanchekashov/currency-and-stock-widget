@@ -25,7 +25,8 @@ import ru.besttuts.stockwidget.ui.dummy.DummyContent;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class GoodsItemFragment extends Fragment implements IQuoteTypeFragment, AbsListView.OnItemClickListener {
+public class GoodsItemFragment extends Fragment implements IQuoteTypeFragment,
+        AbsListView.OnItemClickListener {
 
     private static final String LOG_TAG = "EconomicWidget.GoodsItemFragment";
 

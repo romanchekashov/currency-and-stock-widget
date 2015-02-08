@@ -20,11 +20,13 @@
     <string name="action_quotes">Котировки</string>
     <string name="action_display">Отображение</string>
     <string name="action_settings">Настройки</string>
+    <string name="action_search">Поиск</string>
 
     <string name="configure_menu_item_currency">Валюты</string>
     <string name="configure_menu_item_goods">Товары</string>
     <string name="configure_menu_item_indices">Индексы</string>
     <string name="configure_menu_item_stock">Акции</string>
+    <string name="configure_menu_my_quotes">Мои ценные бумаги</string>
 
     <string name="goods_copper">Медь</string>
     <string name="goods_gold">Золото</string>
@@ -38,11 +40,19 @@
 
     <string name="select_quotes_type">Выбрать тип котировки</string>
 
+    <!-- Hint that the user can search across sessions -->
+    <string name="search_quotes">Поиск котировок</string>
+
+    <!-- Search label that shows the type of data being searched for when the user clicks the
+    Search button. -->
+    <string name="search_label">Котировки из Yahoo</string>
+
     <array name="quotes_type_array">
         <item>Валюты</item>
         <item>Товары</item>
         <item>Индексы</item>
         <item>Акции</item>
+        <item>Мои ценные бумаги</item>
     </array>
 
     <string name="gcf15_cmx">Золото</string>

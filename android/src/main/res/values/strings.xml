@@ -20,11 +20,13 @@
     <string name="action_quotes">Quotes</string>
     <string name="action_display">Display</string>
     <string name="action_settings">Settings</string>
+    <string name="action_search">Search</string>
 
     <string name="configure_menu_item_currency">Currency</string>
     <string name="configure_menu_item_goods">Goods</string>
     <string name="configure_menu_item_indices">Indices</string>
     <string name="configure_menu_item_stock">Stock</string>
+    <string name="configure_menu_my_quotes">My Quotes</string>
 
     <string name="goods_copper">Copper</string>
     <string name="goods_gold">Gold</string>
@@ -38,11 +40,19 @@
 
     <string name="select_quotes_type">Select the type of quotes</string>
 
+    <!-- Hint that the user can search across sessions -->
+    <string name="search_quotes">Search quotes</string>
+
+    <!-- Search label that shows the type of data being searched for when the user clicks the
+    Search button. -->
+    <string name="search_label">Yahoo quotes</string>
+
     <array name="quotes_type_array">
         <item>Currency</item>
         <item>Goods</item>
         <item>Indices</item>
         <item>Stock</item>
+        <item>My Quotes</item>
     </array>
 
     <string name="gcf15_cmx">Gold</string>

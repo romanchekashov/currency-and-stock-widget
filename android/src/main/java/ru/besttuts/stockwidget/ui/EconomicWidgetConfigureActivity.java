@@ -46,8 +46,14 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
 
     private static final String TAG = makeLogTag(EconomicWidgetConfigureActivity.class);
 
+    public static final String ARG_WIDGET_ID = "widgetId";
+    public static final String ARG_QUOTE_TYPE_VALUE = "quoteTypeValue";
+    public static final String ARG_WIDGET_ITEM_POSITION = "widgetItemPosition";
+
     private static final String PREFS_NAME = "ru.besttuts.stockwidget.ui.EconomicWidget";
     private static final String PREF_PREFIX_KEY = "appwidget_";
+
+    private static final int MY_QUOTES_VALUE = 4;
 
     private QuoteDataSource mDataSource;
 
@@ -67,11 +73,20 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
     @Override
     public void showQuotePickerActivity(int quoteTypeValue, int position) {
 
+//        if (MY_QUOTES_VALUE == quoteTypeValue) {
+//            Intent intent = new Intent(this, SearchableQuoteActivity.class);
+//            Bundle b = new Bundle();
+//            b.putInt("widgetId", mAppWidgetId);
+//            intent.putExtras(b);
+//            startActivity(intent);
+//            return;
+//        }
+
         Intent intent = new Intent(this, QuotePickerActivity.class);
         Bundle b = new Bundle();
-        b.putInt("widgetId", mAppWidgetId);
-        b.putInt("quoteTypeValue", quoteTypeValue);
-        b.putInt("widgetItemPosition", position);
+        b.putInt(ARG_WIDGET_ID, mAppWidgetId);
+        b.putInt(ARG_QUOTE_TYPE_VALUE, quoteTypeValue);
+        b.putInt(ARG_WIDGET_ITEM_POSITION, position);
         intent.putExtras(b);
         startActivity(intent);
 

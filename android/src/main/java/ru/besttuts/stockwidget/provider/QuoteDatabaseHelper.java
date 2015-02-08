@@ -27,6 +27,7 @@ public class QuoteDatabaseHelper extends SQLiteOpenHelper {
     public interface Tables {
         String SETTINGS = "settings";
         String MODELS = "models";
+        String QUOTES = "quotes";
         String CURRENCY_EXCHANGE = "currency_exchange";
         String STOCK = "stock";
         String GOODS = "goods";
@@ -52,6 +53,12 @@ public class QuoteDatabaseHelper extends SQLiteOpenHelper {
                 + ModelColumns.MODEL_CHANGE + " NUMERIC(10,4) NOT NULL,"
                 + ModelColumns.MODEL_PERCENT_CHANGE + " TEXT NOT NULL,"
                 + "UNIQUE (" + ModelColumns.MODEL_ID + ") ON CONFLICT REPLACE)");
+
+        db.execSQL("CREATE TABLE " + Tables.QUOTES + " ("
+                + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + QuoteColumns.QUOTE_SYMBOL + " TEXT NOT NULL,"
+                + QuoteColumns.QUOTE_NAME + " TEXT NOT NULL,"
+                + "UNIQUE (" + QuoteColumns.QUOTE_SYMBOL + ") ON CONFLICT REPLACE)");
     }
 
     @Override
@@ -60,6 +67,7 @@ public class QuoteDatabaseHelper extends SQLiteOpenHelper {
         // to simply to discard the data and start over
         db.execSQL("DROP TABLE IF EXISTS " + Tables.SETTINGS);
         db.execSQL("DROP TABLE IF EXISTS " + Tables.MODELS);
+        db.execSQL("DROP TABLE IF EXISTS " + Tables.QUOTES);
         onCreate(db);
     }
 

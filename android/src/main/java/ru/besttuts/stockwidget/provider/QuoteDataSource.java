@@ -11,6 +11,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.besttuts.stockwidget.io.model.Result;
 import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.model.Setting;
@@ -92,6 +93,26 @@ public class QuoteDataSource {
                 SQLiteDatabase.CONFLICT_REPLACE);
 
         LOGD(TAG, "insertWithOnConflict rows count = " + count);
+    }
+
+    public void addQuoteRec(Result result) {
+
+        // New value for one column
+        ContentValues values = new ContentValues();
+        values.put(QuoteContract.QuoteColumns.QUOTE_SYMBOL, result.symbol);
+        values.put(QuoteContract.QuoteColumns.QUOTE_NAME, result.name);
+
+        // Which row to update, based on the ID
+        String selection = QuoteContract.QuoteColumns.QUOTE_SYMBOL + " LIKE ?";
+        String[] selectionArgs = { result.symbol };
+
+        long count = mDatabase.insertWithOnConflict(
+                QuoteDatabaseHelper.Tables.QUOTES,
+                null,
+                values,
+                SQLiteDatabase.CONFLICT_REPLACE);
+
+        LOGD(TAG, "addQuoteRec: insertWithOnConflict rows count = " + count);
     }
 
     public void addModelRec(Model model) {
@@ -258,6 +279,29 @@ public class QuoteDataSource {
     public void deleteAll() {
         mDatabase.delete(QuoteDatabaseHelper.Tables.SETTINGS, null, null);
         mDatabase.delete(QuoteDatabaseHelper.Tables.MODELS, null, null);
+    }
+
+    public Cursor getCursorMyQuotes() {
+        // Define a projection that specifies which columns from the database
+        // you will actually use after this query.
+        String[] projection = {
+                BaseColumns._ID,
+                QuoteContract.QuoteColumns.QUOTE_SYMBOL,
+                QuoteContract.QuoteColumns.QUOTE_NAME
+        };
+
+        // How you want the results sorted in the resulting Cursor
+        String sortOrder = BaseColumns._ID + " ASC";
+
+        return mDatabase.query(
+                QuoteDatabaseHelper.Tables.QUOTES,  // The table to query
+                projection,                               // The columns to return
+                null, // The columns for the WHERE clause
+                null,                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                sortOrder                                 // The sort order
+        );
     }
 
     // Методы для получения бизнес объектов

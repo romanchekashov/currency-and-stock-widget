@@ -8,8 +8,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -22,15 +21,17 @@
             android:name=".service.QuoteWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
-        <!--  При перезагрузке системы получаем уведомление и перезапускаем Alarm
+        <!--
+              При перезагрузке системы получаем уведомление и перезапускаем Alarm
             android:enabled="false" - вызова ресивера не будет, если мы его сами не включим;
             предотвращаем вызов ресивера, когда он не нуже!
             https://developer.android.com/training/scheduling/alarms.html#boot
         -->
-        <receiver android:name=".ui.BootReceiver"
-            android:enabled="false">
+        <receiver
+            android:name=".ui.BootReceiver"
+            android:enabled="false" >
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"></action>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
@@ -64,7 +65,34 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.EconomicWidgetConfigureActivity" />
+
         </activity>
+
+        <activity
+            android:name=".ui.SearchableQuoteActivity"
+            android:launchMode="singleInstance"
+            android:parentActivityName=".ui.QuotePickerActivity"
+            android:theme="@style/AppTheme.Light" >
+
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.QuotePickerActivity" />
+
+            <!-- This Activity handles the search intent -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
+
+        !-- Points to searchable activity so the whole app can invoke search. -->
+        <meta-data
+            android:name="android.app.default_searchable"
+            android:value=".ui.QuotePickerActivity" />
 
         <!-- Service to perform web API queries -->
         <service
@@ -73,6 +101,9 @@
             android:exported="true" >
         </service>
 
+        <provider
+            android:name=".provider.SymbolProvider"
+            android:authorities="ru.besttuts.stockwidget.provider.SymbolProvider" />
     </application>
 
 </manifest>
