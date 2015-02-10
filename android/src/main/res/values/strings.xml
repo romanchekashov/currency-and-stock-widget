@@ -47,6 +47,8 @@
     Search button. -->
     <string name="search_label">Yahoo quotes</string>
 
+    <string name="exc_already_exists">already exists!</string>
+
     <array name="quotes_type_array">
         <item>Currency</item>
         <item>Goods</item>
@@ -65,6 +67,13 @@
     <string name="ch15_cbt">Corn</string>
     <string name="sh15_cbt">Soybeans</string>
     <string name="zwh15_cbt">Wheat</string>
+
+    <string name="cch15_nyb">Cocoa</string>
+    <string name="kch15_nyb">Coffee</string>
+    <string name="cth15_nyb">Cotton</string>
+    <string name="lbh15_cme">Lumber</string>
+    <string name="ojh15_nyb">Orange Juice</string>
+    <string name="sbh15_nyb">Sugar</string>
 
     <array name="good_array">
         <item>Gold(GCF15.CMX)</item>

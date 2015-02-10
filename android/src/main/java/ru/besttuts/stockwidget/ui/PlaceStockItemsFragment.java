@@ -33,12 +33,17 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.io.HandleJSON;
 import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.QuoteType;
+import ru.besttuts.stockwidget.model.Setting;
 import ru.besttuts.stockwidget.provider.QuoteContract;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
 import ru.besttuts.stockwidget.sync.RemoteYahooFinanceDataFetcher;
@@ -126,12 +131,13 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
         // формируем столбцы сопоставления
         String[] from = new String[] { QuoteContract.ModelColumns.MODEL_NAME,
                 QuoteContract.ModelColumns.MODEL_RATE,
+                QuoteContract.ModelColumns.MODEL_CURRENCY,
                 QuoteContract.ModelColumns.MODEL_CHANGE,
                 QuoteContract.ModelColumns.MODEL_PERCENT_CHANGE,
                 QuoteContract.SettingColumns.SETTING_QUOTE_POSITION };
 
-        int[] to = new int[] { R.id.tvName, R.id.tvRate, R.id.tvChange, R.id.tvChangePercentage,
-                R.id.tvPosition };
+        int[] to = new int[] { R.id.tvName, R.id.tvRate, R.id.tvCurrency, R.id.tvChange,
+                R.id.tvChangePercentage, R.id.tvPosition };
 
         // создааем адаптер и настраиваем список
         mSimpleCursorAdapter = new MySimpleCursorAdapter(getActivity(), R.layout.configure_quote_grid_item, null, from, to, 0);
@@ -204,6 +210,8 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
         } else {
             button.setVisibility(View.VISIBLE);
         }
+        new FetchQuote(getActivity()).execute(new String[]{String.valueOf(mWidgetId)});
+
         LOGD(TAG, "onLoadFinished: currentThread = " + Thread.currentThread());
         LOGD(TAG, "swapCursor: cursor.getCount = mWidgetItemsNumber = " + mWidgetItemsNumber);
     }
@@ -329,13 +337,13 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
                 layout.setVisibility(View.GONE);
                 progressBar.setVisibility(View.VISIBLE);
 
-                if (null == mFetchQuote) {
-                    LOGD(TAG, "before FetchQuote: getView: currentThread = " + Thread.currentThread());
-                    LOGD(TAG, String.format("getView: quoteType = %s, symbol = %s", quoteType, symbol));
-
-                    mFetchQuote = (FetchQuote) new FetchQuote(getActivity())
-                            .execute(new String[]{String.valueOf(quoteType), symbol});
-                }
+//                if (null == mFetchQuote) {
+//                    LOGD(TAG, "before FetchQuote: getView: currentThread = " + Thread.currentThread());
+//                    LOGD(TAG, String.format("getView: quoteType = %s, symbol = %s", quoteType, symbol));
+//
+//                    mFetchQuote = (FetchQuote) new FetchQuote(getActivity())
+//                            .execute(new String[]{String.valueOf(quoteType), symbol});
+//                }
 
                 return view;
             }
@@ -434,17 +442,18 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
 
         QuoteDataSource mDataSource;
         int mWidgetId;
+        private Context mContext;
 
         public MyCursorLoader(Context context, QuoteDataSource dataSource, int widgetId) {
             super(context);
             mDataSource = dataSource;
             mWidgetId = widgetId;
+            mContext = context;
         }
 
         @Override
         public Cursor loadInBackground() {
             Cursor cursor = mDataSource.getCursorSettingsWithModelByWidgetId(mWidgetId);
-
             LOGD(TAG, "loadInBackground: currentThread = " + Thread.currentThread());
 
             LOGD(TAG, "loadInBackground: cursor.getCount: " + cursor.getCount());
@@ -458,7 +467,7 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
 
     }
 
-    private class FetchQuote extends AsyncTask<String, Void, Model> {
+    private class FetchQuote extends AsyncTask<String, Void, List<Model>> {
 
         private final Context mContext;
 
@@ -467,18 +476,39 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
         }
 
         @Override
-        protected Model doInBackground(String... params) { //TODO: Написать Unit-тесты!!!
+        protected List<Model> doInBackground(String... params) { //TODO: Написать Unit-тесты!!!
+
+            List<Model> models = new ArrayList<>();
 
             RemoteYahooFinanceDataFetcher dataFetcher = new RemoteYahooFinanceDataFetcher();
-            QuoteDataSource dataSource = new QuoteDataSource(mContext);
-            dataSource.open();
 
-            QuoteType quoteType = QuoteType.valueOf(params[0]);
-            String symbol = params[1];
+            int widgetId = Integer.parseInt(params[0]);
+            Cursor cursor = mDataSource.getCursorSettingsWithoutModelByWidgetId(widgetId);
 
-            LOGD(TAG, String.format("FetchQuote.doInBackground: quoteType = %s, symbol = %s", quoteType, symbol));
+            if (0 == cursor.getCount()) {
+                cursor.close();
+                return models;
+            }
 
-            dataFetcher.populateQuoteSet(quoteType, symbol);
+            Set<String> symbolSet = new HashSet<>(cursor.getCount());
+
+            cursor.moveToFirst();
+            do {
+                String symbol = cursor.getString(cursor.getColumnIndexOrThrow(
+                        QuoteContract.SettingColumns.SETTING_QUOTE_SYMBOL));
+                QuoteType quoteType = QuoteType.valueOf(cursor.getString(cursor.getColumnIndexOrThrow(
+                        QuoteContract.SettingColumns.SETTING_QUOTE_TYPE)));
+
+                LOGD(TAG, String.format("FetchQuote.doInBackground: quoteType = %s, symbol = %s", quoteType, symbol));
+
+                dataFetcher.populateQuoteSet(quoteType, symbol);
+
+                symbolSet.add(symbol);
+            } while (cursor.moveToNext());
+            cursor.close();
+
+//            QuoteType quoteType = QuoteType.valueOf(params[0]);
+//            String symbol = params[1];
 
             HandleJSON handleJSON = new HandleJSON(mContext);
             try {
@@ -486,25 +516,35 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
 
                 Map<String, Model> symbolModelMap = handleJSON.getSymbolModelMap();
 
-                for (Model model: symbolModelMap.values()) {
-                    dataSource.addModelRec(model);
-                    LOGD(TAG, "FetchQuote.doInBackground: currentThread = " + Thread.currentThread());
-
-                    return model;
+                for (String symbol: symbolSet) {
+                    Model model = symbolModelMap.get(symbol);
+                    if (model == null) {
+                        model = new Model();
+                        model.setId(symbol);
+                        model.setName(symbol);
+                    }
+                    mDataSource.addModelRec(model);
+                    models.add(model);
                 }
+
+//                for (Model model: symbolModelMap.values()) {
+//                    mDataSource.addModelRec(model);
+//                    models.add(model);
+//                }
+
+                LOGD(TAG, "FetchQuote.doInBackground: currentThread = " + Thread.currentThread());
 
             } catch (IOException e) {
                 e.printStackTrace();
-            } finally {
-                dataSource.close();
             }
 
-            return null;
+            return models;
         }
 
         @Override
-        protected void onPostExecute(Model model) {
-            if (null == model) return;
+        protected void onPostExecute(List<Model> models) {
+
+            if (0 == models.size()) return;
 
             LOGD(TAG, "FetchQuote.onPostExecute: currentThread = " + Thread.currentThread());
             FragmentActivity activity = getActivity();

@@ -14,7 +14,8 @@
         android:text="Name"
         android:id="@+id/tvName"
         android:textColor="#ffffff"
-        android:textSize="12sp" />
+        android:textSize="12sp"
+        android:singleLine="true" />
 
     <ProgressBar
         style="?android:attr/progressBarStyleSmall"
@@ -40,7 +41,18 @@
             android:id="@+id/tvRate"
             android:textColor="#ffffff"
             android:textSize="18sp"
-            android:textStyle="bold|italic" />
+            android:textStyle="bold|italic"
+            android:singleLine="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/tvCurrency"
+            android:textColor="#ffffff"
+            android:textSize="8sp"
+            android:layout_gravity="right"
+            android:singleLine="true" />
 
         <LinearLayout
             android:orientation="horizontal"
@@ -67,7 +79,8 @@
                     android:text="change"
                     android:id="@+id/tvChange"
                     android:textColor="#00ff00"
-                    android:textSize="10sp" />
+                    android:textSize="10sp"
+                    android:singleLine="true" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -76,7 +89,8 @@
                     android:text="%change"
                     android:id="@+id/tvChangePercentage"
                     android:textColor="#00ff00"
-                    android:textSize="10sp" />
+                    android:textSize="10sp"
+                    android:singleLine="true" />
             </LinearLayout>
 
         </LinearLayout>
@@ -88,6 +102,7 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="Small Text"
         android:id="@+id/tvPosition"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:singleLine="true" />
 
 </LinearLayout>

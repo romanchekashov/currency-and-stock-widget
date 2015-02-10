@@ -1,23 +1,16 @@
 package ru.besttuts.stockwidget.ui;
 
-import android.app.SearchManager;
 import android.appwidget.AppWidgetManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.model.QuoteType;
@@ -31,7 +24,8 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
  * Created by roman on 07.01.2015.
  */
 public class QuotePickerActivity extends ActionBarActivity
-        implements GoodsItemFragment.OnFragmentInteractionListener {
+        implements GoodsItemFragment.OnFragmentInteractionListener,
+        MyQuotesFragment.OnFragmentInteractionListener {
 
     private static final String TAG = makeLogTag(QuotePickerActivity.class);
     private QuoteDataSource mDataSource;
@@ -119,6 +113,8 @@ public class QuotePickerActivity extends ActionBarActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        LOGD(TAG, "+++++++++++++++ onCreateOptionsMenu: ");
+
         // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.second_activity_actions, menu);
@@ -126,13 +122,28 @@ public class QuotePickerActivity extends ActionBarActivity
         return super.onCreateOptionsMenu(menu);
     }
 
+    private Menu mMenu;
+
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        LOGD(TAG, "+++++++++++++++ onPrepareOptionsMenu: ");
         MenuItem register = menu.findItem(R.id.action_show_search);
         if (4 != mQuoteTypeValue) {
             register.setVisible(false);
+            menu.findItem(R.id.action_delete).setVisible(false);
+        }
+        Fragment fragment1 = getSupportFragmentManager().findFragmentById(R.id.second_cont);
+        if (fragment1 instanceof IQuoteTypeFragment) {
+            String[] symbols = ((IQuoteTypeFragment) fragment1).getSelectedSymbols();
+            if (0 == symbols.length) {
+                menu.findItem(R.id.action_accept).setVisible(false);
+                if (fragment1 instanceof MyQuotesFragment) {
+                    menu.findItem(R.id.action_delete).setVisible(false);
+                }
+            }
         }
 
+        mMenu = menu;
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -155,13 +166,24 @@ public class QuotePickerActivity extends ActionBarActivity
                 if (fragment instanceof CurrencyExchangeFragment) {
                     mDataSource.addSettingsRec(mAppWidgetId, mWidgetItemPosition,
                             QuoteType.CURRENCY_EXCHANGE.toString(),
-                            ((CurrencyExchangeFragment) fragment).getSymbol());
+                            ((CurrencyExchangeFragment) fragment).getSelectedSymbols());
                 } else if (fragment instanceof GoodsItemFragment) {
                     mDataSource.addSettingsRec(mAppWidgetId, mWidgetItemPosition,
                             QuoteType.GOODS.toString(),
-                            ((GoodsItemFragment) fragment).getSymbol());
+                            ((GoodsItemFragment) fragment).getSelectedSymbols());
+                } else if (fragment instanceof MyQuotesFragment) {
+                    mDataSource.addSettingsRec(mAppWidgetId, mWidgetItemPosition,
+                            QuoteType.QUOTES.toString(),
+                            ((MyQuotesFragment) fragment).getSelectedSymbols());
                 }
                 finish();
+                return true;
+            case R.id.action_delete:
+                Fragment fragment1 = getSupportFragmentManager().findFragmentById(R.id.second_cont);
+
+                if (fragment1 instanceof MyQuotesFragment) {
+                    ((MyQuotesFragment) fragment1).deleteSelectedSymbols();
+                }
                 return true;
             case android.R.id.home: // Respond to the action bar's Up/Home button
                 Intent upIntent = NavUtils.getParentActivityIntent(this);
@@ -206,4 +228,23 @@ public class QuotePickerActivity extends ActionBarActivity
         LOGD(TAG, "id: " + id);
     }
 
+    @Override
+    public void showDeleteItem(boolean isVisible) {
+        if(null != mMenu) {
+            mMenu.findItem(R.id.action_delete).setVisible(isVisible);
+            mMenu.findItem(R.id.action_accept).setVisible(isVisible);
+        }
+    }
+
+    @Override
+    public void showAcceptItem(boolean isVisible) {
+        if(null != mMenu) {
+            mMenu.findItem(R.id.action_accept).setVisible(isVisible);
+        }
+    }
+
+    @Override
+    public void deleteQuote(String[] symbols) {
+        mDataSource.deleteQuotesByIds(symbols);
+    }
 }

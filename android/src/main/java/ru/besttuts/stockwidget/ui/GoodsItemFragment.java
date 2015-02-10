@@ -1,20 +1,25 @@
 package ru.besttuts.stockwidget.ui;
 
 import android.app.Activity;
+import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.Loader;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import ru.besttuts.stockwidget.R;
-import ru.besttuts.stockwidget.ui.dummy.DummyContent;
+import ru.besttuts.stockwidget.model.QuoteType;
+import ru.besttuts.stockwidget.provider.QuoteContract;
+
+import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
+import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
 /**
  * A fragment representing a list of Items.
@@ -25,10 +30,9 @@ import ru.besttuts.stockwidget.ui.dummy.DummyContent;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class GoodsItemFragment extends Fragment implements IQuoteTypeFragment,
-        AbsListView.OnItemClickListener {
+public class GoodsItemFragment extends AbsQuoteSelectionFragment implements LoaderCallbacks<Cursor> {
 
-    private static final String LOG_TAG = "EconomicWidget.GoodsItemFragment";
+    private static final String TAG = makeLogTag(GoodsItemFragment.class);
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -41,23 +45,23 @@ public class GoodsItemFragment extends Fragment implements IQuoteTypeFragment,
 
     private OnFragmentInteractionListener mListener;
 
+    private SimpleCursorAdapter mSimpleCursorAdapter;
+
+
+    // Идентификатор загрузчика используемый в данном компоненте
+    private static final int URL_LOADER = 0;
+
     /**
      * The fragment's ListView/GridView.
      */
-    private AbsListView mListView;
+    private ListView mListView;
 
-    /**
-     * The Adapter which will be used to populate the ListView/GridView with
-     * Views.
-     */
-    private ListAdapter mAdapter;
-
-    // TODO: Rename and change types of parameters
     public static GoodsItemFragment newInstance(int widgetItemPosition, int quoteTypeValue) {
         GoodsItemFragment fragment = new GoodsItemFragment();
         Bundle args = new Bundle();
         args.putInt("widgetItemPosition", widgetItemPosition);
         args.putInt("quoteTypeValue", quoteTypeValue);
+        args.putString("quoteType", String.valueOf(QuoteType.GOODS));
         fragment.setArguments(args);
         return fragment;
     }
@@ -70,51 +74,77 @@ public class GoodsItemFragment extends Fragment implements IQuoteTypeFragment,
         return getArguments().getInt("quoteTypeValue", 0);
     }
 
-    @Override
-    public String getSymbol() {
-        return getArguments().getString(ARG_GOOD_ITEM);
-    }
-
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public GoodsItemFragment() {}
+    public GoodsItemFragment() {
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
         if (getArguments() != null) {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
-//        DummyContent.addItem(new DummyContent.DummyItem("1", String.format("%s(GCF15.CMX)",getString(R.string.goods_gold))));
-//        DummyContent.addItem(new DummyContent.DummyItem("2", String.format("%s(SIF15.CMX)",getString(R.string.goods_silver))));
-//        DummyContent.addItem(new DummyContent.DummyItem("3", String.format("%s(PLF15.NYM)",getString(R.string.goods_platinum))));
-//        DummyContent.addItem(new DummyContent.DummyItem("4", String.format("%s(PAF15.NYM)",getString(R.string.goods_palladium))));
-//        DummyContent.addItem(new DummyContent.DummyItem("5", String.format("%s(HGF15.CMX)", getString(R.string.goods_copper))));
-//        // TODO: Change Adapter to display your content
-//        mAdapter = new ArrayAdapter<CharSequence>(getActivity(), R.array.good_array,
-//                R.layout.goods_list_item, R.id.tvGood);
-        mAdapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.good_array, R.layout.goods_list_item);
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_item, container, false);
 
-        // Set the adapter
-        mListView = (AbsListView) view.findViewById(android.R.id.list);
-        ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
+        View view = inflater.inflate(R.layout.fragment_my_quotes, container, false);
 
-        // Set OnItemClickListener so we can be notified on item clicks
-        mListView.setOnItemClickListener(this);
+        // формируем столбцы сопоставления
+        String[] from = new String[]{QuoteContract.QuoteColumns.QUOTE_NAME,
+                QuoteContract.QuoteColumns.QUOTE_SYMBOL};
+
+        int[] to = new int[]{android.R.id.text1, android.R.id.text2};
+
+        // создааем адаптер и настраиваем список
+        mSimpleCursorAdapter = new MySimpleCursorAdapter(getActivity(),
+                android.R.layout.simple_list_item_2, null, from, to, 0);
+
+        mListView = (ListView) view.findViewById(R.id.listView2);
+//        listView.setBackground(getResources().getDrawable(R.drawable.bg_key));
+        mListView.setAdapter(mSimpleCursorAdapter);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                String symbol = String.valueOf(((TextView) view.findViewById(android.R.id.text2)).getText());
+                if (mSymbols.contains(symbol)) {
+                    view.setBackgroundColor(Color.TRANSPARENT);
+                    mSymbols.remove(symbol);
+                } else {
+                    mSymbols.add(symbol);
+                    setSelectedBgView(view);
+                }
+                if (0 < mSymbols.size()) {
+                    if (null != mListener) mListener.showAcceptItem(true);
+                } else {
+                    if (null != mListener) mListener.showAcceptItem(false);
+                }
+                LOGD(TAG, "onItemClick: " + mSimpleCursorAdapter.getItem(position));
+            }
+        });
+
+        reload();
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (0 < mSymbols.size()) {
+            if (null != mListener) mListener.showAcceptItem(true);
+        } else {
+            if (null != mListener) mListener.showAcceptItem(false);
+        }
+        LOGD(TAG, "onResume: currentThread = " + Thread.currentThread());
+        reload();
     }
 
     @Override
@@ -131,37 +161,36 @@ public class GoodsItemFragment extends Fragment implements IQuoteTypeFragment,
     @Override
     public void onDetach() {
         super.onDetach();
+        getActivity().getSupportLoaderManager().destroyLoader(URL_LOADER);
         mListener = null;
+        LOGD(TAG, "onDetach");
     }
 
+    private void reload() {
+        // создаем лоадер для чтения данных
+        Loader loader = getActivity().getSupportLoaderManager().getLoader(URL_LOADER);
+        if (null == loader) {
+            LOGD(TAG, "Loader is null");
+            getActivity().getSupportLoaderManager().initLoader(URL_LOADER, null, this);
+        } else {
+            LOGD(TAG, "Loader is " + loader);
+            loader.forceLoad();
+        }
+    }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        view.setSelected(true);
-        if (null != mListener) {
-//            String str = DummyContent.ITEMS.get(position).content;
-            String str = (String) mAdapter.getItem(position);
-            getArguments().putString(ARG_GOOD_ITEM, str.substring(str.lastIndexOf("(") + 1, str.length() - 1));
-
-            Log.d(LOG_TAG, "onItemClick: " + getArguments().getString(ARG_GOOD_ITEM));
-
-            // Notify the active callbacks interface (the activity, if the
-            // fragment is attached to one) that an item has been selected.
-//            mListener.onFragmentInteraction();
-        }
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new MyCursorLoader(getActivity(), mDataSource, mQuoteType);
     }
 
-    /**
-     * The default content for this Fragment has a TextView that is shown when
-     * the list is empty. If you would like to change the text, call this method
-     * to supply the text it should use.
-     */
-    public void setEmptyText(CharSequence emptyText) {
-        View emptyView = mListView.getEmptyView();
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mSimpleCursorAdapter.changeCursor(data);
+    }
 
-        if (emptyView instanceof TextView) {
-            ((TextView) emptyView).setText(emptyText);
-        }
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mSimpleCursorAdapter.changeCursor(null);
     }
 
     /**
@@ -177,6 +206,9 @@ public class GoodsItemFragment extends Fragment implements IQuoteTypeFragment,
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(String id);
+
+        public void showAcceptItem(boolean isVisible);
+
     }
 
 }

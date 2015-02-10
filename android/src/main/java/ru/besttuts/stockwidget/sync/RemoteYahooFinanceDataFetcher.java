@@ -17,10 +17,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
+import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
+
 /**
  * Created by roman on 07.01.2015.
  */
 public class RemoteYahooFinanceDataFetcher {
+
+    private static final String TAG = makeLogTag(RemoteYahooFinanceDataFetcher.class);
 
     final String LOG_TAG = "EconomicWidget.RemoteYahooFinanceDataFetcher";
 
@@ -98,7 +103,10 @@ public class RemoteYahooFinanceDataFetcher {
                 currencyExchangeSet.add(symbol);
                 break;
             case GOODS:
-                goodSet.add(symbol);
+            case QUOTES:
+                String s = new String(symbol);
+//                if ("^DJI".equals(s)) s = "INDU"; // символ исключение для ^DJI
+                goodSet.add(s);
                 break;
         }
     }
@@ -110,7 +118,10 @@ public class RemoteYahooFinanceDataFetcher {
                     currencyExchangeSet.add(setting.getQuoteSymbol());
                     break;
                 case GOODS:
-                    goodSet.add(setting.getQuoteSymbol());
+                case QUOTES:
+                    String s = new String(setting.getQuoteSymbol());
+                    if ("^DJI".equals(s)) s = "INDU"; // символ исключение для ^DJI
+                    goodSet.add(s);
                     break;
             }
         }
@@ -175,7 +186,9 @@ public class RemoteYahooFinanceDataFetcher {
     }
 
     public String downloadQuotes() throws IOException {
-        return downloadUrl(buildYahooFinanceMultiQueryUrl());
+        String sUrl = buildYahooFinanceMultiQueryUrl();
+        LOGD(TAG, "downloadQuotes: " + sUrl);
+        return downloadUrl(sUrl);
     }
 
     public String downloadUrl(String sUrl) throws IOException {

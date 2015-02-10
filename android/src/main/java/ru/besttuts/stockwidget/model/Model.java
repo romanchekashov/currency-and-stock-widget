@@ -7,9 +7,10 @@ public class Model {
 
     protected String id; // symbol
     protected String name;
-    protected double rate;
-    protected double change;
-    protected String percentChange;
+    protected double rate = 0.0;
+    protected double change = 0.0;
+    protected String percentChange = "0.0%";
+    protected String currency;
 
     public String getId() {
         return id;
@@ -61,6 +62,14 @@ public class Model {
 
     public void setPercentChange(String percentChange) {
         this.percentChange = percentChange;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 
     @Override

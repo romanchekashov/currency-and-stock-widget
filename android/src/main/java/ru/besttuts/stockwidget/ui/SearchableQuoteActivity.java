@@ -22,6 +22,7 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -47,6 +48,7 @@ import android.widget.ListView;
 import android.support.v7.widget.SearchView;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.io.model.Result;
@@ -58,6 +60,7 @@ import ru.besttuts.stockwidget.ui.view.SoftKeyboardHandledLinearLayout;
 import ru.besttuts.stockwidget.util.Utils;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
+import static ru.besttuts.stockwidget.util.LogUtils.LOGE;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
 /**
@@ -129,7 +132,13 @@ public class SearchableQuoteActivity extends ActionBarActivity
                         QuoteContract.QuoteColumns.QUOTE_SYMBOL));
                 Result result = SymbolProvider.tempMap.get(symbol);
                 if (null != mDataSource) {
-                    mDataSource.addQuoteRec(result);
+                    try {
+                        mDataSource.addQuoteRec(result);
+                    } catch (IllegalArgumentException e) {
+                        LOGE(TAG, e.getMessage());
+                        Toast.makeText(SearchableQuoteActivity.this,
+                                e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
                     finish();
                 }
             }

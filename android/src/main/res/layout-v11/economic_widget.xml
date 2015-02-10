@@ -12,7 +12,7 @@
         android:layout_alignParentLeft="true"
         android:layout_toLeftOf="@+id/linearLayout"
         android:layout_toStartOf="@+id/linearLayout"
-        android:columnWidth="60dp"
+        android:columnWidth="70dp"
         android:gravity="center"
         android:horizontalSpacing="5dp"
         android:numColumns="auto_fit"

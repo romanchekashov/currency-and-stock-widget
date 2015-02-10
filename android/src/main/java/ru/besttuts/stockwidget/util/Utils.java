@@ -23,6 +23,10 @@ public class Utils {
 
     private static final String TAG = makeLogTag(Utils.class);
 
+    public static String getModelNameFromResourcesBySymbol(Context context, String symbol) {
+        return getModelNameFromResourcesBySymbol(context, QuoteType.GOODS, symbol);
+    }
+
     public static String getModelNameFromResourcesBySymbol(Context context, QuoteType type, String symbol) {
         if (null == context || null == type || null == symbol || symbol.isEmpty()) return "-";
 
@@ -39,7 +43,7 @@ public class Utils {
             LOGE(TAG, e.getMessage());
         }
 
-        return "-";
+        return symbol;
     }
 
     public static void onActivityCreateSetTheme(Activity activity) {

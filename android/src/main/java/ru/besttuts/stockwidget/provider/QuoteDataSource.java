@@ -11,6 +11,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.io.model.Result;
 import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.QuoteType;
@@ -18,6 +19,7 @@ import ru.besttuts.stockwidget.model.Setting;
 import ru.besttuts.stockwidget.util.Utils;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
+import static ru.besttuts.stockwidget.util.LogUtils.LOGE;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
 /**
@@ -35,6 +37,7 @@ public class QuoteDataSource {
 
     public QuoteDataSource(Context context) {
         this.context = context;
+        LOGD(TAG, "QuoteDataSource initialized: " + this);
     }
 
     public void open() throws SQLException {
@@ -46,29 +49,35 @@ public class QuoteDataSource {
         if (null != mDbHelper) mDbHelper.close();
     }
 
-    public void addSettingsRec(int mAppWidgetId, int widgetItemPosition, String type, String symbol) {
+    public void addSettingsRec(int mAppWidgetId, int widgetItemPosition,
+                               String type, String[] symbols) {
 
-        String id = mAppWidgetId + "_" + widgetItemPosition;
+        for (int i = 0; i < symbols.length; i++) {
+            String symbol = symbols[i];
+            int position = widgetItemPosition + i;
+            String id = mAppWidgetId + "_" + position;
 
-        // New value for one column
-        ContentValues values = new ContentValues();
-        values.put(QuoteContract.SettingColumns.SETTING_ID, id);
-        values.put(QuoteContract.SettingColumns.SETTING_WIDGET_ID, mAppWidgetId);
-        values.put(QuoteContract.SettingColumns.SETTING_QUOTE_POSITION, widgetItemPosition);
-        values.put(QuoteContract.SettingColumns.SETTING_QUOTE_TYPE, type);
-        values.put(QuoteContract.SettingColumns.SETTING_QUOTE_SYMBOL, symbol);
+            // New value for one column
+            ContentValues values = new ContentValues();
+            values.put(QuoteContract.SettingColumns.SETTING_ID, id);
+            values.put(QuoteContract.SettingColumns.SETTING_WIDGET_ID, mAppWidgetId);
+            values.put(QuoteContract.SettingColumns.SETTING_QUOTE_POSITION, position);
+            values.put(QuoteContract.SettingColumns.SETTING_QUOTE_TYPE, type);
+            values.put(QuoteContract.SettingColumns.SETTING_QUOTE_SYMBOL, symbol);
 
-        // Which row to update, based on the ID
-        String selection = QuoteContract.SettingColumns.SETTING_ID + " LIKE ?";
-        String[] selectionArgs = { id };
+            // Which row to update, based on the ID
+            String selection = QuoteContract.SettingColumns.SETTING_ID + " LIKE ?";
+            String[] selectionArgs = { id };
 
-        long count = mDatabase.insertWithOnConflict(
-                QuoteDatabaseHelper.Tables.SETTINGS,
-                null,
-                values,
-                SQLiteDatabase.CONFLICT_REPLACE);
+            long count = mDatabase.insertWithOnConflict(
+                    QuoteDatabaseHelper.Tables.SETTINGS,
+                    null,
+                    values,
+                    SQLiteDatabase.CONFLICT_REPLACE);
 
-        LOGD(TAG, "insertWithOnConflict rows count = " + count);
+            LOGD(TAG, "insertWithOnConflict rows count = " + count);
+        }
+
     }
 
     public void addModelRec(QuoteType type, String symbol) {
@@ -101,21 +110,30 @@ public class QuoteDataSource {
         ContentValues values = new ContentValues();
         values.put(QuoteContract.QuoteColumns.QUOTE_SYMBOL, result.symbol);
         values.put(QuoteContract.QuoteColumns.QUOTE_NAME, result.name);
+        values.put(QuoteContract.QuoteColumns.QUOTE_TYPE, String.valueOf(QuoteType.QUOTES));
 
         // Which row to update, based on the ID
         String selection = QuoteContract.QuoteColumns.QUOTE_SYMBOL + " LIKE ?";
         String[] selectionArgs = { result.symbol };
 
-        long count = mDatabase.insertWithOnConflict(
+        long count = mDatabase.insert(
                 QuoteDatabaseHelper.Tables.QUOTES,
                 null,
-                values,
-                SQLiteDatabase.CONFLICT_REPLACE);
+                values);
+        LOGD(TAG, "addQuoteRec: insert rows count = " + count);
 
-        LOGD(TAG, "addQuoteRec: insertWithOnConflict rows count = " + count);
+        if (-1 == count) {
+            throw new IllegalArgumentException(result.symbol + " " +
+                    context.getString(R.string.exc_already_exists));
+        }
     }
 
     public void addModelRec(Model model) {
+
+        if (null == model) {
+            LOGE(TAG, "Model is NULL");
+            return;
+        }
 
         // New value for one column
         ContentValues values = new ContentValues();
@@ -124,6 +142,7 @@ public class QuoteDataSource {
         values.put(QuoteContract.ModelColumns.MODEL_RATE, model.getRate());
         values.put(QuoteContract.ModelColumns.MODEL_CHANGE, model.getChange());
         values.put(QuoteContract.ModelColumns.MODEL_PERCENT_CHANGE, model.getPercentChange());
+        values.put(QuoteContract.ModelColumns.MODEL_CURRENCY, model.getCurrency());
 
         // Which row to update, based on the ID
         String selection = QuoteContract.ModelColumns.MODEL_ID + " LIKE ?";
@@ -178,6 +197,19 @@ public class QuoteDataSource {
                 + "left join "+QuoteDatabaseHelper.Tables.MODELS+" as m "
                 + "on s.setting_quote_symbol = m.model_id "
                 + "where s.setting_widget_id = ? order by "
+                + QuoteContract.SettingColumns.SETTING_QUOTE_POSITION + " asc";
+
+        return mDatabase.rawQuery(sqlQuery, new String[] { String.valueOf(widgetId) });
+
+    }
+
+    public Cursor getCursorSettingsWithoutModelByWidgetId(int widgetId) {
+
+        String sqlQuery = "select * "
+                + "from "+QuoteDatabaseHelper.Tables.SETTINGS+" as s "
+                + "left join "+QuoteDatabaseHelper.Tables.MODELS+" as m "
+                + "on s.setting_quote_symbol = m.model_id "
+                + "where s.setting_widget_id = ? and m.model_id is null order by "
                 + QuoteContract.SettingColumns.SETTING_QUOTE_POSITION + " asc";
 
         return mDatabase.rawQuery(sqlQuery, new String[] { String.valueOf(widgetId) });
@@ -242,6 +274,13 @@ public class QuoteDataSource {
         LOGD(TAG, "deleteSettingsById: deleted rows count = " + delCount);
     }
 
+    public void deleteQuotesByIds(String[] symbols) {
+        for (String s: symbols) {
+            mDatabase.delete(QuoteDatabaseHelper.Tables.QUOTES,
+                    QuoteContract.QuoteColumns.QUOTE_SYMBOL + " = '" + s + "'", null);
+        }
+    }
+
     public void deleteSettingsByIdAndUpdatePositions(String settingId, int position) {
         LOGD(TAG, String.format("deleteSettingsById: settingId = %s, position = %d",
                 settingId, position));
@@ -297,6 +336,32 @@ public class QuoteDataSource {
                 QuoteDatabaseHelper.Tables.QUOTES,  // The table to query
                 projection,                               // The columns to return
                 null, // The columns for the WHERE clause
+                null,                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                sortOrder                                 // The sort order
+        );
+    }
+
+    public Cursor getQuoteCursor(QuoteType quoteType) {
+        // Define a projection that specifies which columns from the database
+        // you will actually use after this query.
+        String[] projection = {
+                BaseColumns._ID,
+                QuoteContract.QuoteColumns.QUOTE_SYMBOL,
+                QuoteContract.QuoteColumns.QUOTE_NAME,
+                QuoteContract.QuoteColumns.QUOTE_TYPE
+        };
+
+        // How you want the results sorted in the resulting Cursor
+        String sortOrder = BaseColumns._ID + " ASC";
+        String where = String.format("%s = '%s'", QuoteContract.QuoteColumns.QUOTE_TYPE,
+                String.valueOf(quoteType));
+
+        return mDatabase.query(
+                QuoteDatabaseHelper.Tables.QUOTES,  // The table to query
+                projection,                               // The columns to return
+                where, // The columns for the WHERE clause
                 null,                            // The values for the WHERE clause
                 null,                                     // don't group the rows
                 null,                                     // don't filter by row groups
@@ -371,6 +436,11 @@ public class QuoteDataSource {
         model.setRate(cursor.getDouble(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_RATE)));
         model.setChange(cursor.getDouble(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_CHANGE)));
         model.setPercentChange(cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_PERCENT_CHANGE)));
+        try {
+            model.setCurrency(cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_CURRENCY)));
+        } catch (IllegalArgumentException e) {
+            // колонка 'model_currency' не существует у Валюты
+        }
 
         return model;
     }

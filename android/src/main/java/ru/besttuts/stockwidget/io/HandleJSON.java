@@ -121,6 +121,8 @@ public class HandleJSON {
 
     public void readAndParseJSON(String in) {
         try {
+            LOGD(TAG, "readAndParseJSON: " + in);
+
             JSONObject reader = new JSONObject(in);
 
             if (reader.isNull("query") || reader.getJSONObject("query").isNull("results")) {
@@ -136,7 +138,7 @@ public class HandleJSON {
                     readResultsJSONObject(results.getJSONObject(i));
                 }
 
-            } else {
+            } else if(oResults instanceof JSONObject) {
                 readResultsJSONObject((JSONObject) oResults);
             }
 
@@ -250,12 +252,23 @@ public class HandleJSON {
         Good good = new Good();
         good.setId(o.getString("symbol"));
         good.setSymbol(o.getString("symbol"));
-        good.setRate(o.getDouble("LastTradePriceOnly"));
-        good.setChange(o.getDouble("Change"));
+        try {
+            good.setRate(o.getDouble("LastTradePriceOnly"));
+        } catch (JSONException e) {
+            LOGE(TAG, e.getMessage());
+            good.setRate(0.0);
+        }
+        try {
+            good.setChange(o.getDouble("Change"));
+        } catch (JSONException e) {
+            LOGE(TAG, e.getMessage());
+            good.setChange(0.0);
+        }
         good.setPercentChange(o.getString("ChangeinPercent"));
         good.setName(Utils.getModelNameFromResourcesBySymbol(mContext,
                 QuoteType.GOODS, o.getString("symbol")));
-
+        good.setCurrency(o.getString("Currency"));
+        
         symbolModelMap.put(o.getString("symbol"), good);
 
         return good;

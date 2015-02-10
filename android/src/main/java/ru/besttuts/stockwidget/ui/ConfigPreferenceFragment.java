@@ -28,7 +28,7 @@ public class ConfigPreferenceFragment extends PreferenceFragment
     public static final String KEY_PREF_BG_COLOR_DEFAULT_VALUE = "#3498db";
 
     public static final String KEY_PREF_BG_VISIBILITY = "pref_listBgVisibility";
-    public static final String KEY_PREF_BG_VISIBILITY_DEFAULT_VALUE = "80";
+    public static final String KEY_PREF_BG_VISIBILITY_DEFAULT_VALUE = "C0";
 
     @Override
     public void onCreate(Bundle paramBundle) {

@@ -115,5 +115,12 @@
         <item>Только Wi-Fi</item>
         <item>В любой сети</item>
     </string-array>
+    <string name="cch15_nyb">Какао</string>
+    <string name="kch15_nyb">Кофе</string>
+    <string name="cth15_nyb">Хлопок</string>
+    <string name="lbh15_cme">Пиломатериалы</string>
+    <string name="ojh15_nyb">Апельсиновый Сок</string>
+    <string name="sbh15_nyb">Сахар</string>
+    <string name="exc_already_exists">уже существует!</string>
 
 </resources>

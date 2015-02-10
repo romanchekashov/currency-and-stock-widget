@@ -1,7 +1,6 @@
 package ru.besttuts.stockwidget.ui;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -159,8 +158,8 @@ public class CurrencyExchangeFragment extends Fragment implements IQuoteTypeFrag
     }
 
     @Override
-    public String getSymbol() {
-        return mCurrencyFrom + mCurrencyTo;
+    public String[] getSelectedSymbols() {
+        return new String[]{mCurrencyFrom + mCurrencyTo};
     }
 
 }

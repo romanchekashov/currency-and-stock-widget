@@ -9,5 +9,5 @@ public interface IQuoteTypeFragment {
 
     int getQuoteTypeValue();
 
-    String getSymbol();
+    String[] getSelectedSymbols();
 }

@@ -13,7 +13,8 @@
         android:text="Medium Text"
         android:id="@+id/tvName"
         android:textColor="#ffffff"
-        android:textSize="12sp" />
+        android:textSize="12sp"
+        android:singleLine="true" />
 
     <TextView
         android:layout_width="match_parent"
@@ -23,7 +24,8 @@
         android:id="@+id/tvRate"
         android:textColor="#ffffff"
         android:textSize="18sp"
-        android:textStyle="bold|italic" />
+        android:textStyle="bold|italic"
+        android:singleLine="true" />
 
     <LinearLayout
         android:orientation="horizontal"
@@ -50,7 +52,8 @@
                 android:text="change"
                 android:id="@+id/tvChange"
                 android:textColor="#ffffff"
-                android:textSize="10sp" />
+                android:textSize="10sp"
+                android:singleLine="true" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -59,7 +62,8 @@
                 android:text="change"
                 android:id="@+id/tvChangePercentage"
                 android:textColor="#ffffff"
-                android:textSize="10sp" />
+                android:textSize="10sp"
+                android:singleLine="true" />
         </LinearLayout>
 
     </LinearLayout>

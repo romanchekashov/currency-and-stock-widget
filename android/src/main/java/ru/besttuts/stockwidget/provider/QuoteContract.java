@@ -29,13 +29,14 @@ public class QuoteContract {
         String MODEL_CHANGE = "model_change";
         /** Extra subtitle for the block. */
         String MODEL_PERCENT_CHANGE = "model_percent_change";
+        /** Extra subtitle for the block. */
+        String MODEL_CURRENCY = "model_currency";
     }
 
     public interface QuoteColumns {
-        /** Unique string identifying this setting: MODEL_WIDGET_ID + "_" + "MODEL_QUOTE_POSITION". */
         String QUOTE_SYMBOL = "quote_symbol";
-        /** Time when this block starts. */
         String QUOTE_NAME = "quote_name";
+        String QUOTE_TYPE = "quote_type";
     }
 
     public interface CurrencyExchangeColumns {

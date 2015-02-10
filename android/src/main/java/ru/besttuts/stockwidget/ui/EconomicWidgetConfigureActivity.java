@@ -98,6 +98,11 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
     }
 
     @Override
+    public void showAcceptItem(boolean isVisible) {
+
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
