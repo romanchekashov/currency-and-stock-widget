@@ -37,7 +37,7 @@ public class CurrencyXmlParser {
 
         RemoteYahooFinanceDataFetcher dataFetcher = new RemoteYahooFinanceDataFetcher();
         for (CcyNtry ccyNtry: ccyNtries) {
-            dataFetcher.populateQuoteSet(QuoteType.CURRENCY_EXCHANGE, "USD"+ccyNtry.Ccy);
+            dataFetcher.populateQuoteSet(QuoteType.CURRENCY, "USD"+ccyNtry.Ccy);
         }
 
         HandleJSON handleJSON = new HandleJSON(null);

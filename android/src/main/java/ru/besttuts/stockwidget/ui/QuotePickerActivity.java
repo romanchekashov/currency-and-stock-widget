@@ -28,7 +28,7 @@ public class QuotePickerActivity extends ActionBarActivity
         MyQuotesFragment.OnFragmentInteractionListener {
 
     private static final String TAG = makeLogTag(QuotePickerActivity.class);
-    private QuoteDataSource mDataSource;
+    static QuoteDataSource mDataSource;
     private int mAppWidgetId;
     private int mQuoteTypeValue;
     private int mWidgetItemPosition;
@@ -62,10 +62,19 @@ public class QuotePickerActivity extends ActionBarActivity
                     fragment = CurrencyExchangeFragment.newInstance(mWidgetItemPosition, mQuoteTypeValue);
                     break;
                 case 1:
-                    fragment = GoodsItemFragment.newInstance(mWidgetItemPosition, mQuoteTypeValue);
+                    fragment = GoodsItemFragment.newInstance(mWidgetItemPosition,
+                            mQuoteTypeValue, QuoteType.GOODS);
+                    break;
+                case 2:
+                    fragment = GoodsItemFragment.newInstance(mWidgetItemPosition,
+                            mQuoteTypeValue, QuoteType.INDICES);
+                    break;
+                case 3:
+                    fragment = GoodsItemFragment.newInstance(mWidgetItemPosition,
+                            mQuoteTypeValue, QuoteType.STOCK);
                     break;
                 case 4:
-                    fragment = MyQuotesFragment.newInstance(mAppWidgetId);
+                    fragment = MyQuotesFragment.newInstance(mAppWidgetId, QuoteType.QUOTES);
                     break;
             }
 
@@ -100,6 +109,8 @@ public class QuotePickerActivity extends ActionBarActivity
         // создаем объект для создания и управления версиями БД
         mDataSource = new QuoteDataSource(this);
         mDataSource.open();
+
+        LOGD(TAG, "onCreate");
 
     }
 
@@ -165,15 +176,15 @@ public class QuotePickerActivity extends ActionBarActivity
 
                 if (fragment instanceof CurrencyExchangeFragment) {
                     mDataSource.addSettingsRec(mAppWidgetId, mWidgetItemPosition,
-                            QuoteType.CURRENCY_EXCHANGE.toString(),
+                            QuoteType.CURRENCY,
                             ((CurrencyExchangeFragment) fragment).getSelectedSymbols());
                 } else if (fragment instanceof GoodsItemFragment) {
                     mDataSource.addSettingsRec(mAppWidgetId, mWidgetItemPosition,
-                            QuoteType.GOODS.toString(),
+                            QuoteType.GOODS,
                             ((GoodsItemFragment) fragment).getSelectedSymbols());
                 } else if (fragment instanceof MyQuotesFragment) {
                     mDataSource.addSettingsRec(mAppWidgetId, mWidgetItemPosition,
-                            QuoteType.QUOTES.toString(),
+                            QuoteType.QUOTES,
                             ((MyQuotesFragment) fragment).getSelectedSymbols());
                 }
                 finish();
@@ -221,6 +232,7 @@ public class QuotePickerActivity extends ActionBarActivity
     protected void onDestroy() {
         super.onDestroy();
         if (null != mDataSource) mDataSource.close(); // закрываем соединение с БД
+        LOGD(TAG, "onDestroy");
     }
 
     @Override

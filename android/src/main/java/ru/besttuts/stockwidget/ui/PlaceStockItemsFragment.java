@@ -42,8 +42,6 @@ import java.util.Set;
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.io.HandleJSON;
 import ru.besttuts.stockwidget.model.Model;
-import ru.besttuts.stockwidget.model.QuoteType;
-import ru.besttuts.stockwidget.model.Setting;
 import ru.besttuts.stockwidget.provider.QuoteContract;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
 import ru.besttuts.stockwidget.sync.RemoteYahooFinanceDataFetcher;
@@ -74,7 +72,7 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
 
     private OnFragmentInteractionListener mListener;
 
-    private QuoteDataSource mDataSource;
+//    private QuoteDataSource mDataSource;
 
     private SimpleCursorAdapter mSimpleCursorAdapter;
 
@@ -111,8 +109,8 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
 
         NotificationManager.addListener(this);
 
-        mDataSource = new QuoteDataSource(getActivity());
-        mDataSource.open();
+//        mDataSource = new QuoteDataSource(getActivity());
+//        mDataSource.open();
 
         LOGD(TAG, String.format("onCreate: mWidgetId = %d, mWidgetItemsNumber = %d",
                 mWidgetId, mWidgetItemsNumber));
@@ -129,15 +127,15 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
         changeColor();
 
         // формируем столбцы сопоставления
-        String[] from = new String[] { QuoteContract.ModelColumns.MODEL_NAME,
+        String[] from = new String[]{QuoteContract.ModelColumns.MODEL_NAME,
                 QuoteContract.ModelColumns.MODEL_RATE,
                 QuoteContract.ModelColumns.MODEL_CURRENCY,
                 QuoteContract.ModelColumns.MODEL_CHANGE,
                 QuoteContract.ModelColumns.MODEL_PERCENT_CHANGE,
-                QuoteContract.SettingColumns.SETTING_QUOTE_POSITION };
+                QuoteContract.SettingColumns.SETTING_QUOTE_POSITION};
 
-        int[] to = new int[] { R.id.tvName, R.id.tvRate, R.id.tvCurrency, R.id.tvChange,
-                R.id.tvChangePercentage, R.id.tvPosition };
+        int[] to = new int[]{R.id.tvName, R.id.tvRate, R.id.tvCurrency, R.id.tvChange,
+                R.id.tvChangePercentage, R.id.tvPosition};
 
         // создааем адаптер и настраиваем список
         mSimpleCursorAdapter = new MySimpleCursorAdapter(getActivity(), R.layout.configure_quote_grid_item, null, from, to, 0);
@@ -154,7 +152,7 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
 
         // создаем лоадер для чтения данных
         Loader loader = getActivity().getSupportLoaderManager().getLoader(URL_LOADER);
-        if(null == loader) {
+        if (null == loader) {
             LOGD(TAG, "Loader is null");
             getActivity().getSupportLoaderManager().initLoader(URL_LOADER, null, this);
         } else {
@@ -167,7 +165,7 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
             @Override
             public void onClick(View v) {
                 StockItemTypeDialogFragment dialog = new StockItemTypeDialogFragment();
-                dialog.set(mWidgetItemsNumber + 1, PlaceStockItemsFragment.this);
+                dialog.set(-1, PlaceStockItemsFragment.this);
                 dialog.show(getActivity().getSupportFragmentManager(), "StockItemTypeDialogFragment");
             }
         });
@@ -190,13 +188,13 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
     public void onDestroy() {
         super.onDestroy();
         NotificationManager.removeListener(this);
-        if (null != mDataSource) mDataSource.close();
+//        if (null != mDataSource) mDataSource.close();
         LOGD(TAG, "onDestroy");
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new MyCursorLoader(getActivity(), mDataSource, getArguments().getInt(ARG_WIDGET_ID));
+        return new MyCursorLoader(getActivity(), EconomicWidgetConfigureActivity.mDataSource, getArguments().getInt(ARG_WIDGET_ID));
     }
 
     @Override
@@ -240,7 +238,7 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
         switch (item.getItemId()) {
             case R.id.action_add_quote:
                 StockItemTypeDialogFragment dialog = new StockItemTypeDialogFragment();
-                dialog.set(mWidgetItemsNumber + 1, PlaceStockItemsFragment.this);
+                dialog.set(-1, PlaceStockItemsFragment.this);
                 dialog.show(getActivity().getSupportFragmentManager(), "StockItemTypeDialogFragment");
                 break;
             default:
@@ -251,7 +249,7 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
     private void deleteItem(int pos) {
         Cursor cursor = (Cursor) mSimpleCursorAdapter.getItem(pos - 1);
         // извлекаем id записи и удаляем соответствующую запись в БД
-        mDataSource.deleteSettingsByIdAndUpdatePositions(cursor.getString(cursor
+        EconomicWidgetConfigureActivity.mDataSource.deleteSettingsByIdAndUpdatePositions(cursor.getString(cursor
                 .getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_ID)), pos);
         // получаем новый курсор с данными
         getActivity().getSupportLoaderManager().getLoader(URL_LOADER).forceLoad();
@@ -282,13 +280,12 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
     public void onDetach() {
         super.onDetach();
         mListener = null;
-        if (null != mDataSource) mDataSource.close(); // закрываем подключение при выходе
+//        if (null != mDataSource) mDataSource.close(); // закрываем подключение при выходе
         getActivity().getSupportLoaderManager().destroyLoader(URL_LOADER);
         LOGD(TAG, "onDetach");
     }
 
     /**
-     *
      * Этот интерфейс должен быть реализован Activity, которые содержат этот фрагмент,
      * чтобы этот фрагмент мог общаться с Activity и фрагментами содержащимися в ней.
      * <p/>
@@ -300,9 +297,8 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
         // TODO: Update argument type and name
 
         /**
-         *
          * @param quoteTypeValue цифровое значение типа котировки
-         * @param position Порядковый номер котировки на виджете.
+         * @param position       Порядковый номер котировки на виджете.
          */
         public void showQuotePickerActivity(int quoteTypeValue, int position);
     }
@@ -326,8 +322,8 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
             LinearLayout layout = (LinearLayout) view.findViewById(R.id.lLayoutRate);
 
             if (null == symbol || symbol.isEmpty()) {
-                QuoteType quoteType = QuoteType.valueOf(cursor.getString(cursor
-                        .getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_QUOTE_TYPE)));
+                int quoteType = cursor.getInt(cursor.getColumnIndexOrThrow(
+                        QuoteContract.SettingColumns.SETTING_QUOTE_TYPE));
                 symbol = cursor.getString(cursor.getColumnIndexOrThrow(
                         QuoteContract.SettingColumns.SETTING_QUOTE_SYMBOL));
                 ((TextView) view.findViewById(R.id.tvName)).setText(
@@ -381,10 +377,11 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
 
         private static final String ARG_POSITION = "position";
 
-        private int mPosition;
+        private int mPosition = -1;
         private PlaceStockItemsFragment mFragment;
 
-        public StockItemTypeDialogFragment() {}
+        public StockItemTypeDialogFragment() {
+        }
 
         public void set(int position, PlaceStockItemsFragment fragment) {
             mPosition = position;
@@ -427,12 +424,16 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
                         }
                     });
 
-            builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    mFragment.deleteItem(mPosition);
-                }
-            }).setNegativeButton(R.string.cancel, null);
+            if (-1 != mPosition) {
+                builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mFragment.deleteItem(mPosition);
+                    }
+                });
+            }
+
+            builder.setNegativeButton(R.string.cancel, null);
 
             return builder.create();
         }
@@ -483,7 +484,10 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
             RemoteYahooFinanceDataFetcher dataFetcher = new RemoteYahooFinanceDataFetcher();
 
             int widgetId = Integer.parseInt(params[0]);
-            Cursor cursor = mDataSource.getCursorSettingsWithoutModelByWidgetId(widgetId);
+//            QuoteDataSource dataSource = new QuoteDataSource(getActivity());
+//            dataSource.open();
+            Cursor cursor = EconomicWidgetConfigureActivity.mDataSource
+                    .getCursorSettingsWithoutModelByWidgetId(widgetId);
 
             if (0 == cursor.getCount()) {
                 cursor.close();
@@ -496,8 +500,8 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
             do {
                 String symbol = cursor.getString(cursor.getColumnIndexOrThrow(
                         QuoteContract.SettingColumns.SETTING_QUOTE_SYMBOL));
-                QuoteType quoteType = QuoteType.valueOf(cursor.getString(cursor.getColumnIndexOrThrow(
-                        QuoteContract.SettingColumns.SETTING_QUOTE_TYPE)));
+                int quoteType = cursor.getInt(cursor.getColumnIndexOrThrow(
+                        QuoteContract.SettingColumns.SETTING_QUOTE_TYPE));
 
                 LOGD(TAG, String.format("FetchQuote.doInBackground: quoteType = %s, symbol = %s", quoteType, symbol));
 
@@ -516,21 +520,16 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
 
                 Map<String, Model> symbolModelMap = handleJSON.getSymbolModelMap();
 
-                for (String symbol: symbolSet) {
+                for (String symbol : symbolSet) {
                     Model model = symbolModelMap.get(symbol);
                     if (model == null) {
                         model = new Model();
                         model.setId(symbol);
                         model.setName(symbol);
                     }
-                    mDataSource.addModelRec(model);
+                    EconomicWidgetConfigureActivity.mDataSource.addModelRec(model);
                     models.add(model);
                 }
-
-//                for (Model model: symbolModelMap.values()) {
-//                    mDataSource.addModelRec(model);
-//                    models.add(model);
-//                }
 
                 LOGD(TAG, "FetchQuote.doInBackground: currentThread = " + Thread.currentThread());
 

@@ -25,7 +25,7 @@ public class ConfigPreferenceFragment extends PreferenceFragment
     public static final String KEY_PREF_UPDATE_INTERVAL_DEFAULT_VALUE = "1800000";
 
     public static final String KEY_PREF_BG_COLOR = "pref_listBgColor";
-    public static final String KEY_PREF_BG_COLOR_DEFAULT_VALUE = "#3498db";
+    public static final String KEY_PREF_BG_COLOR_DEFAULT_VALUE = "#34495e";
 
     public static final String KEY_PREF_BG_VISIBILITY = "pref_listBgVisibility";
     public static final String KEY_PREF_BG_VISIBILITY_DEFAULT_VALUE = "C0";

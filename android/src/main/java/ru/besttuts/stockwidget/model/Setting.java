@@ -8,7 +8,7 @@ public class Setting {
     private String id;
     private int widgetId;
     private int quotePosition;
-    private QuoteType quoteType;
+    private int quoteType;
     private String quoteSymbol;
 
     public String getId() {
@@ -35,11 +35,11 @@ public class Setting {
         this.quotePosition = quotePosition;
     }
 
-    public QuoteType getQuoteType() {
+    public int getQuoteType() {
         return quoteType;
     }
 
-    public void setQuoteType(QuoteType quoteType) {
+    public void setQuoteType(int quoteType) {
         this.quoteType = quoteType;
     }
 

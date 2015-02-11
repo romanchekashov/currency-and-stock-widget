@@ -38,7 +38,7 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 /**
  *
  */
-public class MyQuotesFragment extends Fragment implements IQuoteTypeFragment, LoaderCallbacks<Cursor>,
+public class MyQuotesFragment extends AbsQuoteSelectionFragment implements LoaderCallbacks<Cursor>,
         NotificationManager.OptionsItemSelectListener {
 
     private static final String TAG = makeLogTag(MyQuotesFragment.class);
@@ -51,8 +51,6 @@ public class MyQuotesFragment extends Fragment implements IQuoteTypeFragment, Lo
     private int mWidgetItemsNumber;
     private String mSymbol;
     private Set<String> mSymbols;
-
-    private QuoteDataSource mDataSource;
 
     private SimpleCursorAdapter mSimpleCursorAdapter;
 
@@ -70,10 +68,11 @@ public class MyQuotesFragment extends Fragment implements IQuoteTypeFragment, Lo
      * @param widgetId идентификатор виджета.
      * @return Новый объект фрагмента PlaceStockItemsFragment.
      */
-    public static MyQuotesFragment newInstance(int widgetId) {
+    public static MyQuotesFragment newInstance(int widgetId, int quoteType) {
         MyQuotesFragment fragment = new MyQuotesFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_WIDGET_ID, widgetId);
+        args.putInt(ARG_QUOTE_TYPE, quoteType);
         fragment.setArguments(args);
         return fragment;
     }
@@ -98,7 +97,7 @@ public class MyQuotesFragment extends Fragment implements IQuoteTypeFragment, Lo
 
     public void deleteSelectedSymbols() {
         String[] symbols = getSelectedSymbols();
-        mDataSource.deleteQuotesByIds(symbols);
+        QuotePickerActivity.mDataSource.deleteQuotesByIds(symbols);
         mSymbols = new HashSet<>();
         Toast.makeText(getActivity(), String.format("%d quotes deleted!", symbols.length),
                 Toast.LENGTH_SHORT).show();
@@ -127,9 +126,6 @@ public class MyQuotesFragment extends Fragment implements IQuoteTypeFragment, Lo
         }
 
         NotificationManager.addListener(this);
-
-        mDataSource = new QuoteDataSource(getActivity());
-        mDataSource.open();
 
         LOGD(TAG, String.format("onCreate: mWidgetId = %d, mWidgetItemsNumber = %d",
                 mWidgetId, mWidgetItemsNumber));
@@ -221,13 +217,12 @@ public class MyQuotesFragment extends Fragment implements IQuoteTypeFragment, Lo
     public void onDestroy() {
         super.onDestroy();
         NotificationManager.removeListener(this);
-        if (null != mDataSource) mDataSource.close();
         LOGD(TAG, "onDestroy");
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new MyCursorLoader(getActivity(), mDataSource, getArguments().getInt(ARG_WIDGET_ID));
+        return new MyCursorLoader(getActivity(), QuotePickerActivity.mDataSource, mQuoteType);
     }
 
     @Override
@@ -262,8 +257,8 @@ public class MyQuotesFragment extends Fragment implements IQuoteTypeFragment, Lo
     private void deleteItem(int pos) {
         Cursor cursor = (Cursor) mSimpleCursorAdapter.getItem(pos - 1);
         // извлекаем id записи и удаляем соответствующую запись в БД
-        mDataSource.deleteSettingsByIdAndUpdatePositions(cursor.getString(cursor
-                .getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_ID)), pos);
+        QuotePickerActivity.mDataSource.deleteSettingsByIdAndUpdatePositions(cursor.getString(
+                cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_ID)), pos);
         // получаем новый курсор с данными
         getActivity().getSupportLoaderManager().getLoader(URL_LOADER).forceLoad();
     }
@@ -282,46 +277,9 @@ public class MyQuotesFragment extends Fragment implements IQuoteTypeFragment, Lo
     @Override
     public void onDetach() {
         super.onDetach();
-        if (null != mDataSource) mDataSource.close(); // закрываем подключение при выходе
         getActivity().getSupportLoaderManager().destroyLoader(URL_LOADER);
         mListener = null;
         LOGD(TAG, "onDetach");
-    }
-
-    static class MyCursorLoader extends CursorLoader {
-
-        QuoteDataSource mDataSource;
-        int mWidgetId;
-
-        public MyCursorLoader(Context context, QuoteDataSource dataSource, int widgetId) {
-            super(context);
-            mDataSource = dataSource;
-            mWidgetId = widgetId;
-        }
-
-        @Override
-        public Cursor loadInBackground() {
-            Cursor cursor = mDataSource.getQuoteCursor(QuoteType.QUOTES);
-
-            LOGD(TAG, "loadInBackground: currentThread = " + Thread.currentThread());
-
-            LOGD(TAG, "loadInBackground: cursor.getCount: " + cursor.getCount());
-//            try {
-//                TimeUnit.SECONDS.sleep(3);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-            return cursor;
-        }
-
-    }
-
-    private void setSelectedBgView(View view) {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String bgColor = "#" + ConfigPreferenceFragment.KEY_PREF_BG_VISIBILITY_DEFAULT_VALUE +
-                sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_COLOR,
-                        ConfigPreferenceFragment.KEY_PREF_BG_COLOR_DEFAULT_VALUE).substring(1);
-        view.setBackgroundColor(Color.parseColor(bgColor));
     }
 
     public interface OnFragmentInteractionListener {
@@ -329,25 +287,6 @@ public class MyQuotesFragment extends Fragment implements IQuoteTypeFragment, Lo
         public void showDeleteItem(boolean isVisible);
 
         public void deleteQuote(String[] symbols);
-    }
-
-    private class MySimpleCursorAdapter extends SimpleCursorAdapter {
-        MySimpleCursorAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
-            super(context, layout, c, from, to, flags);
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View view = super.getView(position, convertView, parent);
-            String symbol = String.valueOf(((TextView) view.findViewById(android.R.id.text2)).getText());
-            if (mSymbols.contains(symbol)) {
-                setSelectedBgView(view);
-            } else {
-                view.setBackgroundColor(Color.TRANSPARENT);
-            }
-
-            return view;
-        }
     }
 
 }

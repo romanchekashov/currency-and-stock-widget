@@ -3,17 +3,16 @@ package ru.besttuts.stockwidget.model;
 /**
  * Created by roman on 15.01.2015.
  */
-public enum QuoteType {
-    CURRENCY_EXCHANGE(0), GOODS(1), STOCK(2), INDICES(3), QUOTES(4);
+public interface QuoteType {
 
-    private final int value;
+    final static int CURRENCY = 0;
 
-    private QuoteType(int value) {
-        this.value = value;
-    }
+    final static int GOODS = 1;
 
-    public int getValue() {
-        return value;
-    }
+    final static int INDICES = 2;
+
+    final static int STOCK = 3;
+
+    final static int QUOTES = 4;
 
 }

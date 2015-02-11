@@ -20,17 +20,16 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.model.Model;
-import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
 import ru.besttuts.stockwidget.service.UpdateService;
 import ru.besttuts.stockwidget.util.NotificationManager;
 import ru.besttuts.stockwidget.util.Utils;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
@@ -55,7 +54,7 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
 
     private static final int MY_QUOTES_VALUE = 4;
 
-    private QuoteDataSource mDataSource;
+    static QuoteDataSource mDataSource;
 
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
 
@@ -141,7 +140,7 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
         }
     }
 
-    private void acceptBtnPressed(){
+    private void acceptBtnPressed() {
         final Context context = EconomicWidgetConfigureActivity.this;
 
         // When the button is clicked, store the string locally
@@ -151,7 +150,7 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
 //        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
 //        EconomicWidget.updateAppWidget(context, appWidgetManager, mAppWidgetId, new ArrayList<Model>());
 
-        Intent intent = new Intent(context.getApplicationContext(),UpdateService.class);
+        Intent intent = new Intent(context.getApplicationContext(), UpdateService.class);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[]{mAppWidgetId});
         // Update the widgets via the service
         context.startService(intent);
@@ -230,9 +229,10 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
         super.onDestroy();
         if (null != mDataSource) mDataSource.close();
         NotificationManager.removeListener(this);
+        LOGD(TAG, "onDestroy");
     }
 
-    void showQuoteFragment(QuoteType quoteType) {
+    void showQuoteFragment(int quoteType) {
 //        if (mIsDualPane) {
 //            GoodsItemFragment details = (GoodsItemFragment) getSupportFragmentManager()
 //                    .findFragmentById(R.id.cont);
@@ -280,6 +280,7 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
         prefs.putString(PREF_PREFIX_KEY + appWidgetId + "_lastupdatetime", text);
         prefs.commit();
     }
+
     static String loadLastUpdateTimePref(Context context, int appWidgetId) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
         String titleValue = prefs.getString(PREF_PREFIX_KEY + appWidgetId + "_lastupdatetime", null);
@@ -291,6 +292,7 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
             return dateFormat.format(Calendar.getInstance().getTime());
         }
     }
+
     static void deleteLastUpdateTimePref(Context context, int appWidgetId) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.remove(PREF_PREFIX_KEY + appWidgetId + "_lastupdatetime");

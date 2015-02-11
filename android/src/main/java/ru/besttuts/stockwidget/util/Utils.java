@@ -27,10 +27,11 @@ public class Utils {
         return getModelNameFromResourcesBySymbol(context, QuoteType.GOODS, symbol);
     }
 
-    public static String getModelNameFromResourcesBySymbol(Context context, QuoteType type, String symbol) {
-        if (null == context || null == type || null == symbol || symbol.isEmpty()) return "-";
+    public static String getModelNameFromResourcesBySymbol(Context context, int quoteType,
+                                                           String symbol) {
+        if (null == context || null == symbol || symbol.isEmpty()) return "-";
 
-        if (QuoteType.CURRENCY_EXCHANGE.equals(type)) {
+        if (QuoteType.CURRENCY == quoteType) {
             return symbol.substring(0, 3) + "/" + symbol.substring(3);
         }
 

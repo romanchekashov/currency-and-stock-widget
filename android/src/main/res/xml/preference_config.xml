@@ -24,7 +24,7 @@
         <ru.besttuts.stockwidget.ui.preferences.ColorPreference
             android:entries="@array/color_entries"
             android:entryValues="@array/color_entry_values"
-            android:defaultValue="#3498db"
+            android:defaultValue="#34495e"
             android:key="pref_listBgColor"
             android:summary="@string/pref_bg_color"
             android:title="@string/pref_bg_color">
@@ -32,7 +32,7 @@
         <ListPreference
             android:entries="@array/alpha_entries"
             android:entryValues="@array/alpha_entry_values"
-            android:defaultValue="80"
+            android:defaultValue="C0"
             android:key="pref_listBgVisibility"
             android:summary="@string/pref_bg_visibility"
             android:title="@string/pref_bg_visibility">

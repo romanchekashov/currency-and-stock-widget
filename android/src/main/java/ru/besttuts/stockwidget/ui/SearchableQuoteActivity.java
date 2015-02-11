@@ -16,47 +16,37 @@
 
 package ru.besttuts.stockwidget.ui;
 
-import android.app.Activity;
 import android.app.SearchManager;
-import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteConstraintException;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.support.v7.widget.SearchView;
-import android.support.v4.widget.SimpleCursorAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.io.model.Result;
-import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.provider.QuoteContract;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
 import ru.besttuts.stockwidget.provider.SymbolProvider;
-import ru.besttuts.stockwidget.ui.view.SoftKeyboardHandledLinearLayout;
 import ru.besttuts.stockwidget.util.Utils;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
@@ -112,10 +102,10 @@ public class SearchableQuoteActivity extends ActionBarActivity
                     EconomicWidgetConfigureActivity.ARG_QUOTE_TYPE_VALUE);
         }
 
-        String[] from = new String[] { QuoteContract.QuoteColumns.QUOTE_NAME,
-                QuoteContract.QuoteColumns.QUOTE_SYMBOL };
+        String[] from = new String[]{QuoteContract.QuoteColumns.QUOTE_NAME,
+                QuoteContract.QuoteColumns.QUOTE_SYMBOL};
 
-        int[] to = new int[] { android.R.id.text1, android.R.id.text2 };
+        int[] to = new int[]{android.R.id.text1, android.R.id.text2};
 
         mSimpleCursorAdapter = new SimpleCursorAdapter(this,
                 android.R.layout.simple_list_item_2, null, from, to, 0);
@@ -134,12 +124,12 @@ public class SearchableQuoteActivity extends ActionBarActivity
                 if (null != mDataSource) {
                     try {
                         mDataSource.addQuoteRec(result);
+                        finish();
                     } catch (IllegalArgumentException e) {
                         LOGE(TAG, e.getMessage());
                         Toast.makeText(SearchableQuoteActivity.this,
                                 e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
-                    finish();
                 }
             }
         });
@@ -149,7 +139,7 @@ public class SearchableQuoteActivity extends ActionBarActivity
 
         // создаем лоадер для чтения данных
         Loader loader = getSupportLoaderManager().getLoader(URL_LOADER);
-        if(null == loader) {
+        if (null == loader) {
             LOGD(TAG, "Loader is null");
             getSupportLoaderManager().initLoader(URL_LOADER, null, this);
         } else {
@@ -332,7 +322,7 @@ public class SearchableQuoteActivity extends ActionBarActivity
             query = args.getString("query");
         }
         return new CursorLoader(this, SymbolProvider.SEARCH_URI, null, null,
-                new String[]{ query }, null);
+                new String[]{query}, null);
     }
 
     @Override

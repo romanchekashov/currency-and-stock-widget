@@ -76,7 +76,7 @@ public class ConfigureMenuFragment extends Fragment {
         currencyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onConfigureMenuFragmentInteraction(QuoteType.CURRENCY_EXCHANGE);
+                mListener.onConfigureMenuFragmentInteraction(QuoteType.CURRENCY);
             }
         });
         // Inflate the layout for this fragment
@@ -86,7 +86,7 @@ public class ConfigureMenuFragment extends Fragment {
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
-            mListener.onConfigureMenuFragmentInteraction(QuoteType.CURRENCY_EXCHANGE);
+            mListener.onConfigureMenuFragmentInteraction(QuoteType.CURRENCY);
         }
     }
 
@@ -119,7 +119,7 @@ public class ConfigureMenuFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onConfigureMenuFragmentInteraction(QuoteType quoteType);
+        public void onConfigureMenuFragmentInteraction(int quoteType);
     }
 
 }

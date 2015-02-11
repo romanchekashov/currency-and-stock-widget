@@ -22,7 +22,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
     public void testGetModelNameFromResourcesBySymbol() throws Exception {
 
         assertEquals("EUR/RUB", Utils.getModelNameFromResourcesBySymbol(getContext(),
-                QuoteType.CURRENCY_EXCHANGE, "EURRUB"));
+                QuoteType.CURRENCY, "EURRUB"));
         assertEquals(getContext().getString(R.string.gcf15_cmx),
                 Utils.getModelNameFromResourcesBySymbol(getContext(),
                         QuoteType.GOODS, "GCF15.CMX"));

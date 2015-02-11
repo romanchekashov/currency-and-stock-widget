@@ -50,7 +50,7 @@ public class QuoteDataSource {
     }
 
     public void addSettingsRec(int mAppWidgetId, int widgetItemPosition,
-                               String type, String[] symbols) {
+                               int type, String[] symbols) {
 
         for (int i = 0; i < symbols.length; i++) {
             String symbol = symbols[i];
@@ -80,13 +80,13 @@ public class QuoteDataSource {
 
     }
 
-    public void addModelRec(QuoteType type, String symbol) {
+    public void addModelRec(int quoteType, String symbol) {
 
         // New value for one column
         ContentValues values = new ContentValues();
         values.put(QuoteContract.ModelColumns.MODEL_ID, symbol);
         values.put(QuoteContract.ModelColumns.MODEL_NAME,
-                Utils.getModelNameFromResourcesBySymbol(context, type, symbol));
+                Utils.getModelNameFromResourcesBySymbol(context, quoteType, symbol));
         values.put(QuoteContract.ModelColumns.MODEL_RATE, 0);
         values.put(QuoteContract.ModelColumns.MODEL_CHANGE, 0);
         values.put(QuoteContract.ModelColumns.MODEL_PERCENT_CHANGE, "");
@@ -110,7 +110,7 @@ public class QuoteDataSource {
         ContentValues values = new ContentValues();
         values.put(QuoteContract.QuoteColumns.QUOTE_SYMBOL, result.symbol);
         values.put(QuoteContract.QuoteColumns.QUOTE_NAME, result.name);
-        values.put(QuoteContract.QuoteColumns.QUOTE_TYPE, String.valueOf(QuoteType.QUOTES));
+        values.put(QuoteContract.QuoteColumns.QUOTE_TYPE, QuoteType.QUOTES);
 
         // Which row to update, based on the ID
         String selection = QuoteContract.QuoteColumns.QUOTE_SYMBOL + " LIKE ?";
@@ -147,6 +147,8 @@ public class QuoteDataSource {
         // Which row to update, based on the ID
         String selection = QuoteContract.ModelColumns.MODEL_ID + " LIKE ?";
         String[] selectionArgs = { model.getId() };
+
+        if (null == mDatabase || !mDatabase.isOpen()) return;
 
         long count = mDatabase.insertWithOnConflict(
                 QuoteDatabaseHelper.Tables.MODELS,
@@ -343,7 +345,7 @@ public class QuoteDataSource {
         );
     }
 
-    public Cursor getQuoteCursor(QuoteType quoteType) {
+    public Cursor getQuoteCursor(int quoteType) {
         // Define a projection that specifies which columns from the database
         // you will actually use after this query.
         String[] projection = {
@@ -355,8 +357,7 @@ public class QuoteDataSource {
 
         // How you want the results sorted in the resulting Cursor
         String sortOrder = BaseColumns._ID + " ASC";
-        String where = String.format("%s = '%s'", QuoteContract.QuoteColumns.QUOTE_TYPE,
-                String.valueOf(quoteType));
+        String where = String.format("%s = %d", QuoteContract.QuoteColumns.QUOTE_TYPE, quoteType);
 
         return mDatabase.query(
                 QuoteDatabaseHelper.Tables.QUOTES,  // The table to query
@@ -424,7 +425,7 @@ public class QuoteDataSource {
         setting.setId(cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_ID)));
         setting.setWidgetId(cursor.getInt(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_WIDGET_ID)));
         setting.setQuotePosition(cursor.getInt(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_QUOTE_POSITION)));
-        setting.setQuoteType(QuoteType.valueOf(cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_QUOTE_TYPE))));
+        setting.setQuoteType(cursor.getInt(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_QUOTE_TYPE)));
         setting.setQuoteSymbol(cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_QUOTE_SYMBOL)));
 
         return setting;

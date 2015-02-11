@@ -15,7 +15,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import ru.besttuts.stockwidget.R;
-import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.provider.QuoteContract;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
@@ -56,12 +55,13 @@ public class GoodsItemFragment extends AbsQuoteSelectionFragment implements Load
      */
     private ListView mListView;
 
-    public static GoodsItemFragment newInstance(int widgetItemPosition, int quoteTypeValue) {
+    public static GoodsItemFragment newInstance(int widgetItemPosition, int quoteTypeValue,
+                                                int quoteType) {
         GoodsItemFragment fragment = new GoodsItemFragment();
         Bundle args = new Bundle();
         args.putInt("widgetItemPosition", widgetItemPosition);
         args.putInt("quoteTypeValue", quoteTypeValue);
-        args.putString("quoteType", String.valueOf(QuoteType.GOODS));
+        args.putInt(ARG_QUOTE_TYPE, quoteType);
         fragment.setArguments(args);
         return fragment;
     }
@@ -87,6 +87,8 @@ public class GoodsItemFragment extends AbsQuoteSelectionFragment implements Load
         if (getArguments() != null) {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        LOGD(TAG, "onCreate");
+
     }
 
 
@@ -180,7 +182,7 @@ public class GoodsItemFragment extends AbsQuoteSelectionFragment implements Load
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new MyCursorLoader(getActivity(), mDataSource, mQuoteType);
+        return new MyCursorLoader(getActivity(), QuotePickerActivity.mDataSource, mQuoteType);
     }
 
     @Override

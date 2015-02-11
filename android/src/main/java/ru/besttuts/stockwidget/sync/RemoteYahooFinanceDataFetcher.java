@@ -97,13 +97,13 @@ public class RemoteYahooFinanceDataFetcher {
 //        return String.format(baseYahooUrlreturnJson, getYahooFinanceXchangeQuery());
 //    }
 
-    public void populateQuoteSet(QuoteType type, String symbol) {
-        switch (type) {
-            case CURRENCY_EXCHANGE:
+    public void populateQuoteSet(int quoteType, String symbol) {
+        switch (quoteType) {
+            case QuoteType.CURRENCY:
                 currencyExchangeSet.add(symbol);
                 break;
-            case GOODS:
-            case QUOTES:
+            case QuoteType.GOODS:
+            case QuoteType.QUOTES:
                 String s = new String(symbol);
 //                if ("^DJI".equals(s)) s = "INDU"; // символ исключение для ^DJI
                 goodSet.add(s);
@@ -114,11 +114,11 @@ public class RemoteYahooFinanceDataFetcher {
     public void populateQuoteSet(List<Setting> settings) {
         for (Setting setting: settings) {
             switch (setting.getQuoteType()) {
-                case CURRENCY_EXCHANGE:
+                case QuoteType.CURRENCY:
                     currencyExchangeSet.add(setting.getQuoteSymbol());
                     break;
-                case GOODS:
-                case QUOTES:
+                case QuoteType.GOODS:
+                case QuoteType.QUOTES:
                     String s = new String(setting.getQuoteSymbol());
                     if ("^DJI".equals(s)) s = "INDU"; // символ исключение для ^DJI
                     goodSet.add(s);

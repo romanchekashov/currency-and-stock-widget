@@ -7,22 +7,11 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.Assert.assertNotNull;
-import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
-import static ru.besttuts.stockwidget.util.LogUtils.LOGI;
-import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
-
-import ru.besttuts.stockwidget.io.HandleJSON;
-import ru.besttuts.stockwidget.model.Model;
-import ru.besttuts.stockwidget.model.QuoteType;
-import ru.besttuts.stockwidget.model.Setting;
 import ru.besttuts.stockwidget.sync.RemoteYahooFinanceDataFetcher;
 import ru.besttuts.stockwidget.util.CurrencyXmlParser;
+
+import static org.junit.Assert.assertNotNull;
+import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
 /**
  * Created by roman on 16.01.2015.

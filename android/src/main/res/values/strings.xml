@@ -75,6 +75,8 @@
     <string name="ojh15_nyb">Orange Juice</string>
     <string name="sbh15_nyb">Sugar</string>
 
+    <!-- indices -->
+
     <array name="good_array">
         <item>Gold(GCF15.CMX)</item>
         <item>Silver(SIF15.CMX)</item>
