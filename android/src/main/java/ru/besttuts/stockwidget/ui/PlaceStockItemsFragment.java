@@ -174,6 +174,12 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        NotificationManager.removeListener(this);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         LOGD(TAG, "onResume: currentThread = " + Thread.currentThread());
@@ -187,7 +193,6 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
     @Override
     public void onDestroy() {
         super.onDestroy();
-        NotificationManager.removeListener(this);
 //        if (null != mDataSource) mDataSource.close();
         LOGD(TAG, "onDestroy");
     }

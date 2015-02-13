@@ -51,6 +51,8 @@ public class EconomicWidget extends AppWidgetProvider {
 
     public final static String BROADCAST_ACTION = "ru.besttuts.stockwidget";
 
+    private static int widgetLayoutId = R.layout.economic_widget;
+
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 
@@ -78,24 +80,7 @@ public class EconomicWidget extends AppWidgetProvider {
             return;
         }
 
-        // Создаем intent для вызова сервиса
-        Intent intent = new Intent(context.getApplicationContext(),
-                UpdateService.class);
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, allWidgetIds);
-        intent.putExtra(ARG_HAS_INTERNET, hasInternet);
-
-        // Обновляем виджеты через сервис
-        context.startService(intent);
-
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.economic_widget);
-        views.setViewVisibility(R.id.ibRefresh, View.GONE);
-        views.setViewVisibility(R.id.progressBar, View.VISIBLE);
-
-        // Возможно активны несколько виджетов, поэтому обновляем их все
-        final int N = appWidgetIds.length;
-        for (int i = 0; i < N; i++) {
-            appWidgetManager.updateAppWidget(allWidgetIds[i], views);
-        }
+        update(context, appWidgetManager, allWidgetIds, hasInternet);
 
         if(BuildConfig.DEBUG) {
             LOGD(TAG, "onUpdate");
@@ -103,6 +88,30 @@ public class EconomicWidget extends AppWidgetProvider {
                 LOGD(TAG, "widgetId = " + allWidgetIds[i]);
             }
         }
+    }
+
+    private void update(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds,
+                        boolean hasInternet) {
+
+        // Создаем intent для вызова сервиса
+        Intent intent = new Intent(context.getApplicationContext(),
+                UpdateService.class);
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
+        intent.putExtra(ARG_HAS_INTERNET, hasInternet);
+
+        // Обновляем виджеты через сервис
+        context.startService(intent);
+
+        RemoteViews views = new RemoteViews(context.getPackageName(), widgetLayoutId);
+        views.setViewVisibility(R.id.ibRefresh, View.GONE);
+        views.setViewVisibility(R.id.progressBar, View.VISIBLE);
+
+        // Возможно активны несколько виджетов, поэтому обновляем их все
+        final int N = appWidgetIds.length;
+        for (int i = 0; i < N; i++) {
+            appWidgetManager.updateAppWidget(appWidgetIds[i], views);
+        }
+
     }
 
     @Override
@@ -220,13 +229,13 @@ public class EconomicWidget extends AppWidgetProvider {
     public static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                        int appWidgetId, List<Model> models, boolean hasInternet) {
 
-//        LOGD(TAG, "updateAppWidget: minHeight = " + appWidgetManager.getAppWidgetInfo(appWidgetId).minHeight);
-//        LOGD(TAG, "updateAppWidget: minWidth = " + appWidgetManager.getAppWidgetInfo(appWidgetId).minWidth);
+        LOGD(TAG, "updateAppWidget: minHeight = " + appWidgetManager.getAppWidgetInfo(appWidgetId).minHeight);
+        LOGD(TAG, "updateAppWidget: minWidth = " + appWidgetManager.getAppWidgetInfo(appWidgetId).minWidth);
 
         if (null == models) models = new ArrayList<>();
 
         // Создаем объект RemoteViews для взаимодействи с отображением виджета
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.economic_widget);
+        RemoteViews views = new RemoteViews(context.getPackageName(), widgetLayoutId);
 
         readPrefsSettings(context, views); // считываем настройки виджета
 
@@ -352,7 +361,11 @@ public class EconomicWidget extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-        LOGD(TAG, "onReceive");
+        LOGD(TAG, "onReceive"); //com.sec.android.widgetapp.APPWIDGET_RESIZE
+        if (intent.getAction().contentEquals("com.sec.android.widgetapp.APPWIDGET_RESIZE")) {
+            handleResize(context, intent);
+            return;
+        }
         if (!intent.getAction().equalsIgnoreCase(UPDATE_ALL_WIDGETS)) return;
 
         ComponentName thisAppWidget = new ComponentName(
@@ -366,6 +379,31 @@ public class EconomicWidget extends AppWidgetProvider {
         LOGD(TAG, "onReceive: UPDATE_ALL_WIDGETS = " + UPDATE_ALL_WIDGETS);
 
     }
+
+    private void handleResize(Context context, Intent intent) {
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        Bundle newOptions = getOptions(context, intent);
+        int appWidgetId = intent.getIntExtra("widgetId", 0);
+
+        if (!newOptions.isEmpty()) {
+            onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
+        }
+    }
+
+    public Bundle getOptions(Context context, Intent intent) {
+        Bundle newOptions = new Bundle();
+
+        int appWidgetId = intent.getIntExtra("widgetId", 0);
+        int widgetSpanX = intent.getIntExtra("widgetspanx", 0);
+        int widgetSpanY = intent.getIntExtra("widgetspany", 0);
+
+        if(appWidgetId > 0 && widgetSpanX > 0 && widgetSpanY > 0) {
+            newOptions.putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, widgetSpanY * 74);
+            newOptions.putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, widgetSpanX * 74);
+        }
+        return newOptions;
+    }
+
 
     public boolean isSyncAllowed(Context context) {
         return isSyncAllowed(context, true);
@@ -414,14 +452,38 @@ public class EconomicWidget extends AppWidgetProvider {
 
         int minwidth_dp = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH);
         int maxwidth_dp = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH);
-        int minheight_dp = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT);
+        int minHeight_dp = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT);
         int maxheight_dp = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT);
 
         LOGD(TAG, "onAppWidgetOptionsChanged: minwidth_dp = " + minwidth_dp);
         LOGD(TAG, "onAppWidgetOptionsChanged: maxwidth_dp = " + maxwidth_dp);
-        LOGD(TAG, "onAppWidgetOptionsChanged: minheight_dp = " + minheight_dp);
+        LOGD(TAG, "onAppWidgetOptionsChanged: minheight_dp = " + minHeight_dp);
         LOGD(TAG, "onAppWidgetOptionsChanged: maxheight_dp = " + maxheight_dp);
 
+        // First find out rows and columns based on width provided.
+        int rows = getCellsForSize(minHeight_dp);
+        if(1 < rows) {
+            widgetLayoutId = R.layout.economic_widget_row2;
+        } else {
+            widgetLayoutId = R.layout.economic_widget;
+        }
+
+        update(context, appWidgetManager, new int[]{appWidgetId}, false);
+
+    }
+
+    /**
+     * Returns number of cells needed for given size of the widget.
+     *
+     * @param size Widget size in dp.
+     * @return Size in number of cells.
+     */
+    private static int getCellsForSize(int size) {
+        int n = 2;
+        while (70 * n - 30 < size) {
+            ++n;
+        }
+        return n - 1;
     }
 
 }

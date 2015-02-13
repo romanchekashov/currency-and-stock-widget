@@ -1,0 +1,93 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/widget_margin"
+    android:background="#ff2c3e50"
+    android:id="@+id/bgWidget">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:weightSum="100"
+        android:layout_alignParentRight="false"
+        android:id="@+id/linearLayout"
+        android:layout_alignParentTop="true">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="sync time"
+            android:id="@+id/tvSyncTime"
+            android:textColor="#ffffffff"
+            android:textSize="10sp"
+            android:layout_weight="30"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_margin="5dp">
+            <requestFocus
+                android:duplicateParentState="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true" />
+        </TextView>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="35">
+
+            <ProgressBar
+                style="?android:attr/progressBarStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/progressBar"
+                android:layout_gravity="center"
+                android:visibility="gone" />
+
+            <ImageButton
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/ibRefresh"
+                android:src="@drawable/refresh_btn"
+                android:layout_alignParentBottom="true"
+                android:background="#00ffffff"
+                android:layout_marginBottom="2dp" />
+        </LinearLayout>
+
+        <ImageButton
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:id="@+id/ibSettings"
+            android:src="@drawable/ic_action_settings"
+            android:layout_alignParentBottom="true"
+            android:background="#00ffffff"
+            android:focusable="false"
+            android:layout_weight="35"
+            android:focusableInTouchMode="false" />
+    </LinearLayout>
+
+    <GridView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/gridView2"
+        android:layout_alignParentLeft="true"
+        android:columnWidth="70dp"
+        android:gravity="center"
+        android:horizontalSpacing="5dp"
+        android:numColumns="auto_fit"
+        android:verticalSpacing="15dp"
+        android:stretchMode="columnWidth"
+        android:paddingLeft="10dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:layout_below="@+id/linearLayout" />
+
+</RelativeLayout>

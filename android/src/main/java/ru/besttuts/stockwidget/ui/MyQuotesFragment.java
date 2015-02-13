@@ -1,20 +1,13 @@
 package ru.besttuts.stockwidget.ui;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -27,10 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import ru.besttuts.stockwidget.R;
-import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.provider.QuoteContract;
-import ru.besttuts.stockwidget.provider.QuoteDataSource;
-import ru.besttuts.stockwidget.util.NotificationManager;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
@@ -38,8 +28,7 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 /**
  *
  */
-public class MyQuotesFragment extends AbsQuoteSelectionFragment implements LoaderCallbacks<Cursor>,
-        NotificationManager.OptionsItemSelectListener {
+public class MyQuotesFragment extends AbsQuoteSelectionFragment implements LoaderCallbacks<Cursor> {
 
     private static final String TAG = makeLogTag(MyQuotesFragment.class);
 
@@ -112,7 +101,8 @@ public class MyQuotesFragment extends AbsQuoteSelectionFragment implements Loade
     }
 
     // Необходим пустой общедоступный конструктор
-    public MyQuotesFragment() {}
+    public MyQuotesFragment() {
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -124,8 +114,6 @@ public class MyQuotesFragment extends AbsQuoteSelectionFragment implements Loade
         if (null != savedInstanceState) {
             mSymbols.addAll(savedInstanceState.getStringArrayList(ARG_SYMBOLS));
         }
-
-        NotificationManager.addListener(this);
 
         LOGD(TAG, String.format("onCreate: mWidgetId = %d, mWidgetItemsNumber = %d",
                 mWidgetId, mWidgetItemsNumber));
@@ -216,7 +204,6 @@ public class MyQuotesFragment extends AbsQuoteSelectionFragment implements Loade
     @Override
     public void onDestroy() {
         super.onDestroy();
-        NotificationManager.removeListener(this);
         LOGD(TAG, "onDestroy");
     }
 
@@ -240,18 +227,6 @@ public class MyQuotesFragment extends AbsQuoteSelectionFragment implements Loade
          * Это предотвращает утечку памяти.
          */
         mSimpleCursorAdapter.changeCursor(null);
-    }
-
-    @Override
-    public void onOptionsItemSelectedInActivity(MenuItem item) {
-        // Обработка нажатий на элемент ActionBar
-        switch (item.getItemId()) {
-            case R.id.action_delete:
-                LOGD(TAG, "action_delete");
-                break;
-            default:
-                break;
-        }
     }
 
     private void deleteItem(int pos) {

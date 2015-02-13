@@ -104,9 +104,9 @@ public class RemoteYahooFinanceDataFetcher {
                 break;
             case QuoteType.GOODS:
             case QuoteType.QUOTES:
-                String s = new String(symbol);
+//                String s = new String(symbol);
 //                if ("^DJI".equals(s)) s = "INDU"; // символ исключение для ^DJI
-                goodSet.add(s);
+                goodSet.add(symbol);
                 break;
         }
     }

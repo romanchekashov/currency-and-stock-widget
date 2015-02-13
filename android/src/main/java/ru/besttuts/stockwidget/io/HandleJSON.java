@@ -121,6 +121,7 @@ public class HandleJSON {
 
     public void readAndParseJSON(String in) {
         try {
+
             LOGD(TAG, "readAndParseJSON: " + in);
 
             JSONObject reader = new JSONObject(in);
