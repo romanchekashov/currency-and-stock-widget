@@ -57,7 +57,9 @@
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="45">
+                    android:layout_weight="45"
+                    android:layout_gravity="center"
+                    android:gravity="center_vertical|center_horizontal">
 
                     <ProgressBar
                         style="?android:attr/progressBarStyleSmall"
@@ -65,7 +67,8 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/progressBar"
                         android:layout_gravity="center"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        android:padding="9dp" />
 
                     <ImageButton
                         android:layout_width="match_parent"

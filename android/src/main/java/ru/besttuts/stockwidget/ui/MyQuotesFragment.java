@@ -72,11 +72,6 @@ public class MyQuotesFragment extends AbsQuoteSelectionFragment implements Loade
     }
 
     @Override
-    public int getQuoteTypeValue() {
-        return 0;
-    }
-
-    @Override
     public String[] getSelectedSymbols() {
         if (null == mSymbols) return new String[0];
 

@@ -7,7 +7,7 @@ public interface IQuoteTypeFragment {
 
     int getWidgetItemPosition();
 
-    int getQuoteTypeValue();
+    int getQuoteType();
 
     String[] getSelectedSymbols();
 }

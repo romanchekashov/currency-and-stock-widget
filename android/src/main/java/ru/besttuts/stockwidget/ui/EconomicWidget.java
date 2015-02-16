@@ -123,7 +123,6 @@ public class EconomicWidget extends AppWidgetProvider {
             dataSource.open();
             dataSource.deleteSettingsByWidgetId(appWidgetIds[i]);
             dataSource.close();
-            EconomicWidgetConfigureActivity.deleteTitlePref(context, appWidgetIds[i]);
         }
 
         if(BuildConfig.DEBUG) {
@@ -154,7 +153,6 @@ public class EconomicWidget extends AppWidgetProvider {
         AlarmManager alarmManager = (AlarmManager) context
                 .getSystemService(Context.ALARM_SERVICE);
 
-        // TODO: Добавить изменение интервала оповещения при изменении в настройках!!!
         alarmManager.setRepeating(AlarmManager.RTC,
                 System.currentTimeMillis(), interval, pIntent);
 
@@ -229,9 +227,6 @@ public class EconomicWidget extends AppWidgetProvider {
     public static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                        int appWidgetId, List<Model> models, boolean hasInternet) {
 
-        LOGD(TAG, "updateAppWidget: minHeight = " + appWidgetManager.getAppWidgetInfo(appWidgetId).minHeight);
-        LOGD(TAG, "updateAppWidget: minWidth = " + appWidgetManager.getAppWidgetInfo(appWidgetId).minWidth);
-
         if (null == models) models = new ArrayList<>();
 
         // Создаем объект RemoteViews для взаимодействи с отображением виджета
@@ -245,7 +240,7 @@ public class EconomicWidget extends AppWidgetProvider {
             setWidgetViewForApi10(views, context, models);
         }
 
-        if (hasInternet && null == connectionStatus) { // TODO connectionStatus always null!!! Need fix(correction)
+        if (hasInternet && null == connectionStatus) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm dd.MM.yy");
             String time = dateFormat.format(Calendar.getInstance().getTime());
             views.setTextViewText(R.id.tvSyncTime, time);
@@ -276,9 +271,8 @@ public class EconomicWidget extends AppWidgetProvider {
 
     }
 
+    // Обновление виджета (вторая зона)
     private static void setRefreshBtn(Context context, int appWidgetId, RemoteViews views) {
-
-        // Обновление виджета (вторая зона)
         Intent updateIntent = new Intent(context, EconomicWidget.class);
         updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
         updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,
@@ -287,9 +281,8 @@ public class EconomicWidget extends AppWidgetProvider {
         views.setOnClickPendingIntent(R.id.ibRefresh, pIntent);
     }
 
+    // Конфигурационный экран (первая зона)
     private static void setConfigBtn(Context context, int appWidgetId, RemoteViews views) {
-
-        // Конфигурационный экран (первая зона)
         Intent configIntent = new Intent(context, EconomicWidgetConfigureActivity.class);
         configIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_CONFIGURE);
         configIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
@@ -329,6 +322,8 @@ public class EconomicWidget extends AppWidgetProvider {
         int viewId = R.id.currency;
         views.removeAllViews(viewId);
         for (Model model: models) {
+            if (null == model) continue;
+
             RemoteViews viewItem = new RemoteViews(context.getPackageName(), R.layout.economic_widget_item);
             viewItem.setTextViewText(R.id.tvName, model.getName());
             viewItem.setTextViewText(R.id.tvRate, model.getRateToString());
@@ -361,11 +356,16 @@ public class EconomicWidget extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-        LOGD(TAG, "onReceive"); //com.sec.android.widgetapp.APPWIDGET_RESIZE
-        if (intent.getAction().contentEquals("com.sec.android.widgetapp.APPWIDGET_RESIZE")) {
+
+        String action = intent.getAction();
+        LOGD(TAG, "onReceive: intent.getAction = " + action);
+
+        // Отлавливаем событие изменения размера виджета
+        if (action.contentEquals("com.sec.android.widgetapp.APPWIDGET_RESIZE")) {
             handleResize(context, intent);
             return;
         }
+
         if (!intent.getAction().equalsIgnoreCase(UPDATE_ALL_WIDGETS)) return;
 
         ComponentName thisAppWidget = new ComponentName(
@@ -376,7 +376,6 @@ public class EconomicWidget extends AppWidgetProvider {
 
         onUpdate(context, appWidgetManager, appWidgetIds, isSyncAllowed(context));
 
-        LOGD(TAG, "onReceive: UPDATE_ALL_WIDGETS = " + UPDATE_ALL_WIDGETS);
 
     }
 
@@ -405,14 +404,19 @@ public class EconomicWidget extends AppWidgetProvider {
     }
 
 
+    public static volatile String connectionStatus;
+
     public boolean isSyncAllowed(Context context) {
         return isSyncAllowed(context, true);
     }
 
-    public static volatile String connectionStatus;
-
-    // Checks the network connection and sets the wifiConnected and mobileConnected
-    // variables accordingly.
+    /**
+     * Проверяем сетевое соединение.
+     *
+     * @param context
+     * @param isCheckSharedPreferences
+     * @return
+     */
     public boolean isSyncAllowed(Context context, boolean isCheckSharedPreferences) {
         ConnectivityManager connMgr = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -450,17 +454,14 @@ public class EconomicWidget extends AppWidgetProvider {
 
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
 
-        int minwidth_dp = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH);
-        int maxwidth_dp = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH);
+//        int minWidth_dp = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH);
+//        int maxWidth_dp = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH);
         int minHeight_dp = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT);
-        int maxheight_dp = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT);
+//        int maxHeight_dp = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT);
 
-        LOGD(TAG, "onAppWidgetOptionsChanged: minwidth_dp = " + minwidth_dp);
-        LOGD(TAG, "onAppWidgetOptionsChanged: maxwidth_dp = " + maxwidth_dp);
-        LOGD(TAG, "onAppWidgetOptionsChanged: minheight_dp = " + minHeight_dp);
-        LOGD(TAG, "onAppWidgetOptionsChanged: maxheight_dp = " + maxheight_dp);
+        LOGD(TAG, "onAppWidgetOptionsChanged: minHeight_dp = " + minHeight_dp);
 
-        // First find out rows and columns based on width provided.
+        // Находим кол-во строк по минимальной высоте виджета.
         int rows = getCellsForSize(minHeight_dp);
         if(1 < rows) {
             widgetLayoutId = R.layout.economic_widget_row2;
@@ -468,15 +469,16 @@ public class EconomicWidget extends AppWidgetProvider {
             widgetLayoutId = R.layout.economic_widget;
         }
 
+        // обновляем виджет с новым layout
         update(context, appWidgetManager, new int[]{appWidgetId}, false);
 
     }
 
     /**
-     * Returns number of cells needed for given size of the widget.
+     * Возвращает кол-во ячеек необходимое для данного размера виджета.
      *
-     * @param size Widget size in dp.
-     * @return Size in number of cells.
+     * @param size Размер виджета dp.
+     * @return Размер в кол-ве ячеек.
      */
     private static int getCellsForSize(int size) {
         int n = 2;

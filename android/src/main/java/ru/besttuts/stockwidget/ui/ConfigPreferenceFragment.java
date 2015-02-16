@@ -12,11 +12,16 @@ import com.github.machinarius.preferencefragment.PreferenceFragment;
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.util.NotificationManager;
 
+import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
+import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
+
 /**
  * Created by roman on 22.01.2015.
  */
 public class ConfigPreferenceFragment extends PreferenceFragment
         implements SharedPreferences.OnSharedPreferenceChangeListener {
+
+    private static final String TAG = makeLogTag(ConfigPreferenceFragment.class);
 
     public static final String KEY_PREF_UPDATE_VIA = "pref_listUpdateVia";
     public static final String KEY_PREF_UPDATE_VIA_DEFAULT_VALUE_WI_FI = "wi-fi";
@@ -46,6 +51,8 @@ public class ConfigPreferenceFragment extends PreferenceFragment
 
         listPreference = (ListPreference) findPreference(KEY_PREF_UPDATE_VIA);
         listPreference.setSummary(listPreference.getEntry());
+
+        LOGD(TAG, "onCreate");
     }
 
     @Override

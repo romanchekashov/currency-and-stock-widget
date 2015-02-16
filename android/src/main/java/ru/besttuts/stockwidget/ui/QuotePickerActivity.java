@@ -58,23 +58,16 @@ public class QuotePickerActivity extends ActionBarActivity
 
             Fragment fragment = null;
             switch (mQuoteTypeValue) {
-                case 0:
+                case QuoteType.CURRENCY:
                     fragment = CurrencyExchangeFragment.newInstance(mWidgetItemPosition, mQuoteTypeValue);
                     break;
-                case 1:
-                    fragment = GoodsItemFragment.newInstance(mWidgetItemPosition,
-                            mQuoteTypeValue, QuoteType.GOODS);
+                case QuoteType.GOODS:
+                case QuoteType.INDICES:
+                case QuoteType.STOCK:
+                    fragment = GoodsItemFragment.newInstance(mWidgetItemPosition, mQuoteTypeValue);
                     break;
-                case 2:
-                    fragment = GoodsItemFragment.newInstance(mWidgetItemPosition,
-                            mQuoteTypeValue, QuoteType.INDICES);
-                    break;
-                case 3:
-                    fragment = GoodsItemFragment.newInstance(mWidgetItemPosition,
-                            mQuoteTypeValue, QuoteType.STOCK);
-                    break;
-                case 4:
-                    fragment = MyQuotesFragment.newInstance(mAppWidgetId, QuoteType.QUOTES);
+                case QuoteType.QUOTES:
+                    fragment = MyQuotesFragment.newInstance(mAppWidgetId, mQuoteTypeValue);
                     break;
             }
 
@@ -95,13 +88,13 @@ public class QuotePickerActivity extends ActionBarActivity
         }
 
         switch (mQuoteTypeValue) {
-            case 0:
+            case QuoteType.CURRENCY:
                 getSupportActionBar().setTitle(R.string.configure_menu_item_currency);
                 break;
-            case 1:
+            case QuoteType.GOODS:
                 getSupportActionBar().setTitle(R.string.configure_menu_item_goods);
                 break;
-            case 4:
+            case QuoteType.QUOTES:
                 getSupportActionBar().setTitle(R.string.configure_menu_my_quotes);
                 break;
         }
@@ -124,8 +117,6 @@ public class QuotePickerActivity extends ActionBarActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        LOGD(TAG, "+++++++++++++++ onCreateOptionsMenu: ");
-
         // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.second_activity_actions, menu);
@@ -137,9 +128,8 @@ public class QuotePickerActivity extends ActionBarActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        LOGD(TAG, "+++++++++++++++ onPrepareOptionsMenu: ");
         MenuItem register = menu.findItem(R.id.action_show_search);
-        if (4 != mQuoteTypeValue) {
+        if (QuoteType.QUOTES != mQuoteTypeValue) {
             register.setVisible(false);
             menu.findItem(R.id.action_delete).setVisible(false);
         }
@@ -173,19 +163,10 @@ public class QuotePickerActivity extends ActionBarActivity
             case R.id.action_accept:
                 Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.second_cont);
                 LOGD(TAG, "onOptionsItemSelected: fragment: " + fragment.getClass().getName());
-
-                if (fragment instanceof CurrencyExchangeFragment) {
+                if (fragment instanceof IQuoteTypeFragment) {
+                    IQuoteTypeFragment quoteTypeFragment = (IQuoteTypeFragment) fragment;
                     mDataSource.addSettingsRec(mAppWidgetId, mWidgetItemPosition,
-                            QuoteType.CURRENCY,
-                            ((CurrencyExchangeFragment) fragment).getSelectedSymbols());
-                } else if (fragment instanceof GoodsItemFragment) {
-                    mDataSource.addSettingsRec(mAppWidgetId, mWidgetItemPosition,
-                            QuoteType.GOODS,
-                            ((GoodsItemFragment) fragment).getSelectedSymbols());
-                } else if (fragment instanceof MyQuotesFragment) {
-                    mDataSource.addSettingsRec(mAppWidgetId, mWidgetItemPosition,
-                            QuoteType.QUOTES,
-                            ((MyQuotesFragment) fragment).getSelectedSymbols());
+                            quoteTypeFragment.getQuoteType(), quoteTypeFragment.getSelectedSymbols());
                 }
                 finish();
                 return true;
@@ -214,15 +195,6 @@ public class QuotePickerActivity extends ActionBarActivity
                     NavUtils.navigateUpTo(this, upIntent);
                 }
                 return true;
-
-//            case R.id.menuDisplay:
-//                Toast.makeText(getApplicationContext(), "menuDisplay", Toast.LENGTH_SHORT).show();
-//                return true;
-//            case R.id.menuSettings:
-//                Toast.makeText(getApplicationContext(), "menuSettings", Toast.LENGTH_SHORT).show();
-//                getSupportFragmentManager().beginTransaction()
-//                        .replace(R.id.fragment_place, new ConfigPreferenceFragment()).commit();
-//                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -259,4 +231,5 @@ public class QuotePickerActivity extends ActionBarActivity
     public void deleteQuote(String[] symbols) {
         mDataSource.deleteQuotesByIds(symbols);
     }
+
 }

@@ -18,11 +18,13 @@ public class CurrencyExchangeFragment extends Fragment implements IQuoteTypeFrag
     private static final String LOG_TAG = "EconomicWidget.CurrencyExchangeFragment";
 
     // параметры для инициализации фрагмента, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_QUOTE_TYPE = "quoteType";
     private static final String ARG_FROM = "from";
     private static final String ARG_FROM_POSITION = "from_position";
     private static final String ARG_TO = "to";
     private static final String ARG_TO_POSITION = "to_position";
 
+    private int mQuoteType;
     private String mCurrencyFrom;
     private int mCurrencyFromPosition;
     private String mCurrencyTo;
@@ -40,7 +42,7 @@ public class CurrencyExchangeFragment extends Fragment implements IQuoteTypeFrag
         CurrencyExchangeFragment fragment = new CurrencyExchangeFragment();
         Bundle args = new Bundle();
         args.putInt("widgetItemPosition", widgetItemPosition);
-        args.putInt("quoteTypeValue", quoteTypeValue);
+        args.putInt(ARG_QUOTE_TYPE, quoteTypeValue);
         fragment.setArguments(args);
         return fragment;
     }
@@ -53,11 +55,25 @@ public class CurrencyExchangeFragment extends Fragment implements IQuoteTypeFrag
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            mQuoteType = getArguments().getInt(ARG_QUOTE_TYPE);
             mCurrencyFrom = getArguments().getString(ARG_FROM);
             mCurrencyFromPosition = getArguments().getInt(ARG_FROM_POSITION);
             mCurrencyTo = getArguments().getString(ARG_TO);
             mCurrencyToPosition = getArguments().getInt(ARG_TO_POSITION);
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (null == getArguments()) {
+            setArguments(new Bundle());
+        }
+        getArguments().putInt(ARG_QUOTE_TYPE, mQuoteType);
+        getArguments().putString(ARG_FROM, mCurrencyFrom);
+        getArguments().putInt(ARG_FROM_POSITION, mCurrencyFromPosition);
+        getArguments().putString(ARG_TO, mCurrencyTo);
+        getArguments().putInt(ARG_TO_POSITION, mCurrencyToPosition);
     }
 
     @Override
@@ -136,25 +152,13 @@ public class CurrencyExchangeFragment extends Fragment implements IQuoteTypeFrag
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (null == getArguments()) {
-            setArguments(new Bundle());
-        }
-        getArguments().putString(ARG_FROM, mCurrencyFrom);
-        getArguments().putInt(ARG_FROM_POSITION, mCurrencyFromPosition);
-        getArguments().putString(ARG_TO, mCurrencyTo);
-        getArguments().putInt(ARG_TO_POSITION, mCurrencyToPosition);
-    }
-
-    @Override
     public int getWidgetItemPosition() {
         return getArguments().getInt("widgetItemPosition", 0);
     }
 
     @Override
-    public int getQuoteTypeValue() {
-        return getArguments().getInt("quoteTypeValue", 0);
+    public int getQuoteType() {
+        return mQuoteType;
     }
 
     @Override

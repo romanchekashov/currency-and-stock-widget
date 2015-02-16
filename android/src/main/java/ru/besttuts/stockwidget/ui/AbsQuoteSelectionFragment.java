@@ -46,6 +46,16 @@ public abstract class AbsQuoteSelectionFragment extends Fragment implements IQuo
     public AbsQuoteSelectionFragment() {}
 
     @Override
+    public int getWidgetItemPosition() {
+        return 0;
+    }
+
+    @Override
+    public int getQuoteType() {
+        return mQuoteType;
+    }
+
+    @Override
     public String[] getSelectedSymbols() {
         if (null == mSymbols) return new String[0];
 

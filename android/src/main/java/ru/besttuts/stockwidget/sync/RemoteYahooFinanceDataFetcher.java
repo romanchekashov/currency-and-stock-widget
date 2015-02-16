@@ -27,52 +27,7 @@ public class RemoteYahooFinanceDataFetcher {
 
     private static final String TAG = makeLogTag(RemoteYahooFinanceDataFetcher.class);
 
-    final String LOG_TAG = "EconomicWidget.RemoteYahooFinanceDataFetcher";
-
     private String baseUrl = "http://query.yahooapis.com/v1/public/yql?q=";
-
-    private String multiQuery = "SELECT * FROM query.multi WHERE queries = \"%s\"";
-
-    private String exchangeQueryUrl = "select * from yahoo.finance.xchange where pair in (%s);";
-
-    private String quotesQueryUrl = "select * from yahoo.finance.quotes where symbol in (%s);";
-
-
-    public String createExchangeQuery() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("'");
-        for (String s: currencyExchangeSet) {
-            builder.append(s);
-            builder.append("','");
-        }
-        return String.format(exchangeQueryUrl, builder.substring(0, builder.length() - 2));
-    }
-
-    public String createQuotesQuery() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("'");
-        for (String s: goodSet) {
-            builder.append(s);
-            builder.append("','");
-        }
-        return String.format(quotesQueryUrl, builder.substring(0, builder.length() - 2));
-    }
-
-    public String createMultiQuery() {
-        StringBuilder builder = new StringBuilder();
-        if (null != currencyExchangeSet && currencyExchangeSet.size() > 0) {
-            builder.append(createExchangeQuery());
-        }
-        if (null != goodSet && goodSet.size() > 0) {
-            builder.append(createQuotesQuery());
-        }
-
-        return String.format(multiQuery, builder.toString());
-    }
-
-    public String createMultiQueryUrl() throws UnsupportedEncodingException {
-        return baseUrl + URLEncoder.encode(createMultiQuery(), "UTF-8") + "&format=json";
-    }
 
     private String xchangeUrl = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.xchange%20where%20pair%20in%20('EURUSD'%2C'USDRUB'%2C'EURRUB'%2C'CNYRUB')%3B&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
 
@@ -90,19 +45,14 @@ public class RemoteYahooFinanceDataFetcher {
     private Set<String> currencyExchangeSet = new HashSet<>();
     private Set<String> goodSet = new HashSet<>();
 
-    private String[] exchange = new String[]{"EURUSD","USDRUB","EURRUB","CNYRUB"};
-    private String[] goods = new String[]{"GCF15.CMX","PLF15.NYM","PAF15.NYM","SIF15.CMX","HGF15.CMX"};
-
-//    public String getYahooFinanceMultiQueryUrl() {
-//        return String.format(baseYahooUrlreturnJson, getYahooFinanceXchangeQuery());
-//    }
-
     public void populateQuoteSet(int quoteType, String symbol) {
         switch (quoteType) {
             case QuoteType.CURRENCY:
                 currencyExchangeSet.add(symbol);
                 break;
             case QuoteType.GOODS:
+            case QuoteType.INDICES:
+            case QuoteType.STOCK:
             case QuoteType.QUOTES:
 //                String s = new String(symbol);
 //                if ("^DJI".equals(s)) s = "INDU"; // символ исключение для ^DJI
@@ -118,10 +68,12 @@ public class RemoteYahooFinanceDataFetcher {
                     currencyExchangeSet.add(setting.getQuoteSymbol());
                     break;
                 case QuoteType.GOODS:
+                case QuoteType.INDICES:
+                case QuoteType.STOCK:
                 case QuoteType.QUOTES:
-                    String s = new String(setting.getQuoteSymbol());
-                    if ("^DJI".equals(s)) s = "INDU"; // символ исключение для ^DJI
-                    goodSet.add(s);
+//                    String s = new String(setting.getQuoteSymbol());
+//                    if ("^DJI".equals(s)) s = "INDU"; // символ исключение для ^DJI
+                    goodSet.add(setting.getQuoteSymbol());
                     break;
             }
         }
@@ -170,15 +122,6 @@ public class RemoteYahooFinanceDataFetcher {
         return yahooFinanceQuotesQueryUrl + builder.substring(0, builder.length() - 4) + ")";
     }
 
-    // Reads an InputStream and converts it to a String.
-    public String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
-        Reader reader = null;
-        reader = new InputStreamReader(stream, "UTF-8");
-        char[] buffer = new char[len];
-        reader.read(buffer);
-        return new String(buffer);
-    }
-
     // Convert the InputStream into a string
     static String convertStreamToString(InputStream is) {
         java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
@@ -204,7 +147,7 @@ public class RemoteYahooFinanceDataFetcher {
             // Starts the query
             conn.connect();
             int response = conn.getResponseCode();
-            Log.d(LOG_TAG, "The response is: " + response);
+            LOGD(TAG, "The response is: " + response);
             is = conn.getInputStream();
 
             return convertStreamToString(is);

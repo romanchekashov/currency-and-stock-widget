@@ -39,7 +39,7 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
  * The configuration screen for the {@link EconomicWidget EconomicWidget} AppWidget.
  */
 public class EconomicWidgetConfigureActivity extends ActionBarActivity
-        implements GoodsItemFragment.OnFragmentInteractionListener,
+        implements SlidingTabsFragment.OnFragmentInteractionListener,
         PlaceStockItemsFragment.OnFragmentInteractionListener,
         NotificationManager.ColorChangedListener {
 
@@ -51,8 +51,6 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
 
     private static final String PREFS_NAME = "ru.besttuts.stockwidget.ui.EconomicWidget";
     private static final String PREF_PREFIX_KEY = "appwidget_";
-
-    private static final int MY_QUOTES_VALUE = 4;
 
     static QuoteDataSource mDataSource;
 
@@ -72,15 +70,6 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
     @Override
     public void showQuotePickerActivity(int quoteTypeValue, int position) {
 
-//        if (MY_QUOTES_VALUE == quoteTypeValue) {
-//            Intent intent = new Intent(this, SearchableQuoteActivity.class);
-//            Bundle b = new Bundle();
-//            b.putInt("widgetId", mAppWidgetId);
-//            intent.putExtras(b);
-//            startActivity(intent);
-//            return;
-//        }
-
         Intent intent = new Intent(this, QuotePickerActivity.class);
         Bundle b = new Bundle();
         b.putInt(ARG_WIDGET_ID, mAppWidgetId);
@@ -91,14 +80,13 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
 
     }
 
-    @Override
-    public void onFragmentInteraction(String id) {
-
-    }
+    private Menu mMenu;
 
     @Override
-    public void showAcceptItem(boolean isVisible) {
-
+    public void showAddQuoteItem(boolean isVisible) {
+        if(null != mMenu) {
+            mMenu.findItem(R.id.action_add_quote).setVisible(isVisible);
+        }
     }
 
     @Override
@@ -106,6 +94,9 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
         // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_activity_actions, menu);
+
+        mMenu = menu;
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -124,17 +115,6 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
                         Uri.parse("https://github.com/romanchekashov/currency-and-stock-widget"));
                 startActivity(browserIntent);
                 return true;
-//            case R.id.menuQuotes:
-//                Toast.makeText(getApplicationContext(), "menuQuotes", Toast.LENGTH_SHORT).show();
-//                return true;
-//            case R.id.menuDisplay:
-//                Toast.makeText(getApplicationContext(), "menuDisplay", Toast.LENGTH_SHORT).show();
-//                return true;
-//            case R.id.menuSettings:
-//                Toast.makeText(getApplicationContext(), "menuSettings", Toast.LENGTH_SHORT).show();
-//                getSupportFragmentManager().beginTransaction()
-//                        .replace(R.id.fragment_place, new ConfigPreferenceFragment()).commit();
-//                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -142,13 +122,6 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
 
     private void acceptBtnPressed() {
         final Context context = EconomicWidgetConfigureActivity.this;
-
-        // When the button is clicked, store the string locally
-        saveTitlePref(context, mAppWidgetId, "EXAMPLE");
-
-        // It is the responsibility of the configuration activity to update the app widget
-//        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-//        EconomicWidget.updateAppWidget(context, appWidgetManager, mAppWidgetId, new ArrayList<Model>());
 
         Intent intent = new Intent(context.getApplicationContext(), UpdateService.class);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[]{mAppWidgetId});
@@ -171,7 +144,6 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
         setResult(RESULT_CANCELED);
 
         PreferenceManager.setDefaultValues(this, R.xml.preference_config, false);
-
 
         setContentView(R.layout.activity_economic_widget_configure);
 
@@ -212,7 +184,6 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
         // создаем объект для создания и управления версиями БД
         mDataSource = new QuoteDataSource(this);
         mDataSource.open();
-//        mAppWidgetText.setText(loadTitlePref(EconomicWidgetConfigureActivity.this, mAppWidgetId));
 
         LOGD(TAG, "onCreate");
 
@@ -230,49 +201,6 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
         if (null != mDataSource) mDataSource.close();
         NotificationManager.removeListener(this);
         LOGD(TAG, "onDestroy");
-    }
-
-    void showQuoteFragment(int quoteType) {
-//        if (mIsDualPane) {
-//            GoodsItemFragment details = (GoodsItemFragment) getSupportFragmentManager()
-//                    .findFragmentById(R.id.cont);
-//            if (details == null || details.getQuoteTypeValue() != quoteTypeValue) {
-//                details = GoodsItemFragment.newInstance(widgetItemPosition, quoteTypeValue);
-//                getSupportFragmentManager().beginTransaction()
-//                        .replace(R.id.cont, details).commit();
-//            }
-//        } else {
-//            startActivity(new Intent(this, QuotePickerActivity.class)
-//                    .putExtra("quoteTypeValue", quoteType.getValue())
-//                    .putExtra("widgetItemPosition", widgetItemPosition));
-//        }
-    }
-
-    View.OnClickListener mOnClickListener = new View.OnClickListener() {
-        public void onClick(View v) {
-            final Context context = EconomicWidgetConfigureActivity.this;
-
-            // When the button is clicked, store the string locally
-//            String widgetText = mAppWidgetText.getText().toString();
-            saveTitlePref(context, mAppWidgetId, "EXAMPLE");
-
-            // It is the responsibility of the configuration activity to update the app widget
-            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-            EconomicWidget.updateAppWidget(context, appWidgetManager, mAppWidgetId, new ArrayList<Model>(), true);
-
-            // Make sure we pass back the original appWidgetId
-            Intent resultValue = new Intent();
-            resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
-            setResult(RESULT_OK, resultValue);
-            finish();
-        }
-    };
-
-    // Write the prefix to the SharedPreferences object for this widget
-    static void saveTitlePref(Context context, int appWidgetId, String text) {
-        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
-        prefs.putString(PREF_PREFIX_KEY + appWidgetId, text);
-        prefs.commit();
     }
 
     static void saveLastUpdateTimePref(Context context, int appWidgetId, String text) {
@@ -299,71 +227,11 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
         prefs.commit();
     }
 
-//    public static void saveConnectionStatusPref(Context context, int appWidgetId, String text) {
-//        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
-//        prefs.putString(PREF_PREFIX_KEY + appWidgetId + "_connectionstatus", text);
-//        prefs.commit();
-//    }
-//    public static String loadConnectionStatusPref(Context context, int appWidgetId) {
-//        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
-//        String titleValue = prefs.getString(PREF_PREFIX_KEY + appWidgetId + "_connectionstatus", null);
-//        return titleValue;
-//    }
-//    public static void deleteConnectionStatusPref(Context context, int appWidgetId) {
-//        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
-//        prefs.remove(PREF_PREFIX_KEY + appWidgetId + "_connectionstatus");
-//        prefs.commit();
-//    }
-
-    // Read the prefix from the SharedPreferences object for this widget.
-    // If there is no preference saved, get the default from a resource
-    static String loadTitlePref(Context context, int appWidgetId) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
-        String titleValue = prefs.getString(PREF_PREFIX_KEY + appWidgetId, null);
-        if (titleValue != null) {
-            return titleValue;
-        } else {
-            return context.getString(R.string.appwidget_text);
-        }
-    }
-
-    static void deleteTitlePref(Context context, int appWidgetId) {
-        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
-        prefs.remove(PREF_PREFIX_KEY + appWidgetId);
-        prefs.commit();
-    }
-
     @Override
     public void changeColor() {
         Utils.onActivityCreateSetActionBarColor(getSupportActionBar());
     }
 
-    public static class ConfigActionProvider extends ActionProvider {
-
-        private Context mContext;
-
-        public ConfigActionProvider(Context context) {
-            super(context);
-            mContext = context;
-        }
-
-        @Override
-        public View onCreateActionView() {
-            LayoutInflater layoutInflater = LayoutInflater.from(mContext);
-            View view = layoutInflater.inflate(R.layout.action_provider_config, null);
-
-            Spinner spinner = (Spinner) view.findViewById(R.id.spinnerConfigActionProvider);
-            // Create an ArrayAdapter using the string array and a default spinner layout
-            final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(mContext,
-                    R.array.currency_array, android.R.layout.simple_spinner_item);
-            // Specify the layout to use when the list of choices appears
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            // Apply the adapter to the spinner
-            spinner.setAdapter(adapter);
-
-            return view;
-        }
-    }
 }
 
 

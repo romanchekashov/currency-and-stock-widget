@@ -6,7 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.IBinder;
-import android.util.Log;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.io.HandleJSON;
@@ -15,13 +20,6 @@ import ru.besttuts.stockwidget.model.Setting;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
 import ru.besttuts.stockwidget.sync.RemoteYahooFinanceDataFetcher;
 import ru.besttuts.stockwidget.ui.EconomicWidget;
-import ru.besttuts.stockwidget.ui.EconomicWidgetConfigureActivity;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.LOGE;
@@ -85,9 +83,12 @@ public class UpdateService extends Service {
 
         @Override
         protected Map<Integer, List<Model>> doInBackground(Void... params) { //TODO: Написать Unit-тесты!!!
+
+            Map<Integer, List<Model>> map = new HashMap<>();
+
             int ln = allWidgetIds.length;
             if (0 >= ln) {
-                return new HashMap<>();
+                return map;
             }
 
             if (!hasInternet) {
@@ -98,22 +99,21 @@ public class UpdateService extends Service {
             QuoteDataSource dataSource = new QuoteDataSource(mContext);
             dataSource.open();
 
-            List<Setting> settings = dataSource.getAllSettings();
-
-            dataFetcher.populateQuoteSet(settings);
-//            String currencyUrl = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.xchange%20where%20pair%20in%20('EURUSD'%2C'USDRUB'%2C'EURRUB'%2C'CNYRUB')%3B&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
-//            String goodsUrl = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quotes%20where%20symbol%20in%20(%22GCF15.CMX%22%2C%22PLF15.NYM%22%2C%22PAF15.NYM%22%2C%22SIF15.CMX%22%2C%22HGF15.CMX%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
-
-//            List<Model> models = new ArrayList<>();
-            HandleJSON handleJSON = new HandleJSON(mContext);
             try {
+
+                List<Setting> settings = dataSource.getAllSettings();
+
+                if (0 == settings.size()) return map;
+
+                dataFetcher.populateQuoteSet(settings);
+
+                HandleJSON handleJSON = new HandleJSON(mContext);
+
                 handleJSON.readAndParseJSON(dataFetcher.downloadQuotes());
 
                 Map<String, Model> symbolModelMap = handleJSON.getSymbolModelMap();
 
-                Map<Integer, List<Model>> map = new HashMap<>();
-
-                for (Setting setting: settings) {
+                for (Setting setting : settings) {
                     int widgetId = setting.getWidgetId();
                     if (!map.containsKey(widgetId)) {
                         map.put(widgetId, new ArrayList<Model>());
@@ -121,7 +121,7 @@ public class UpdateService extends Service {
                     map.get(widgetId).add(symbolModelMap.get(setting.getQuoteSymbol()));
                 }
 
-                for (Map.Entry<Integer, List<Model>> me: map.entrySet()) {
+                for (Map.Entry<Integer, List<Model>> me : map.entrySet()) {
                     int widgetId = me.getKey();
                     List<Model> models = me.getValue();
 
@@ -130,27 +130,12 @@ public class UpdateService extends Service {
                     }
                 }
 
-//                models.addAll(handleJSON.readAndParseCurrencyJSON(dataFetcher.downloadUrl(currencyUrl)));
-//                models.addAll(handleJSON.readAndParseGoodsJSON(dataFetcher.downloadUrl(goodsUrl)));
-
                 // при успешном получении данных, удаляем статус о проблемах соединения
-//                final int N = allWidgetIds.length;
-//                for (int i = 0; i < N; i++) {
-//                    EconomicWidgetConfigureActivity.deleteConnectionStatusPref(mContext,
-//                            allWidgetIds[i]);
-//                }
                 EconomicWidget.connectionStatus = null;
 
                 return map;
             } catch (IOException e) {
-                // TODO обработать ошибку и выводить в статус
-//                e.printStackTrace();
                 LOGE(TAG, e.getMessage());
-//                final int N = allWidgetIds.length;
-//                for (int i = 0; i < N; i++) {
-//                    EconomicWidgetConfigureActivity.saveConnectionStatusPref(mContext,
-//                            allWidgetIds[i], "connection problem");
-//                }
                 EconomicWidget.connectionStatus =
                         mContext.getString(R.string.connection_status_default_problem);
             } finally {
@@ -164,7 +149,7 @@ public class UpdateService extends Service {
         protected void onPostExecute(Map<Integer, List<Model>> map) {
             super.onPostExecute(map);
 
-            // There may be multiple widgets active, so update all of them
+            // Обновляем все активные виджеты.
             final int N = allWidgetIds.length;
             for (int i = 0; i < N; i++) {
                 EconomicWidget.updateAppWidget(mContext, appWidgetManager, allWidgetIds[i],
@@ -178,7 +163,6 @@ public class UpdateService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
@@ -188,4 +172,5 @@ public class UpdateService extends Service {
 
         LOGD(TAG, "onDestroy: Current thread: " + Thread.currentThread().getName());
     }
+
 }

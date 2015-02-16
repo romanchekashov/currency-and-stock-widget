@@ -15,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
@@ -68,7 +69,7 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
     private static final String ARG_WIDGET_ID = "widgetId";
 
     private int mWidgetId;
-    private int mWidgetItemsNumber;
+    private static int mWidgetItemsNumber;
 
     private OnFragmentInteractionListener mListener;
 
@@ -164,19 +165,11 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                StockItemTypeDialogFragment dialog = new StockItemTypeDialogFragment();
-                dialog.set(-1, PlaceStockItemsFragment.this);
-                dialog.show(getActivity().getSupportFragmentManager(), "StockItemTypeDialogFragment");
+                showQuoteTypeDialog();
             }
         });
 
         return mMainView;
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        NotificationManager.removeListener(this);
     }
 
     @Override
@@ -193,6 +186,7 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
     @Override
     public void onDestroy() {
         super.onDestroy();
+        NotificationManager.removeListener(this);
 //        if (null != mDataSource) mDataSource.close();
         LOGD(TAG, "onDestroy");
     }
@@ -237,14 +231,19 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
         mMainView.setBackgroundColor(Color.parseColor(color));
     }
 
+    public void showQuoteTypeDialog() {
+        StockItemTypeDialogFragment dialog = new StockItemTypeDialogFragment();
+        dialog.set(-1, this);
+        dialog.show(getActivity().getSupportFragmentManager(), "StockItemTypeDialogFragment");
+    }
+
     @Override
     public void onOptionsItemSelectedInActivity(MenuItem item) {
         // Обработка нажатий на элемент ActionBar
         switch (item.getItemId()) {
             case R.id.action_add_quote:
-                StockItemTypeDialogFragment dialog = new StockItemTypeDialogFragment();
-                dialog.set(-1, PlaceStockItemsFragment.this);
-                dialog.show(getActivity().getSupportFragmentManager(), "StockItemTypeDialogFragment");
+                LOGD(TAG, "onOptionsItemSelectedInActivity: " + item);
+                showQuoteTypeDialog();
                 break;
             default:
                 break;
@@ -306,6 +305,7 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
          * @param position       Порядковый номер котировки на виджете.
          */
         public void showQuotePickerActivity(int quoteTypeValue, int position);
+
     }
 
     FetchQuote mFetchQuote;
@@ -422,7 +422,11 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
 
                             // The 'which' argument contains the index position
                             // of the selected item
-                            mFragment.onQuoteTypeSelected(which, mPosition);
+                            if (-1 == mPosition) {
+                                mFragment.onQuoteTypeSelected(which, mWidgetItemsNumber + 1);
+                            } else {
+                                mFragment.onQuoteTypeSelected(which, mPosition);
+                            }
 
                             // закрываем диалоговое окно
                             StockItemTypeDialogFragment.this.dismiss();

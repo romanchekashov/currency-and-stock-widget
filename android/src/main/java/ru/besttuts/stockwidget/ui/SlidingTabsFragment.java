@@ -1,5 +1,6 @@
 package ru.besttuts.stockwidget.ui;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -39,8 +40,12 @@ public class SlidingTabsFragment extends Fragment
      */
     private ViewPager mViewPager;
 
+    private SlidingTabsPagerAdapter mSlidingTabsPagerAdapter;
+
     private static final String ARG_WIDGET_ID = "widgetId";
     private int mWidgetId;
+
+    private OnFragmentInteractionListener mListener;
 
     public static SlidingTabsFragment newInstance(int widgetId) {
         SlidingTabsFragment fragment = new SlidingTabsFragment();
@@ -48,6 +53,17 @@ public class SlidingTabsFragment extends Fragment
         args.putInt(ARG_WIDGET_ID, widgetId);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (OnFragmentInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
     }
 
     @Override
@@ -74,17 +90,25 @@ public class SlidingTabsFragment extends Fragment
     }
 
     @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_sample, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+
+        mSlidingTabsPagerAdapter = new SlidingTabsPagerAdapter(
+                getActivity().getSupportFragmentManager(), mWidgetId);
         // BEGIN_INCLUDE (setup_viewpager)
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         mViewPager = (ViewPager) view.findViewById(R.id.viewpager);
-        mViewPager.setAdapter(new SlidingTabsPagerAdapter(
-                getActivity().getSupportFragmentManager(), mWidgetId));
+        mViewPager.setAdapter(mSlidingTabsPagerAdapter);
         // END_INCLUDE (setup_viewpager)
 
         // BEGIN_INCLUDE (setup_slidingtablayout)
@@ -92,7 +116,16 @@ public class SlidingTabsFragment extends Fragment
         // it's PagerAdapter set.
         mSlidingTabLayout = (SlidingTabLayout) view.findViewById(R.id.sliding_tabs);
         mSlidingTabLayout.setViewPager(mViewPager);
-
+        mSlidingTabLayout.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                if (0 == position) {
+                    if (null != mListener) mListener.showAddQuoteItem(true);
+                } else {
+                    if (null != mListener) mListener.showAddQuoteItem(false);
+                }
+            }
+        });
         changeColor();
         // END_INCLUDE (setup_slidingtablayout)
     }
@@ -115,6 +148,12 @@ public class SlidingTabsFragment extends Fragment
                 return Color.parseColor(color);
             }
         });
+    }
+
+    public interface OnFragmentInteractionListener {
+
+        public void showAddQuoteItem(boolean isVisible);
+
     }
 
     class SlidingTabsPagerAdapter extends FragmentPagerAdapter {

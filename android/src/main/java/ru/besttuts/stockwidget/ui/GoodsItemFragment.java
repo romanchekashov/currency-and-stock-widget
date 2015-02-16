@@ -55,12 +55,10 @@ public class GoodsItemFragment extends AbsQuoteSelectionFragment implements Load
      */
     private ListView mListView;
 
-    public static GoodsItemFragment newInstance(int widgetItemPosition, int quoteTypeValue,
-                                                int quoteType) {
+    public static GoodsItemFragment newInstance(int widgetItemPosition, int quoteType) {
         GoodsItemFragment fragment = new GoodsItemFragment();
         Bundle args = new Bundle();
         args.putInt("widgetItemPosition", widgetItemPosition);
-        args.putInt("quoteTypeValue", quoteTypeValue);
         args.putInt(ARG_QUOTE_TYPE, quoteType);
         fragment.setArguments(args);
         return fragment;
@@ -68,10 +66,6 @@ public class GoodsItemFragment extends AbsQuoteSelectionFragment implements Load
 
     public int getWidgetItemPosition() {
         return getArguments().getInt("widgetItemPosition", 0);
-    }
-
-    public int getQuoteTypeValue() {
-        return getArguments().getInt("quoteTypeValue", 0);
     }
 
     /**

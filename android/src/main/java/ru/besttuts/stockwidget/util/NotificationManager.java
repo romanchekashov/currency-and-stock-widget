@@ -5,10 +5,15 @@ import android.view.MenuItem;
 import java.util.ArrayList;
 import java.util.List;
 
+import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
+import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
+
 /**
  * Created by roman on 27.01.2015.
  */
 public class NotificationManager {
+
+    private static final String TAG = makeLogTag(NotificationManager.class);
 
     public interface Listener {
     }
@@ -26,18 +31,22 @@ public class NotificationManager {
 
     public static void addListener(Listener listener) {
         if (listener instanceof ColorChangedListener) {
+            LOGD(TAG, "addListener:ColorChangedListener: " + listener);
             addColorChangedListener((ColorChangedListener) listener);
         }
         if (listener instanceof OptionsItemSelectListener) {
+            LOGD(TAG, "addListener:OptionsItemSelectListener: " + listener);
             addOptionsItemSelectListener((OptionsItemSelectListener) listener);
         }
     }
 
     public static void removeListener(Listener listener) {
         if (listener instanceof ColorChangedListener) {
+            LOGD(TAG, "removeListener:ColorChangedListener: " + listener);
             removeColorChangedListener((ColorChangedListener) listener);
         }
         if (listener instanceof OptionsItemSelectListener) {
+            LOGD(TAG, "removeListener:OptionsItemSelectListener: " + listener);
             removeOptionsItemSelectListener((OptionsItemSelectListener) listener);
         }
     }
