@@ -50,7 +50,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/progressBar"
                 android:layout_gravity="center"
-                android:visibility="gone" />
+                android:visibility="gone"
+                android:padding="9dp" />
 
             <ImageButton
                 android:layout_width="match_parent"

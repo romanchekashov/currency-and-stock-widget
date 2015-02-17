@@ -94,6 +94,12 @@ public class QuotePickerActivity extends ActionBarActivity
             case QuoteType.GOODS:
                 getSupportActionBar().setTitle(R.string.configure_menu_item_goods);
                 break;
+            case QuoteType.INDICES:
+                getSupportActionBar().setTitle(R.string.configure_menu_item_indices);
+                break;
+            case QuoteType.STOCK:
+                getSupportActionBar().setTitle(R.string.configure_menu_item_stock);
+                break;
             case QuoteType.QUOTES:
                 getSupportActionBar().setTitle(R.string.configure_menu_my_quotes);
                 break;

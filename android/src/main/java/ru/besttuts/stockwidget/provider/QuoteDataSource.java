@@ -199,7 +199,7 @@ public class QuoteDataSource {
                 + "left join "+QuoteDatabaseHelper.Tables.MODELS+" as m "
                 + "on s.setting_quote_symbol = m.model_id "
                 + "where s.setting_widget_id = ? order by "
-                + QuoteContract.SettingColumns.SETTING_QUOTE_POSITION + " asc";
+                + QuoteContract.SettingColumns.SETTING_QUOTE_POSITION + " asc;";
 
         return mDatabase.rawQuery(sqlQuery, new String[] { String.valueOf(widgetId) });
 
