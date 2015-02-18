@@ -17,6 +17,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
@@ -241,8 +242,7 @@ public class EconomicWidget extends AppWidgetProvider {
         }
 
         if (hasInternet && null == connectionStatus) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm dd.MM.yy");
-            String time = dateFormat.format(Calendar.getInstance().getTime());
+            String time = new SimpleDateFormat().format(Calendar.getInstance().getTime());
             views.setTextViewText(R.id.tvSyncTime, time);
             views.setTextColor(R.id.tvSyncTime, Color.WHITE);
             EconomicWidgetConfigureActivity.saveLastUpdateTimePref(context, appWidgetId, time);

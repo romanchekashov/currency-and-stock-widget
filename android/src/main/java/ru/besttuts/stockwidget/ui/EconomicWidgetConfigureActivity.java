@@ -215,9 +215,7 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
         if (titleValue != null) {
             return titleValue;
         } else {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm dd.MM.yy");
-
-            return dateFormat.format(Calendar.getInstance().getTime());
+            return new SimpleDateFormat().format(Calendar.getInstance().getTime());
         }
     }
 

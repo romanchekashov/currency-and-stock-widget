@@ -3,7 +3,8 @@
     android:layout_height="match_parent"
     android:padding="@dimen/widget_margin"
     android:background="#ff2c3e50"
-    android:id="@+id/bgWidget">
+    android:id="@+id/bgWidget"
+    android:gravity="center_horizontal">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -79,7 +80,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/gridView2"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentLeft="false"
         android:columnWidth="70dp"
         android:gravity="center"
         android:horizontalSpacing="5dp"
@@ -87,8 +88,9 @@
         android:verticalSpacing="15dp"
         android:stretchMode="columnWidth"
         android:paddingLeft="10dp"
-        android:paddingTop="10dp"
         android:paddingBottom="10dp"
-        android:layout_below="@+id/linearLayout" />
+        android:layout_below="@+id/linearLayout"
+        android:paddingRight="10dp"
+        android:layout_centerInParent="true" />
 
 </RelativeLayout>

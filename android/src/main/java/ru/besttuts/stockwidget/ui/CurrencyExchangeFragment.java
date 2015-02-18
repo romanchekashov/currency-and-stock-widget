@@ -13,9 +13,12 @@ import android.widget.TextView;
 
 import ru.besttuts.stockwidget.R;
 
+import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
+import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
+
 public class CurrencyExchangeFragment extends Fragment implements IQuoteTypeFragment {
 
-    private static final String LOG_TAG = "EconomicWidget.CurrencyExchangeFragment";
+    private static final String TAG = makeLogTag(CurrencyExchangeFragment.class);
 
     // параметры для инициализации фрагмента, e.g. ARG_ITEM_NUMBER
     private static final String ARG_QUOTE_TYPE = "quoteType";
@@ -23,6 +26,9 @@ public class CurrencyExchangeFragment extends Fragment implements IQuoteTypeFrag
     private static final String ARG_FROM_POSITION = "from_position";
     private static final String ARG_TO = "to";
     private static final String ARG_TO_POSITION = "to_position";
+
+    private static final int CURRENCY_POSITION_USD = 149;
+    private static final int CURRENCY_POSITION_RUB = 119;
 
     private int mQuoteType;
     private String mCurrencyFrom;
@@ -101,7 +107,7 @@ public class CurrencyExchangeFragment extends Fragment implements IQuoteTypeFrag
                 mCurrencyFrom = str.substring(str.length() - 4, str.length() - 1);
                 tvCurrency.setText(mCurrencyFrom +"/"+ mCurrencyTo);
 
-                Log.d(LOG_TAG, "onItemSelected: " + mCurrencyFrom);
+                LOGD(TAG, "onItemSelected: " + mCurrencyFrom);
             }
 
             @Override
@@ -126,7 +132,7 @@ public class CurrencyExchangeFragment extends Fragment implements IQuoteTypeFrag
                 mCurrencyTo = str.substring(str.length() - 4, str.length() - 1);
                 tvCurrency.setText(mCurrencyFrom +"/"+ mCurrencyTo);
 
-                Log.d(LOG_TAG, "onItemSelected: "+ mCurrencyTo);
+                LOGD(TAG, "onItemSelected: "+ mCurrencyTo);
             }
 
             @Override
@@ -134,6 +140,15 @@ public class CurrencyExchangeFragment extends Fragment implements IQuoteTypeFrag
 
             }
         });
+
+        String lng = getResources().getConfiguration().locale.getLanguage();
+        LOGD(TAG, "locale.getLanguage: " + lng);
+
+        if ("ru".equals(lng)) {
+            spinner1.setSelection(CURRENCY_POSITION_RUB, false);
+        } else {
+            spinner1.setSelection(CURRENCY_POSITION_USD, false);
+        }
 
         return view;
     }

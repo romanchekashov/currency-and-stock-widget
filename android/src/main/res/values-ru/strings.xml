@@ -122,5 +122,6 @@
     <string name="ojh15_nyb">Апельсиновый Сок</string>
     <string name="sbh15_nyb">Сахар</string>
     <string name="exc_already_exists">уже существует!</string>
+    <string name="data_will_be_lost">Данные будут утеряны!</string>
 
 </resources>
