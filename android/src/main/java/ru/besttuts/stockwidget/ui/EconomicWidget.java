@@ -238,7 +238,8 @@ public class EconomicWidget extends AppWidgetProvider {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             setGrid(views, context, appWidgetId);
         } else {
-            setWidgetViewForApi10(views, context, models);
+            int columns = getCellsForSize(appWidgetManager.getAppWidgetInfo(appWidgetId).minWidth);
+            setWidgetViewForApi10(views, context, models, columns);
         }
 
         if (hasInternet && null == connectionStatus) {
@@ -246,11 +247,15 @@ public class EconomicWidget extends AppWidgetProvider {
             views.setTextViewText(R.id.tvSyncTime, time);
             views.setTextColor(R.id.tvSyncTime, Color.WHITE);
             EconomicWidgetConfigureActivity.saveLastUpdateTimePref(context, appWidgetId, time);
-        } else {
+        } else if(null != connectionStatus) {
             String time = EconomicWidgetConfigureActivity.loadLastUpdateTimePref(context, appWidgetId);
             views.setTextViewText(R.id.tvSyncTime, time + " - " + connectionStatus);
             int color = context.getResources().getColor(R.color.arrow_red);
             views.setTextColor(R.id.tvSyncTime, color);
+        } else {
+            String time = EconomicWidgetConfigureActivity.loadLastUpdateTimePref(context, appWidgetId);
+            views.setTextViewText(R.id.tvSyncTime, time);
+            views.setTextColor(R.id.tvSyncTime, Color.WHITE);
         }
 
         setConfigBtn(context, appWidgetId, views);
@@ -317,9 +322,9 @@ public class EconomicWidget extends AppWidgetProvider {
         }
     }
 
-    private static void setWidgetViewForApi10(RemoteViews views, Context context, List<Model> models) {
+    private static void setWidgetViewForApi10(RemoteViews views, Context context, List<Model> models, int columns) {
         int i = 0;
-        int viewId = R.id.currency;
+        int viewId = R.id.firstLinearLayout;
         views.removeAllViews(viewId);
         for (Model model: models) {
             if (null == model) continue;
@@ -342,14 +347,11 @@ public class EconomicWidget extends AppWidgetProvider {
             viewItem.setTextColor(R.id.tvChangePercentage, color);
 
             views.addView(viewId, viewItem);
-            i++;
-            if (3 == i) {
-                viewId = R.id.goods;
-                views.removeAllViews(viewId);
-            } else if(7 == i) { // заполнены все 8 ячеек виджета, выходил из цикла
+
+            if (columns == ++i) { // одну колонку занимают кнопки обновления и настроек
+                LOGD(TAG, "setWidgetViewForApi10: columns = " + columns);
                 break;
             }
-
         }
     }
 

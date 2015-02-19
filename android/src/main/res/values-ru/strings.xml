@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Виджет валют и акций</string>
+    <string name="app_name">Валютно-фондовый виджет</string>
     <string name="medium_widget_name">Виджет валют и акций 4x1</string>
     <string name="large_widget_name">Виджет валют и акций 4x2</string>
     <string name="appwidget_text">EXAMPLE</string>
@@ -103,6 +103,65 @@
         <item>2 дня</item>
         <item>Никогда</item>
     </string-array>
+    <string-array name="update_interval_entry_values">
+        <item>300000</item>
+        <item>900000</item>
+        <item>1800000</item>
+        <item>3600000</item>
+        <item>10800000</item>
+        <item>21600000</item>
+        <item>32400000</item>
+        <item>43200000</item>
+        <item>86400000</item>
+        <item>172800000</item>
+        <item>0</item>
+    </string-array>
+
+    <string-array name="color_entries">
+        <item>бирюзовый</item>
+        <item>зеленое_море</item>
+        <item>изумрудный</item>
+        <item>нефритовый</item>
+        <item>peter_river</item>
+        <item>belize_hole</item>
+        <item>аметистовый</item>
+        <item>глицинии</item>
+        <item>мокрый_асфальт</item>
+        <item>темно-синий</item>
+        <item>подсолнух</item>
+        <item>оранжевый</item>
+        <item>морковный</item>
+        <item>тыквенный</item>
+        <item>alizarin</item>
+        <item>гранатовый</item>
+        <item>небесный</item>
+        <item>серебряный</item>
+        <item>бетонный</item>
+        <item>асбестовый</item>
+    </string-array>
+    <string-array name="color_entry_values">
+        <item>#1abc9c</item>
+        <item>#16a085</item>
+        <item>#2ecc71</item>
+        <item>#27ae60</item>
+        <item>#3498db</item>
+        <item>#2980b9</item>
+        <item>#9b59b6</item>
+        <item>#8e44ad</item>
+        <item>#34495e</item>
+        <item>#2c3e50</item>
+        <item>#f1c40f</item>
+        <item>#f39c12</item>
+        <item>#e67e22</item>
+        <item>#d35400</item>
+        <item>#e74c3c</item>
+        <item>#c0392b</item>
+        <item>#ecf0f1</item>
+        <item>#bdc3c7</item>
+        <item>#95a5a6</item>
+        <item>#7f8c8d</item>
+    </string-array>
+
     <string-array name="alpha_entries">
         <item>Прозрачный</item>
         <item>25\uff05 прозрачности</item>
@@ -110,11 +169,23 @@
         <item>75\uff05 прозрачности</item>
         <item>Непрозрачный</item>
     </string-array>
+    <string-array name="alpha_entry_values">
+        <item>00</item>
+        <item>40</item>
+        <item>80</item>
+        <item>C0</item>
+        <item>FF</item>
+    </string-array>
 
     <string-array name="update_via_entries">
         <item>Только Wi-Fi</item>
         <item>В любой сети</item>
     </string-array>
+    <string-array name="update_via_entry_values">
+        <item>wi-fi</item>
+        <item>any</item>
+    </string-array>
+
     <string name="cch15_nyb">Какао</string>
     <string name="kch15_nyb">Кофе</string>
     <string name="cth15_nyb">Хлопок</string>
