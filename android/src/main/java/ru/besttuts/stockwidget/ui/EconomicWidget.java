@@ -32,7 +32,9 @@ import ru.besttuts.stockwidget.service.UpdateService;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
@@ -52,7 +54,16 @@ public class EconomicWidget extends AppWidgetProvider {
 
     public final static String BROADCAST_ACTION = "ru.besttuts.stockwidget";
 
-    private static int widgetLayoutId = R.layout.economic_widget;
+    public static Map<Integer, WidgetViewData> widgetViewDataMap = new HashMap<>();
+
+    public static class WidgetViewData {
+        int widgetLayoutId = R.layout.economic_widget;
+        public int gridPaddingTop = 2;
+        public int gridPaddingBottom = 2;
+        public int gridColumnHeight = 36;
+        public int rows = 1;
+        boolean isResized = false;
+    }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
@@ -69,17 +80,15 @@ public class EconomicWidget extends AppWidgetProvider {
                 EconomicWidget.class);
         int[] allWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
 
-        if (!hasInternet && (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)) {
-//            Toast.makeText(context, "Wi-Fi disabled!", Toast.LENGTH_SHORT).show();
-
-            // Возможно активны несколько виджетов, поэтому обновляем их все
-            final int N = appWidgetIds.length;
-            for (int i = 0; i < N; i++) {
-                EconomicWidget.updateAppWidget(context, appWidgetManager,
-                        appWidgetIds[i], null, hasInternet);
-            }
-            return;
-        }
+//        if (!hasInternet && (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)) {
+//            // Возможно активны несколько виджетов, поэтому обновляем их все
+//            final int N = appWidgetIds.length;
+//            for (int i = 0; i < N; i++) {
+//                EconomicWidget.updateAppWidget(context, appWidgetManager,
+//                        appWidgetIds[i], null, hasInternet);
+//            }
+//            return;
+//        }
 
         update(context, appWidgetManager, allWidgetIds, hasInternet);
 
@@ -103,13 +112,12 @@ public class EconomicWidget extends AppWidgetProvider {
         // Обновляем виджеты через сервис
         context.startService(intent);
 
-        RemoteViews views = new RemoteViews(context.getPackageName(), widgetLayoutId);
-        views.setViewVisibility(R.id.ibRefresh, View.GONE);
-        views.setViewVisibility(R.id.progressBar, View.VISIBLE);
-
         // Возможно активны несколько виджетов, поэтому обновляем их все
         final int N = appWidgetIds.length;
         for (int i = 0; i < N; i++) {
+            RemoteViews views = new RemoteViews(context.getPackageName(), getWidgetLayoutId(context, appWidgetIds[i]));
+            views.setViewVisibility(R.id.ibRefresh, View.GONE);
+            views.setViewVisibility(R.id.progressBar, View.VISIBLE);
             appWidgetManager.updateAppWidget(appWidgetIds[i], views);
         }
 
@@ -229,13 +237,15 @@ public class EconomicWidget extends AppWidgetProvider {
                                        int appWidgetId, List<Model> models, boolean hasInternet) {
 
         if (null == models) models = new ArrayList<>();
+        LOGD(TAG, "updateAppWidget: minHeight = " + appWidgetManager.getAppWidgetInfo(appWidgetId).minHeight);
 
         // Создаем объект RemoteViews для взаимодействи с отображением виджета
-        RemoteViews views = new RemoteViews(context.getPackageName(), widgetLayoutId);
+        RemoteViews views = new RemoteViews(context.getPackageName(), getWidgetLayoutId(context, appWidgetId));
 
         readPrefsSettings(context, views); // считываем настройки виджета
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            calcWidgetViewData(context, appWidgetId, appWidgetManager.getAppWidgetInfo(appWidgetId).minHeight, false);
             setGrid(views, context, appWidgetId);
         } else {
             int columns = getCellsForSize(appWidgetManager.getAppWidgetInfo(appWidgetId).minWidth);
@@ -320,6 +330,16 @@ public class EconomicWidget extends AppWidgetProvider {
         } else if (currentapiVersion >= Build.VERSION_CODES.HONEYCOMB) {
             rv.setRemoteAdapter(appWidgetId, R.id.gridView2, adapter);
         }
+
+//        WidgetViewData widgetViewData = widgetViewDataMap.get(appWidgetId);
+//        if (null == widgetViewData) return;
+//        if (R.layout.economic_widget == widgetViewData.widgetLayoutId) {
+//            rv.setViewPadding(R.id.gridView2, 10, widgetViewData.gridPaddingTop, 0,
+//                    widgetViewData.gridPaddingBottom);
+//        } else {
+//            rv.setViewPadding(R.id.gridView2, 10, widgetViewData.gridPaddingTop, 10,
+//                    widgetViewData.gridPaddingBottom);
+//        }
     }
 
     private static void setWidgetViewForApi10(RemoteViews views, Context context, List<Model> models, int columns) {
@@ -348,10 +368,11 @@ public class EconomicWidget extends AppWidgetProvider {
 
             views.addView(viewId, viewItem);
 
-            if (columns == ++i) { // одну колонку занимают кнопки обновления и настроек
+            if (3 == ++i) { // одну колонку занимают кнопки обновления и настроек
                 LOGD(TAG, "setWidgetViewForApi10: columns = " + columns);
                 break;
             }
+
         }
     }
 
@@ -452,7 +473,8 @@ public class EconomicWidget extends AppWidgetProvider {
 
     @Override
     @SuppressLint("NewApi")
-    public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions) {
+    public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager,
+                                          int appWidgetId, Bundle newOptions) {
 
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
 
@@ -463,13 +485,14 @@ public class EconomicWidget extends AppWidgetProvider {
 
         LOGD(TAG, "onAppWidgetOptionsChanged: minHeight_dp = " + minHeight_dp);
 
+        calcWidgetViewData(context, appWidgetId, minHeight_dp, true);
         // Находим кол-во строк по минимальной высоте виджета.
-        int rows = getCellsForSize(minHeight_dp);
-        if(1 < rows) {
-            widgetLayoutId = R.layout.economic_widget_row2;
-        } else {
-            widgetLayoutId = R.layout.economic_widget;
-        }
+//        int rows = getCellsForSize(minHeight_dp);
+//        if(1 < rows) {
+//            widgetLayoutId = R.layout.economic_widget_row2;
+//        } else {
+//            widgetLayoutId = R.layout.economic_widget;
+//        }
 
         // обновляем виджет с новым layout
         update(context, appWidgetManager, new int[]{appWidgetId}, false);
@@ -488,6 +511,78 @@ public class EconomicWidget extends AppWidgetProvider {
             ++n;
         }
         return n - 1;
+    }
+
+    private static int topButtonsHeight = 40;
+    private static int gridVerticalSpacing = 5;
+
+    private static int getWidgetLayoutId(Context context, int appWidgetId) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            return EconomicWidgetConfigureActivity.loadWidgetLayoutPref(context, appWidgetId);
+        } else {
+            return R.layout.economic_widget;
+        }
+//        if (null == widgetViewDataMap) widgetViewDataMap = new HashMap<>();
+//        WidgetViewData widgetViewData = widgetViewDataMap.get(appWidgetId);
+//        if (null == widgetViewData) {
+//            widgetViewData = new WidgetViewData();
+//            widgetViewDataMap.put(appWidgetId, widgetViewData);
+//        }
+//        return widgetViewData.widgetLayoutId;
+    }
+
+    private static void calcWidgetViewData(Context context, int appWidgetId, int height, boolean isResize) {
+        if (null == widgetViewDataMap) widgetViewDataMap = new HashMap<>();
+        WidgetViewData widgetViewData = widgetViewDataMap.get(appWidgetId);
+        if (null == widgetViewData) {
+            widgetViewData = new WidgetViewData();
+            widgetViewDataMap.put(appWidgetId, widgetViewData);
+        }
+
+        if (isResize != widgetViewData.isResized) return;
+
+        widgetViewData.isResized = true;
+
+        int rows = getCellsForSize(height);
+        LOGD(TAG, "calcWidgetViewData: rows = " + rows);
+        switch (rows) {
+            case 1:
+                widgetViewData.widgetLayoutId = R.layout.economic_widget;
+                EconomicWidgetConfigureActivity.saveWidgetLayoutPref(context, appWidgetId, R.layout.economic_widget);
+                EconomicWidgetConfigureActivity.saveWidgetLayoutGridItemPref(context, appWidgetId, R.layout.economic_widget_item);
+                break;
+            case 2:
+                widgetViewData.widgetLayoutId = R.layout.economic_widget_row2;
+                EconomicWidgetConfigureActivity.saveWidgetLayoutPref(context, appWidgetId, R.layout.economic_widget_row2);
+                EconomicWidgetConfigureActivity.saveWidgetLayoutGridItemPref(context, appWidgetId, R.layout.economic_widget_item_row2);
+                break;
+            case 3:
+                widgetViewData.widgetLayoutId = R.layout.economic_widget_row_3;
+                EconomicWidgetConfigureActivity.saveWidgetLayoutPref(context, appWidgetId, R.layout.economic_widget_row_3);
+                EconomicWidgetConfigureActivity.saveWidgetLayoutGridItemPref(context, appWidgetId, R.layout.economic_widget_item_row_3);
+                break;
+            default:
+                widgetViewData.widgetLayoutId = R.layout.economic_widget_row_4;
+                EconomicWidgetConfigureActivity.saveWidgetLayoutPref(context, appWidgetId, R.layout.economic_widget_row_4);
+                EconomicWidgetConfigureActivity.saveWidgetLayoutGridItemPref(context, appWidgetId, R.layout.economic_widget_item_row_4);
+                break;
+        }
+
+//        if(1 < rows) {
+//            widgetViewData.widgetLayoutId = R.layout.economic_widget_row2;
+//            widgetViewData.gridPaddingTop = 0;
+//            widgetViewData.gridPaddingBottom = 4;
+//            widgetViewData.gridColumnHeight = (height - topButtonsHeight - (gridVerticalSpacing * (rows - 1))
+//                    - widgetViewData.gridPaddingBottom) / rows;
+//        } else {
+//            widgetViewData.widgetLayoutId = R.layout.economic_widget;
+//            widgetViewData.gridPaddingTop = 2;
+//            widgetViewData.gridPaddingBottom = 2;
+//            widgetViewData.gridColumnHeight = height - widgetViewData.gridPaddingTop
+//                    - widgetViewData.gridPaddingBottom;
+//        }
+
+        widgetViewData.rows = rows;
     }
 
 }

@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ActionProvider;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -185,7 +186,12 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
         mDataSource = new QuoteDataSource(this);
         mDataSource.open();
 
-        LOGD(TAG, "onCreate");
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        LOGD(TAG, String.format("onCreate: density = %f, densityDpi = %d, heightPixels = %d, " +
+                        "widthPixels = %d, scaledDensity = %f, xdpi = %f, ydpi = %f",
+                metrics.density, metrics.densityDpi, metrics.heightPixels, metrics.widthPixels,
+                metrics.scaledDensity, metrics.xdpi, metrics.ydpi));
 
     }
 
@@ -201,6 +207,28 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
         if (null != mDataSource) mDataSource.close();
         NotificationManager.removeListener(this);
         LOGD(TAG, "onDestroy");
+    }
+
+    static void saveWidgetLayoutPref(Context context, int appWidgetId, int layout) {
+        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
+        prefs.putInt(PREF_PREFIX_KEY + appWidgetId + "_widget_layout", layout);
+        prefs.commit();
+    }
+
+    static int loadWidgetLayoutPref(Context context, int appWidgetId) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
+        return prefs.getInt(PREF_PREFIX_KEY + appWidgetId + "_widget_layout", R.layout.economic_widget_row_4);
+    }
+
+    static void saveWidgetLayoutGridItemPref(Context context, int appWidgetId, int layoutGridItem) {
+        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
+        prefs.putInt(PREF_PREFIX_KEY + appWidgetId + "_widget_layout_grid_item", layoutGridItem);
+        prefs.commit();
+    }
+
+    public static int loadWidgetLayoutGridItemPref(Context context, int appWidgetId) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
+        return prefs.getInt(PREF_PREFIX_KEY + appWidgetId + "_widget_layout_grid_item", R.layout.economic_widget_item_row_4);
     }
 
     static void saveLastUpdateTimePref(Context context, int appWidgetId, String text) {

@@ -18,7 +18,7 @@
             android:text="Name"
             android:id="@+id/tvName"
             android:textColor="#ffffff"
-            android:textSize="@dimen/widget_grid_item_name_text_size"
+            android:textSize="@dimen/widget_grid_item_name_text_size_row_3"
             android:singleLine="true" />
 
         <TextView
@@ -28,7 +28,7 @@
             android:text="Rate"
             android:id="@+id/tvRate"
             android:textColor="#ffffff"
-            android:textSize="@dimen/widget_grid_item_rate_text_size"
+            android:textSize="@dimen/widget_grid_item_rate_text_size_row_3"
             android:textStyle="bold|italic"
             android:singleLine="true" />
 
@@ -57,7 +57,7 @@
                     android:text="change"
                     android:id="@+id/tvChange"
                     android:textColor="#00ff00"
-                    android:textSize="@dimen/widget_grid_item_change_text_size"
+                    android:textSize="@dimen/widget_grid_item_change_text_size_row_3"
                     android:singleLine="true" />
 
                 <TextView
@@ -67,7 +67,7 @@
                     android:text="%change"
                     android:id="@+id/tvChangePercentage"
                     android:textColor="#00ff00"
-                    android:textSize="@dimen/widget_grid_item_change_percentage_text_size"
+                    android:textSize="@dimen/widget_grid_item_change_percentage_text_size_row_3"
                     android:singleLine="true" />
             </LinearLayout>
 

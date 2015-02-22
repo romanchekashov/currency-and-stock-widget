@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!--
-Refer to App Widget Documentation for margin information
-http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
-    -->
-    <dimen name="widget_margin">8dp</dimen>
-
-    <!-- wrap_content(-2dp); match_parent,fill_parent(-1dp) -->
-    <!--<dimen name="widget_grid_item_height">-2dp</dimen>-->
+    <!-- tested -->
     <dimen name="widget_grid_column_width">70dp</dimen>
 
     <!-- 1 row -->
@@ -16,9 +9,9 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="widget_grid_vertical_spacing">5dp</dimen>
 
     <dimen name="widget_grid_left_padding">10dp</dimen>
-    <dimen name="widget_grid_top_padding">10dp</dimen>
+    <dimen name="widget_grid_top_padding">17dp</dimen>
     <dimen name="widget_grid_right_padding">0dp</dimen>
-    <dimen name="widget_grid_bottom_padding">10dp</dimen>
+    <dimen name="widget_grid_bottom_padding">17dp</dimen>
 
     <dimen name="widget_grid_item_name_text_size">12sp</dimen>
     <dimen name="widget_grid_item_rate_text_size">18sp</dimen>
@@ -26,27 +19,27 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="widget_grid_item_change_percentage_text_size">10sp</dimen>
 
     <!-- 2 row -->
-    <dimen name="widget_grid_horizontal_spacing_row_2">5dp</dimen>
-    <dimen name="widget_grid_vertical_spacing_row_2">5dp</dimen>
+    <dimen name="widget_grid_horizontal_spacing_row_2">10dp</dimen>
+    <dimen name="widget_grid_vertical_spacing_row_2">10dp</dimen>
 
     <dimen name="widget_grid_left_padding_row2">7dp</dimen>
-    <dimen name="widget_grid_top_padding_row2">0dp</dimen>
+    <dimen name="widget_grid_top_padding_row2">12dp</dimen>
     <dimen name="widget_grid_right_padding_row2">7dp</dimen>
-    <dimen name="widget_grid_bottom_padding_row2">8dp</dimen>
+    <dimen name="widget_grid_bottom_padding_row2">12dp</dimen>
 
-    <dimen name="widget_grid_item_name_text_size_row2">11sp</dimen>
-    <dimen name="widget_grid_item_rate_text_size_row2">17sp</dimen>
-    <dimen name="widget_grid_item_change_text_size_row2">9sp</dimen>
-    <dimen name="widget_grid_item_change_percentage_text_size_row2">9sp</dimen>
+    <dimen name="widget_grid_item_name_text_size_row2">12sp</dimen>
+    <dimen name="widget_grid_item_rate_text_size_row2">20sp</dimen>
+    <dimen name="widget_grid_item_change_text_size_row2">10sp</dimen>
+    <dimen name="widget_grid_item_change_percentage_text_size_row2">10sp</dimen>
 
     <!-- 3 row -->
-    <dimen name="widget_grid_horizontal_spacing_row_3">5dp</dimen>
-    <dimen name="widget_grid_vertical_spacing_row_3">5dp</dimen>
+    <dimen name="widget_grid_horizontal_spacing_row_3">10dp</dimen>
+    <dimen name="widget_grid_vertical_spacing_row_3">25dp</dimen>
 
     <dimen name="widget_grid_left_padding_row_3">7dp</dimen>
-    <dimen name="widget_grid_top_padding_row_3">0dp</dimen>
+    <dimen name="widget_grid_top_padding_row_3">16dp</dimen>
     <dimen name="widget_grid_right_padding_row_3">7dp</dimen>
-    <dimen name="widget_grid_bottom_padding_row_3">8dp</dimen>
+    <dimen name="widget_grid_bottom_padding_row_3">18dp</dimen>
 
     <dimen name="widget_grid_item_name_text_size_row_3">12sp</dimen>
     <dimen name="widget_grid_item_rate_text_size_row_3">18sp</dimen>
@@ -54,16 +47,16 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="widget_grid_item_change_percentage_text_size_row_3">9sp</dimen>
 
     <!-- 4 row -->
-    <dimen name="widget_grid_horizontal_spacing_row_4">5dp</dimen>
-    <dimen name="widget_grid_vertical_spacing_row_4">5dp</dimen>
+    <dimen name="widget_grid_horizontal_spacing_row_4">10dp</dimen>
+    <dimen name="widget_grid_vertical_spacing_row_4">20dp</dimen>
 
     <dimen name="widget_grid_left_padding_row_4">7dp</dimen>
     <dimen name="widget_grid_top_padding_row_4">0dp</dimen>
     <dimen name="widget_grid_right_padding_row_4">7dp</dimen>
     <dimen name="widget_grid_bottom_padding_row_4">8dp</dimen>
 
-    <dimen name="widget_grid_item_name_text_size_row_4">12sp</dimen>
-    <dimen name="widget_grid_item_rate_text_size_row_4">18sp</dimen>
+    <dimen name="widget_grid_item_name_text_size_row_4">10sp</dimen>
+    <dimen name="widget_grid_item_rate_text_size_row_4">17sp</dimen>
     <dimen name="widget_grid_item_change_text_size_row_4">9sp</dimen>
     <dimen name="widget_grid_item_change_percentage_text_size_row_4">9sp</dimen>
 

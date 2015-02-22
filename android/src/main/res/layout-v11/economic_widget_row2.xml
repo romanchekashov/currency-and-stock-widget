@@ -23,8 +23,8 @@
             android:text="sync time"
             android:id="@+id/tvSyncTime"
             android:textColor="#ffffffff"
-            android:textSize="10sp"
-            android:layout_weight="30"
+            android:textSize="12sp"
+            android:layout_weight="40"
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:ellipsize="marquee"
@@ -43,7 +43,7 @@
             android:orientation="vertical"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="35">
+            android:layout_weight="30">
 
             <ProgressBar
                 style="?android:attr/progressBarStyleSmall"
@@ -72,7 +72,7 @@
             android:layout_alignParentBottom="true"
             android:background="#00ffffff"
             android:focusable="false"
-            android:layout_weight="35"
+            android:layout_weight="30"
             android:focusableInTouchMode="false" />
     </LinearLayout>
 
@@ -83,14 +83,15 @@
         android:layout_alignParentLeft="false"
         android:columnWidth="70dp"
         android:gravity="center"
-        android:horizontalSpacing="5dp"
+        android:horizontalSpacing="@dimen/widget_grid_horizontal_spacing_row_2"
         android:numColumns="auto_fit"
-        android:verticalSpacing="15dp"
+        android:verticalSpacing="@dimen/widget_grid_vertical_spacing_row_2"
         android:stretchMode="columnWidth"
-        android:paddingLeft="10dp"
-        android:paddingBottom="10dp"
+        android:paddingLeft="@dimen/widget_grid_left_padding_row2"
+        android:paddingBottom="@dimen/widget_grid_bottom_padding_row2"
         android:layout_below="@+id/linearLayout"
-        android:paddingRight="10dp"
-        android:layout_centerInParent="true" />
+        android:paddingRight="@dimen/widget_grid_right_padding_row2"
+        android:layout_centerInParent="true"
+        android:paddingTop="@dimen/widget_grid_top_padding_row2" />
 
 </RelativeLayout>

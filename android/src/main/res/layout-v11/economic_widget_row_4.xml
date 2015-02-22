@@ -3,53 +3,36 @@
     android:layout_height="match_parent"
     android:padding="@dimen/widget_margin"
     android:background="#ff2c3e50"
-    android:id="@+id/bgWidget">
-
-    <GridView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/gridView2"
-        android:layout_alignParentLeft="true"
-        android:layout_toLeftOf="@+id/linearLayout"
-        android:layout_toStartOf="@+id/linearLayout"
-        android:columnWidth="@dimen/widget_grid_column_width"
-        android:gravity="center"
-        android:horizontalSpacing="@dimen/widget_grid_horizontal_spacing"
-        android:numColumns="auto_fit"
-        android:verticalSpacing="@dimen/widget_grid_vertical_spacing"
-        android:stretchMode="columnWidth"
-        android:paddingLeft="@dimen/widget_grid_left_padding"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentBottom="true"
-        android:paddingTop="@dimen/widget_grid_top_padding"
-        android:paddingBottom="@dimen/widget_grid_bottom_padding"
-        android:paddingRight="@dimen/widget_grid_right_padding" />
+    android:id="@+id/bgWidget"
+    android:gravity="center_horizontal">
 
     <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
         android:layout_weight="1"
         android:gravity="center_horizontal"
         android:weightSum="100"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentRight="false"
         android:id="@+id/linearLayout"
-        android:layout_centerVertical="true">
+        android:layout_alignParentTop="true">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:text="sync time"
             android:id="@+id/tvSyncTime"
             android:textColor="#ffffffff"
-            android:textSize="10sp"
-            android:layout_weight="10"
+            android:textSize="12sp"
+            android:layout_weight="40"
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:ellipsize="marquee"
             android:marqueeRepeatLimit="marquee_forever"
             android:scrollHorizontally="true"
-            android:singleLine="true" >
+            android:singleLine="true"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_margin="5dp">
             <requestFocus
                 android:duplicateParentState="true"
                 android:focusable="true"
@@ -58,9 +41,9 @@
 
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="45">
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="30">
 
             <ProgressBar
                 style="?android:attr/progressBarStyleSmall"
@@ -73,7 +56,7 @@
 
             <ImageButton
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:id="@+id/ibRefresh"
                 android:src="@drawable/refresh_btn"
                 android:layout_alignParentBottom="true"
@@ -82,15 +65,33 @@
         </LinearLayout>
 
         <ImageButton
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:id="@+id/ibSettings"
             android:src="@drawable/ic_action_settings"
             android:layout_alignParentBottom="true"
             android:background="#00ffffff"
             android:focusable="false"
-            android:layout_weight="45"
+            android:layout_weight="30"
             android:focusableInTouchMode="false" />
     </LinearLayout>
+
+    <GridView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/gridView2"
+        android:layout_alignParentLeft="false"
+        android:columnWidth="70dp"
+        android:gravity="center"
+        android:horizontalSpacing="@dimen/widget_grid_horizontal_spacing_row_4"
+        android:numColumns="auto_fit"
+        android:verticalSpacing="@dimen/widget_grid_vertical_spacing_row_4"
+        android:stretchMode="columnWidth"
+        android:paddingLeft="@dimen/widget_grid_left_padding_row_4"
+        android:paddingBottom="@dimen/widget_grid_bottom_padding_row_4"
+        android:layout_below="@+id/linearLayout"
+        android:paddingRight="@dimen/widget_grid_right_padding_row_4"
+        android:layout_centerInParent="true"
+        android:paddingTop="@dimen/widget_grid_top_padding_row_4" />
 
 </RelativeLayout>
