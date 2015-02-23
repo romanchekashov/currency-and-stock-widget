@@ -21,9 +21,9 @@
     <dimen name="widget_grid_horizontal_spacing_row_2">5dp</dimen>
     <dimen name="widget_grid_vertical_spacing_row_2">5dp</dimen>
 
-    <dimen name="widget_grid_left_padding_row2">7dp</dimen>
+    <dimen name="widget_grid_left_padding_row2">10dp</dimen>
     <dimen name="widget_grid_top_padding_row2">8dp</dimen>
-    <dimen name="widget_grid_right_padding_row2">7dp</dimen>
+    <dimen name="widget_grid_right_padding_row2">10dp</dimen>
     <dimen name="widget_grid_bottom_padding_row2">9dp</dimen>
 
     <dimen name="widget_grid_item_name_text_size_row2">12sp</dimen>
@@ -35,9 +35,9 @@
     <dimen name="widget_grid_horizontal_spacing_row_3">5dp</dimen>
     <dimen name="widget_grid_vertical_spacing_row_3">5dp</dimen>
 
-    <dimen name="widget_grid_left_padding_row_3">7dp</dimen>
+    <dimen name="widget_grid_left_padding_row_3">10dp</dimen>
     <dimen name="widget_grid_top_padding_row_3">0dp</dimen>
-    <dimen name="widget_grid_right_padding_row_3">7dp</dimen>
+    <dimen name="widget_grid_right_padding_row_3">10dp</dimen>
     <dimen name="widget_grid_bottom_padding_row_3">7dp</dimen>
 
     <dimen name="widget_grid_item_name_text_size_row_3">11sp</dimen>
@@ -49,9 +49,9 @@
     <dimen name="widget_grid_horizontal_spacing_row_4">5dp</dimen>
     <dimen name="widget_grid_vertical_spacing_row_4">5dp</dimen>
 
-    <dimen name="widget_grid_left_padding_row_4">7dp</dimen>
+    <dimen name="widget_grid_left_padding_row_4">10dp</dimen>
     <dimen name="widget_grid_top_padding_row_4">2dp</dimen>
-    <dimen name="widget_grid_right_padding_row_4">7dp</dimen>
+    <dimen name="widget_grid_right_padding_row_4">10dp</dimen>
     <dimen name="widget_grid_bottom_padding_row_4">8dp</dimen>
 
     <dimen name="widget_grid_item_name_text_size_row_4">12sp</dimen>

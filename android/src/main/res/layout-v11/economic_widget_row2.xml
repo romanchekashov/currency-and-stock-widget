@@ -60,7 +60,7 @@
                 android:id="@+id/ibRefresh"
                 android:src="@drawable/refresh_btn"
                 android:layout_alignParentBottom="true"
-                android:background="#00ffffff"
+                android:background="?android:selectableItemBackground"
                 android:layout_marginBottom="2dp" />
         </LinearLayout>
 
@@ -70,7 +70,7 @@
             android:id="@+id/ibSettings"
             android:src="@drawable/ic_action_settings"
             android:layout_alignParentBottom="true"
-            android:background="#00ffffff"
+            android:background="?android:selectableItemBackground"
             android:focusable="false"
             android:layout_weight="30"
             android:focusableInTouchMode="false" />

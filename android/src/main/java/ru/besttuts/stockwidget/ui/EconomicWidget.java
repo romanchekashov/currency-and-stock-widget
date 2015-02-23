@@ -55,19 +55,6 @@ public class EconomicWidget extends AppWidgetProvider {
 
     public final static String BROADCAST_ACTION = "ru.besttuts.stockwidget";
 
-    static boolean isFirstStart;
-
-//    public static Map<Integer, WidgetViewData> widgetViewDataMap = new HashMap<>();
-//
-//    public static class WidgetViewData {
-//        int widgetLayoutId = R.layout.economic_widget;
-//        public int gridPaddingTop = 2;
-//        public int gridPaddingBottom = 2;
-//        public int gridColumnHeight = 36;
-//        public int rows = 1;
-//        boolean isResized = false;
-//    }
-
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 
@@ -106,9 +93,17 @@ public class EconomicWidget extends AppWidgetProvider {
     private void update(Context context, AppWidgetManager appWidgetManager,
                         int[] appWidgetIds, boolean hasInternet) {
 
+        for (int widgetId: appWidgetIds) {
+            RemoteViews views = new RemoteViews(context.getPackageName(),
+                    getWidgetLayoutId(context, widgetId));
+            views.setViewVisibility(R.id.ibRefresh, View.GONE);
+            views.setViewVisibility(R.id.progressBar, View.VISIBLE);
+            appWidgetManager.updateAppWidget(widgetId, views);
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            for (int i: appWidgetIds) {
-                updateAppWidget(context, appWidgetManager, i, null, hasInternet);
+            for (int widgetId: appWidgetIds) {
+                updateAppWidget(context, appWidgetManager, widgetId, null, hasInternet);
             }
         } else {
             // Создаем intent для вызова сервиса
@@ -136,13 +131,16 @@ public class EconomicWidget extends AppWidgetProvider {
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
         // Удаляем все данные ассоциированные с удаляемым виджетом.
+        QuoteDataSource dataSource = new QuoteDataSource(context);
+        dataSource.open();
         final int N = appWidgetIds.length;
         for (int i = 0; i < N; i++) {
-            QuoteDataSource dataSource = new QuoteDataSource(context);
-            dataSource.open();
             dataSource.deleteSettingsByWidgetId(appWidgetIds[i]);
-            dataSource.close();
+            EconomicWidgetConfigureActivity.deleteLastUpdateTimePref(context, appWidgetIds[i]);
+            EconomicWidgetConfigureActivity.deleteWidgetLayoutPref(context, appWidgetIds[i]);
+            EconomicWidgetConfigureActivity.deleteWidgetLayoutGridItemPref(context, appWidgetIds[i]);
         }
+        dataSource.close();
 
         if(BuildConfig.DEBUG) {
             LOGD(TAG, "onDeleted: ");
@@ -320,48 +318,6 @@ public class EconomicWidget extends AppWidgetProvider {
 
     }
 
-    public static void updateAppWidgetApi10(Context context, AppWidgetManager appWidgetManager,
-                                       int appWidgetId, List<Model> models, boolean hasInternet) {
-
-        if (null == models) models = new ArrayList<>();
-
-        // Создаем объект RemoteViews для взаимодействи с отображением виджета
-        RemoteViews views = new RemoteViews(context.getPackageName(), getWidgetLayoutId(context, appWidgetId));
-
-        readPrefsSettings(context, views); // считываем настройки виджета
-
-        int columns = getCellsForSize(appWidgetManager.getAppWidgetInfo(appWidgetId).minWidth);
-        setWidgetViewForApi10(views, context, models, columns);
-
-        if (hasInternet && null == connectionStatus) {
-            String time = new SimpleDateFormat().format(Calendar.getInstance().getTime());
-            views.setTextViewText(R.id.tvSyncTime, time);
-            views.setTextColor(R.id.tvSyncTime, Color.WHITE);
-            EconomicWidgetConfigureActivity.saveLastUpdateTimePref(context, appWidgetId, time);
-        } else if(null != connectionStatus) {
-            String time = EconomicWidgetConfigureActivity.loadLastUpdateTimePref(context, appWidgetId);
-            views.setTextViewText(R.id.tvSyncTime, time + " - " + connectionStatus);
-            int color = context.getResources().getColor(R.color.arrow_red);
-            views.setTextColor(R.id.tvSyncTime, color);
-        } else {
-            String time = EconomicWidgetConfigureActivity.loadLastUpdateTimePref(context, appWidgetId);
-            views.setTextViewText(R.id.tvSyncTime, time);
-            views.setTextColor(R.id.tvSyncTime, Color.WHITE);
-        }
-
-        setConfigBtn(context, appWidgetId, views);
-        setRefreshBtn(context, appWidgetId, views);
-
-        views.setViewVisibility(R.id.progressBar, View.GONE);
-        views.setViewVisibility(R.id.ibRefresh, View.VISIBLE);
-
-        // Оповещаем менеджер вижетов о необходимости обновить виджет
-        appWidgetManager.updateAppWidget(appWidgetId, views);
-
-        LOGD(TAG, "updateAppWidgetApi10: appWidgetId = " + appWidgetId);
-
-    }
-
     // Обновление виджета (вторая зона)
     private static void setRefreshBtn(Context context, int appWidgetId, RemoteViews views) {
         Intent updateIntent = new Intent(context, EconomicWidget.class);
@@ -466,7 +422,6 @@ public class EconomicWidget extends AppWidgetProvider {
 
         onUpdate(context, appWidgetManager, appWidgetIds, isSyncAllowed(context));
 
-
     }
 
     private void handleResize(Context context, Intent intent) {
@@ -553,13 +508,6 @@ public class EconomicWidget extends AppWidgetProvider {
         LOGD(TAG, "onAppWidgetOptionsChanged: minHeight_dp = " + minHeight_dp);
 
         calcWidgetViewData(context, appWidgetId, minHeight_dp);
-        // Находим кол-во строк по минимальной высоте виджета.
-//        int rows = getCellsForSize(minHeight_dp);
-//        if(1 < rows) {
-//            widgetLayoutId = R.layout.economic_widget_row2;
-//        } else {
-//            widgetLayoutId = R.layout.economic_widget;
-//        }
 
         // обновляем виджет с новым layout
         update(context, appWidgetManager, new int[]{appWidgetId}, false);
@@ -580,76 +528,38 @@ public class EconomicWidget extends AppWidgetProvider {
         return n - 1;
     }
 
-    private static int topButtonsHeight = 40;
-    private static int gridVerticalSpacing = 5;
-
     private static int getWidgetLayoutId(Context context, int appWidgetId) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             return EconomicWidgetConfigureActivity.loadWidgetLayoutPref(context, appWidgetId);
         } else {
             return R.layout.economic_widget;
         }
-//        if (null == widgetViewDataMap) widgetViewDataMap = new HashMap<>();
-//        WidgetViewData widgetViewData = widgetViewDataMap.get(appWidgetId);
-//        if (null == widgetViewData) {
-//            widgetViewData = new WidgetViewData();
-//            widgetViewDataMap.put(appWidgetId, widgetViewData);
-//        }
-//        return widgetViewData.widgetLayoutId;
     }
 
     private static void calcWidgetViewData(Context context, int appWidgetId, int height) {
-//        if (null == widgetViewDataMap) widgetViewDataMap = new HashMap<>();
-//        WidgetViewData widgetViewData = widgetViewDataMap.get(appWidgetId);
-//        if (null == widgetViewData) {
-//            widgetViewData = new WidgetViewData();
-//            widgetViewDataMap.put(appWidgetId, widgetViewData);
-//        }
-//
-//        if (isResize != widgetViewData.isResized) return;
-//
-//        widgetViewData.isResized = true;
 
+        // Находим кол-во строк по минимальной высоте виджета.
         int rows = getCellsForSize(height);
         LOGD(TAG, "calcWidgetViewData: rows = " + rows);
         switch (rows) {
             case 1:
-//                widgetViewData.widgetLayoutId = R.layout.economic_widget;
                 EconomicWidgetConfigureActivity.saveWidgetLayoutPref(context, appWidgetId, R.layout.economic_widget);
                 EconomicWidgetConfigureActivity.saveWidgetLayoutGridItemPref(context, appWidgetId, R.layout.economic_widget_item);
                 break;
             case 2:
-//                widgetViewData.widgetLayoutId = R.layout.economic_widget_row2;
                 EconomicWidgetConfigureActivity.saveWidgetLayoutPref(context, appWidgetId, R.layout.economic_widget_row2);
                 EconomicWidgetConfigureActivity.saveWidgetLayoutGridItemPref(context, appWidgetId, R.layout.economic_widget_item_row2);
                 break;
             case 3:
-//                widgetViewData.widgetLayoutId = R.layout.economic_widget_row_3;
                 EconomicWidgetConfigureActivity.saveWidgetLayoutPref(context, appWidgetId, R.layout.economic_widget_row_3);
                 EconomicWidgetConfigureActivity.saveWidgetLayoutGridItemPref(context, appWidgetId, R.layout.economic_widget_item_row_3);
                 break;
             default:
-//                widgetViewData.widgetLayoutId = R.layout.economic_widget_row_4;
                 EconomicWidgetConfigureActivity.saveWidgetLayoutPref(context, appWidgetId, R.layout.economic_widget_row_4);
                 EconomicWidgetConfigureActivity.saveWidgetLayoutGridItemPref(context, appWidgetId, R.layout.economic_widget_item_row_4);
                 break;
         }
 
-//        if(1 < rows) {
-//            widgetViewData.widgetLayoutId = R.layout.economic_widget_row2;
-//            widgetViewData.gridPaddingTop = 0;
-//            widgetViewData.gridPaddingBottom = 4;
-//            widgetViewData.gridColumnHeight = (height - topButtonsHeight - (gridVerticalSpacing * (rows - 1))
-//                    - widgetViewData.gridPaddingBottom) / rows;
-//        } else {
-//            widgetViewData.widgetLayoutId = R.layout.economic_widget;
-//            widgetViewData.gridPaddingTop = 2;
-//            widgetViewData.gridPaddingBottom = 2;
-//            widgetViewData.gridColumnHeight = height - widgetViewData.gridPaddingTop
-//                    - widgetViewData.gridPaddingBottom;
-//        }
-
-//        widgetViewData.rows = rows;
     }
 
 }
