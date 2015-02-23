@@ -9,12 +9,15 @@ import android.provider.BaseColumns;
 import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.provider.QuoteContract.*;
 
+import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
+import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
+
 /**
  * Created by roman on 10.01.2015.
  */
 public class QuoteDatabaseHelper extends SQLiteOpenHelper {
 
-    private static final String LOG_TAG = "EconomicWidget.QuoteDatabase";
+    private static final String TAG = makeLogTag(QuoteDatabaseHelper.class);
 
     private static final String DATABASE_NAME = "quote.db";
     private static final int DATABASE_VERSION = 2;
@@ -65,6 +68,8 @@ public class QuoteDatabaseHelper extends SQLiteOpenHelper {
                 + "UNIQUE (" + QuoteColumns.QUOTE_SYMBOL + "))");
 
         createDefaults(db);
+
+        LOGD(TAG, "onCreate: " + db);
     }
 
     private void createDefaults(SQLiteDatabase db) {
@@ -85,9 +90,9 @@ public class QuoteDatabaseHelper extends SQLiteOpenHelper {
         insertQuote(db, "OJH15.NYB", "Orange Juice", QuoteType.GOODS);
         insertQuote(db, "SBH15.NYB", "Sugar", QuoteType.GOODS);
         // indices
-        insertQuote(db, "MICEXINDEXCF.ME", "MICEX", QuoteType.INDICES);
+//        insertQuote(db, "MICEXINDEXCF.ME", "MICEX", QuoteType.INDICES);
         insertQuote(db, "RTS.RS", "RTS", QuoteType.INDICES);
-        insertQuote(db, "^DJI", "Dow Jones", QuoteType.INDICES);
+//        insertQuote(db, "^DJI", "Dow Jones", QuoteType.INDICES);
         insertQuote(db, "^GSPC", "S&P 500", QuoteType.INDICES);
         insertQuote(db, "^IXIC", "Nasdaq Composite", QuoteType.INDICES);
         insertQuote(db, "^FTSE", "FTSE 100", QuoteType.INDICES);

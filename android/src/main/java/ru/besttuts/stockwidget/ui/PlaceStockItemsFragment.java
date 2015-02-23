@@ -310,6 +310,21 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
 
     FetchQuote mFetchQuote;
 
+    /**
+     * http://developer.android.com/training/improving-layouts/smooth-scrolling.html#ViewHolder
+     */
+    static class ViewHolder {
+        ProgressBar progressBar;
+        LinearLayout linearLayout;
+        TextView tvName;
+        TextView tvRate;
+        TextView tvChange;
+        TextView tvChangePercentage;
+        TextView tvCurrency;
+        TextView tvPosition;
+        ImageView imageView;
+    }
+
     class MySimpleCursorAdapter extends SimpleCursorAdapter {
         MySimpleCursorAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
             super(context, layout, c, from, to, flags);
@@ -317,26 +332,45 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            View view = super.getView(position, convertView, parent);
+            View row = convertView;
+            ViewHolder holder = null;
+            if(row == null) {
+                LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                row = inflater.inflate(R.layout.configure_quote_grid_item, parent, false);
+                //Now create the ViewHolder
+                holder = new ViewHolder();
+                holder.progressBar = (ProgressBar) row.findViewById(R.id.progressBar2);
+                holder.linearLayout = (LinearLayout) row.findViewById(R.id.lLayoutRate);
+                holder.tvName =  (TextView) row.findViewById(R.id.tvName);
+                holder.tvRate =  (TextView) row.findViewById(R.id.tvRate);
+                holder.tvChange =  (TextView) row.findViewById(R.id.tvChange);
+                holder.tvChangePercentage =  (TextView) row.findViewById(R.id.tvChangePercentage);
+                holder.tvCurrency =  (TextView) row.findViewById(R.id.tvCurrency);
+                holder.tvPosition =  (TextView) row.findViewById(R.id.tvPosition);
+                holder.imageView = (ImageView) row.findViewById(R.id.imageView);
+                //and store it as the 'tag' of our view
+                row.setTag(holder);
+            } else {
+                //We've already seen this one before!
+                holder = (ViewHolder) row.getTag();
+            }
+
             Cursor cursor = (Cursor) getItem(position);
             String symbol = cursor.getString(cursor.getColumnIndexOrThrow(
                     QuoteContract.ModelColumns.MODEL_ID));
             LOGD(TAG, "getView: symbol = " + symbol + " currentThread = " + Thread.currentThread());
-
-            ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progressBar2);
-            LinearLayout layout = (LinearLayout) view.findViewById(R.id.lLayoutRate);
 
             if (null == symbol || symbol.isEmpty()) {
                 int quoteType = cursor.getInt(cursor.getColumnIndexOrThrow(
                         QuoteContract.SettingColumns.SETTING_QUOTE_TYPE));
                 symbol = cursor.getString(cursor.getColumnIndexOrThrow(
                         QuoteContract.SettingColumns.SETTING_QUOTE_SYMBOL));
-                ((TextView) view.findViewById(R.id.tvName)).setText(
+                holder.tvName.setText(
                         Utils.getModelNameFromResourcesBySymbol(getActivity(), quoteType, symbol));
 
 
-                layout.setVisibility(View.GONE);
-                progressBar.setVisibility(View.VISIBLE);
+                holder.linearLayout.setVisibility(View.GONE);
+                holder.progressBar.setVisibility(View.VISIBLE);
 
 //                if (null == mFetchQuote) {
 //                    LOGD(TAG, "before FetchQuote: getView: currentThread = " + Thread.currentThread());
@@ -346,35 +380,33 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
 //                            .execute(new String[]{String.valueOf(quoteType), symbol});
 //                }
 
-                return view;
+                return row;
             }
 
-            progressBar.setVisibility(View.GONE);
-            layout.setVisibility(View.VISIBLE);
+            holder.progressBar.setVisibility(View.GONE);
+            holder.linearLayout.setVisibility(View.VISIBLE);
+
+            holder.tvPosition.setText(String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(
+                    QuoteContract.SettingColumns.SETTING_QUOTE_POSITION))));
 
             Model model = QuoteDataSource.transformCursorToModel(cursor);
-            ((TextView) view.findViewById(R.id.tvName)).setText(model.getName());
-            ((TextView) view.findViewById(R.id.tvRate)).setText(model.getRateToString());
-
-            TextView tvChange = (TextView) view.findViewById(R.id.tvChange);
-            tvChange.setText(model.getChangeToString());
-
-            TextView tvChangePercentage = (TextView) view.findViewById(R.id.tvChangePercentage);
-            tvChangePercentage.setText(model.getPercentChange());
-
-            ImageView imageView = (ImageView) view.findViewById(R.id.imageView);
+            holder.tvName.setText(model.getName());
+            holder.tvRate.setText(model.getRateToString());
+            holder.tvChange.setText(model.getChangeToString());
+            holder.tvChangePercentage.setText(model.getPercentChange());
 
             int color = getResources().getColor(R.color.arrow_green);
             if (0 < model.getChange()) {
-                imageView.setImageResource(R.drawable.ic_widget_green_arrow_up);
+                holder.imageView.setImageResource(R.drawable.ic_widget_green_arrow_up);
             } else {
-                imageView.setImageResource(R.drawable.ic_widget_green_arrow_down);
+                holder.imageView.setImageResource(R.drawable.ic_widget_green_arrow_down);
                 color = getResources().getColor(R.color.arrow_red);
             }
-            tvChange.setTextColor(color);
-            tvChangePercentage.setTextColor(color);
+            holder.tvChange.setTextColor(color);
+            holder.tvChangePercentage.setTextColor(color);
 
-            return view;
+            holder.tvCurrency.setText(model.getCurrency());
+            return row;
         }
     }
 

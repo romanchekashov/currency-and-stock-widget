@@ -266,8 +266,7 @@ public class HandleJSON {
             good.setChange(0.0);
         }
         good.setPercentChange(o.getString("ChangeinPercent"));
-        good.setName(Utils.getModelNameFromResourcesBySymbol(mContext,
-                QuoteType.GOODS, o.getString("symbol")));
+        good.setName(o.getString("Name"));
         good.setCurrency(o.getString("Currency"));
         
         symbolModelMap.put(o.getString("symbol"), good);

@@ -217,7 +217,7 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
 
     static int loadWidgetLayoutPref(Context context, int appWidgetId) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
-        return prefs.getInt(PREF_PREFIX_KEY + appWidgetId + "_widget_layout", R.layout.economic_widget_row_4);
+        return prefs.getInt(PREF_PREFIX_KEY + appWidgetId + "_widget_layout", R.layout.economic_widget);
     }
 
     static void saveWidgetLayoutGridItemPref(Context context, int appWidgetId, int layoutGridItem) {
@@ -228,7 +228,7 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
 
     public static int loadWidgetLayoutGridItemPref(Context context, int appWidgetId) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
-        return prefs.getInt(PREF_PREFIX_KEY + appWidgetId + "_widget_layout_grid_item", R.layout.economic_widget_item_row_4);
+        return prefs.getInt(PREF_PREFIX_KEY + appWidgetId + "_widget_layout_grid_item", R.layout.economic_widget_item);
     }
 
     static void saveLastUpdateTimePref(Context context, int appWidgetId, String text) {

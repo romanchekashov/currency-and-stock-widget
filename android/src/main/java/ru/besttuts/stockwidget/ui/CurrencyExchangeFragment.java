@@ -29,6 +29,7 @@ public class CurrencyExchangeFragment extends Fragment implements IQuoteTypeFrag
 
     private static final int CURRENCY_POSITION_USD = 149;
     private static final int CURRENCY_POSITION_RUB = 119;
+    private static final int CURRENCY_POSITION_UAH = 60;
 
     private int mQuoteType;
     private String mCurrencyFrom;
@@ -146,6 +147,8 @@ public class CurrencyExchangeFragment extends Fragment implements IQuoteTypeFrag
 
         if ("ru".equals(lng)) {
             spinner1.setSelection(CURRENCY_POSITION_RUB, false);
+        } else if ("uk".equals(lng)) {
+            spinner1.setSelection(CURRENCY_POSITION_UAH, false);
         } else {
             spinner1.setSelection(CURRENCY_POSITION_USD, false);
         }
