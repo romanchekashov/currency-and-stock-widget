@@ -233,6 +233,34 @@ public class EconomicWidget extends AppWidgetProvider {
             dataSource.addSettingsRec(appWidgetIds[0], 2, QuoteType.GOODS, new String[]{"BZH15.NYM", "NGH15.NYM", "GCF15.CMX"});
         }
 
+//        dataSource.addModelRec(QuoteType.CURRENCY, "EURUSD");
+//        dataSource.addModelRec(QuoteType.CURRENCY, "USDRUB");
+//        dataSource.addModelRec(QuoteType.CURRENCY, "EURRUB");
+//
+//        dataSource.addModelRec(QuoteType.GOODS, "BZH15.NYM");
+//        dataSource.addModelRec(QuoteType.GOODS, "NGH15.NYM");
+//        dataSource.addModelRec(QuoteType.GOODS, "GCF15.CMX");
+//
+//        dataSource.addModelRec(QuoteType.STOCK, "AAPL");
+//        dataSource.addModelRec(QuoteType.STOCK, "GOOG");
+//        dataSource.addModelRec(QuoteType.STOCK, "IBM");
+//        dataSource.addModelRec(QuoteType.STOCK, "MCD");
+//        dataSource.addModelRec(QuoteType.STOCK, "MSFT");
+//        dataSource.addModelRec(QuoteType.STOCK, "KO");
+//        dataSource.addModelRec(QuoteType.STOCK, "T");
+//        dataSource.addModelRec(QuoteType.STOCK, "PM");
+//        dataSource.addModelRec(QuoteType.STOCK, "CHL");
+//        dataSource.addModelRec(QuoteType.STOCK, "GE");
+//        dataSource.addModelRec(QuoteType.STOCK, "VOD");
+//        dataSource.addModelRec(QuoteType.STOCK, "VZ");
+//        dataSource.addModelRec(QuoteType.STOCK, "AMZN");
+//        dataSource.addModelRec(QuoteType.STOCK, "WMT");
+//        dataSource.addModelRec(QuoteType.STOCK, "WFC");
+//        dataSource.addModelRec(QuoteType.STOCK, "UPS");
+//        dataSource.addModelRec(QuoteType.STOCK, "HPQ");
+//        dataSource.addModelRec(QuoteType.STOCK, "TMUS");
+//        dataSource.addModelRec(QuoteType.STOCK, "Visa");
+
         dataSource.close();
 
     }

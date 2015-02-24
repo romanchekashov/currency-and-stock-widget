@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- tested -->
+    <!-- tested: Galaxy S II SHW-M250K api-4.1.2 -->
     <dimen name="widget_grid_column_width">60dp</dimen>
 
     <!-- 1 row -->
@@ -27,10 +27,10 @@
     <dimen name="widget_grid_right_padding_row2">10dp</dimen>
     <dimen name="widget_grid_bottom_padding_row2">10dp</dimen>
 
-    <dimen name="widget_grid_item_name_text_size_row2">11sp</dimen>
-    <dimen name="widget_grid_item_rate_text_size_row2">18sp</dimen>
-    <dimen name="widget_grid_item_change_text_size_row2">8sp</dimen>
-    <dimen name="widget_grid_item_change_percentage_text_size_row2">8sp</dimen>
+    <dimen name="widget_grid_item_name_text_size_row2">10sp</dimen>
+    <dimen name="widget_grid_item_rate_text_size_row2">17sp</dimen>
+    <dimen name="widget_grid_item_change_text_size_row2">7sp</dimen>
+    <dimen name="widget_grid_item_change_percentage_text_size_row2">7sp</dimen>
 
     <!-- 3 row -->
     <dimen name="widget_grid_horizontal_spacing_row_3">10dp</dimen>
@@ -39,24 +39,24 @@
     <dimen name="widget_grid_left_padding_row_3">10dp</dimen>
     <dimen name="widget_grid_top_padding_row_3">11dp</dimen>
     <dimen name="widget_grid_right_padding_row_3">10dp</dimen>
-    <dimen name="widget_grid_bottom_padding_row_3">15dp</dimen>
+    <dimen name="widget_grid_bottom_padding_row_3">11dp</dimen>
 
     <dimen name="widget_grid_item_name_text_size_row_3">12sp</dimen>
     <dimen name="widget_grid_item_rate_text_size_row_3">18sp</dimen>
-    <dimen name="widget_grid_item_change_text_size_row_3">9sp</dimen>
-    <dimen name="widget_grid_item_change_percentage_text_size_row_3">9sp</dimen>
+    <dimen name="widget_grid_item_change_text_size_row_3">8sp</dimen>
+    <dimen name="widget_grid_item_change_percentage_text_size_row_3">8sp</dimen>
 
     <!-- 4 row -->
     <dimen name="widget_grid_horizontal_spacing_row_4">10dp</dimen>
-    <dimen name="widget_grid_vertical_spacing_row_4">18dp</dimen>
+    <dimen name="widget_grid_vertical_spacing_row_4">15dp</dimen>
 
     <dimen name="widget_grid_left_padding_row_4">10dp</dimen>
     <dimen name="widget_grid_top_padding_row_4">10dp</dimen>
     <dimen name="widget_grid_right_padding_row_4">10dp</dimen>
-    <dimen name="widget_grid_bottom_padding_row_4">15dp</dimen>
+    <dimen name="widget_grid_bottom_padding_row_4">10dp</dimen>
 
     <dimen name="widget_grid_item_name_text_size_row_4">12sp</dimen>
-    <dimen name="widget_grid_item_rate_text_size_row_4">19sp</dimen>
+    <dimen name="widget_grid_item_rate_text_size_row_4">18sp</dimen>
     <dimen name="widget_grid_item_change_text_size_row_4">9sp</dimen>
     <dimen name="widget_grid_item_change_percentage_text_size_row_4">9sp</dimen>
 

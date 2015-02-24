@@ -89,7 +89,7 @@ public class QuoteDataSource {
                 Utils.getModelNameFromResourcesBySymbol(context, quoteType, symbol));
         values.put(QuoteContract.ModelColumns.MODEL_RATE, 0);
         values.put(QuoteContract.ModelColumns.MODEL_CHANGE, 0);
-        values.put(QuoteContract.ModelColumns.MODEL_PERCENT_CHANGE, "");
+        values.put(QuoteContract.ModelColumns.MODEL_PERCENT_CHANGE, "0.0%");
 
         // Which row to update, based on the ID
         String selection = QuoteContract.ModelColumns.MODEL_ID + " LIKE ?";
