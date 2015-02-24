@@ -80,6 +80,7 @@ public class QuoteDataSource {
 
     }
 
+    @Deprecated
     public void addModelRec(int quoteType, String symbol) {
 
         // New value for one column
@@ -433,6 +434,7 @@ public class QuoteDataSource {
 
     public static Model transformCursorToModel(Cursor cursor) {
         Model model = new Model();
+        model.setId(cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_ID)));
         model.setName(cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_NAME)));
         model.setRate(cursor.getDouble(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_RATE)));
         model.setChange(cursor.getDouble(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_CHANGE)));

@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 
 import ru.besttuts.stockwidget.R;
+import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.ui.ConfigPreferenceFragment;
 
@@ -22,6 +23,23 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 public class Utils {
 
     private static final String TAG = makeLogTag(Utils.class);
+
+    public static String getModelNameFromResourcesBySymbol(Context context, Model model) {
+
+        if (null == model) return "-";
+        if (null == model.getId()) return model.getName();
+
+        String field = model.getId().toLowerCase().replace(".", "_");
+        try {
+            return context.getString(R.string.class.getDeclaredField(field).getInt(null));
+        } catch (IllegalAccessException e) {
+            LOGE(TAG, e.getMessage());
+        } catch (NoSuchFieldException e) {
+            LOGE(TAG, e.getMessage());
+        }
+
+        return model.getName();
+    }
 
     public static String getModelNameFromResourcesBySymbol(Context context, String symbol) {
         return getModelNameFromResourcesBySymbol(context, QuoteType.GOODS, symbol);

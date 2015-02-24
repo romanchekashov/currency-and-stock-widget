@@ -60,7 +60,7 @@
     <string name="plf15_nym">Платина</string>
     <string name="paf15_nym">Палладий</string>
     <string name="hgf15_cmx">Медь</string>
-    <string name="bzh15_nym">Brent</string>
+    <string name="bzh15_nym">Нефть(Brent)</string>
     <string name="ngh15_nym">Газ</string>
     <string name="ch15_cbt">Кукуруза</string>
     <string name="sh15_cbt">Соя</string>

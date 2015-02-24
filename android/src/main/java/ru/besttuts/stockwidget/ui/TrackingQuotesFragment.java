@@ -385,7 +385,7 @@ public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<
                     QuoteContract.SettingColumns.SETTING_QUOTE_POSITION))));
 
             Model model = QuoteDataSource.transformCursorToModel(cursor);
-            holder.tvName.setText(model.getName());
+            holder.tvName.setText(Utils.getModelNameFromResourcesBySymbol(getActivity(), model));
             holder.tvRate.setText(model.getRateToString());
             holder.tvChange.setText(model.getChangeToString());
             holder.tvChangePercentage.setText(model.getPercentChange());

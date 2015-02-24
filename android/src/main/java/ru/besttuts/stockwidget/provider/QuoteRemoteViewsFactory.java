@@ -18,6 +18,7 @@ import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.ui.EconomicWidget;
 import ru.besttuts.stockwidget.ui.EconomicWidgetConfigureActivity;
+import ru.besttuts.stockwidget.util.Utils;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
@@ -82,7 +83,7 @@ public class QuoteRemoteViewsFactory implements RemoteViewsFactory {
         Model model = models.get(position);
 
 //        viewItem.setFloat(R.id.tvName, "setTextSize", 12);
-        viewItem.setTextViewText(R.id.tvName, model.getName());
+        viewItem.setTextViewText(R.id.tvName, Utils.getModelNameFromResourcesBySymbol(mContext, model));
         viewItem.setTextViewText(R.id.tvRate, model.getRateToString());
         viewItem.setTextViewText(R.id.tvChange, model.getChangeToString());
         viewItem.setTextViewText(R.id.tvChangePercentage, model.getPercentChange());

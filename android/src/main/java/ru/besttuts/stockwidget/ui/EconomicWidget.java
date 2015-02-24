@@ -29,6 +29,7 @@ import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
 import ru.besttuts.stockwidget.service.QuoteWidgetService;
 import ru.besttuts.stockwidget.service.UpdateService;
+import ru.besttuts.stockwidget.util.Utils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -401,7 +402,7 @@ public class EconomicWidget extends AppWidgetProvider {
             if (null == model) continue;
 
             RemoteViews viewItem = new RemoteViews(context.getPackageName(), R.layout.economic_widget_item);
-            viewItem.setTextViewText(R.id.tvName, model.getName());
+            viewItem.setTextViewText(R.id.tvName, Utils.getModelNameFromResourcesBySymbol(context, model));
             viewItem.setTextViewText(R.id.tvRate, model.getRateToString());
             viewItem.setTextViewText(R.id.tvChange, model.getChangeToString());
             viewItem.setTextViewText(R.id.tvChangePercentage, model.getPercentChange());
