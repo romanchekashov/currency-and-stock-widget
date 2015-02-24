@@ -9,24 +9,19 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ActionProvider;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
+
+import com.google.android.gms.analytics.GoogleAnalytics;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 
 import ru.besttuts.stockwidget.R;
-import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
 import ru.besttuts.stockwidget.service.UpdateService;
 import ru.besttuts.stockwidget.util.NotificationManager;
@@ -41,7 +36,7 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
  */
 public class EconomicWidgetConfigureActivity extends ActionBarActivity
         implements SlidingTabsFragment.OnFragmentInteractionListener,
-        PlaceStockItemsFragment.OnFragmentInteractionListener,
+        TrackingQuotesFragment.OnFragmentInteractionListener,
         NotificationManager.ColorChangedListener {
 
     private static final String TAG = makeLogTag(EconomicWidgetConfigureActivity.class);
@@ -193,12 +188,28 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
                 metrics.density, metrics.densityDpi, metrics.heightPixels, metrics.widthPixels,
                 metrics.scaledDensity, metrics.xdpi, metrics.ydpi));
 
+        //Get a Tracker (should auto-report)
+        ((AnalyticsApp) getApplication()).getTracker(AnalyticsApp.TrackerName.APP_TRACKER);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //Get an Analytics tracker to report app starts & uncaught exceptions etc.
+        GoogleAnalytics.getInstance(this).reportActivityStart(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         LOGD(TAG, "onResume");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        //Stop the analytics tracking
+        GoogleAnalytics.getInstance(this).reportActivityStop(this);
     }
 
     @Override

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="TypographyDashes">
+
+    <integer name="ga_sessionTimeout">300</integer>
+
+    <!-- the Local LogLevel for Analytics -->
+    <string name="ga_logLevel">verbose</string>
+
+    <!-- Treat events as test events and don't send to google -->
+    <bool name="ga_dryRun">true</bool>
+
+    <!-- Enable automatic Activity measurement -->
+    <bool name="ga_autoActivityTracking">true</bool>
+
+    <!-- The screen names that will appear in reports -->
+    <screenName name="ru.besttuts.stockwidget.ui.EconomicWidgetConfigureActivity">
+        AnalyticsApp EconomicWidgetConfigureActivity
+    </screenName>
+
+</resources>

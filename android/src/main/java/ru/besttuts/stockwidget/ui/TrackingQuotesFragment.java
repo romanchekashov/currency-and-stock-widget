@@ -15,7 +15,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
@@ -53,17 +52,12 @@ import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
 /**
- * A simple {@link android.support.v4.app.Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ru.besttuts.stockwidget.ui.PlaceStockItemsFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ru.besttuts.stockwidget.ui.PlaceStockItemsFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Фрагмет с отслеживаемыми котировками.
  */
-public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks<Cursor>,
+public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<Cursor>,
         NotificationManager.ColorChangedListener, NotificationManager.OptionsItemSelectListener {
 
-    private static final String TAG = makeLogTag(PlaceStockItemsFragment.class);
+    private static final String TAG = makeLogTag(TrackingQuotesFragment.class);
 
     // параметры для инициализации фрагмента, e.g. ARG_ITEM_NUMBER
     private static final String ARG_WIDGET_ID = "widgetId";
@@ -89,15 +83,15 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
      * @param widgetId идентификатор виджета.
      * @return Новый объект фрагмента PlaceStockItemsFragment.
      */
-    public static PlaceStockItemsFragment newInstance(int widgetId) {
-        PlaceStockItemsFragment fragment = new PlaceStockItemsFragment();
+    public static TrackingQuotesFragment newInstance(int widgetId) {
+        TrackingQuotesFragment fragment = new TrackingQuotesFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_WIDGET_ID, widgetId);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public PlaceStockItemsFragment() {
+    public TrackingQuotesFragment() {
         // Необходим пустой общедоступный конструктор
     }
 
@@ -115,6 +109,7 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
 
         LOGD(TAG, String.format("onCreate: mWidgetId = %d, mWidgetItemsNumber = %d",
                 mWidgetId, mWidgetItemsNumber));
+
     }
 
     @Override
@@ -146,7 +141,7 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 StockItemTypeDialogFragment dialog = new StockItemTypeDialogFragment();
-                dialog.set(position + 1, PlaceStockItemsFragment.this);
+                dialog.set(position + 1, TrackingQuotesFragment.this);
                 dialog.show(getActivity().getSupportFragmentManager(), "StockItemTypeDialogFragment");
             }
         });
@@ -415,12 +410,12 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
         private static final String ARG_POSITION = "position";
 
         private int mPosition = -1;
-        private PlaceStockItemsFragment mFragment;
+        private TrackingQuotesFragment mFragment;
 
         public StockItemTypeDialogFragment() {
         }
 
-        public void set(int position, PlaceStockItemsFragment fragment) {
+        public void set(int position, TrackingQuotesFragment fragment) {
             mPosition = position;
             mFragment = fragment;
         }
@@ -444,7 +439,7 @@ public class PlaceStockItemsFragment extends Fragment implements LoaderCallbacks
                  * Получаем ссылку на фрагмент PlaceStockItemsFragment.
                  * Она сохраняется при поворотах экрана!
                  */
-                mFragment = (PlaceStockItemsFragment) getTargetFragment();
+                mFragment = (TrackingQuotesFragment) getTargetFragment();
             }
 
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
