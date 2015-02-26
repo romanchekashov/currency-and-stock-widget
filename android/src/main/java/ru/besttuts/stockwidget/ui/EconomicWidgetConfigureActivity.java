@@ -39,6 +39,7 @@ import ru.besttuts.stockwidget.util.NotificationManager;
 import ru.besttuts.stockwidget.util.Utils;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
+import static ru.besttuts.stockwidget.util.LogUtils.LOGE;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
 
@@ -54,8 +55,8 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
 
 
     /** Your ad unit id. Replace with your actual ad unit id. */
-    private static final String BANNER_AD_UNIT_ID = "ca-app-pub-XXX";
-    private static final String INTERSTITIAL_AD_UNIT_ID = "ca-app-pub-XXX";
+    private static final String BANNER_AD_UNIT_ID = "ca-app-pub-XXXX";
+    private static final String INTERSTITIAL_AD_UNIT_ID = "ca-app-pub-XXXX";
 
     /** The interstitial ad. */
     private InterstitialAd interstitialAd;
@@ -137,8 +138,7 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
 
     private void acceptBtnPressed() {
 
-//        loadInterstitial(null);
-        showInterstitial(null);
+        showInterstitial();
 
         final Context context = EconomicWidgetConfigureActivity.this;
 
@@ -199,6 +199,10 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
             fragmentTransaction.replace(R.id.fragment_place, fragment);
 //        fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
+
+            // Проверяем нужно ли показать диалог оценки приложения
+            AppRater.app_launched(this, getSupportFragmentManager());
+
         } else {
             position = savedInstanceState.getInt("position");
         }
@@ -217,7 +221,6 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
         //Получаю треккер отслеживания для Гугл-Аналитики (должен автоматически отправлять отчеты)
         ((AnalyticsApp) getApplication()).getTracker(AnalyticsApp.TrackerName.APP_TRACKER);
 
-        AppRater.app_launched(this, getSupportFragmentManager());
     }
 
     public void createAds() {
@@ -235,8 +238,8 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
 
         // Инициирование общего запроса.
         AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .addTestDevice("D3C9806471E4384943F6D91")
+//                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+//                .addTestDevice("D3C9806471EC6606384943F6D91")
                 .build();
 
         // Загрузка adView с объявлением.
@@ -261,8 +264,8 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
 
         // Check the logcat output for your hashed device ID to get test ads on a physical device.
         AdRequest interstitialAdRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .addTestDevice("D3C9806471E434943F6D91")
+//                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+//                .addTestDevice("D3C980644AEC6606384943F6D91")
                 .build();
 
         // Load the interstitial ad.
@@ -270,7 +273,11 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
     }
 
     /** Called when the Show Interstitial button is clicked. */
-    public void showInterstitial(View unusedView) {
+    public void showInterstitial() {
+        if (null == interstitialAd) {
+            LOGE(TAG, "interstitialAd = " + interstitialAd);
+            return;
+        }
         if (interstitialAd.isLoaded()) {
             interstitialAd.show();
         } else {
@@ -296,6 +303,12 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
                 break;
         }
         return errorReason;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        showInterstitial();
     }
 
     @Override
