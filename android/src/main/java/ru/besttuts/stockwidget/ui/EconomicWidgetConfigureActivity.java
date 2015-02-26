@@ -4,6 +4,8 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -15,7 +17,15 @@ import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.Toast;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.analytics.GoogleAnalytics;
 
 import java.text.SimpleDateFormat;
@@ -24,6 +34,7 @@ import java.util.Calendar;
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
 import ru.besttuts.stockwidget.service.UpdateService;
+import ru.besttuts.stockwidget.util.AppRater;
 import ru.besttuts.stockwidget.util.NotificationManager;
 import ru.besttuts.stockwidget.util.Utils;
 
@@ -41,11 +52,19 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
 
     private static final String TAG = makeLogTag(EconomicWidgetConfigureActivity.class);
 
+
+    /** Your ad unit id. Replace with your actual ad unit id. */
+    private static final String BANNER_AD_UNIT_ID = "ca-app-pub-XXX";
+    private static final String INTERSTITIAL_AD_UNIT_ID = "ca-app-pub-XXX";
+
+    /** The interstitial ad. */
+    private InterstitialAd interstitialAd;
+
     public static final String ARG_WIDGET_ID = "widgetId";
     public static final String ARG_QUOTE_TYPE_VALUE = "quoteTypeValue";
     public static final String ARG_WIDGET_ITEM_POSITION = "widgetItemPosition";
 
-    private static final String PREFS_NAME = "ru.besttuts.stockwidget.ui.EconomicWidget";
+    public static final String PREFS_NAME = "ru.besttuts.stockwidget.ui.EconomicWidget";
     private static final String PREF_PREFIX_KEY = "appwidget_";
 
     static QuoteDataSource mDataSource;
@@ -117,6 +136,10 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
     }
 
     private void acceptBtnPressed() {
+
+//        loadInterstitial(null);
+        showInterstitial(null);
+
         final Context context = EconomicWidgetConfigureActivity.this;
 
         Intent intent = new Intent(context.getApplicationContext(), UpdateService.class);
@@ -142,6 +165,9 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
         PreferenceManager.setDefaultValues(this, R.xml.preference_config, false);
 
         setContentView(R.layout.activity_economic_widget_configure);
+
+        // Создаем рекламный баннер
+        createAds();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -181,15 +207,95 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
         mDataSource = new QuoteDataSource(this);
         mDataSource.open();
 
-        DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        LOGD(TAG, String.format("onCreate: density = %f, densityDpi = %d, heightPixels = %d, " +
-                        "widthPixels = %d, scaledDensity = %f, xdpi = %f, ydpi = %f",
-                metrics.density, metrics.densityDpi, metrics.heightPixels, metrics.widthPixels,
-                metrics.scaledDensity, metrics.xdpi, metrics.ydpi));
+//        DisplayMetrics metrics = new DisplayMetrics();
+//        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+//        LOGD(TAG, String.format("onCreate: density = %f, densityDpi = %d, heightPixels = %d, " +
+//                        "widthPixels = %d, scaledDensity = %f, xdpi = %f, ydpi = %f",
+//                metrics.density, metrics.densityDpi, metrics.heightPixels, metrics.widthPixels,
+//                metrics.scaledDensity, metrics.xdpi, metrics.ydpi));
 
-        //Get a Tracker (should auto-report)
+        //Получаю треккер отслеживания для Гугл-Аналитики (должен автоматически отправлять отчеты)
         ((AnalyticsApp) getApplication()).getTracker(AnalyticsApp.TrackerName.APP_TRACKER);
+
+        AppRater.app_launched(this, getSupportFragmentManager());
+    }
+
+    public void createAds() {
+        // Создание экземпляра adView.
+        AdView adView = new AdView(this);
+        adView.setAdUnitId(BANNER_AD_UNIT_ID);
+        adView.setAdSize(AdSize.SMART_BANNER);
+
+        // Поиск разметки LinearLayout (предполагается, что ей был присвоен
+        // атрибут android:id="@+id/mainLayout").
+        FrameLayout adViewFrameLayout = (FrameLayout)findViewById(R.id.adViewFrameLayout);
+
+        // Добавление в разметку экземпляра adView.
+        adViewFrameLayout.addView(adView);
+
+        // Инициирование общего запроса.
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("D3C9806471E4384943F6D91")
+                .build();
+
+        // Загрузка adView с объявлением.
+        adView.loadAd(adRequest);
+
+        // Create an ad.
+        interstitialAd = new InterstitialAd(this);
+        interstitialAd.setAdUnitId(INTERSTITIAL_AD_UNIT_ID);
+        // Set the AdListener.
+        interstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                LOGD(TAG, "onAdLoaded");
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+                String message = String.format("onAdFailedToLoad (%s)", getErrorReason(errorCode));
+                LOGD(TAG, message);
+            }
+        });
+
+        // Check the logcat output for your hashed device ID to get test ads on a physical device.
+        AdRequest interstitialAdRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("D3C9806471E434943F6D91")
+                .build();
+
+        // Load the interstitial ad.
+        interstitialAd.loadAd(interstitialAdRequest);
+    }
+
+    /** Called when the Show Interstitial button is clicked. */
+    public void showInterstitial(View unusedView) {
+        if (interstitialAd.isLoaded()) {
+            interstitialAd.show();
+        } else {
+            LOGD(TAG, "Interstitial ad was not ready to be shown.");
+        }
+    }
+
+    /** Gets a string error reason from an error code. */
+    private String getErrorReason(int errorCode) {
+        String errorReason = "";
+        switch(errorCode) {
+            case AdRequest.ERROR_CODE_INTERNAL_ERROR:
+                errorReason = "Internal error";
+                break;
+            case AdRequest.ERROR_CODE_INVALID_REQUEST:
+                errorReason = "Invalid request";
+                break;
+            case AdRequest.ERROR_CODE_NETWORK_ERROR:
+                errorReason = "Network Error";
+                break;
+            case AdRequest.ERROR_CODE_NO_FILL:
+                errorReason = "No fill";
+                break;
+        }
+        return errorReason;
     }
 
     @Override
@@ -278,7 +384,13 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
 
     @Override
     public void changeColor() {
-        Utils.onActivityCreateSetActionBarColor(getSupportActionBar());
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        String color = sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_COLOR,
+                ConfigPreferenceFragment.KEY_PREF_BG_COLOR_DEFAULT_VALUE);
+
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor(color)));
+
+        findViewById(R.id.adViewFrameLayout).setBackgroundColor(Color.parseColor(color));
     }
 
 }

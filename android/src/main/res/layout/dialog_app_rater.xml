@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:id="@+id/llTitle"
+        android:layout_marginBottom="20dp"
+        android:paddingRight="4dp"
+        android:paddingLeft="4dp">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/imageView2"
+            android:src="@mipmap/ic_launcher" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/rate_app"
+            android:id="@+id/textView2"
+            android:layout_marginLeft="10dp"
+            android:layout_gravity="center_vertical" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/rate_app_text"
+        android:id="@+id/textView"
+        android:layout_below="@+id/llTitle"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/rate_now"
+        android:id="@+id/btnRateNow"
+        android:layout_below="@+id/textView"
+        android:layout_marginTop="10dp" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/rate_later"
+        android:id="@+id/btnRateLater"
+        android:layout_below="@+id/btnRateNow"
+        android:layout_marginTop="10dp" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/rate_no"
+        android:id="@+id/btnRateNo"
+        android:layout_below="@+id/btnRateLater"
+        android:layout_marginTop="10dp" />
+</RelativeLayout>

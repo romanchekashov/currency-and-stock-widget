@@ -9,8 +9,8 @@ android {
         applicationId "ru.besttuts.stockwidget"
         minSdkVersion 10
         targetSdkVersion 21
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1"
     }
     buildTypes {
         release {
@@ -47,6 +47,7 @@ robolectric {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.google.android.gms:play-services:6.1.+'
+//    compile 'com.google.android.gms:play-services-ads:6.5.+'
     compile 'com.android.support:appcompat-v7:21.0.+'
     compile 'com.github.machinarius:preferencefragment:0.1.1'
 
@@ -83,5 +84,62 @@ apply plugin: 'idea'
 idea {
     module {
         testOutputDir = file('build/test-classes/debug')
+    }
+}
+
+// play-service:6.5.+ не заработала, использую 6.1.+
+// данным скриптом удаляю лишние пакеты, чтобы уменьшить вес приложения
+// https://gist.github.com/dmarcato/d7c91b94214acd936e42
+def toCamelCase(String string) {
+    String result = ""
+    string.findAll("[^\\W]+") { String word ->
+        result += word.capitalize()
+    }
+    return result
+}
+
+afterEvaluate { project ->
+    Configuration runtimeConfiguration = project.configurations.getByName('compile')
+    ResolutionResult resolution = runtimeConfiguration.incoming.resolutionResult
+    // Forces resolve of configuration
+    ModuleVersionIdentifier module = resolution.getAllComponents().find { it.moduleVersion.name.equals("play-services") }.moduleVersion
+
+    String prepareTaskName = "prepare${toCamelCase("${module.group} ${module.name} ${module.version}")}Library"
+    File playServiceRootFolder = project.tasks.find { it.name.equals(prepareTaskName) }.explodedDir
+
+    Task stripPlayServices = project.tasks.create(name: 'stripPlayServices', group: "Strip") {
+        inputs.files new File(playServiceRootFolder, "classes.jar")
+        outputs.dir playServiceRootFolder
+        description 'Strip useless packages from Google Play Services library to avoid reaching dex limit'
+
+        doLast {
+            copy {
+                from(file(new File(playServiceRootFolder, "classes.jar")))
+                into(file(playServiceRootFolder))
+                rename { fileName ->
+                    fileName = "classes_orig.jar"
+                }
+            }
+            tasks.create(name: "stripPlayServices" + module.version, type: Jar) {
+                destinationDir = playServiceRootFolder
+                archiveName = "classes.jar"
+                from(zipTree(new File(playServiceRootFolder, "classes_orig.jar"))) {
+                    exclude "com/google/android/gms/games/**"
+                    exclude "com/google/android/gms/panorama/**"
+                    exclude "com/google/android/gms/plus/**"
+                    exclude "com/google/android/gms/maps/**"
+                    exclude "com/google/android/gms/drive/**"
+                    exclude "com/google/android/gms/fitness/**"
+                    exclude "com/google/android/gms/wearable/**"
+                    exclude "com/google/android/gms/wallet/**"
+                    exclude "com/google/android/gms/cast/**"
+                }
+            }.execute()
+            delete file(new File(playServiceRootFolder, "classes_orig.jar"))
+        }
+    }
+
+    project.tasks.findAll { it.name.startsWith('prepare') && it.name.endsWith('Dependencies') }.each { Task task ->
+        task.dependsOn stripPlayServices
     }
 }

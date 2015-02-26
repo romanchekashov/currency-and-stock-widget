@@ -9,6 +9,12 @@
     <string name="add_widget">Add widget</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <string name="rate_app">Оцените приложение</string>
+    <string name="rate_app_text">Если Вам понравилось использовать Валютно-фондовый виджет, пожалуйста оцените его. Спасибо за Вашу поддержку!</string>
+    <string name="rate_now">Оценить сейчас</string>
+    <string name="rate_later">Позже</string>
+    <string name="rate_no">Нет, Спасибо</string>
+
     <string name="action_accept">Подтвердить</string>
     <string name="refresh">Обновить</string>
     <string name="for_">За</string>
