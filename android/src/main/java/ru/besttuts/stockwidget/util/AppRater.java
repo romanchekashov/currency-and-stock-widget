@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
@@ -24,10 +25,10 @@ public class AppRater {
     private final static String APP_PNAME = "ru.besttuts.stockwidget";
 
     private final static int DAYS_UNTIL_PROMPT = 3;
-    private final static int LAUNCHES_UNTIL_PROMPT = 3;
+    private final static int LAUNCHES_UNTIL_PROMPT = 5;
 
     public static void app_launched(Context mContext, FragmentManager fragmentManager) {
-        SharedPreferences prefs = mContext.getSharedPreferences(EconomicWidgetConfigureActivity.PREFS_NAME, 0);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         if (prefs.getBoolean("dontshowagain", false)) {
             return;
         }
@@ -35,8 +36,8 @@ public class AppRater {
         SharedPreferences.Editor editor = prefs.edit();
 
         // Increment launch counter
-        long launch_count = prefs.getLong("launch_count", 0) + 1;
-        editor.putLong("launch_count", launch_count);
+        long launch_count = prefs.getLong("launch_count", 0);
+//        editor.putLong("launch_count", launch_count);
 
         // Get date of first launch
         Long date_firstLaunch = prefs.getLong("date_firstlaunch", 0);
@@ -53,6 +54,20 @@ public class AppRater {
             showRateDialog(fragmentManager, mContext, editor);
         }
 
+        editor.commit();
+    }
+
+    public static void countLaunches(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        if (prefs.getBoolean("dontshowagain", false)) {
+            return;
+        }
+
+        SharedPreferences.Editor editor = prefs.edit();
+
+        // Increment launch counter
+        long launch_count = prefs.getLong("launch_count", 0) + 1;
+        editor.putLong("launch_count", launch_count);
         editor.commit();
     }
 

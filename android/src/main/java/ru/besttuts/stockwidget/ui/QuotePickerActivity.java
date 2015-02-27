@@ -184,22 +184,11 @@ public class QuotePickerActivity extends ActionBarActivity
                 }
                 return true;
             case android.R.id.home: // Respond to the action bar's Up/Home button
-                Intent upIntent = NavUtils.getParentActivityIntent(this);
-                upIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
-
-                if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
-                    // This activity is NOT part of this app's task, so create a new task
-                    // when navigating up, with a synthesized back stack.
-                    TaskStackBuilder.create(this)
-                            // Add all of this activity's parents to the back stack
-                            .addNextIntentWithParentStack(upIntent)
-                                    // Navigate up to the closest parent
-                            .startActivities();
-                } else {
-                    // This activity is part of this app's task, so simply
-                    // navigate up to the logical parent activity.
-                    NavUtils.navigateUpTo(this, upIntent);
-                }
+//                Intent upIntent = new Intent(this, EconomicWidgetConfigureActivity.class);
+//                upIntent.setAction("android.appwidget.action.APPWIDGET_CONFIGURE");
+//                upIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+//                NavUtils.navigateUpTo(this, upIntent);
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

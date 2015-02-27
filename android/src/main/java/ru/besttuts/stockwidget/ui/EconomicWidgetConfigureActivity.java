@@ -138,6 +138,9 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
 
     private void acceptBtnPressed() {
 
+        // при выходе засчитываем один запуск
+        AppRater.countLaunches(this);
+
         showInterstitial();
 
         final Context context = EconomicWidgetConfigureActivity.this;
@@ -218,6 +221,24 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
 //                metrics.density, metrics.densityDpi, metrics.heightPixels, metrics.widthPixels,
 //                metrics.scaledDensity, metrics.xdpi, metrics.ydpi));
 
+//        if (BuildConfig.DEBUG) {
+//            File file = new File("/data/data/ru.besttuts.stockwidget");
+//            SharedPreferences sp = getSharedPreferences(PREFS_NAME, 0);
+//            LOGD(TAG, "PreferenceManager.getDefaultSharedPreferences: " + sp);
+//            Map<String, ?> map = sp.getAll();
+//            Set<String> keys = map.keySet();
+//            for (String key: keys) {
+//                LOGD(TAG, String.format("%s: %s", key, map.get(key)));
+//            }
+//
+//            sp = PreferenceManager.getDefaultSharedPreferences(this);
+//            LOGD(TAG, "PreferenceManager.getDefaultSharedPreferences: " + sp);
+//            map = sp.getAll();
+//            keys = map.keySet();
+//            for (String key: keys) {
+//                LOGD(TAG, String.format("%s: %s", key, map.get(key)));
+//            }
+//        }
         //Получаю треккер отслеживания для Гугл-Аналитики (должен автоматически отправлять отчеты)
         ((AnalyticsApp) getApplication()).getTracker(AnalyticsApp.TrackerName.APP_TRACKER);
 
@@ -308,6 +329,8 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        // при выходе засчитываем один запуск
+        AppRater.countLaunches(this);
         showInterstitial();
     }
 
