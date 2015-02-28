@@ -11,3 +11,9 @@
 - Отслеживание курсов валют;
 - Минимальное время обновления данных 5 минут;
 - Разнообразная цветовая гамма виджета.
+
+Доступно для скачивания: https://play.google.com/store/apps/details?id=ru.besttuts.stockwidget
+
+<a href="https://play.google.com/store/apps/details?id=ru.besttuts.stockwidget">
+	<img alt="Get it on Google Play" src="https://developer.android.com/images/brand/en_generic_rgb_wo_60.png">
+</a>
