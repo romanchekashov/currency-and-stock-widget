@@ -63,6 +63,7 @@ public class EconomicWidgetConfigureActivityTest {
 
     @After
     public void tearDown() throws Exception {
+        shadowOf(activity).finish();
     }
 
     @Test
