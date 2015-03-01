@@ -1,22 +1,40 @@
 package ru.besttuts.stockwidget.robolectric;
 
+import android.appwidget.AppWidgetManager;
+import android.content.Intent;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.view.Menu;
+import android.view.MenuItem;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
+import org.robolectric.fakes.RoboMenuItem;
 
+import ru.besttuts.stockwidget.R;
+import ru.besttuts.stockwidget.model.QuoteType;
+import ru.besttuts.stockwidget.ui.ConfigPreferenceFragment;
 import ru.besttuts.stockwidget.ui.EconomicWidgetConfigureActivity;
+import ru.besttuts.stockwidget.ui.SlidingTabsFragment;
+import ru.besttuts.stockwidget.ui.TrackingQuotesFragment;
+import ru.besttuts.stockwidget.util.Utils;
 
-import static junit.framework.TestCase.assertNull;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.robolectric.Shadows.shadowOf;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
 /**
  * Created by roman on 16.01.2015.
  */
-@Config(manifest = "./android/src/main/AndroidManifest.xml", emulateSdk = 18)
+//@Config(manifest = "./android/src/main/AndroidManifest.xml", emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)
 public class EconomicWidgetConfigureActivityTest {
 
@@ -30,7 +48,17 @@ public class EconomicWidgetConfigureActivityTest {
 
     @Before
     public void setUp() throws Exception { // TODO: Does not work with ActionBarActivity! Need to fix!
-//        activity = Robolectric.setupActivity(EconomicWidgetConfigureActivity.class);
+        Intent intent = new Intent();
+        intent.setAction("android.appwidget.action.APPWIDGET_CONFIGURE");
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, 1);
+
+        activity = Robolectric.buildActivity(EconomicWidgetConfigureActivity.class)
+                .withIntent(intent)
+                .create()
+                .start()
+                .resume()
+                .visible()
+                .get();
     }
 
     @After
@@ -38,105 +66,98 @@ public class EconomicWidgetConfigureActivityTest {
     }
 
     @Test
-    public void testGenerateCurrency() throws Exception {
+    public void testPreconditions() {
+        assertThat(activity).isNotNull();
+        // Должно быть 3 фрагмента
+        assertThat(activity.getSupportFragmentManager().getFragments().size()).isEqualTo(3);
+    }
 
-        assertNull(activity);
-//        String currencyUrl = "http://www.currency-iso.org/dam/downloads/table_a1.xml";
-//        String filePath = "D:\\ideaWorkspace\\currency-and-stock-widget\\android\\src\\main\\res\\values\\currency.xml";
-//        CurrencyXmlParser currencyXmlParser = new CurrencyXmlParser();
-//        currencyXmlParser.loadXmlAnrWriteToFile(currencyUrl, filePath);
+    @Test
+    public void hasToolbar() {
+        assertThat(activity.findViewById(R.id.toolbar)).isNotNull();
+    }
 
+    @Test
+    public void hasSlidingTabsFragment() throws Exception {
+        Fragment slidingTabsFragement = activity.getSupportFragmentManager().findFragmentById(R.id.fragment_place);
+        assertNotNull(slidingTabsFragement);
+        assertTrue(slidingTabsFragement instanceof SlidingTabsFragment);
+    }
+
+    @Test
+    public void hasTrackingQuotesFragment() throws Exception {
+        SlidingTabsFragment slidingTabsFragement = (SlidingTabsFragment)
+                activity.getSupportFragmentManager().findFragmentById(R.id.fragment_place);
+        ViewPager viewPager = (ViewPager) slidingTabsFragement.getView().findViewById(R.id.viewpager);
+        assertNotNull(viewPager);
+
+        Fragment trackingQuotesFragment = ((FragmentPagerAdapter) viewPager.getAdapter()).getItem(0);
+        assertNotNull(trackingQuotesFragment);
+        assertTrue(trackingQuotesFragment instanceof TrackingQuotesFragment);
+    }
+
+    @Test
+    public void hasConfigPreferenceFragment() throws Exception {
+        SlidingTabsFragment slidingTabsFragement = (SlidingTabsFragment)
+                activity.getSupportFragmentManager().findFragmentById(R.id.fragment_place);
+        ViewPager viewPager = (ViewPager) slidingTabsFragement.getView().findViewById(R.id.viewpager);
+        assertNotNull(viewPager);
+
+        Fragment configPreferenceFragment = ((FragmentPagerAdapter) viewPager.getAdapter()).getItem(1);
+        assertNotNull(configPreferenceFragment);
+        assertTrue(configPreferenceFragment instanceof ConfigPreferenceFragment);
+    }
+
+    @Test
+    public void viewPagerShoudChangeCurrentItem() throws Exception {
+
+        SlidingTabsFragment slidingTabsFragement = (SlidingTabsFragment)
+                activity.getSupportFragmentManager().findFragmentById(R.id.fragment_place);
+
+        ViewPager viewPager = (ViewPager) slidingTabsFragement.getView().findViewById(R.id.viewpager);
+        assertNotNull(viewPager);
+
+        assertThat(viewPager.getCurrentItem()).isEqualTo(0);
+
+        viewPager.setCurrentItem(1);
+
+        assertThat(viewPager.getCurrentItem()).isEqualTo(1);
+    }
+
+    @Test
+    public void menuItemClickShouldShowQuoteTypeDialog() throws Exception {
+
+        final Menu menu = shadowOf(activity).getOptionsMenu();
+
+        assertThat(menu.findItem(R.id.action_add_quote).getTitle()).isEqualTo("+ Add quote");
+//
+//        Toolbar toolbar = (Toolbar) activity.findViewById(R.id.toolbar);
+//        assertNotNull(toolbar);
+//        assertNotNull(toolbar.findViewById(R.id.action_add_quote));
+
+        MenuItem item = new RoboMenuItem() {
+            public int getItemId() {
+                return R.id.action_add_quote;
+            }
+        };
+//
+//        activity.onOptionsItemSelected(item);
+
+//        System.out.println(toolbar.findViewById(R.id.action_add_quote));
+//        toolbar.findViewById(R.id.action_add_quote).performClick();
+//        ShadowView.clickOn(toolbar.findViewById(R.id.action_add_quote));
+//        shadowOf(activity).clickMenuItem(R.id.action_add_quote);
+
+//        assertTrue(ShadowDialog.getLatestDialog().isShowing());
     }
 
     @Test
     public void testGetModelNameFromResourcesBySymbol() throws Exception {
-
-//        String currencyUrl = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.xchange%20where%20pair%20in%20('EURUSD'%2C'USDRUB'%2C'EURRUB'%2C'CNYRUB')%3B&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
-//        RemoteYahooFinanceDataFetcher dataFetcher = new RemoteYahooFinanceDataFetcher();
-//        String data = dataFetcher.downloadUrl(currencyUrl);
-//
-//        assertNotNull(data);
-
-    }
-
-    @Test
-    public void testDataFetcher() throws Exception {
-
-//        String currencyUrl = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.xchange%20where%20pair%20in%20('EURUSD'%2C'USDRUB'%2C'EURRUB'%2C'CNYRUB')%3B&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
-//        RemoteYahooFinanceDataFetcher dataFetcher = new RemoteYahooFinanceDataFetcher();
-//        String data = dataFetcher.downloadUrl(currencyUrl);
-//
-//        assertNotNull(data);
-
-    }
-
-    @Test
-    public void testGenerateUrl() throws Exception {
-/*
-
-        String[] currencies = new String[]{"RUB", "USD", "EUR", "AFN", "ALL", "DZD", "AOA", "XCD", "AMD", "BBD"};
-        String[] goods = new String[]{"GCF15.CMX", "SIF15.CMX", "PLF15.NYM", "PAF15.NYM", "HGF15.CMX"};
-        int[] allWidgetIds = new int[]{1, 2};
-
-        List<Setting> settings = new ArrayList<>();
-
-        for(int i = 0; i < 10; i++) {
-            Setting setting = new Setting();
-            setting.setId("1_"+i);
-            setting.setWidgetId(1);
-            setting.setQuotePosition(i);
-            setting.setQuoteType(QuoteType.CURRENCY_EXCHANGE);
-            setting.setQuoteSymbol(currencies[i]+currencies[9-i]);
-            settings.add(setting);
-        }
-
-        for(int i = 0; i < 5; i++) {
-            Setting setting = new Setting();
-            setting.setId("2_"+i);
-            setting.setWidgetId(2);
-            setting.setQuotePosition(i);
-            setting.setQuoteType(QuoteType.GOODS);
-            setting.setQuoteSymbol(goods[i]);
-            settings.add(setting);
-        }
-
-//        String currencyUrl = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.xchange%20where%20pair%20in%20('EURUSD'%2C'USDRUB'%2C'EURRUB'%2C'CNYRUB')%3B&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
-        RemoteYahooFinanceDataFetcher dataFetcher = new RemoteYahooFinanceDataFetcher();
-
-        String multiUrlExample = "https://query.yahooapis.com/v1/public/yql?q=SELECT%20*%20FROM%20query.multi%20WHERE%20queries%3D%22select%20*%20from%20yahoo.finance.xchange%20where%20pair%20in%20('EURUSD'%2C'USDRUB'%2C'EURRUB'%2C'CNYRUB')%3B%20select%20*%20from%20yahoo.finance.quotes%20where%20symbol%20in%20('GCF15.CMX'%2C'PLF15.NYM'%2C'PAF15.NYM'%2C'SIF15.CMX'%2C'HGF15.CMX')%3B%22&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
-
-        dataFetcher.populateQuoteSet(settings);
-
-        // TODO решить проблему с контекстом
-        HandleJSON handleJSON = new HandleJSON(null);
-        handleJSON.readAndParseJSON(dataFetcher.downloadQuotes());
-
-        Map<String, Model> symbolModelMap = handleJSON.getSymbolModelMap();
-
-        Map<Integer, List<Model>> map = new HashMap<>();
-
-        for (Setting setting: settings) {
-            int widgetId = setting.getWidgetId();
-            if (!map.containsKey(widgetId)) {
-                map.put(widgetId, new ArrayList<Model>());
-            }
-            map.get(widgetId).add(symbolModelMap.get(setting.getQuoteSymbol()));
-
-            println(setting.toString());
-        }
-
-        for (Map.Entry<Integer, List<Model>> me: map.entrySet()) {
-            println("widgetId = " + me.getKey());
-            for (Model model: me.getValue()) {
-                println(model.toString());
-            }
-        }
-*/
-
-//        String data = dataFetcher.downloadUrl(currencyUrl);
-
-//        assertNotNull(data);
-
+        assertEquals("EUR/RUB", Utils.getModelNameFromResourcesBySymbol(activity,
+                QuoteType.CURRENCY, "EURRUB"));
+        assertEquals(activity.getString(R.string.gcf15_cmx),
+                Utils.getModelNameFromResourcesBySymbol(activity,
+                        QuoteType.GOODS, "GCF15.CMX"));
     }
 
 }
