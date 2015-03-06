@@ -5,7 +5,9 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -82,6 +84,9 @@ public class AppRater {
                 LayoutInflater inflater = getActivity().getLayoutInflater();
 
                 View view = inflater.inflate(R.layout.dialog_app_rater, null);
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+                    view.setBackgroundColor(Color.WHITE);
+                }
                 view.findViewById(R.id.btnRateNow).setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
                         mContext.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + APP_PNAME)));

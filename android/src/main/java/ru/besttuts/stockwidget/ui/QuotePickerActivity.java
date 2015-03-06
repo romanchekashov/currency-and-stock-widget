@@ -2,6 +2,9 @@ package ru.besttuts.stockwidget.ui;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
@@ -11,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.WindowManager;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.model.QuoteType;
@@ -42,7 +46,16 @@ public class QuotePickerActivity extends ActionBarActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar2);
         setSupportActionBar(toolbar);
 
-        Utils.onActivityCreateSetActionBarColor(getSupportActionBar());
+//        Utils.onActivityCreateSetActionBarColor(getSupportActionBar());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            getWindow().setStatusBarColor(EconomicWidgetConfigureActivity.getColor(this, false));
+        }
+        getSupportActionBar().setBackgroundDrawable(
+                new ColorDrawable(EconomicWidgetConfigureActivity.getColor(this, true)));
+
+
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 

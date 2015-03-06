@@ -9,5 +9,5 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/data_will_be_lost"
-        android:id="@+id/textView5" />
+        android:id="@+id/pref_dataclean_textView" />
 </LinearLayout>

@@ -29,14 +29,21 @@
             android:summary="@string/pref_bg_color"
             android:title="@string/pref_bg_color">
         </ru.besttuts.stockwidget.ui.preferences.ColorPreference>
-        <ListPreference
+        <!--<ListPreference
             android:entries="@array/alpha_entries"
             android:entryValues="@array/alpha_entry_values"
             android:defaultValue="C0"
             android:key="pref_listBgVisibility"
             android:summary="@string/pref_bg_visibility"
             android:title="@string/pref_bg_visibility">
-        </ListPreference>
+        </ListPreference>-->
+
+        <ru.besttuts.stockwidget.ui.preferences.SliderPreference
+            android:defaultValue="C0"
+            android:key="pref_listBgVisibility"
+            android:summary="@string/pref_bg_visibility"
+            android:title="@string/pref_bg_visibility" />
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_data">

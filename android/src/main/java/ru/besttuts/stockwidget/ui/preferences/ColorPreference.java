@@ -40,7 +40,6 @@ public class ColorPreference extends ListPreference {
     List<RadioButton> rButtonList;
     SharedPreferences prefs;
     SharedPreferences.Editor editor;
-    private int mClickedDialogEntryIndex;
 
 
     public ColorPreference(Context context, AttributeSet attrs) {
@@ -57,7 +56,8 @@ public class ColorPreference extends ListPreference {
         super.onPrepareDialogBuilder(builder);
         entries = getEntries();
         mEntryValues = getEntryValues();
-        mClickedDialogEntryIndex = findIndexOfValue(prefs.getString(
+
+        int mClickedDialogEntryIndex = findIndexOfValue(prefs.getString(
                 ConfigPreferenceFragment.KEY_PREF_BG_COLOR,
                 ConfigPreferenceFragment.KEY_PREF_BG_COLOR_DEFAULT_VALUE));
 
@@ -66,55 +66,20 @@ public class ColorPreference extends ListPreference {
                     "and an mEntryValues array which are both the same length");
         }
 
-//        for (int i = 0; i < entries.length; i++) {
-//            LOGD(TAG, "onPrepareDialogBuilder: " + String.format("pos = %d, color = %s, text = %s",
-//                    i, mEntryValues[i], entries[i]));
-//        }
-
         ListAdapter listAdapter = new ColorArrayAdapter(getContext(),
                 android.R.layout.list_content, getEntryValues(), mClickedDialogEntryIndex, this);
 
         builder.setAdapter(listAdapter, this);
 
-//        builder.setAdapter(new ColorPreferenceAdapter(), new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//
-//            }
-//        });
-
-//        builder.setSingleChoiceItems(new ColorPreferenceAdapter(), mClickedDialogEntryIndex,
-//                new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                mClickedDialogEntryIndex = which;
-//
-//                        /*
-//                         * Clicking on an item simulates the positive button
-//                         * click, and dismisses the dialog.
-//                         */
-//                ColorPreference.this.onClick(dialog, DialogInterface.BUTTON_POSITIVE);
-//                dialog.dismiss();
-//            }
-//        });
     }
 
-    @Override
-    protected void onDialogClosed(boolean positiveResult) {
-
-        if (positiveResult && mClickedDialogEntryIndex >= 0 && mEntryValues != null) {
-            String value = mEntryValues[mClickedDialogEntryIndex].toString();
+    public void SetResult(int position) {
+        if (position >= 0 && mEntryValues != null) {
+            String value = mEntryValues[position].toString();
             if (callChangeListener(value)) {
                 setValue(value);
             }
         }
-
-    }
-
-    public void SetResult(int position) {
-        editor.putString(ConfigPreferenceFragment.KEY_PREF_BG_COLOR,
-                String.valueOf(mEntryValues[position]));
-        editor.commit();
         this.getDialog().dismiss();
     }
 

@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -18,6 +19,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -55,8 +58,9 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
 
 
     /** Your ad unit id. Replace with your actual ad unit id. */
-    private static final String BANNER_AD_UNIT_ID = "ca-app-pub-XXXX";
-    private static final String INTERSTITIAL_AD_UNIT_ID = "ca-app-pub-XXXX";
+    private static final String BANNER_AD_UNIT_ID = "xxx";
+    private static final String INTERSTITIAL_AD_UNIT_ID = "xxx";
+    private static final String HASHED_DEVICE_ID = "xxx";
 
     /** The interstitial ad. */
     private InterstitialAd interstitialAd;
@@ -212,7 +216,6 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
 
         // создаем объект для создания и управления версиями БД
         mDataSource = new QuoteDataSource(this);
-        mDataSource.open();
 
 //        DisplayMetrics metrics = new DisplayMetrics();
 //        getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -240,7 +243,7 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
 //            }
 //        }
         //Получаю треккер отслеживания для Гугл-Аналитики (должен автоматически отправлять отчеты)
-        ((AnalyticsApp) getApplication()).getTracker(AnalyticsApp.TrackerName.APP_TRACKER);
+//        ((AnalyticsApp) getApplication()).getTracker(AnalyticsApp.TrackerName.APP_TRACKER);
 
     }
 
@@ -260,7 +263,7 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
         // Инициирование общего запроса.
         AdRequest adRequest = new AdRequest.Builder()
 //                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-//                .addTestDevice("D3C9806471EC6606384943F6D91")
+//                .addTestDevice(HASHED_DEVICE_ID)
                 .build();
 
         // Загрузка adView с объявлением.
@@ -286,7 +289,7 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
         // Check the logcat output for your hashed device ID to get test ads on a physical device.
         AdRequest interstitialAdRequest = new AdRequest.Builder()
 //                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-//                .addTestDevice("D3C980644AEC6606384943F6D91")
+//                .addTestDevice(HASHED_DEVICE_ID)
                 .build();
 
         // Load the interstitial ad.
@@ -338,7 +341,7 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
     protected void onStart() {
         super.onStart();
         //Get an Analytics tracker to report app starts & uncaught exceptions etc.
-        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+//        GoogleAnalytics.getInstance(this).reportActivityStart(this);
     }
 
     @Override
@@ -351,7 +354,7 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
     protected void onStop() {
         super.onStop();
         //Stop the analytics tracking
-        GoogleAnalytics.getInstance(this).reportActivityStop(this);
+//        GoogleAnalytics.getInstance(this).reportActivityStop(this);
     }
 
     @Override
@@ -418,15 +421,35 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
         prefs.commit();
     }
 
+    public static int getColor(Context context, boolean hasAlpha) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        String sColor = sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_COLOR,
+                ConfigPreferenceFragment.KEY_PREF_BG_COLOR_DEFAULT_VALUE);
+        if (!hasAlpha) return Color.parseColor(sColor);
+
+        String sBgColor = "#D0" + sColor.substring(1);
+
+        return Color.parseColor(sBgColor);
+    }
+
     @Override
     public void changeColor() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        String color = sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_COLOR,
+        String sColor = sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_COLOR,
                 ConfigPreferenceFragment.KEY_PREF_BG_COLOR_DEFAULT_VALUE);
+        String sBgColor = "#D0" + sColor.substring(1);
 
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor(color)));
+        int color = Color.parseColor(sBgColor);
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(color));
 
-        findViewById(R.id.adViewFrameLayout).setBackgroundColor(Color.parseColor(color));
+        findViewById(R.id.adViewFrameLayout).setBackgroundColor(color);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            color = Color.parseColor(sColor);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            getWindow().setStatusBarColor(color);
+        }
     }
 
 }

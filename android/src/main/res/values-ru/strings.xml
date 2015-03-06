@@ -66,7 +66,7 @@
     <string name="plf15_nym">Платина</string>
     <string name="paf15_nym">Палладий</string>
     <string name="hgf15_cmx">Медь</string>
-    <string name="bzh15_nym">Нефть(Brent)</string>
+    <string name="bzj15_nym">Нефть(Brent)</string>
     <string name="ngh15_nym">Газ</string>
     <string name="ch15_cbt">Кукуруза</string>
     <string name="sh15_cbt">Соя</string>
@@ -78,7 +78,7 @@
         <item>Платина(PLF15.NYM)</item>
         <item>Палладий(PAF15.NYM)</item>
         <item>Медь(HGF15.CMX)</item>
-        <item>Нефть Brent(BZH15.NYM)</item>
+        <item>Нефть Brent(BZJ15.NYM)</item>
         <item>Натуральный газ(NGH15.NYM)</item>
         <item>Кукуруза(CH15.CBT)</item>
         <item>Соя(SH15.CBT)</item>
@@ -95,8 +95,12 @@
     <string name="pref_bg_color">Цвет фона</string>
     <string name="pref_theme">Тема</string>
     <string name="pref_theme_change">Поменять тему</string>
+    <string name="pref_wakeUp_title">Обновить при включении экрана</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
 
     <string-array name="update_interval_entries">
+        <item>1 минута</item>
         <item>5 минут</item>
         <item>15 минут</item>
         <item>30 минут</item>
@@ -110,6 +114,7 @@
         <item>Никогда</item>
     </string-array>
     <string-array name="update_interval_entry_values">
+        <item>60000</item>
         <item>300000</item>
         <item>900000</item>
         <item>1800000</item>
@@ -168,6 +173,12 @@
         <item>#7f8c8d</item>
     </string-array>
 
+
+    <string name="pref_slider_fully_transparent">Прозрачный</string>
+    <string name="pref_slider_visible">\uff05 прозрачности</string>
+    <string name="pref_slider_fully_opaque">Непрозрачный</string>
+<!--
+
     <string-array name="alpha_entries">
         <item>Прозрачный</item>
         <item>25\uff05 прозрачности</item>
@@ -182,6 +193,7 @@
         <item>C0</item>
         <item>FF</item>
     </string-array>
+-->
 
     <string-array name="update_via_entries">
         <item>Только Wi-Fi</item>

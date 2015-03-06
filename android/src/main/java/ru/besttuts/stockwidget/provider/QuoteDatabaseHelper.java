@@ -78,7 +78,7 @@ public class QuoteDatabaseHelper extends SQLiteOpenHelper {
         insertQuote(db, "PLF15.NYM", "Platinum", QuoteType.GOODS);
         insertQuote(db, "PAF15.NYM", "Palladium", QuoteType.GOODS);
         insertQuote(db, "HGF15.CMX", "Copper", QuoteType.GOODS);
-        insertQuote(db, "BZH15.NYM", "Brent Oil", QuoteType.GOODS);
+        insertQuote(db, "BZJ15.NYM", "Brent Oil", QuoteType.GOODS);
         insertQuote(db, "NGH15.NYM", "Natural Gas", QuoteType.GOODS);
         insertQuote(db, "CH15.CBT", "Corn", QuoteType.GOODS);
         insertQuote(db, "SH15.CBT", "Soybeans", QuoteType.GOODS);

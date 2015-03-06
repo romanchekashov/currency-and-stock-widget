@@ -20,7 +20,9 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
@@ -37,6 +39,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -87,8 +90,14 @@ public class SearchableQuoteActivity extends ActionBarActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar3);
         setSupportActionBar(toolbar);
 
-        Utils.onActivityCreateSetActionBarColor(getSupportActionBar());
-
+//        Utils.onActivityCreateSetActionBarColor(getSupportActionBar());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            getWindow().setStatusBarColor(EconomicWidgetConfigureActivity.getColor(this, false));
+        }
+        getSupportActionBar().setBackgroundDrawable(
+                new ColorDrawable(EconomicWidgetConfigureActivity.getColor(this, true)));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (null == savedInstanceState) {
@@ -157,7 +166,6 @@ public class SearchableQuoteActivity extends ActionBarActivity
 //                return false;
 //            }
 //        });
-
 
         handleIntent(getIntent());
     }

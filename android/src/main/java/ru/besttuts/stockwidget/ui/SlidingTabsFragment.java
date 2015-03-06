@@ -134,18 +134,19 @@ public class SlidingTabsFragment extends Fragment
     public void changeColor() {
         if (null == mSlidingTabLayout) return;
 
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        final String color = sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_COLOR,
-                ConfigPreferenceFragment.KEY_PREF_BG_COLOR_DEFAULT_VALUE);
+//        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+//        final String color = sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_COLOR,
+//                ConfigPreferenceFragment.KEY_PREF_BG_COLOR_DEFAULT_VALUE);
+        final int color = EconomicWidgetConfigureActivity.getColor(getActivity(), true);
         mSlidingTabLayout.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
-                return Color.parseColor(color);
+                return color;
             }
 
             @Override
             public int getDividerColor(int position) {
-                return Color.parseColor(color);
+                return color;
             }
         });
     }

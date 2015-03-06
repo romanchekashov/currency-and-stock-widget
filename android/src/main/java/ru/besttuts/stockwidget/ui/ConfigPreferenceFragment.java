@@ -1,8 +1,13 @@
 package ru.besttuts.stockwidget.ui;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
+import android.preference.DialogPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
@@ -10,6 +15,7 @@ import android.preference.PreferenceManager;
 import com.github.machinarius.preferencefragment.PreferenceFragment;
 
 import ru.besttuts.stockwidget.R;
+import ru.besttuts.stockwidget.ui.preferences.SliderPreference;
 import ru.besttuts.stockwidget.util.NotificationManager;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
@@ -46,9 +52,6 @@ public class ConfigPreferenceFragment extends PreferenceFragment
         listPreference = (ListPreference) findPreference(KEY_PREF_BG_COLOR);
         listPreference.setSummary(listPreference.getEntry());
 
-        listPreference = (ListPreference) findPreference(KEY_PREF_BG_VISIBILITY);
-        listPreference.setSummary(listPreference.getEntry());
-
         listPreference = (ListPreference) findPreference(KEY_PREF_UPDATE_VIA);
         listPreference.setSummary(listPreference.getEntry());
 
@@ -77,14 +80,6 @@ public class ConfigPreferenceFragment extends PreferenceFragment
             listPreference.setSummary(listPreference.getEntry());
 
             NotificationManager.notifyColorChangedListeners();
-
-            return;
-        }
-
-        if (key.equals(KEY_PREF_BG_VISIBILITY)) {
-            ListPreference listPreference = (ListPreference) findPreference(key);
-            // Set Ccy to be the user-description for the selected value
-            listPreference.setSummary(listPreference.getEntry());
 
             return;
         }

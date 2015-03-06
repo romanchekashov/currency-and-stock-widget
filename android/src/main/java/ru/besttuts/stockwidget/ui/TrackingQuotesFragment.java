@@ -219,11 +219,12 @@ public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<
 
     @Override
     public void changeColor() {
+
         // TODO: set color
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String color = sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_COLOR,
-                ConfigPreferenceFragment.KEY_PREF_BG_COLOR_DEFAULT_VALUE);
-        mMainView.setBackgroundColor(Color.parseColor(color));
+//        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+//        String color = sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_COLOR,
+//                ConfigPreferenceFragment.KEY_PREF_BG_COLOR_DEFAULT_VALUE);
+        mMainView.setBackgroundColor(EconomicWidgetConfigureActivity.getColor(getActivity(), true));
     }
 
     public void showQuoteTypeDialog() {
