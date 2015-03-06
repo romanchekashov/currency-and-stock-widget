@@ -36,3 +36,6 @@
 
 # suppress warnings
 -dontwarn com.google.android.gms.**
+
+# solve: (SearchView) MenuItemCompat.getActionView -> returns null
+-keep class android.support.v7.widget.SearchView { *; }

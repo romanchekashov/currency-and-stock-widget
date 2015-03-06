@@ -209,40 +209,17 @@ public class SearchableQuoteActivity extends ActionBarActivity
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         final MenuItem searchItem = menu.findItem(R.id.action_search);
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+
+        if (null == searchView) {
+            LOGE(TAG, "searchView is "+ searchView);
+            return super.onCreateOptionsMenu(menu);
+        }
+
         // Assumes current activity is the searchable activity
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
 
-        searchView.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
-
-            public boolean onQueryTextChange(String arg0) {
-                LOGD(TAG, "onQueryTextChange: " + arg0);
-                // TODO Auto-generated method stub
-                return false;
-            }
-
-            public boolean onQueryTextSubmit(String arg0) {
-                LOGD(TAG, "onQueryTextSubmit: " + arg0);
-
-//                if (searchItem != null) {
-//                    searchItem.collapseActionView();
-//                }
-//                MenuItemCompat.collapseActionView(searchItem);
-                return false;
-            }
-
-        });
-        searchView.setOnCloseListener(new android.support.v7.widget.SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                LOGD(TAG, "setOnCloseListener: onClose");
-
-                return false;
-            }
-        });
-
-
-        return super.onCreateOptionsMenu(menu);
+        return true;
     }
 
     @Override
