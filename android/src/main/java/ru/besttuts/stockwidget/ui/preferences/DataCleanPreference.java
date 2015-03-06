@@ -26,7 +26,6 @@ public class DataCleanPreference extends DialogPreference {
     protected void onDialogClosed(boolean positiveResult) {
         if (positiveResult) {
             QuoteDataSource dataSource = new QuoteDataSource(getContext());
-            dataSource.open();
             dataSource.deleteAll();
             dataSource.close();
         }

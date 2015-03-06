@@ -133,7 +133,6 @@ public class EconomicWidget extends AppWidgetProvider {
     public void onDeleted(Context context, int[] appWidgetIds) {
         // Удаляем все данные ассоциированные с удаляемым виджетом.
         QuoteDataSource dataSource = new QuoteDataSource(context);
-        dataSource.open();
         final int N = appWidgetIds.length;
         for (int i = 0; i < N; i++) {
             dataSource.deleteSettingsByWidgetId(appWidgetIds[i]);
@@ -219,7 +218,7 @@ public class EconomicWidget extends AppWidgetProvider {
         LOGD(TAG, "onEnabled: appWidgetId = " + appWidgetIds[0]);
 
         QuoteDataSource dataSource = new QuoteDataSource(context);
-        dataSource.open();
+
         String lng = context.getResources().getConfiguration().locale.getLanguage();
         LOGD(TAG, "locale.getLanguage: " + lng);
 

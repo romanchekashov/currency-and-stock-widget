@@ -68,7 +68,6 @@ public class UpdateService extends Service {
         private Map<Integer, List<Model>> getCachedData() {
             Map<Integer, List<Model>> map = new HashMap<>();
             QuoteDataSource dataSource = new QuoteDataSource(mContext);
-            dataSource.open();
 
             final int N = allWidgetIds.length;
             for (int i = 0; i < N; i++) {
@@ -97,7 +96,6 @@ public class UpdateService extends Service {
 
             RemoteYahooFinanceDataFetcher dataFetcher = new RemoteYahooFinanceDataFetcher();
             QuoteDataSource dataSource = new QuoteDataSource(mContext);
-            dataSource.open();
 
             try {
 

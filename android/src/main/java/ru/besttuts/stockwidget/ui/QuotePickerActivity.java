@@ -107,7 +107,6 @@ public class QuotePickerActivity extends ActionBarActivity
 
         // создаем объект для создания и управления версиями БД
         mDataSource = new QuoteDataSource(this);
-        mDataSource.open();
 
         LOGD(TAG, "onCreate");
 

@@ -37,13 +37,13 @@ public class QuoteDataSource {
 
     public QuoteDataSource(Context context) {
         this.context = context;
+        mDbHelper = new QuoteDatabaseHelper(context);
         LOGD(TAG, "QuoteDataSource initialized: " + this);
     }
 
-    public void open() throws SQLException {
-        mDbHelper = new QuoteDatabaseHelper(context);
-        mDatabase = mDbHelper.getWritableDatabase();
-    }
+//    public void open() throws SQLException {
+//        mDatabase = mDbHelper.getWritableDatabase();
+//    }
 
     public void close() {
         if (null != mDbHelper) mDbHelper.close();
@@ -51,6 +51,8 @@ public class QuoteDataSource {
 
     public void addSettingsRec(int mAppWidgetId, int widgetItemPosition,
                                int type, String[] symbols) {
+
+        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         for (int i = 0; i < symbols.length; i++) {
             String symbol = symbols[i];
@@ -69,7 +71,7 @@ public class QuoteDataSource {
             String selection = QuoteContract.SettingColumns.SETTING_ID + " LIKE ?";
             String[] selectionArgs = { id };
 
-            long count = mDatabase.insertWithOnConflict(
+            long count = db.insertWithOnConflict(
                     QuoteDatabaseHelper.Tables.SETTINGS,
                     null,
                     values,
@@ -82,6 +84,8 @@ public class QuoteDataSource {
 
     @Deprecated
     public void addModelRec(int quoteType, String symbol) {
+
+        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         // New value for one column
         ContentValues values = new ContentValues();
@@ -96,7 +100,7 @@ public class QuoteDataSource {
         String selection = QuoteContract.ModelColumns.MODEL_ID + " LIKE ?";
         String[] selectionArgs = { symbol };
 
-        long count = mDatabase.insertWithOnConflict(
+        long count = db.insertWithOnConflict(
                 QuoteDatabaseHelper.Tables.MODELS,
                 null,
                 values,
@@ -106,6 +110,8 @@ public class QuoteDataSource {
     }
 
     public void addQuoteRec(Result result) {
+
+        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         // New value for one column
         ContentValues values = new ContentValues();
@@ -117,7 +123,7 @@ public class QuoteDataSource {
         String selection = QuoteContract.QuoteColumns.QUOTE_SYMBOL + " LIKE ?";
         String[] selectionArgs = { result.symbol };
 
-        long count = mDatabase.insert(
+        long count = db.insert(
                 QuoteDatabaseHelper.Tables.QUOTES,
                 null,
                 values);
@@ -130,6 +136,8 @@ public class QuoteDataSource {
     }
 
     public void addModelRec(Model model) {
+
+        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         if (null == model) {
             LOGE(TAG, "Model is NULL");
@@ -149,9 +157,9 @@ public class QuoteDataSource {
         String selection = QuoteContract.ModelColumns.MODEL_ID + " LIKE ?";
         String[] selectionArgs = { model.getId() };
 
-        if (null == mDatabase || !mDatabase.isOpen()) return;
+//        if (null == mDatabase || !mDatabase.isOpen()) return;
 
-        long count = mDatabase.insertWithOnConflict(
+        long count = db.insertWithOnConflict(
                 QuoteDatabaseHelper.Tables.MODELS,
                 null,
                 values,
@@ -161,6 +169,9 @@ public class QuoteDataSource {
     }
 
     public Cursor getCursorSettingsByWidgetId(int widgetId) {
+
+        final SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
         // Define a projection that specifies which columns from the database
         // you will actually use after this query.
         String[] projection = {
@@ -175,7 +186,7 @@ public class QuoteDataSource {
         // How you want the results sorted in the resulting Cursor
         String sortOrder = QuoteContract.SettingColumns.SETTING_QUOTE_POSITION + " ASC";
 
-        return mDatabase.query(
+        return db.query(
                 QuoteDatabaseHelper.Tables.SETTINGS,  // The table to query
                 projection,                               // The columns to return
                 QuoteContract.SettingColumns.SETTING_WIDGET_ID + " = " + widgetId, // The columns for the WHERE clause
@@ -195,6 +206,8 @@ public class QuoteDataSource {
      */
     public Cursor getCursorSettingsWithModelByWidgetId(int widgetId) {
 
+        final SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
         String sqlQuery = "select * "
                 + "from "+QuoteDatabaseHelper.Tables.SETTINGS+" as s "
                 + "left join "+QuoteDatabaseHelper.Tables.MODELS+" as m "
@@ -202,11 +215,12 @@ public class QuoteDataSource {
                 + "where s.setting_widget_id = ? order by "
                 + QuoteContract.SettingColumns.SETTING_QUOTE_POSITION + " asc;";
 
-        return mDatabase.rawQuery(sqlQuery, new String[] { String.valueOf(widgetId) });
+        return db.rawQuery(sqlQuery, new String[] { String.valueOf(widgetId) });
 
     }
 
     public Cursor getCursorSettingsWithoutModelByWidgetId(int widgetId) {
+        final SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
         String sqlQuery = "select * "
                 + "from "+QuoteDatabaseHelper.Tables.SETTINGS+" as s "
@@ -215,11 +229,12 @@ public class QuoteDataSource {
                 + "where s.setting_widget_id = ? and m.model_id is null order by "
                 + QuoteContract.SettingColumns.SETTING_QUOTE_POSITION + " asc";
 
-        return mDatabase.rawQuery(sqlQuery, new String[] { String.valueOf(widgetId) });
+        return db.rawQuery(sqlQuery, new String[] { String.valueOf(widgetId) });
 
     }
 
     public Cursor getCursorModelsByWidgetId(int widgetId) {
+        final SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
         String sqlQuery = "select m._id, m.model_id, m.model_name, "
                 + "m.model_rate, m.model_change, m.model_percent_change "
@@ -229,11 +244,13 @@ public class QuoteDataSource {
                 + "where s.setting_widget_id = ? order by "
                 + QuoteContract.SettingColumns.SETTING_QUOTE_POSITION + " asc";
 
-        return mDatabase.rawQuery(sqlQuery, new String[] { String.valueOf(widgetId) });
+        return db.rawQuery(sqlQuery, new String[] { String.valueOf(widgetId) });
 
     }
 
     public Cursor getCursorAllSettings() {
+        final SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
         // Define a projection that specifies which columns from the database
         // you will actually use after this query.
         String[] projection = {
@@ -248,7 +265,7 @@ public class QuoteDataSource {
         // How you want the results sorted in the resulting Cursor
         String sortOrder = QuoteContract.SettingColumns.SETTING_QUOTE_POSITION + " ASC";
 
-        return mDatabase.query(
+        return db.query(
                 QuoteDatabaseHelper.Tables.SETTINGS,  // The table to query
                 projection,                               // The columns to return
                 null, // The columns for the WHERE clause
@@ -260,37 +277,47 @@ public class QuoteDataSource {
     }
 
     public void deleteSettingsByWidgetId(int widgetId) {
-        int delCount = mDatabase.delete(QuoteDatabaseHelper.Tables.SETTINGS,
+
+        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        int delCount = db.delete(QuoteDatabaseHelper.Tables.SETTINGS,
                 QuoteContract.SettingColumns.SETTING_WIDGET_ID + " = " + widgetId, null);
 
         LOGD(TAG, "deleteSettingsByWidgetId: deleted rows count = " + delCount);
 
         // Если все записи Setting удалены, то удаляем все записи Model
-        if (0 == mDatabase.rawQuery("select _id from "+ QuoteDatabaseHelper.Tables.SETTINGS, null).getCount()) {
-            mDatabase.delete(QuoteDatabaseHelper.Tables.MODELS, null, null);
+        if (0 == db.rawQuery("select _id from "+ QuoteDatabaseHelper.Tables.SETTINGS, null).getCount()) {
+            db.delete(QuoteDatabaseHelper.Tables.MODELS, null, null);
         }
     }
 
     public void deleteSettingsById(String settingId) {
-        int delCount = mDatabase.delete(QuoteDatabaseHelper.Tables.SETTINGS,
+        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        int delCount = db.delete(QuoteDatabaseHelper.Tables.SETTINGS,
                 QuoteContract.SettingColumns.SETTING_ID + " = '" + settingId + "'", null);
         LOGD(TAG, "deleteSettingsById: deleted rows count = " + delCount);
     }
 
     public void deleteQuotesByIds(String[] symbols) {
+        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
         for (String s: symbols) {
-            mDatabase.delete(QuoteDatabaseHelper.Tables.QUOTES,
+            db.delete(QuoteDatabaseHelper.Tables.QUOTES,
                     QuoteContract.QuoteColumns.QUOTE_SYMBOL + " = '" + s + "'", null);
         }
     }
 
     public void deleteSettingsByIdAndUpdatePositions(String settingId, int position) {
+
+        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
         LOGD(TAG, String.format("deleteSettingsById: settingId = %s, position = %d",
                 settingId, position));
 
         deleteSettingsById(settingId);
 
-        Cursor cursor = mDatabase.rawQuery("select * from " + QuoteDatabaseHelper.Tables.SETTINGS
+        Cursor cursor = db.rawQuery("select * from " + QuoteDatabaseHelper.Tables.SETTINGS
                 + " where setting_quote_position > ?"
                 + " order by setting_quote_position asc", new String[]{String.valueOf(position)});
         if (null == cursor || 0 == cursor.getCount()) return;
@@ -304,7 +331,8 @@ public class QuoteDataSource {
             ContentValues args = new ContentValues();
             args.put(QuoteContract.SettingColumns.SETTING_ID, widgetId+"_"+position);
             args.put(QuoteContract.SettingColumns.SETTING_QUOTE_POSITION, position);
-            mDatabase.update(QuoteDatabaseHelper.Tables.SETTINGS, args,
+
+            db.update(QuoteDatabaseHelper.Tables.SETTINGS, args,
                     QuoteContract.SettingColumns.SETTING_ID + " = '" + id + "'", null);
 
 //            mDatabase.rawQuery("update " + QuoteDatabaseHelper.Tables.SETTINGS
@@ -319,11 +347,14 @@ public class QuoteDataSource {
     }
 
     public void deleteAll() {
-        mDatabase.delete(QuoteDatabaseHelper.Tables.SETTINGS, null, null);
-        mDatabase.delete(QuoteDatabaseHelper.Tables.MODELS, null, null);
+        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        db.delete(QuoteDatabaseHelper.Tables.SETTINGS, null, null);
+        db.delete(QuoteDatabaseHelper.Tables.MODELS, null, null);
     }
 
     public Cursor getCursorMyQuotes() {
+        final SQLiteDatabase db = mDbHelper.getReadableDatabase();
         // Define a projection that specifies which columns from the database
         // you will actually use after this query.
         String[] projection = {
@@ -335,7 +366,7 @@ public class QuoteDataSource {
         // How you want the results sorted in the resulting Cursor
         String sortOrder = BaseColumns._ID + " ASC";
 
-        return mDatabase.query(
+        return db.query(
                 QuoteDatabaseHelper.Tables.QUOTES,  // The table to query
                 projection,                               // The columns to return
                 null, // The columns for the WHERE clause
@@ -347,6 +378,9 @@ public class QuoteDataSource {
     }
 
     public Cursor getQuoteCursor(int quoteType) {
+
+        final SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
         // Define a projection that specifies which columns from the database
         // you will actually use after this query.
         String[] projection = {
@@ -360,7 +394,7 @@ public class QuoteDataSource {
         String sortOrder = BaseColumns._ID + " ASC";
         String where = String.format("%s = %d", QuoteContract.QuoteColumns.QUOTE_TYPE, quoteType);
 
-        return mDatabase.query(
+        return db.query(
                 QuoteDatabaseHelper.Tables.QUOTES,  // The table to query
                 projection,                               // The columns to return
                 where, // The columns for the WHERE clause

@@ -135,7 +135,6 @@ public class SearchableQuoteActivity extends ActionBarActivity
         });
 
         mDataSource = new QuoteDataSource(this);
-        mDataSource.open();
 
         // создаем лоадер для чтения данных
         Loader loader = getSupportLoaderManager().getLoader(URL_LOADER);

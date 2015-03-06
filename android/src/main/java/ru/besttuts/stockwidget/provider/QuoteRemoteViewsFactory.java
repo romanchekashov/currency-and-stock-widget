@@ -58,7 +58,6 @@ public class QuoteRemoteViewsFactory implements RemoteViewsFactory {
         models.clear();
 
         QuoteDataSource dataSource = new QuoteDataSource(mContext);
-        dataSource.open();
 
         models.addAll(dataSource.getModelsByWidgetId(mAppWidgetId));
 
