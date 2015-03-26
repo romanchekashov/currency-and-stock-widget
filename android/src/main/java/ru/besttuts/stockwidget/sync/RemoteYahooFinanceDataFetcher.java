@@ -1,21 +1,15 @@
 package ru.besttuts.stockwidget.sync;
 
-import android.util.Log;
-
-import ru.besttuts.stockwidget.model.QuoteType;
-import ru.besttuts.stockwidget.model.Setting;
-
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import ru.besttuts.stockwidget.model.QuoteType;
+import ru.besttuts.stockwidget.model.Setting;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
@@ -62,7 +56,7 @@ public class RemoteYahooFinanceDataFetcher {
     }
 
     public void populateQuoteSet(List<Setting> settings) {
-        for (Setting setting: settings) {
+        for (Setting setting : settings) {
             switch (setting.getQuoteType()) {
                 case QuoteType.CURRENCY:
                     currencyExchangeSet.add(setting.getQuoteSymbol());
@@ -105,7 +99,7 @@ public class RemoteYahooFinanceDataFetcher {
     public String getYahooFinanceXchangeQuery() {
         StringBuilder builder = new StringBuilder();
         builder.append("'");
-        for (String s: currencyExchangeSet) {
+        for (String s : currencyExchangeSet) {
             builder.append(s);
             builder.append("'%2C'");
         }
@@ -115,7 +109,7 @@ public class RemoteYahooFinanceDataFetcher {
     public String getYahooFinanceQuotesQuery() {
         StringBuilder builder = new StringBuilder();
         builder.append("'");
-        for (String s: goodSet) {
+        for (String s : goodSet) {
             builder.append(s);
             builder.append("'%2C'");
         }
@@ -135,6 +129,15 @@ public class RemoteYahooFinanceDataFetcher {
     }
 
     public String downloadUrl(String sUrl) throws IOException {
+//        OkHttpClient client = new OkHttpClient();
+//
+//        Request request = new Request.Builder()
+//                .url(sUrl)
+//                .build();
+//
+//        Response response = client.newCall(request).execute();
+//        return response.body().string();
+
         InputStream is = null;
 
         try {

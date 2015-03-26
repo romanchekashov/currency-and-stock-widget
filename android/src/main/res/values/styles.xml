@@ -8,4 +8,5 @@
     <style name="AppTheme.Dark" parent="@style/Theme.AppCompat.NoActionBar">
         <!-- Customize your theme here. -->
     </style>
+
 </resources>

@@ -11,6 +11,7 @@ public class Model {
     protected double change = 0.0;
     protected String percentChange = "0.0%";
     protected String currency;
+    private int quoteType;
 
     public String getId() {
         return id;
@@ -70,6 +71,14 @@ public class Model {
 
     public void setCurrency(String currency) {
         this.currency = currency;
+    }
+
+    public int getQuoteType() {
+        return quoteType;
+    }
+
+    public void setQuoteType(int quoteType) {
+        this.quoteType = quoteType;
     }
 
     @Override

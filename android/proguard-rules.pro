@@ -39,3 +39,6 @@
 
 # solve: (SearchView) MenuItemCompat.getActionView -> returns null
 -keep class android.support.v7.widget.SearchView { *; }
+
+# for com.squareup.picasso
+-dontwarn com.squareup.okhttp.**

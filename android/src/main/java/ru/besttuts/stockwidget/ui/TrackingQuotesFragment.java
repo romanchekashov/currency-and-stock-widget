@@ -5,10 +5,14 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.Point;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -20,15 +24,20 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -42,6 +51,7 @@ import java.util.Set;
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.io.HandleJSON;
 import ru.besttuts.stockwidget.model.Model;
+import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.provider.QuoteContract;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
 import ru.besttuts.stockwidget.sync.RemoteYahooFinanceDataFetcher;
@@ -55,12 +65,14 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
  * Фрагмет с отслеживаемыми котировками.
  */
 public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<Cursor>,
-        NotificationManager.ColorChangedListener, NotificationManager.OptionsItemSelectListener {
+        NotificationManager.ColorChangedListener, NotificationManager.OptionsItemSelectListener,
+        AdapterView.OnItemClickListener {
 
     private static final String TAG = makeLogTag(TrackingQuotesFragment.class);
 
     // параметры для инициализации фрагмента, e.g. ARG_ITEM_NUMBER
     private static final String ARG_WIDGET_ID = "widgetId";
+    public static final String ARG_URL = "url";
 
     private int mWidgetId;
     private static int mWidgetItemsNumber;
@@ -72,6 +84,7 @@ public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<
     private SimpleCursorAdapter mSimpleCursorAdapter;
 
     private View mMainView;
+    private GridView gridView;
 
     // Идентификатор загрузчика используемый в данном компоненте
     private static final int URL_LOADER = 0;
@@ -123,7 +136,8 @@ public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<
         changeColor();
 
         // формируем столбцы сопоставления
-        String[] from = new String[]{QuoteContract.ModelColumns.MODEL_NAME,
+        String[] from = new String[]{
+                QuoteContract.ModelColumns.MODEL_NAME,
                 QuoteContract.ModelColumns.MODEL_RATE,
                 QuoteContract.ModelColumns.MODEL_CURRENCY,
                 QuoteContract.ModelColumns.MODEL_CHANGE,
@@ -135,16 +149,9 @@ public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<
 
         // создааем адаптер и настраиваем список
         mSimpleCursorAdapter = new MySimpleCursorAdapter(getActivity(), R.layout.configure_quote_grid_item, null, from, to, 0);
-        GridView gridView = (GridView) mMainView.findViewById(R.id.gridView);
+        gridView = (GridView) mMainView.findViewById(R.id.gridView);
         gridView.setAdapter(mSimpleCursorAdapter);
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                StockItemTypeDialogFragment dialog = new StockItemTypeDialogFragment();
-                dialog.set(position + 1, TrackingQuotesFragment.this);
-                dialog.show(getActivity().getSupportFragmentManager(), "StockItemTypeDialogFragment");
-            }
-        });
+        gridView.setOnItemClickListener(this);
 
         // создаем лоадер для чтения данных
         Loader loader = getActivity().getSupportLoaderManager().getLoader(URL_LOADER);
@@ -283,6 +290,44 @@ public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<
 //        if (null != mDataSource) mDataSource.close(); // закрываем подключение при выходе
         getActivity().getSupportLoaderManager().destroyLoader(URL_LOADER);
         LOGD(TAG, "onDetach");
+    }
+
+    private int mLastSelectedItemPosition = -1;
+
+    /**
+     * Отрабатываем клик по элементу сетки(Grid)
+     */
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+        if (0 <= mLastSelectedItemPosition) {
+            gridView.getChildAt(mLastSelectedItemPosition).setBackgroundColor(Color.TRANSPARENT);
+        }
+        mLastSelectedItemPosition = position;
+        view.setBackgroundColor(Color.parseColor("#33ffffff"));
+
+        PopupWindow popupWindow = popupWindowDogs(position);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            if(0 == (position + 1) % gridView.getNumColumns()) {
+                popupWindow.showAsDropDown(view, -popupWindow.getWidth(), -view.getHeight());
+                return;
+            }
+        }
+        // show the list view as dropdown
+        popupWindow.showAsDropDown(view, view.getWidth(), -view.getHeight());
+
+        popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                if (0 <= mLastSelectedItemPosition) {
+                    if(null != gridView && null != gridView.getChildAt(mLastSelectedItemPosition)) {
+                        gridView.getChildAt(mLastSelectedItemPosition).setBackgroundColor(Color.TRANSPARENT);
+                    }
+                }
+                mLastSelectedItemPosition = -1;
+            }
+        });
+
     }
 
     /**
@@ -461,14 +506,14 @@ public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<
                         }
                     });
 
-            if (-1 != mPosition) {
-                builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mFragment.deleteItem(mPosition);
-                    }
-                });
-            }
+//            if (-1 != mPosition) {
+//                builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        mFragment.deleteItem(mPosition);
+//                    }
+//                });
+//            }
 
             builder.setNegativeButton(R.string.cancel, null);
 
@@ -596,6 +641,91 @@ public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<
             }
 
         }
+    }
+
+    public PopupWindow popupWindowDogs(final int position) {
+
+        // initialize a pop up window type
+        final PopupWindow popupWindow = new PopupWindow(getActivity());
+
+        // the drop down list is a list view
+        ListView listViewDogs = (ListView) getActivity().getLayoutInflater().inflate(R.layout.popup_window, null, false);
+
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
+                android.R.layout.simple_list_item_1, new String[]{getString(R.string.dynamic),
+                getString(R.string.change), getString(R.string.remove)});
+
+        // set our adapter and pass our pop up window contents
+        listViewDogs.setAdapter(adapter);
+
+        // set the item click listener
+        listViewDogs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
+                LOGD(TAG, adapter.getItem(pos));
+
+                switch (pos) {
+                    case 0:
+                        Cursor cursor = (Cursor) mSimpleCursorAdapter.getItem(position);
+                        String url;
+                        if(QuoteType.CURRENCY == cursor.getInt(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_QUOTE_TYPE))) {
+                            url = String.format("http://finance.yahoo.com/q?s=%s=X&ql=1",
+                                    cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_ID)));
+                        } else {
+                            url = String.format("http://finance.yahoo.com/q?s=%s&ql=1",
+                                    cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_ID)));
+                        }
+
+                        Intent intent = new Intent(getActivity(), DynamicWebViewActivity.class);
+                        intent.putExtra(ARG_URL, url);
+
+                        popupWindow.dismiss();
+
+                        startActivity(intent);
+                        break;
+                    case 1:
+                        StockItemTypeDialogFragment dialog = new StockItemTypeDialogFragment();
+                        dialog.set(position + 1, TrackingQuotesFragment.this);
+                        popupWindow.dismiss();
+                        dialog.show(getActivity().getSupportFragmentManager(), "StockItemTypeDialogFragment");
+                        break;
+                    case 2:
+                        popupWindow.dismiss();
+                        deleteItem(position + 1);
+                        break;
+                }
+            }
+        });
+
+        // some other visual settings
+        popupWindow.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        popupWindow.setFocusable(true);
+//        popupWindow.setWidth(100);
+//        popupWindow.setWidth(330);
+//        popupWindow.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
+        popupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+
+        WindowManager windowManager = (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
+        Display display = windowManager.getDefaultDisplay();
+        int popupWidth;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            Point windowSize = new Point();
+            display.getSize(windowSize);
+            popupWidth = windowSize.x / 2;
+        } else {
+            popupWidth = display.getWidth() / 2;
+        }
+
+        if(350 < popupWidth) {
+            popupWindow.setWidth(350);
+        } else {
+            popupWindow.setWidth(popupWidth);
+        }
+
+        // set the list view as pop up window content
+        popupWindow.setContentView(listViewDogs);
+
+        return popupWindow;
     }
 
 }

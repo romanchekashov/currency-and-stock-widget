@@ -237,7 +237,7 @@ public class QuoteDataSource {
         final SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
         String sqlQuery = "select m._id, m.model_id, m.model_name, "
-                + "m.model_rate, m.model_change, m.model_percent_change "
+                + "m.model_rate, m.model_change, m.model_percent_change, s.setting_quote_type "
                 + "from "+QuoteDatabaseHelper.Tables.SETTINGS+" as s "
                 + "inner join "+QuoteDatabaseHelper.Tables.MODELS+" as m "
                 + "on s.setting_quote_symbol = m.model_id "
@@ -473,6 +473,7 @@ public class QuoteDataSource {
         model.setRate(cursor.getDouble(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_RATE)));
         model.setChange(cursor.getDouble(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_CHANGE)));
         model.setPercentChange(cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_PERCENT_CHANGE)));
+        model.setQuoteType(cursor.getInt(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_QUOTE_TYPE)));
         try {
             model.setCurrency(cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_CURRENCY)));
         } catch (IllegalArgumentException e) {

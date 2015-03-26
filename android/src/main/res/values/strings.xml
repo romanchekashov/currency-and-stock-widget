@@ -15,6 +15,10 @@
     <string name="rate_later">Later</string>
     <string name="rate_no">No, Thanks</string>
 
+    <string name="dynamic">Dynamic</string>
+    <string name="change">Change</string>
+    <string name="remove">Remove</string>
+
     <string name="action_accept">Accept</string>
     <string name="refresh">Refresh</string>
     <string name="for_">For</string>

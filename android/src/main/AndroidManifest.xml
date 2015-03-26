@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ru.besttuts.stockwidget" >
+    package="ru.besttuts.stockwidget"
+    android:installLocation="internalOnly" >
 
     <uses-sdk
         android:minSdkVersion="10"
@@ -111,6 +112,11 @@
         <provider
             android:name=".provider.SymbolProvider"
             android:authorities="ru.besttuts.stockwidget.provider.SymbolProvider" />
+
+        <activity
+            android:name=".ui.DynamicWebViewActivity"
+            android:screenOrientation="sensorLandscape">
+        </activity>
 
     </application>
 

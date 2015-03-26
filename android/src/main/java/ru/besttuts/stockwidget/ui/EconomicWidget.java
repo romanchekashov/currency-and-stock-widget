@@ -81,6 +81,9 @@ public class EconomicWidget extends AppWidgetProvider {
 //            return;
 //        }
 
+        LOGD(TAG, String.format("onUpdate: context(%s), appWidgetManager(%s), allWidgetIds(%s), hasInternet(%s)",
+                context, appWidgetManager, allWidgetIds, hasInternet));
+
         update(context, appWidgetManager, allWidgetIds, hasInternet);
 
         if(BuildConfig.DEBUG) {
@@ -102,20 +105,21 @@ public class EconomicWidget extends AppWidgetProvider {
             appWidgetManager.updateAppWidget(widgetId, views);
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            for (int widgetId: appWidgetIds) {
-                updateAppWidget(context, appWidgetManager, widgetId, null, hasInternet);
-            }
-        } else {
-            // Создаем intent для вызова сервиса
-            Intent intent = new Intent(context.getApplicationContext(),
-                    UpdateService.class);
-            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
-            intent.putExtra(ARG_HAS_INTERNET, hasInternet);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+//            for (int widgetId: appWidgetIds) {
+//                updateAppWidget(context, appWidgetManager, widgetId, null, hasInternet);
+//            }
+//        } else {
+//        }
 
-            // Обновляем виджеты через сервис
-            context.startService(intent);
-        }
+        // Создаем intent для вызова сервиса
+        Intent intent = new Intent(context.getApplicationContext(),
+                UpdateService.class);
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
+        intent.putExtra(ARG_HAS_INTERNET, hasInternet);
+
+        // Обновляем виджеты через сервис
+        context.startService(intent);
 
 
         // Возможно активны несколько виджетов, поэтому обновляем их все
@@ -390,6 +394,10 @@ public class EconomicWidget extends AppWidgetProvider {
         } else if (currentapiVersion >= Build.VERSION_CODES.HONEYCOMB) {
             rv.setRemoteAdapter(appWidgetId, R.id.gridView2, adapter);
         }
+
+        Intent intent = new Intent(context, DynamicWebViewActivity.class);
+        PendingIntent viewPendingIntent = PendingIntent.getActivity(context, appWidgetId, intent, 0);
+        rv.setPendingIntentTemplate(R.id.gridView2, viewPendingIntent);
 
     }
 

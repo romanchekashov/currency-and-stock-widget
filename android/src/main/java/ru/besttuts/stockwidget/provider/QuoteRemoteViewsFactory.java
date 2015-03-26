@@ -2,6 +2,7 @@ package ru.besttuts.stockwidget.provider;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
@@ -16,8 +17,11 @@ import java.util.List;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.model.Model;
+import ru.besttuts.stockwidget.model.QuoteType;
+import ru.besttuts.stockwidget.ui.DynamicWebViewActivity;
 import ru.besttuts.stockwidget.ui.EconomicWidget;
 import ru.besttuts.stockwidget.ui.EconomicWidgetConfigureActivity;
+import ru.besttuts.stockwidget.ui.TrackingQuotesFragment;
 import ru.besttuts.stockwidget.util.Utils;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
@@ -96,6 +100,19 @@ public class QuoteRemoteViewsFactory implements RemoteViewsFactory {
         }
         viewItem.setTextColor(R.id.tvChange, color);
         viewItem.setTextColor(R.id.tvChangePercentage, color);
+
+        Intent intent = new Intent();
+        String url;
+        if(QuoteType.CURRENCY == model.getQuoteType()) {
+            url = String.format("http://finance.yahoo.com/q?s=%s=X&ql=1", model.getId());
+        } else {
+            url = String.format("http://finance.yahoo.com/q?s=%s&ql=1", model.getId());
+        }
+        intent.putExtra(TrackingQuotesFragment.ARG_URL, url);
+        viewItem.setOnClickFillInIntent(R.id.tvName, intent);
+        viewItem.setOnClickFillInIntent(R.id.tvRate, intent);
+        viewItem.setOnClickFillInIntent(R.id.tvChange, intent);
+        viewItem.setOnClickFillInIntent(R.id.tvChangePercentage, intent);
 
         return viewItem;
     }

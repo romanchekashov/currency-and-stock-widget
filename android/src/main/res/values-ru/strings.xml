@@ -15,6 +15,10 @@
     <string name="rate_later">Позже</string>
     <string name="rate_no">Нет, Спасибо</string>
 
+    <string name="dynamic">Динамика</string>
+    <string name="change">Изменить</string>
+    <string name="remove">Убрать</string>
+
     <string name="action_accept">Подтвердить</string>
     <string name="refresh">Обновить</string>
     <string name="for_">За</string>
