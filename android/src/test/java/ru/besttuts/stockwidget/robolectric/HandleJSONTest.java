@@ -22,7 +22,6 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 /**
  * Created by roman on 14.02.2015.
  */
-@Config(emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)
 public class HandleJSONTest {
 

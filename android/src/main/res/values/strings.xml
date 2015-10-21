@@ -68,11 +68,16 @@
     </array>
 
     <string name="gcf15_cmx">Gold</string>
+    <string name="gcv15_cmx">Gold(Oct)</string>
     <string name="sif15_cmx">Silver</string>
+    <string name="siv15_cmx">Silver(Oct)</string>
     <string name="plf15_nym">Platinum</string>
     <string name="paf15_nym">Palladium</string>
     <string name="hgf15_cmx">Copper</string>
     <string name="bzj15_nym">Brent Oil</string>
+    <string name="bzz15_nym">Brent(Dec) Oil</string>
+    <string name="clx15_nym">Light(Nov) Oil</string>
+    <string name="clz15_nym">Light(Dec) Oil</string>
     <string name="ngh15_nym">Gas</string>
     <string name="ch15_cbt">Corn</string>
     <string name="sh15_cbt">Soybeans</string>
@@ -89,11 +94,16 @@
 
     <array name="good_array">
         <item>Gold(GCF15.CMX)</item>
+        <item>Gold(GCV15.CMX)</item>
         <item>Silver(SIF15.CMX)</item>
+        <item>Silver(SIV15.CMX)</item>
         <item>Platinum(PLF15.NYM)</item>
         <item>Palladium(PAF15.NYM)</item>
         <item>Copper(HGF15.CMX)</item>
         <item>Brent Oil(BZJ15.NYM)</item>
+        <item>Brent(Dec) Oil(BZZ15.NYM)</item>
+        <item>Light(Nov) Oil(CLX15.NYM)</item>
+        <item>Light(Dec) Oil(CLZ15.NYM)</item>
         <item>Natural Gas(NGH15.NYM)</item>
         <item>Corn(CH15.CBT)</item>
         <item>Soybeans(SH15.CBT)</item>

@@ -36,10 +36,16 @@ public class UpdateService extends Service {
     public int onStartCommand(Intent intent, int flags, final int startId) {
         LOGD(TAG, "onStartCommand");
 
+//        LOGD(TAG, "intent=" + intent + ", action=" + intent.getAction() + ", flags=" + flags + " bits=" + Integer.toBinaryString(flags));
+        if (null == intent) {
+            String source = null == intent ? "intent" : "action";
+            LOGE(TAG, source + " was null, flags=" + flags + " bits=" + Integer.toBinaryString(flags));
+            return START_NOT_STICKY;
+        }
+
         final Context context = this.getApplicationContext();
         final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-        final int[] allWidgetIds = intent
-                .getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
+        final int[] allWidgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
 
         boolean hasInternet = intent.getBooleanExtra(EconomicWidget.ARG_HAS_INTERNET, true);
 

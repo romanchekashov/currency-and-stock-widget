@@ -42,3 +42,7 @@
 
 # for com.squareup.picasso
 -dontwarn com.squareup.okhttp.**
+
+-keep class com.google.ads.** # Don't proguard AdMob classes
+
+-dontwarn com.google.ads.** # Temporary workaround for v6.2.1. It gives a warning that you can ignore

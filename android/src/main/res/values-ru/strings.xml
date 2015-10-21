@@ -66,11 +66,16 @@
     </array>
 
     <string name="gcf15_cmx">Золото</string>
+    <string name="gcv15_cmx">Золото(Окт)</string>
     <string name="sif15_cmx">Серебро</string>
+    <string name="siv15_cmx">Серебро(Окт)</string>
     <string name="plf15_nym">Платина</string>
     <string name="paf15_nym">Палладий</string>
     <string name="hgf15_cmx">Медь</string>
     <string name="bzj15_nym">Нефть(Brent)</string>
+    <string name="bzz15_nym">Brent(Дек) Нефть</string>
+    <string name="clx15_nym">Light(Ноя) Нефть</string>
+    <string name="clz15_nym">Light(Дек) Нефть</string>
     <string name="ngh15_nym">Газ</string>
     <string name="ch15_cbt">Кукуруза</string>
     <string name="sh15_cbt">Соя</string>
@@ -78,11 +83,16 @@
 
     <array name="good_array">
         <item>Золото(GCF15.CMX)</item>
+        <item>Золото(GCV15.CMX)</item>
         <item>Серебро(SIF15.CMX)</item>
+        <item>Серебро(SIV15.CMX)</item>
         <item>Платина(PLF15.NYM)</item>
         <item>Палладий(PAF15.NYM)</item>
         <item>Медь(HGF15.CMX)</item>
-        <item>Нефть Brent(BZJ15.NYM)</item>
+        <item>Нефть Brent(Апр) Oil(BZJ15.NYM)</item>
+        <item>Нефть Brent(Дек) Oil(BZZ15.NYM)</item>
+        <item>Нефть Light(Ноя) Oil(CLX15.NYM)</item>
+        <item>Нефть Light(Дек) Oil(CLZ15.NYM)</item>
         <item>Натуральный газ(NGH15.NYM)</item>
         <item>Кукуруза(CH15.CBT)</item>
         <item>Соя(SH15.CBT)</item>

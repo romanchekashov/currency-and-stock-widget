@@ -228,13 +228,13 @@ public class EconomicWidget extends AppWidgetProvider {
 
         if ("ru".equals(lng)) {
             dataSource.addSettingsRec(appWidgetIds[0], 1, QuoteType.CURRENCY, new String[]{"EURUSD", "USDRUB", "EURRUB"});
-            dataSource.addSettingsRec(appWidgetIds[0], 4, QuoteType.GOODS, new String[]{"BZJ15.NYM", "NGH15.NYM", "GCF15.CMX"});
+            dataSource.addSettingsRec(appWidgetIds[0], 4, QuoteType.GOODS, new String[]{"BZZ15.NYM", "NGH15.NYM", "GCF15.CMX"});
         } else if ("uk".equals(lng)) {
             dataSource.addSettingsRec(appWidgetIds[0], 1, QuoteType.CURRENCY, new String[]{"EURUSD", "USDUAH", "EURUAH"});
-            dataSource.addSettingsRec(appWidgetIds[0], 4, QuoteType.GOODS, new String[]{"BZJ15.NYM", "NGH15.NYM", "GCF15.CMX"});
+            dataSource.addSettingsRec(appWidgetIds[0], 4, QuoteType.GOODS, new String[]{"BZZ15.NYM", "NGH15.NYM", "GCF15.CMX"});
         } else {
             dataSource.addSettingsRec(appWidgetIds[0], 1, QuoteType.CURRENCY, new String[]{"EURUSD"});
-            dataSource.addSettingsRec(appWidgetIds[0], 2, QuoteType.GOODS, new String[]{"BZJ15.NYM", "NGH15.NYM", "GCF15.CMX"});
+            dataSource.addSettingsRec(appWidgetIds[0], 2, QuoteType.GOODS, new String[]{"BZZ15.NYM", "NGH15.NYM", "GCF15.CMX"});
         }
 
 //        dataSource.addModelRec(QuoteType.CURRENCY, "EURUSD");
@@ -372,10 +372,13 @@ public class EconomicWidget extends AppWidgetProvider {
 
     private static void readPrefsSettings(Context context, RemoteViews views) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        String bgColor = "#" + sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_VISIBILITY,
-                ConfigPreferenceFragment.KEY_PREF_BG_VISIBILITY_DEFAULT_VALUE) +
-                sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_COLOR,
-                        ConfigPreferenceFragment.KEY_PREF_BG_COLOR_DEFAULT_VALUE).substring(1);
+        String sVisibility = sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_VISIBILITY,
+                ConfigPreferenceFragment.KEY_PREF_BG_VISIBILITY_DEFAULT_VALUE);
+        if (2 != sVisibility.length()){
+            sVisibility = "0" + sVisibility;
+        }
+        String bgColor = "#" + sVisibility + sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_COLOR,
+                ConfigPreferenceFragment.KEY_PREF_BG_COLOR_DEFAULT_VALUE).substring(1);
         views.setInt(R.id.bgWidget, "setBackgroundColor", Color.parseColor(bgColor));
     }
 

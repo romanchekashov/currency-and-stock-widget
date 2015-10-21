@@ -13,6 +13,9 @@ import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
 /**
+ * http://stackoverflow.com/questions/8133597/android-upgrading-db-version-and-adding-new-table
+ *
+ * db_version 3: insert some new oil prices
  * Created by roman on 10.01.2015.
  */
 public class QuoteDatabaseHelper extends SQLiteOpenHelper {
@@ -20,7 +23,7 @@ public class QuoteDatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = makeLogTag(QuoteDatabaseHelper.class);
 
     private static final String DATABASE_NAME = "quote.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     private final Context mContext;
 
@@ -74,11 +77,16 @@ public class QuoteDatabaseHelper extends SQLiteOpenHelper {
 
     private void createDefaults(SQLiteDatabase db) {
         insertQuote(db, "GCF15.CMX", "Gold", QuoteType.GOODS);
+        insertQuote(db, "GCV15.CMX", "Gold(Oct)", QuoteType.GOODS);
         insertQuote(db, "SIF15.CMX", "Silver", QuoteType.GOODS);
+        insertQuote(db, "SIV15.CMX", "Silver(Oct)", QuoteType.GOODS);
         insertQuote(db, "PLF15.NYM", "Platinum", QuoteType.GOODS);
         insertQuote(db, "PAF15.NYM", "Palladium", QuoteType.GOODS);
         insertQuote(db, "HGF15.CMX", "Copper", QuoteType.GOODS);
         insertQuote(db, "BZJ15.NYM", "Brent Oil", QuoteType.GOODS);
+        insertQuote(db, "BZZ15.NYM", "Brent(Dec) Oil", QuoteType.GOODS);
+        insertQuote(db, "CLX15.NYM", "Light(Nov) Oil", QuoteType.GOODS);
+        insertQuote(db, "CLZ15.NYM", "Light(Dec) Oil", QuoteType.GOODS);
         insertQuote(db, "NGH15.NYM", "Natural Gas", QuoteType.GOODS);
         insertQuote(db, "CH15.CBT", "Corn", QuoteType.GOODS);
         insertQuote(db, "SH15.CBT", "Soybeans", QuoteType.GOODS);
@@ -165,10 +173,23 @@ public class QuoteDatabaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // This database is only a cache for online data, so its upgrade policy is
         // to simply to discard the data and start over
-        db.execSQL("DROP TABLE IF EXISTS " + Tables.SETTINGS);
-        db.execSQL("DROP TABLE IF EXISTS " + Tables.MODELS);
-        db.execSQL("DROP TABLE IF EXISTS " + Tables.QUOTES);
-        onCreate(db);
+        switch(oldVersion){
+            case 1:
+                db.execSQL("DROP TABLE IF EXISTS " + Tables.SETTINGS);
+                db.execSQL("DROP TABLE IF EXISTS " + Tables.MODELS);
+                db.execSQL("DROP TABLE IF EXISTS " + Tables.QUOTES);
+                onCreate(db);
+                break;
+            case 2:
+                insertQuote(db, "BZZ15.NYM", "Brent(Dec) Oil", QuoteType.GOODS);
+                insertQuote(db, "CLX15.NYM", "Light(Nov) Oil", QuoteType.GOODS);
+                insertQuote(db, "CLZ15.NYM", "Light(Dec) Oil", QuoteType.GOODS);
+                insertQuote(db, "GCV15.CMX", "Gold(Oct)", QuoteType.GOODS);
+                insertQuote(db, "SIV15.CMX", "Silver(Oct)", QuoteType.GOODS);
+            default:
+                break;
+        }
+
     }
 
 }
