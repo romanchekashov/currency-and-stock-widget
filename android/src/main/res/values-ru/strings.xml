@@ -67,36 +67,56 @@
 
     <string name="gcf15_cmx">Золото</string>
     <string name="gcv15_cmx">Золото(Окт)</string>
+    <string name="gcx15_cmx">Золото(Текущий)</string>
     <string name="sif15_cmx">Серебро</string>
     <string name="siv15_cmx">Серебро(Окт)</string>
+    <string name="siz15_cmx">Серебро(Текущий)</string>
     <string name="plf15_nym">Платина</string>
+    <string name="plz15_nym">Платина(Текущий)</string>
     <string name="paf15_nym">Палладий</string>
+    <string name="paz15_nym">Палладий(Текущий)</string>
     <string name="hgf15_cmx">Медь</string>
+    <string name="hgx15_cmx">Медь(Текущий)</string>
     <string name="bzj15_nym">Нефть(Brent)</string>
     <string name="bzz15_nym">Brent(Дек) Нефть</string>
+    <string name="bzf16_nym">Brent(Текущий) Нефть</string>
     <string name="clx15_nym">Light(Ноя) Нефть</string>
     <string name="clz15_nym">Light(Дек) Нефть</string>
     <string name="ngh15_nym">Газ</string>
+    <string name="ngz15_nym">Газ(Текущий)</string>
     <string name="ch15_cbt">Кукуруза</string>
+    <string name="cz15_cbt">Кукуруза(Текущий)</string>
     <string name="sh15_cbt">Соя</string>
+    <string name="sf16_cbt">Соя(Текущий)</string>
     <string name="zwh15_cbt">Пшеница</string>
+    <string name="zwz15_cbt">Пшеница(Текущий)</string>
 
     <array name="good_array">
         <item>Золото(GCF15.CMX)</item>
         <item>Золото(GCV15.CMX)</item>
+        <item>Золото(GCX15.CMX)</item>
         <item>Серебро(SIF15.CMX)</item>
         <item>Серебро(SIV15.CMX)</item>
+        <item>Серебро(SIZ15.CMX)</item>
         <item>Платина(PLF15.NYM)</item>
+        <item>Платина(PLZ15.NYM)</item>
         <item>Палладий(PAF15.NYM)</item>
+        <item>Палладий(PAZ15.NYM)</item>
         <item>Медь(HGF15.CMX)</item>
+        <item>Медь(HGX15.CMX)</item>
         <item>Нефть Brent(Апр) Oil(BZJ15.NYM)</item>
         <item>Нефть Brent(Дек) Oil(BZZ15.NYM)</item>
+        <item>Нефть Brent(Янв) Oil(BZF16.NYM)</item>
         <item>Нефть Light(Ноя) Oil(CLX15.NYM)</item>
         <item>Нефть Light(Дек) Oil(CLZ15.NYM)</item>
         <item>Натуральный газ(NGH15.NYM)</item>
+        <item>Натуральный газ(NGZ15.NYM)</item>
         <item>Кукуруза(CH15.CBT)</item>
+        <item>Кукуруза(CZ15.CBT)</item>
         <item>Соя(SH15.CBT)</item>
+        <item>Соя(SF16.CBT)</item>
         <item>Пшеница(ZWH15.CBT)</item>
+        <item>Пшеница(ZWZ15.CBT)</item>
     </array>
 
     <string name="pref_auto_update">Автоматическое обновление</string>

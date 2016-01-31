@@ -23,7 +23,7 @@ public class QuoteDatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = makeLogTag(QuoteDatabaseHelper.class);
 
     private static final String DATABASE_NAME = "quote.db";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     private final Context mContext;
 
@@ -76,21 +76,17 @@ public class QuoteDatabaseHelper extends SQLiteOpenHelper {
     }
 
     private void createDefaults(SQLiteDatabase db) {
-        insertQuote(db, "GCF15.CMX", "Gold", QuoteType.GOODS);
-        insertQuote(db, "GCV15.CMX", "Gold(Oct)", QuoteType.GOODS);
-        insertQuote(db, "SIF15.CMX", "Silver", QuoteType.GOODS);
-        insertQuote(db, "SIV15.CMX", "Silver(Oct)", QuoteType.GOODS);
-        insertQuote(db, "PLF15.NYM", "Platinum", QuoteType.GOODS);
-        insertQuote(db, "PAF15.NYM", "Palladium", QuoteType.GOODS);
-        insertQuote(db, "HGF15.CMX", "Copper", QuoteType.GOODS);
-        insertQuote(db, "BZJ15.NYM", "Brent Oil", QuoteType.GOODS);
-        insertQuote(db, "BZZ15.NYM", "Brent(Dec) Oil", QuoteType.GOODS);
-        insertQuote(db, "CLX15.NYM", "Light(Nov) Oil", QuoteType.GOODS);
-        insertQuote(db, "CLZ15.NYM", "Light(Dec) Oil", QuoteType.GOODS);
-        insertQuote(db, "NGH15.NYM", "Natural Gas", QuoteType.GOODS);
-        insertQuote(db, "CH15.CBT", "Corn", QuoteType.GOODS);
-        insertQuote(db, "SH15.CBT", "Soybeans", QuoteType.GOODS);
-        insertQuote(db, "ZWH15.CBT", "Wheat", QuoteType.GOODS);
+        insertQuote(db, "GCX15.CMX", "Gold", QuoteType.GOODS);
+        insertQuote(db, "SIZ15.CMX", "Silver", QuoteType.GOODS);
+        insertQuote(db, "PLZ15.NYM", "Platinum", QuoteType.GOODS);
+        insertQuote(db, "PAZ15.NYM", "Palladium", QuoteType.GOODS);
+        insertQuote(db, "HGX15.CMX", "Copper", QuoteType.GOODS);
+        insertQuote(db, "BZF16.NYM", "Brent Oil", QuoteType.GOODS);
+        insertQuote(db, "CLZ15.NYM", "Light Oil", QuoteType.GOODS);
+        insertQuote(db, "NGZ15.NYM", "Natural Gas", QuoteType.GOODS);
+        insertQuote(db, "CZ15.CBT", "Corn", QuoteType.GOODS);
+        insertQuote(db, "SF16.CBT", "Soybeans", QuoteType.GOODS);
+        insertQuote(db, "ZWZ15.CBT", "Wheat", QuoteType.GOODS);
         insertQuote(db, "CCH15.NYB", "Cocoa", QuoteType.GOODS);
         insertQuote(db, "KCH15.NYB", "Coffee", QuoteType.GOODS);
         insertQuote(db, "CTH15.NYB", "Cotton", QuoteType.GOODS);
@@ -186,6 +182,17 @@ public class QuoteDatabaseHelper extends SQLiteOpenHelper {
                 insertQuote(db, "CLZ15.NYM", "Light(Dec) Oil", QuoteType.GOODS);
                 insertQuote(db, "GCV15.CMX", "Gold(Oct)", QuoteType.GOODS);
                 insertQuote(db, "SIV15.CMX", "Silver(Oct)", QuoteType.GOODS);
+            case 3:
+                insertQuote(db, "GCX15.CMX", "Gold(Current)", QuoteType.GOODS);
+                insertQuote(db, "SIZ15.CMX", "Silver(Current)", QuoteType.GOODS);
+                insertQuote(db, "PLZ15.NYM", "Platinum(Current)", QuoteType.GOODS);
+                insertQuote(db, "PAZ15.NYM", "Palladium(Current)", QuoteType.GOODS);
+                insertQuote(db, "HGX15.CMX", "Copper(Current)", QuoteType.GOODS);
+                insertQuote(db, "BZF16.NYM", "Brent(Current) Oil", QuoteType.GOODS);
+                insertQuote(db, "NGZ15.NYM", "Natural Gas(Current)", QuoteType.GOODS);
+                insertQuote(db, "CZ15.CBT", "Corn(Current)", QuoteType.GOODS);
+                insertQuote(db, "SF16.CBT", "Soybeans(Current)", QuoteType.GOODS);
+                insertQuote(db, "ZWZ15.CBT", "Wheat(Current)", QuoteType.GOODS);
             default:
                 break;
         }

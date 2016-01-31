@@ -226,15 +226,19 @@ public class EconomicWidget extends AppWidgetProvider {
         String lng = context.getResources().getConfiguration().locale.getLanguage();
         LOGD(TAG, "locale.getLanguage: " + lng);
 
+        final String[] defaultCommodities = new String[]{"BZF16.NYM", "NGZ15.NYM", "GCX15.CMX"};
         if ("ru".equals(lng)) {
-            dataSource.addSettingsRec(appWidgetIds[0], 1, QuoteType.CURRENCY, new String[]{"EURUSD", "USDRUB", "EURRUB"});
-            dataSource.addSettingsRec(appWidgetIds[0], 4, QuoteType.GOODS, new String[]{"BZZ15.NYM", "NGH15.NYM", "GCF15.CMX"});
+            dataSource.addSettingsRec(appWidgetIds[0], 1, QuoteType.CURRENCY,
+                    new String[]{"EURUSD", "USDRUB", "EURRUB"});
+            dataSource.addSettingsRec(appWidgetIds[0], 4, QuoteType.GOODS, defaultCommodities);
         } else if ("uk".equals(lng)) {
-            dataSource.addSettingsRec(appWidgetIds[0], 1, QuoteType.CURRENCY, new String[]{"EURUSD", "USDUAH", "EURUAH"});
-            dataSource.addSettingsRec(appWidgetIds[0], 4, QuoteType.GOODS, new String[]{"BZZ15.NYM", "NGH15.NYM", "GCF15.CMX"});
+            dataSource.addSettingsRec(appWidgetIds[0], 1, QuoteType.CURRENCY,
+                    new String[]{"EURUSD", "USDUAH", "EURUAH"});
+            dataSource.addSettingsRec(appWidgetIds[0], 4, QuoteType.GOODS, defaultCommodities);
         } else {
-            dataSource.addSettingsRec(appWidgetIds[0], 1, QuoteType.CURRENCY, new String[]{"EURUSD"});
-            dataSource.addSettingsRec(appWidgetIds[0], 2, QuoteType.GOODS, new String[]{"BZZ15.NYM", "NGH15.NYM", "GCF15.CMX"});
+            dataSource.addSettingsRec(appWidgetIds[0], 1, QuoteType.CURRENCY,
+                    new String[]{"EURUSD"});
+            dataSource.addSettingsRec(appWidgetIds[0], 2, QuoteType.GOODS, defaultCommodities);
         }
 
 //        dataSource.addModelRec(QuoteType.CURRENCY, "EURUSD");

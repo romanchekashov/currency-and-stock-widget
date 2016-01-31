@@ -69,19 +69,29 @@
 
     <string name="gcf15_cmx">Gold</string>
     <string name="gcv15_cmx">Gold(Oct)</string>
+    <string name="gcx15_cmx">Gold(Current)</string>
     <string name="sif15_cmx">Silver</string>
     <string name="siv15_cmx">Silver(Oct)</string>
+    <string name="siz15_cmx">Silver(Current)</string>
     <string name="plf15_nym">Platinum</string>
+    <string name="plz15_nym">Platinum(Current)</string>
     <string name="paf15_nym">Palladium</string>
+    <string name="paz15_nym">Palladium(Current)</string>
     <string name="hgf15_cmx">Copper</string>
+    <string name="hgx15_cmx">Copper(Current)</string>
     <string name="bzj15_nym">Brent Oil</string>
     <string name="bzz15_nym">Brent(Dec) Oil</string>
+    <string name="bzf16_nym">Brent(Current) Oil</string>
     <string name="clx15_nym">Light(Nov) Oil</string>
     <string name="clz15_nym">Light(Dec) Oil</string>
     <string name="ngh15_nym">Gas</string>
+    <string name="ngz15_nym">Gas(Current)</string>
     <string name="ch15_cbt">Corn</string>
+    <string name="cz15_cbt">Corn(Current)</string>
     <string name="sh15_cbt">Soybeans</string>
+    <string name="sf16_cbt">Soybeans(Current)</string>
     <string name="zwh15_cbt">Wheat</string>
+    <string name="zwz15_cbt">Wheat(Current)</string>
 
     <string name="cch15_nyb">Cocoa</string>
     <string name="kch15_nyb">Coffee</string>
@@ -95,19 +105,29 @@
     <array name="good_array">
         <item>Gold(GCF15.CMX)</item>
         <item>Gold(GCV15.CMX)</item>
+        <item>Gold(GCX15.CMX)</item> <!-- expire: 25-Nov-15 -->
         <item>Silver(SIF15.CMX)</item>
         <item>Silver(SIV15.CMX)</item>
+        <item>Silver(SIZ15.CMX)</item> <!-- expire: 29-Dec-15 -->
         <item>Platinum(PLF15.NYM)</item>
+        <item>Platinum(PLZ15.NYM)</item> <!-- expire: 29-Dec-15 -->
         <item>Palladium(PAF15.NYM)</item>
+        <item>Palladium(PAZ15.NYM)</item> <!-- expire: 29-Dec-15 -->
         <item>Copper(HGF15.CMX)</item>
+        <item>Copper(HGX15.CMX)</item> <!-- expire: 25-Nov-15 -->
         <item>Brent Oil(BZJ15.NYM)</item>
         <item>Brent(Dec) Oil(BZZ15.NYM)</item>
+        <item>Brent(Jan) Oil(BZF16.NYM)</item> <!-- expire: 16-Dec-15 -->
         <item>Light(Nov) Oil(CLX15.NYM)</item>
-        <item>Light(Dec) Oil(CLZ15.NYM)</item>
+        <item>Light(Dec) Oil(CLZ15.NYM)</item> <!-- expire: 20-Nov-15 -->
         <item>Natural Gas(NGH15.NYM)</item>
+        <item>Natural Gas(NGZ15.NYM)</item> <!-- expire: 25-Nov-15 -->
         <item>Corn(CH15.CBT)</item>
+        <item>Corn(CZ15.CBT)</item> <!-- expire: 14-Dec-15 -->
         <item>Soybeans(SH15.CBT)</item>
+        <item>Soybeans(SF16.CBT)</item> <!-- expire: 14-Jan-16 -->
         <item>Wheat(ZWH15.CBT)</item>
+        <item>Wheat(ZWZ15.CBT)</item> <!-- expire: 14-Dec-15 -->
     </array>
 
     <string name="pref_auto_update">Auto update</string>
