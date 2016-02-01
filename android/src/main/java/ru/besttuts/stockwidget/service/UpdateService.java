@@ -105,7 +105,7 @@ public class UpdateService extends Service {
 
             try {
 
-                List<Setting> settings = dataSource.getAllSettings();
+                List<Setting> settings = dataSource.getAllSettingsWithCheck();
 
                 if (0 == settings.size()) return map;
 

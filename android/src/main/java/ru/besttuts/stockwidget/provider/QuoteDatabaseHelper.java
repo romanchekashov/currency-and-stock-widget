@@ -23,7 +23,7 @@ public class QuoteDatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = makeLogTag(QuoteDatabaseHelper.class);
 
     private static final String DATABASE_NAME = "quote.db";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
 
     private final Context mContext;
 
@@ -36,6 +36,7 @@ public class QuoteDatabaseHelper extends SQLiteOpenHelper {
         String SETTINGS = "settings";
         String MODELS = "models";
         String QUOTES = "quotes";
+        String QUOTE_LAST_TRADE_DATES = "quote_last_trade_dates";
         String CURRENCY_EXCHANGE = "currency_exchange";
         String STOCK = "stock";
         String GOODS = "goods";
@@ -51,6 +52,7 @@ public class QuoteDatabaseHelper extends SQLiteOpenHelper {
                 + SettingColumns.SETTING_QUOTE_POSITION + " INTEGER NOT NULL,"
                 + SettingColumns.SETTING_QUOTE_TYPE + " INTEGER NOT NULL,"
                 + SettingColumns.SETTING_QUOTE_SYMBOL + " TEXT NOT NULL,"
+                + SettingColumns.LAST_TRADE_DATE + " INTEGER,"
                 + "UNIQUE (" + SettingColumns.SETTING_ID + ") ON CONFLICT REPLACE)");
 
         db.execSQL("CREATE TABLE " + Tables.MODELS + " ("
@@ -70,7 +72,15 @@ public class QuoteDatabaseHelper extends SQLiteOpenHelper {
                 + QuoteColumns.QUOTE_TYPE + " INTEGER NOT NULL,"
                 + "UNIQUE (" + QuoteColumns.QUOTE_SYMBOL + "))");
 
+        db.execSQL("CREATE TABLE " + Tables.QUOTE_LAST_TRADE_DATES + " ("
+                + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + QuoteLastTradeDateColumns.SYMBOL + " TEXT NOT NULL,"
+                + QuoteLastTradeDateColumns.CODE + " TEXT NOT NULL,"
+                + QuoteLastTradeDateColumns.LAST_TRADE_DATE + " INTEGER,"
+                + "UNIQUE (" + QuoteLastTradeDateColumns.SYMBOL + "))");
+
         createDefaults(db);
+        createDefaultsQuoteLastTradeDate(db);
 
         LOGD(TAG, "onCreate: " + db);
     }
@@ -165,6 +175,101 @@ public class QuoteDatabaseHelper extends SQLiteOpenHelper {
         db.insertWithOnConflict(Tables.QUOTES, null, values, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
+    private void insertQuoteLastTradeDate(
+            SQLiteDatabase db, String code, String symbol, long lastTradeDate) {
+        ContentValues values = new ContentValues();
+        values.put(QuoteLastTradeDateColumns.SYMBOL, symbol);
+        values.put(QuoteLastTradeDateColumns.CODE, code);
+        values.put(QuoteLastTradeDateColumns.LAST_TRADE_DATE, lastTradeDate);
+
+        db.insertWithOnConflict(Tables.QUOTE_LAST_TRADE_DATES, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+    }
+
+    private void createDefaultsQuoteLastTradeDate(SQLiteDatabase db){
+        insertQuoteLastTradeDate(db, "BZ", "BZZ15.NYM", 1447372800000L);
+        insertQuoteLastTradeDate(db, "BZ", "BZJ15.NYM", 1426464000000L);
+        insertQuoteLastTradeDate(db, "BZ", "BZF16.NYM", 1450224000000L);
+        insertQuoteLastTradeDate(db, "BZ", "BZH16.NYM", 1454025600000L);
+        insertQuoteLastTradeDate(db, "BZ", "BZJ16.NYM", 1456704000000L);
+        insertQuoteLastTradeDate(db, "BZ", "BZK16.NYM", 1459382400000L);
+        insertQuoteLastTradeDate(db, "BZ", "BZM16.NYM", 1461888000000L);
+        insertQuoteLastTradeDate(db, "BZ", "BZN16.NYM", 1464652800000L);
+        insertQuoteLastTradeDate(db, "BZ", "BZQ16.NYM", 1467244800000L);
+        insertQuoteLastTradeDate(db, "BZ", "BZU16.NYM", 1469750400000L); // July
+
+        insertQuoteLastTradeDate(db, "CL", "CLX15.NYM", 1445299200000L);
+        insertQuoteLastTradeDate(db, "CL", "CLZ15.NYM", 1447977600000L);
+        insertQuoteLastTradeDate(db, "CL", "CLH16.NYM", 1456099200000L);
+        insertQuoteLastTradeDate(db, "CL", "CLJ16.NYM", 1458518400000L);
+        insertQuoteLastTradeDate(db, "CL", "CLK16.NYM", 1461110400000L);
+        insertQuoteLastTradeDate(db, "CL", "CLM16.NYM", 1463702400000L);
+        insertQuoteLastTradeDate(db, "CL", "CLN16.NYM", 1466467200000L);
+        insertQuoteLastTradeDate(db, "CL", "CLQ16.NYM", 1468972800000L); // July
+
+        insertQuoteLastTradeDate(db, "GC", "GCV15.CMX", 1445990400000L);
+        insertQuoteLastTradeDate(db, "GC", "GCX15.CMX", 1448409600000L);
+        insertQuoteLastTradeDate(db, "GC", "GCF16.CMX", 1453852800000L);
+        insertQuoteLastTradeDate(db, "GC", "GCG16.CMX", 1456358400000L);
+        insertQuoteLastTradeDate(db, "GC", "GCH16.CMX", 1459209600000L);
+        insertQuoteLastTradeDate(db, "GC", "GCJ16.CMX", 1461715200000L); // Apr
+
+        insertQuoteLastTradeDate(db, "SI", "SIZ15.CMX", 1451347200000L);
+        insertQuoteLastTradeDate(db, "SI", "SIF16.CMX", 1453852800000L);
+        insertQuoteLastTradeDate(db, "SI", "SIG16.CMX", 1456358400000L);
+        insertQuoteLastTradeDate(db, "SI", "SIH16.CMX", 1459209600000L); // Mar
+
+        insertQuoteLastTradeDate(db, "PL", "PLF16.NYM", 1453852800000L);
+        insertQuoteLastTradeDate(db, "PL", "PLG16.NYM", 1456358400000L);
+        insertQuoteLastTradeDate(db, "PL", "PLH16.NYM", 1459209600000L); // Mar
+
+        insertQuoteLastTradeDate(db, "PA", "PAF16.NYM", 1453852800000L);
+        insertQuoteLastTradeDate(db, "PA", "PAG16.NYM", 1456358400000L);
+        insertQuoteLastTradeDate(db, "PA", "PAH16.NYM", 1459209600000L); // Mar
+
+        insertQuoteLastTradeDate(db, "HG", "HGF16.CMX", 1453852800000L);
+        insertQuoteLastTradeDate(db, "HG", "HGG16.CMX", 1456358400000L);
+        insertQuoteLastTradeDate(db, "HG", "HGH16.CMX", 1459209600000L); // Mar
+
+        insertQuoteLastTradeDate(db, "NG", "NGG16.NYM", 1453852800000L);
+        insertQuoteLastTradeDate(db, "NG", "NGH16.NYM", 1456358400000L);
+        insertQuoteLastTradeDate(db, "NG", "NGJ16.NYM", 1459209600000L); // Mar
+
+        insertQuoteLastTradeDate(db, "C", "CZ15.CBT", 1450051200000L);
+        insertQuoteLastTradeDate(db, "C", "CH16.CBT", 1457913600000L);
+        insertQuoteLastTradeDate(db, "C", "CK16.CBT", 1463097600000L); // May
+
+        insertQuoteLastTradeDate(db, "S", "SF16.CBT", 1452729600000L);
+        insertQuoteLastTradeDate(db, "S", "SH16.CBT", 1457913600000L);
+        insertQuoteLastTradeDate(db, "S", "SK16.CBT", 1463097600000L); // May
+
+        insertQuoteLastTradeDate(db, "ZW", "ZWZ15.CBT", 1450051200000L);
+        insertQuoteLastTradeDate(db, "ZW", "ZWH16.CBT", 1457913600000L);
+        insertQuoteLastTradeDate(db, "ZW", "ZWK16.CBT", 1463097600000L); // May
+
+        insertQuoteLastTradeDate(db, "CC", "CCH15.NYB", 1426464000000L);
+        insertQuoteLastTradeDate(db, "CC", "CCK16.NYB", 1463097600000L); // May
+
+        insertQuoteLastTradeDate(db, "KC", "KCH15.NYB", 1426723200000L);
+        insertQuoteLastTradeDate(db, "KC", "KCH16.NYB", 1458259200000L);
+        insertQuoteLastTradeDate(db, "KC", "KCK16.NYB", 1463529600000L); // May
+
+        insertQuoteLastTradeDate(db, "CT", "CTH15.NYB", 1425859200000L);
+        insertQuoteLastTradeDate(db, "CT", "CTH16.NYB", 1457395200000L);
+        insertQuoteLastTradeDate(db, "CT", "CTK16.NYB", 1462492800000L); // May
+
+        insertQuoteLastTradeDate(db, "LB", "LBH15.CME", 1426204800000L);
+        insertQuoteLastTradeDate(db, "LB", "LBH16.CME", 1458000000000L);
+        insertQuoteLastTradeDate(db, "LB", "LBK16.CME", 1463097600000L); // May
+
+        insertQuoteLastTradeDate(db, "OJ", "OJH15.NYB", 1426032000000L);
+        insertQuoteLastTradeDate(db, "OJ", "OJH16.NYB", 1457568000000L);
+        insertQuoteLastTradeDate(db, "OJ", "OJK16.NYB", 1462838400000L); // May
+
+        insertQuoteLastTradeDate(db, "SB", "SBH15.NYB", 1424995200000L);
+        insertQuoteLastTradeDate(db, "SB", "SBH16.NYB", 1456704000000L);
+        insertQuoteLastTradeDate(db, "SB", "SBK16.NYB", 1461888000000L); // Apr
+    }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // This database is only a cache for online data, so its upgrade policy is
@@ -193,6 +298,18 @@ public class QuoteDatabaseHelper extends SQLiteOpenHelper {
                 insertQuote(db, "CZ15.CBT", "Corn(Current)", QuoteType.GOODS);
                 insertQuote(db, "SF16.CBT", "Soybeans(Current)", QuoteType.GOODS);
                 insertQuote(db, "ZWZ15.CBT", "Wheat(Current)", QuoteType.GOODS);
+            case 4:
+                db.execSQL(String.format("ALTER TABLE %s ADD COLUMN %s INTEGER",
+                        Tables.SETTINGS, SettingColumns.LAST_TRADE_DATE));
+
+                db.execSQL("CREATE TABLE " + Tables.QUOTE_LAST_TRADE_DATES + " ("
+                        + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                        + QuoteLastTradeDateColumns.CODE + " TEXT NOT NULL,"
+                        + QuoteLastTradeDateColumns.SYMBOL + " TEXT NOT NULL,"
+                        + QuoteLastTradeDateColumns.LAST_TRADE_DATE + " INTEGER,"
+                        + "UNIQUE (" + QuoteLastTradeDateColumns.SYMBOL + "))");
+
+                createDefaultsQuoteLastTradeDate(db);
             default:
                 break;
         }

@@ -29,13 +29,16 @@ public class Utils {
         if (null == model) return "-";
         if (null == model.getId()) return model.getName();
 
-        String field = model.getId().toLowerCase().replace(".", "_");
-        try {
-            return context.getString(R.string.class.getDeclaredField(field).getInt(null));
-        } catch (IllegalAccessException e) {
-            LOGE(TAG, e.getMessage());
-        } catch (NoSuchFieldException e) {
-            LOGE(TAG, e.getMessage());
+        if (QuoteType.GOODS == model.getQuoteType()){
+            String symbol = model.getId();
+            String field = symbol.toLowerCase().substring(0, symbol.length() - 7);
+            try {
+                return context.getString(R.string.class.getDeclaredField(field).getInt(null));
+            } catch (IllegalAccessException e) {
+                LOGE(TAG, e.getMessage());
+            } catch (NoSuchFieldException e) {
+                LOGE(TAG, e.getMessage());
+            }
         }
 
         return model.getName();
@@ -53,7 +56,11 @@ public class Utils {
             return symbol.substring(0, 3) + "/" + symbol.substring(3);
         }
 
-        String field = symbol.toLowerCase().replace(".", "_");
+        if(QuoteType.GOODS != quoteType){
+            return symbol;
+        }
+
+        String field = symbol.toLowerCase().substring(0, symbol.length() - 7);
         try {
             return context.getString(R.string.class.getDeclaredField(field).getInt(null));
         } catch (IllegalAccessException e) {

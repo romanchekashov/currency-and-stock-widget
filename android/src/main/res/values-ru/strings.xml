@@ -65,6 +65,24 @@
         <item>Мои ценные бумаги</item>
     </array>
 
+    <string name="gc">Золото</string>
+    <string name="si">Серебро</string>
+    <string name="pl">Платина</string>
+    <string name="pa">Палладий</string>
+    <string name="hg">Медь</string>
+    <string name="bz">Нефть(Brent)</string>
+    <string name="cl">Нефть(Light)</string>
+    <string name="ng">Газ</string>
+    <string name="c">Кукуруза</string>
+    <string name="s">Соя</string>
+    <string name="zw">Пшеница</string>
+    <string name="cc">Какао</string>
+    <string name="kc">Кофе</string>
+    <string name="ct">Хлопок</string>
+    <string name="lb">Лесоматериал</string>
+    <string name="oj">Апельсиновый сок</string>
+    <string name="sb">Сахар</string>
+
     <string name="gcf15_cmx">Золото</string>
     <string name="gcv15_cmx">Золото(Окт)</string>
     <string name="gcx15_cmx">Золото(Текущий)</string>

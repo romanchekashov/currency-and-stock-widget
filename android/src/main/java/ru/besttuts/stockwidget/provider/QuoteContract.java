@@ -16,6 +16,8 @@ public class QuoteContract {
         String SETTING_QUOTE_TYPE = "setting_quote_type";
         /** Type describing this block. */
         String SETTING_QUOTE_SYMBOL = "setting_quote_symbol";
+
+        String LAST_TRADE_DATE = "last_trade_date";
     }
 
     public interface ModelColumns {
@@ -37,6 +39,12 @@ public class QuoteContract {
         String QUOTE_SYMBOL = "quote_symbol";
         String QUOTE_NAME = "quote_name";
         String QUOTE_TYPE = "quote_type";
+    }
+
+    public interface QuoteLastTradeDateColumns {
+        String CODE = "code";
+        String SYMBOL = "symbol";
+        String LAST_TRADE_DATE = "last_trade_date";
     }
 
     public interface CurrencyExchangeColumns {

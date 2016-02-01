@@ -10,6 +10,7 @@ public class Setting {
     private int quotePosition;
     private int quoteType;
     private String quoteSymbol;
+    private long lastTradeDate;
 
     public String getId() {
         return id;
@@ -53,6 +54,14 @@ public class Setting {
         } else {
             this.quoteSymbol = quoteSymbol;
         }
+    }
+
+    public long getLastTradeDate() {
+        return lastTradeDate;
+    }
+
+    public void setLastTradeDate(long lastTradeDate) {
+        this.lastTradeDate = lastTradeDate;
     }
 
     @Override

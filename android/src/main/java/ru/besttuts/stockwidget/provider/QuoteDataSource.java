@@ -9,7 +9,9 @@ import android.provider.BaseColumns;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.io.model.Result;
@@ -49,37 +51,65 @@ public class QuoteDataSource {
         if (null != mDbHelper) mDbHelper.close();
     }
 
+    private long getTodayUtcDate(){
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+
+        return calendar.getTimeInMillis();
+    }
+
     public void addSettingsRec(int mAppWidgetId, int widgetItemPosition,
                                int type, String[] symbols) {
 
-        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        long today = getTodayUtcDate();
 
         for (int i = 0; i < symbols.length; i++) {
             String symbol = symbols[i];
             int position = widgetItemPosition + i;
             String id = mAppWidgetId + "_" + position;
 
-            // New value for one column
-            ContentValues values = new ContentValues();
-            values.put(QuoteContract.SettingColumns.SETTING_ID, id);
-            values.put(QuoteContract.SettingColumns.SETTING_WIDGET_ID, mAppWidgetId);
-            values.put(QuoteContract.SettingColumns.SETTING_QUOTE_POSITION, position);
-            values.put(QuoteContract.SettingColumns.SETTING_QUOTE_TYPE, type);
-            values.put(QuoteContract.SettingColumns.SETTING_QUOTE_SYMBOL, symbol);
+            Setting setting = new Setting();
+            setting.setId(id);
+            setting.setWidgetId(mAppWidgetId);
+            setting.setQuotePosition(widgetItemPosition);
+            setting.setQuoteType(type);
+            setting.setQuoteSymbol(symbol);
 
-            // Which row to update, based on the ID
-            String selection = QuoteContract.SettingColumns.SETTING_ID + " LIKE ?";
-            String[] selectionArgs = { id };
+            if (QuoteType.GOODS == type){
+                updateSettingWithNewSymbolAndLastTradeDate(setting, today);
+            }
 
-            long count = db.insertWithOnConflict(
-                    QuoteDatabaseHelper.Tables.SETTINGS,
-                    null,
-                    values,
-                    SQLiteDatabase.CONFLICT_REPLACE);
-
-            LOGD(TAG, "insertWithOnConflict rows count = " + count);
+            persist(setting);
         }
 
+    }
+
+    public void persist(Setting setting) {
+
+        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        if(null == setting.getId() || setting.getId().isEmpty()){
+            setting.setId(setting.getWidgetId() + "_" + setting.getQuotePosition());
+        }
+
+        // New value for one column
+        ContentValues values = new ContentValues();
+        values.put(QuoteContract.SettingColumns.SETTING_ID, setting.getId());
+        values.put(QuoteContract.SettingColumns.SETTING_WIDGET_ID, setting.getWidgetId());
+        values.put(QuoteContract.SettingColumns.SETTING_QUOTE_POSITION, setting.getQuotePosition());
+        values.put(QuoteContract.SettingColumns.SETTING_QUOTE_TYPE, setting.getQuoteType());
+        values.put(QuoteContract.SettingColumns.SETTING_QUOTE_SYMBOL, setting.getQuoteSymbol());
+        values.put(QuoteContract.SettingColumns.LAST_TRADE_DATE, setting.getLastTradeDate());
+
+        long rowId = db.insertWithOnConflict(
+                QuoteDatabaseHelper.Tables.SETTINGS,
+                null,
+                values,
+                SQLiteDatabase.CONFLICT_REPLACE);
+
+        LOGD(TAG, "insertWithOnConflict id = " + rowId);
     }
 
     @Deprecated
@@ -215,7 +245,7 @@ public class QuoteDataSource {
                 + "where s.setting_widget_id = ? order by "
                 + QuoteContract.SettingColumns.SETTING_QUOTE_POSITION + " asc;";
 
-        return db.rawQuery(sqlQuery, new String[] { String.valueOf(widgetId) });
+        return db.rawQuery(sqlQuery, new String[]{String.valueOf(widgetId)});
 
     }
 
@@ -229,7 +259,7 @@ public class QuoteDataSource {
                 + "where s.setting_widget_id = ? and m.model_id is null order by "
                 + QuoteContract.SettingColumns.SETTING_QUOTE_POSITION + " asc";
 
-        return db.rawQuery(sqlQuery, new String[] { String.valueOf(widgetId) });
+        return db.rawQuery(sqlQuery, new String[]{String.valueOf(widgetId)});
 
     }
 
@@ -244,7 +274,7 @@ public class QuoteDataSource {
                 + "where s.setting_widget_id = ? order by "
                 + QuoteContract.SettingColumns.SETTING_QUOTE_POSITION + " asc";
 
-        return db.rawQuery(sqlQuery, new String[] { String.valueOf(widgetId) });
+        return db.rawQuery(sqlQuery, new String[]{String.valueOf(widgetId)});
 
     }
 
@@ -259,7 +289,8 @@ public class QuoteDataSource {
                 QuoteContract.SettingColumns.SETTING_WIDGET_ID,
                 QuoteContract.SettingColumns.SETTING_QUOTE_POSITION,
                 QuoteContract.SettingColumns.SETTING_QUOTE_TYPE,
-                QuoteContract.SettingColumns.SETTING_QUOTE_SYMBOL
+                QuoteContract.SettingColumns.SETTING_QUOTE_SYMBOL,
+                QuoteContract.SettingColumns.LAST_TRADE_DATE
         };
 
         // How you want the results sorted in the resulting Cursor
@@ -439,11 +470,60 @@ public class QuoteDataSource {
         return settings;
     }
 
+    public List<Setting> getAllSettingsWithCheck(){
+        List<Setting> settings = getAllSettings();
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+
+        long today = calendar.getTimeInMillis();
+
+        for (Setting setting: settings){
+            if (QuoteType.GOODS != setting.getQuoteType() || today < setting.getLastTradeDate()){
+                continue;
+            }
+
+            updateSettingWithNewSymbolAndLastTradeDate(setting, today);
+
+            persist(setting);
+        }
+
+        return settings;
+    }
+
+    private void updateSettingWithNewSymbolAndLastTradeDate(Setting setting, long today) {
+        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        String symbol = setting.getQuoteSymbol();
+        String code = symbol.substring(0, symbol.length() - 7);
+
+        Cursor cursor = db.rawQuery("select * from " + QuoteDatabaseHelper.Tables.QUOTE_LAST_TRADE_DATES
+                + " where code = ? and last_trade_date > ?"
+                + " order by last_trade_date asc",
+                new String[]{code, String.valueOf(today)});
+        if (null == cursor || 0 == cursor.getCount()) return;
+
+        cursor.moveToFirst();
+
+        String newSymbol = cursor.getString(cursor.getColumnIndexOrThrow(
+                QuoteContract.QuoteLastTradeDateColumns.SYMBOL));
+        long newLastTradeDate = cursor.getLong(cursor.getColumnIndexOrThrow(
+                QuoteContract.QuoteLastTradeDateColumns.LAST_TRADE_DATE));
+
+        setting.setQuoteSymbol(newSymbol);
+        setting.setLastTradeDate(newLastTradeDate);
+
+        cursor.close();
+    }
+
     public List<Model> getModelsByWidgetId(int widgetId) {
         Cursor cursor = getCursorModelsByWidgetId(widgetId);
-        if (0 >= cursor.getCount()) return new ArrayList();
+        if (0 >= cursor.getCount()){
+            return new ArrayList<Model>();
+        }
 
-        List list = new ArrayList(cursor.getCount());
+        List<Model> list = new ArrayList<Model>(cursor.getCount());
         cursor.moveToFirst();
         do {
             Model model = transformCursorToModel(cursor);
@@ -462,6 +542,7 @@ public class QuoteDataSource {
         setting.setQuotePosition(cursor.getInt(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_QUOTE_POSITION)));
         setting.setQuoteType(cursor.getInt(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_QUOTE_TYPE)));
         setting.setQuoteSymbol(cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_QUOTE_SYMBOL)));
+        setting.setLastTradeDate(cursor.getLong(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.LAST_TRADE_DATE)));
 
         return setting;
     }

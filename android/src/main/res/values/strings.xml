@@ -67,6 +67,24 @@
         <item>My Quotes</item>
     </array>
 
+    <string name="gc">Gold</string>
+    <string name="si">Silver</string>
+    <string name="pl">Platinum</string>
+    <string name="pa">Palladium</string>
+    <string name="hg">Copper</string>
+    <string name="bz">Brent Oil</string>
+    <string name="cl">Light Oil</string>
+    <string name="ng">Gas</string>
+    <string name="c">Corn</string>
+    <string name="s">Soybeans</string>
+    <string name="zw">Wheat</string>
+    <string name="cc">Cocoa</string>
+    <string name="kc">Coffee</string>
+    <string name="ct">Cotton</string>
+    <string name="lb">Lumber</string>
+    <string name="oj">Orange Juice</string>
+    <string name="sb">Sugar</string>
+
     <string name="gcf15_cmx">Gold</string>
     <string name="gcv15_cmx">Gold(Oct)</string>
     <string name="gcx15_cmx">Gold(Current)</string>
