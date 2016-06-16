@@ -81,8 +81,12 @@ public class EconomicWidget extends AppWidgetProvider {
 //            return;
 //        }
 
+        StringBuilder stringBuilderWidgetIds = new StringBuilder();
+        for (Integer widgetId: allWidgetIds){
+            stringBuilderWidgetIds.append(widgetId + ",");
+        }
         LOGD(TAG, String.format("onUpdate: context(%s), appWidgetManager(%s), allWidgetIds(%s), hasInternet(%s)",
-                context, appWidgetManager, allWidgetIds, hasInternet));
+                context, appWidgetManager, stringBuilderWidgetIds.toString(), hasInternet));
 
         update(context, appWidgetManager, allWidgetIds, hasInternet);
 
@@ -462,6 +466,7 @@ public class EconomicWidget extends AppWidgetProvider {
         AppWidgetManager appWidgetManager = AppWidgetManager
                 .getInstance(context);
         int appWidgetIds[] = appWidgetManager.getAppWidgetIds(thisAppWidget);
+        LOGD(TAG, "[onReceive] appWidgetIds[] = " + appWidgetIds);
 
         onUpdate(context, appWidgetManager, appWidgetIds, isSyncAllowed(context));
 

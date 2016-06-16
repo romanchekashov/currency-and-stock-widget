@@ -71,6 +71,7 @@ public class Setting {
                 ", widgetId=" + widgetId +
                 ", quotePosition=" + quotePosition +
                 ", quoteType=" + quoteType +
+                ", lastTradeDate=" + lastTradeDate +
                 ", quoteSymbol='" + quoteSymbol + '\'' +
                 '}';
     }

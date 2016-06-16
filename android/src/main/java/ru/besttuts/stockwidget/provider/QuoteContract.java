@@ -1,5 +1,8 @@
 package ru.besttuts.stockwidget.provider;
 
+import android.net.Uri;
+import android.provider.BaseColumns;
+
 /**
  * Created by roman on 10.01.2015.
  */
@@ -62,4 +65,55 @@ public class QuoteContract {
         String CURRENCY_EXCHANGE_TIME = "currency_exchange_time";
     }
 
+    // the symbolic name of the entire provider (its authority)
+    public static final String CONTENT_AUTHORITY = "ru.besttuts.stockwidget";
+
+    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
+
+    private static final String PATH_SETTINGS = "settings";
+
+    public static class Settings implements SettingColumns, BaseColumns {
+        public static final String BLOCK_TYPE_FREE = "free";
+        public static final String BLOCK_TYPE_BREAK = "break";
+        public static final String BLOCK_TYPE_KEYNOTE = "keynote";
+
+        public static final boolean isValidBlockType(String type) {
+            return BLOCK_TYPE_FREE.equals(type) ||  BLOCK_TYPE_BREAK.equals(type)
+                    || BLOCK_TYPE_KEYNOTE.equals(type);
+        }
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_SETTINGS).build();
+
+        public static final String CONTENT_TYPE =
+                "vnd.android.cursor.dir/vnd.ru.besttuts.stockwidget.setting";
+        public static final String CONTENT_ITEM_TYPE =
+                "vnd.android.cursor.item/vnd.ru.besttuts.stockwidget.setting";
+
+        /** "ORDER BY" clauses. */
+//        public static final String DEFAULT_SORT = BlocksColumns.BLOCK_START + " ASC, "
+//                + BlocksColumns.BLOCK_END + " ASC";
+
+        /** Build {@link Uri} for requested {@link #_ID}. */
+        public static Uri buildUri(String entityId) {
+            return CONTENT_URI.buildUpon().appendPath(entityId).build();
+        }
+
+        /** Read {@link #_ID} from {@link Settings} {@link Uri}. */
+        public static String getId(Uri uri) {
+            return uri.getPathSegments().get(1);
+        }
+
+//        /**
+//         * Generate a {@link #BLOCK_ID} that will always match the requested
+//         * {@link Blocks} details.
+//         * @param startTime the block start time, in milliseconds since Epoch UTC
+//         * @param endTime the block end time, in milliseconds since Epoch UTF
+//         */
+//        public static String generateBlockId(long startTime, long endTime) {
+//            startTime /= DateUtils.SECOND_IN_MILLIS;
+//            endTime /= DateUtils.SECOND_IN_MILLIS;
+//            return ParserUtils.sanitizeId(startTime + "-" + endTime);
+//        }
+    }
 }

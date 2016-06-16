@@ -34,8 +34,6 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import ru.besttuts.stockwidget.Config;
-import ru.besttuts.stockwidget.PrivateConstants;
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
 import ru.besttuts.stockwidget.service.UpdateService;
@@ -60,11 +58,11 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
 
 
     /** Your ad unit id. Replace with your actual ad unit id. */
-    private static final String BANNER_AD_UNIT_ID = PrivateConstants.BANNER_AD_UNIT_ID;
+    private static final String BANNER_AD_UNIT_ID = "PrivateConstants.BANNER_AD_UNIT_ID";
 //            Config.getProperty("ru.besttuts.stockwidget.PrivateConstants", "BANNER_AD_UNIT_ID");
-    private static final String INTERSTITIAL_AD_UNIT_ID = PrivateConstants.INTERSTITIAL_AD_UNIT_ID;
+    private static final String INTERSTITIAL_AD_UNIT_ID = "PrivateConstants.INTERSTITIAL_AD_UNIT_ID";
 //            Config.getProperty("ru.besttuts.stockwidget.PrivateConstants", "INTERSTITIAL_AD_UNIT_ID");
-    private static final String HASHED_DEVICE_ID = PrivateConstants.HASHED_DEVICE_ID;
+    private static final String HASHED_DEVICE_ID = "PrivateConstants.HASHED_DEVICE_ID";
 //            Config.getProperty("ru.besttuts.stockwidget.PrivateConstants", "HASHED_DEVICE_ID");
 
     /** The interstitial ad. */
