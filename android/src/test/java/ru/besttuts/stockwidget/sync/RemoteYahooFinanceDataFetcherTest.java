@@ -1,12 +1,8 @@
-package ru.besttuts.stockwidget.robolectric;
+package ru.besttuts.stockwidget.sync;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
 
 import ru.besttuts.stockwidget.model.QuoteType;
-import ru.besttuts.stockwidget.sync.RemoteYahooFinanceDataFetcher;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -15,7 +11,6 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 /**
  * Created by roman on 14.02.2015.
  */
-@RunWith(RobolectricTestRunner.class)
 public class RemoteYahooFinanceDataFetcherTest {
 
     private static final String TAG = makeLogTag(RemoteYahooFinanceDataFetcherTest.class);

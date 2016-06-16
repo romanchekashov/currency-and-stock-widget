@@ -1,15 +1,11 @@
-package ru.besttuts.stockwidget.robolectric;
+package ru.besttuts.stockwidget.io;
 
 import org.json.JSONObject;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
 
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import ru.besttuts.stockwidget.io.HandleJSON;
 import ru.besttuts.stockwidget.model.Currency;
 import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.QuoteType;
@@ -22,7 +18,6 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 /**
  * Created by roman on 14.02.2015.
  */
-@RunWith(RobolectricTestRunner.class)
 public class HandleJSONTest {
 
     private static final String TAG = makeLogTag(HandleJSONTest.class);
