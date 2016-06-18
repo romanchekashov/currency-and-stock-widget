@@ -14,15 +14,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -34,12 +30,13 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import ru.besttuts.stockwidget.Config;
+import ru.besttuts.stockwidget.PrivateConstants;
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
 import ru.besttuts.stockwidget.service.UpdateService;
 import ru.besttuts.stockwidget.util.AppRater;
 import ru.besttuts.stockwidget.util.NotificationManager;
-import ru.besttuts.stockwidget.util.Utils;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.LOGE;
@@ -58,11 +55,11 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
 
 
     /** Your ad unit id. Replace with your actual ad unit id. */
-    private static final String BANNER_AD_UNIT_ID = "PrivateConstants.BANNER_AD_UNIT_ID";
+    private static final String BANNER_AD_UNIT_ID = PrivateConstants.BANNER_AD_UNIT_ID;
 //            Config.getProperty("ru.besttuts.stockwidget.PrivateConstants", "BANNER_AD_UNIT_ID");
-    private static final String INTERSTITIAL_AD_UNIT_ID = "PrivateConstants.INTERSTITIAL_AD_UNIT_ID";
+    private static final String INTERSTITIAL_AD_UNIT_ID = PrivateConstants.INTERSTITIAL_AD_UNIT_ID;
 //            Config.getProperty("ru.besttuts.stockwidget.PrivateConstants", "INTERSTITIAL_AD_UNIT_ID");
-    private static final String HASHED_DEVICE_ID = "PrivateConstants.HASHED_DEVICE_ID";
+    private static final String HASHED_DEVICE_ID = PrivateConstants.HASHED_DEVICE_ID;
 //            Config.getProperty("ru.besttuts.stockwidget.PrivateConstants", "HASHED_DEVICE_ID");
 
     /** The interstitial ad. */
@@ -246,11 +243,17 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
 //            }
 //        }
         //Получаю треккер отслеживания для Гугл-Аналитики (должен автоматически отправлять отчеты)
-        ((AnalyticsApp) getApplication()).getTracker(AnalyticsApp.TrackerName.APP_TRACKER);
+        if(Config.IS_DEV_MODE){
+            ((AnalyticsApp) getApplication()).getTracker(AnalyticsApp.TrackerName.APP_TRACKER);
+        }
 
     }
 
     public void createAds() {
+        if(Config.IS_DEV_MODE){
+            return;
+        }
+
         // Создание экземпляра adView.
         AdView adView = new AdView(this);
         adView.setAdUnitId(BANNER_AD_UNIT_ID);
@@ -301,6 +304,10 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
 
     /** Called when the Show Interstitial button is clicked. */
     public void showInterstitial() {
+        if(Config.IS_DEV_MODE){
+            return;
+        }
+
         if (null == interstitialAd) {
             LOGE(TAG, "interstitialAd = " + interstitialAd);
             return;
@@ -343,8 +350,10 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
     @Override
     protected void onStart() {
         super.onStart();
-        //Get an Analytics tracker to report app starts & uncaught exceptions etc.
-        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+        if(Config.IS_DEV_MODE){
+            //Get an Analytics tracker to report app starts & uncaught exceptions etc.
+            GoogleAnalytics.getInstance(this).reportActivityStart(this);
+        }
     }
 
     @Override
@@ -356,8 +365,10 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
     @Override
     protected void onStop() {
         super.onStop();
-        //Stop the analytics tracking
-        GoogleAnalytics.getInstance(this).reportActivityStop(this);
+        if(Config.IS_DEV_MODE){
+            //Stop the analytics tracking
+            GoogleAnalytics.getInstance(this).reportActivityStop(this);
+        }
     }
 
     @Override

@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -29,6 +30,7 @@ import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
 import ru.besttuts.stockwidget.service.QuoteWidgetService;
 import ru.besttuts.stockwidget.service.UpdateService;
+import ru.besttuts.stockwidget.util.ContentResolverHelper;
 import ru.besttuts.stockwidget.util.Utils;
 
 import java.text.SimpleDateFormat;
@@ -81,21 +83,16 @@ public class EconomicWidget extends AppWidgetProvider {
 //            return;
 //        }
 
-        StringBuilder stringBuilderWidgetIds = new StringBuilder();
-        for (Integer widgetId: allWidgetIds){
-            stringBuilderWidgetIds.append(widgetId + ",");
+        if(BuildConfig.DEBUG) {
+            StringBuilder widgetIdStrBuilder = new StringBuilder();
+            for (int i: allWidgetIds) {
+                widgetIdStrBuilder.append(i+",");
+            }
+            LOGD(TAG, String.format("onUpdate: context(%s), appWidgetManager(%s), allWidgetIds(%s), hasInternet(%s)",
+                    context, appWidgetManager, widgetIdStrBuilder.toString(), hasInternet));
         }
-        LOGD(TAG, String.format("onUpdate: context(%s), appWidgetManager(%s), allWidgetIds(%s), hasInternet(%s)",
-                context, appWidgetManager, stringBuilderWidgetIds.toString(), hasInternet));
 
         update(context, appWidgetManager, allWidgetIds, hasInternet);
-
-        if(BuildConfig.DEBUG) {
-            LOGD(TAG, "onUpdate");
-            for (int i = 0; i < allWidgetIds.length; i++) {
-                LOGD(TAG, "widgetId = " + allWidgetIds[i]);
-            }
-        }
     }
 
     private void update(Context context, AppWidgetManager appWidgetManager,
@@ -141,20 +138,20 @@ public class EconomicWidget extends AppWidgetProvider {
     public void onDeleted(Context context, int[] appWidgetIds) {
         // Удаляем все данные ассоциированные с удаляемым виджетом.
         QuoteDataSource dataSource = new QuoteDataSource(context);
-        final int N = appWidgetIds.length;
-        for (int i = 0; i < N; i++) {
-            dataSource.deleteSettingsByWidgetId(appWidgetIds[i]);
-            EconomicWidgetConfigureActivity.deleteLastUpdateTimePref(context, appWidgetIds[i]);
-            EconomicWidgetConfigureActivity.deleteWidgetLayoutPref(context, appWidgetIds[i]);
-            EconomicWidgetConfigureActivity.deleteWidgetLayoutGridItemPref(context, appWidgetIds[i]);
+        for (int widgetId: appWidgetIds) {
+            dataSource.deleteSettingsByWidgetId(widgetId);
+            EconomicWidgetConfigureActivity.deleteLastUpdateTimePref(context, widgetId);
+            EconomicWidgetConfigureActivity.deleteWidgetLayoutPref(context, widgetId);
+            EconomicWidgetConfigureActivity.deleteWidgetLayoutGridItemPref(context, widgetId);
         }
         dataSource.close();
 
         if(BuildConfig.DEBUG) {
-            LOGD(TAG, "onDeleted: ");
-            for (int i = 0; i < appWidgetIds.length; i++) {
-                LOGD(TAG, "widgetId = " + appWidgetIds[i]);
+            StringBuilder widgetIdStrBuilder = new StringBuilder();
+            for (int i: appWidgetIds) {
+                widgetIdStrBuilder.append(i+",");
             }
+            LOGD(TAG, "onDeleted: appWidgetIds: " + widgetIdStrBuilder.toString());
         }
     }
 
@@ -217,13 +214,12 @@ public class EconomicWidget extends AppWidgetProvider {
 
         setAlarm(context);
 
-        ComponentName thisAppWidget = new ComponentName(
-                context.getPackageName(), getClass().getName());
-        AppWidgetManager appWidgetManager = AppWidgetManager
-                .getInstance(context);
+        ComponentName thisAppWidget = new ComponentName(context.getPackageName(), getClass().getName());
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         int appWidgetIds[] = appWidgetManager.getAppWidgetIds(thisAppWidget);
 
         LOGD(TAG, "onEnabled: appWidgetId = " + appWidgetIds[0]);
+
 
         QuoteDataSource dataSource = new QuoteDataSource(context);
 
@@ -232,6 +228,9 @@ public class EconomicWidget extends AppWidgetProvider {
 
         final String[] defaultCommodities = new String[]{"BZF16.NYM", "NGZ15.NYM", "GCX15.CMX"};
         if ("ru".equals(lng)) {
+//            new ContentResolverHelper(context.getContentResolver())
+//                    .addSettingsRec();
+
             dataSource.addSettingsRec(appWidgetIds[0], 1, QuoteType.CURRENCY,
                     new String[]{"EURUSD", "USDRUB", "EURRUB"});
             dataSource.addSettingsRec(appWidgetIds[0], 4, QuoteType.GOODS, defaultCommodities);

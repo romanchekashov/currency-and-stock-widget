@@ -71,6 +71,7 @@ public class QuoteContract {
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     private static final String PATH_SETTINGS = "settings";
+    private static final String PATH_QUOTE_LAST_TRADE_DATES = "quoteLastTradeDates";
 
     public static class Settings implements SettingColumns, BaseColumns {
         public static final String BLOCK_TYPE_FREE = "free";
@@ -115,5 +116,28 @@ public class QuoteContract {
 //            endTime /= DateUtils.SECOND_IN_MILLIS;
 //            return ParserUtils.sanitizeId(startTime + "-" + endTime);
 //        }
+    }
+
+    public static class QuoteLastTradeDates implements QuoteLastTradeDateColumns, BaseColumns {
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_QUOTE_LAST_TRADE_DATES).build();
+
+        public static final String CONTENT_TYPE =
+                "vnd.android.cursor.dir/vnd.ru.besttuts.stockwidget.quoteLastTradeDate";
+        public static final String CONTENT_ITEM_TYPE =
+                "vnd.android.cursor.item/vnd.ru.besttuts.stockwidget.quoteLastTradeDate";
+
+        /** "ORDER BY" clauses. */
+//        public static final String DEFAULT_SORT = BlocksColumns.BLOCK_START + " ASC, "
+//                + BlocksColumns.BLOCK_END + " ASC";
+
+        /** Build {@link Uri} for requested {@link #_ID}. */
+        public static Uri buildUri(String entityId) {
+            return CONTENT_URI.buildUpon().appendPath(entityId).build();
+        }
+
+        /** Read {@link #_ID} from {@link Settings} {@link Uri}. */
+        public static String getId(Uri uri) {
+            return uri.getPathSegments().get(1);
+        }
     }
 }

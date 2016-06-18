@@ -10,13 +10,18 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.util.Log;
 
+import ru.besttuts.stockwidget.BuildConfig;
 import ru.besttuts.stockwidget.provider.QuoteContract.*;
+import ru.besttuts.stockwidget.provider.QuoteContract.Settings;
+import ru.besttuts.stockwidget.provider.QuoteContract.QuoteLastTradeDates;
+
 import ru.besttuts.stockwidget.provider.QuoteDatabaseHelper.*;
+import ru.besttuts.stockwidget.provider.QuoteDatabaseHelper.Tables;
 import ru.besttuts.stockwidget.util.SelectionBuilder;
 
 import java.util.Arrays;
 
-import static ru.besttuts.stockwidget.util.LogUtils.LOGV;
+import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
 public class QuoteProvider extends ContentProvider {
@@ -29,8 +34,14 @@ public class QuoteProvider extends ContentProvider {
     private static final int SETTINGS = 100;
     private static final int SETTINGS_ID = 101;
 
-    private static final int TESTS = 200;
-    private static final int TESTS_ID = 201;
+    private static final int MODELS = 200;
+    private static final int MODELS_ID = 201;
+
+    private static final int QUOTES = 300;
+    private static final int QUOTES_ID = 301;
+
+    private static final int QUOTE_LAST_TRADE_DATES = 400;
+    private static final int QUOTE_LAST_TRADE_DATES_ID = 401;
 
     private static UriMatcher buildUriMatcher() {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -39,8 +50,14 @@ public class QuoteProvider extends ContentProvider {
         matcher.addURI(authority, "settings", SETTINGS);
         matcher.addURI(authority, "settings/*", SETTINGS_ID);
 
-        matcher.addURI(authority, "tests", TESTS);
-        matcher.addURI(authority, "tests/*", TESTS_ID);
+        matcher.addURI(authority, "models", MODELS);
+        matcher.addURI(authority, "models/*", MODELS_ID);
+
+        matcher.addURI(authority, "models", QUOTES);
+        matcher.addURI(authority, "models/*", QUOTES_ID);
+
+        matcher.addURI(authority, "quoteLastTradeDates", QUOTE_LAST_TRADE_DATES);
+        matcher.addURI(authority, "quoteLastTradeDates/*", QUOTE_LAST_TRADE_DATES_ID);
 
         return matcher;
     }
@@ -59,8 +76,8 @@ public class QuoteProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
 
         // avoid the expensive string concatenation below if not loggable
-        if (Log.isLoggable(TAG, Log.VERBOSE)) {
-            LOGV(TAG, "uri=" + uri + " match=" + match + " proj=" + Arrays.toString(projection) +
+        if (BuildConfig.DEBUG) {
+            LOGD(TAG, "uri=" + uri + " match=" + match + " proj=" + Arrays.toString(projection) +
                     " selection=" + selection + " args=" + Arrays.toString(selectionArgs) + ")");
         }
 
@@ -86,9 +103,13 @@ public class QuoteProvider extends ContentProvider {
 
         switch (sUriMatcher.match(uri)){
             case SETTINGS:
-                return QuoteContract.Settings.CONTENT_TYPE;
+                return Settings.CONTENT_TYPE;
             case SETTINGS_ID:
-                return QuoteContract.Settings.CONTENT_ITEM_TYPE;
+                return Settings.CONTENT_ITEM_TYPE;
+            case QUOTE_LAST_TRADE_DATES:
+                return QuoteLastTradeDates.CONTENT_TYPE;
+            case QUOTE_LAST_TRADE_DATES_ID:
+                return QuoteLastTradeDates.CONTENT_ITEM_TYPE;
             default:
                 throw new IllegalArgumentException("Unsupported URI " + uri);
         }
@@ -101,10 +122,12 @@ public class QuoteProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
 
         switch (match){
-            case SETTINGS: {
-                db.insertOrThrow(QuoteDatabaseHelper.Tables.SETTINGS, null, values);
-                return QuoteContract.Settings.buildUri(values.getAsString(BaseColumns._ID));
-            }
+            case SETTINGS:
+                db.insertOrThrow(Tables.SETTINGS, null, values);
+                return Settings.buildUri(values.getAsString(BaseColumns._ID));
+            case QUOTE_LAST_TRADE_DATES:
+                db.insertOrThrow(Tables.QUOTE_LAST_TRADE_DATES, null, values);
+                return QuoteLastTradeDates.buildUri(values.getAsString(BaseColumns._ID));
             default: {
                 throw new UnsupportedOperationException("Unknown insert uri: " + uri);
             }
@@ -114,7 +137,7 @@ public class QuoteProvider extends ContentProvider {
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
 
-        LOGV(TAG, "delete(uri=" + uri + ")");
+        LOGD(TAG, "delete(uri=" + uri + ")");
 
         final SQLiteDatabase db = mDBOpenHelper.getWritableDatabase();
         final SelectionBuilder builder = buildSimpleSelection(uri);
@@ -125,7 +148,7 @@ public class QuoteProvider extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
 
-        LOGV(TAG, "update(uri=" + uri + ", values=" + values.toString() + ")");
+        LOGD(TAG, "update(uri=" + uri + ", values=" + values.toString() + ")");
         final SQLiteDatabase db = mDBOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
 
@@ -145,15 +168,12 @@ public class QuoteProvider extends ContentProvider {
         final SelectionBuilder builder = new SelectionBuilder();
         final int match = sUriMatcher.match(uri);
         switch (match) {
-            case SETTINGS: {
+            case SETTINGS:
                 return builder.table(Tables.SETTINGS);
-            }
-            case SETTINGS_ID: {
+            case SETTINGS_ID:
                 return builder.table(Tables.SETTINGS).where(BaseColumns._ID + "=" + Settings.getId(uri));
-            }
-            default: {
+            default:
                 throw new UnsupportedOperationException("Unknown uri for " + match + ": " + uri);
-            }
         }
     }
 
@@ -165,15 +185,12 @@ public class QuoteProvider extends ContentProvider {
     private SelectionBuilder buildExpandedSelection(Uri uri, int match) {
         final SelectionBuilder builder = new SelectionBuilder();
         switch (match) {
-            case SETTINGS: {
+            case SETTINGS:
                 return builder.table(Tables.SETTINGS);
-            }
-            case SETTINGS_ID: {
+            case SETTINGS_ID:
                 return builder.table(Tables.SETTINGS).where(Settings._ID + "=?", Settings.getId(uri));
-            }
-            default: {
+            default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
-            }
         }
     }
 }
