@@ -22,6 +22,7 @@ import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.model.Setting;
 import ru.besttuts.stockwidget.provider.QuoteContract;
 import ru.besttuts.stockwidget.provider.QuoteContract.*;
+import ru.besttuts.stockwidget.provider.QuoteDataSource;
 import ru.besttuts.stockwidget.provider.QuoteProvider;
 import ru.besttuts.stockwidget.util.ContentResolverHelper;
 import ru.besttuts.stockwidget.provider.QuoteContract.QuoteLastTradeDates;
@@ -59,7 +60,7 @@ public class QuoteProviderTestCase extends ProviderTestCase2<QuoteProvider> {
 //        insertQuoteLastTradeDate();
         try {
             Cursor cursor = contentResolver.query(QuoteLastTradeDates.CONTENT_URI, null, null, null, null);
-            assertEquals(10, cursor.getCount());
+//            assertEquals(10, cursor.getCount());
             LOGI(LOG_TAG, "I: cursor.getCount: " + cursor.getCount());
 
             cursor.moveToFirst();
@@ -73,7 +74,7 @@ public class QuoteProviderTestCase extends ProviderTestCase2<QuoteProvider> {
     }
 
     public void testShouldCreateAndRetrieveSetting(){
-//        createSetting();
+        createSetting(1, 10);
         try {
             Cursor cursor = contentResolver.query(Settings.CONTENT_URI, null, null, null, null);
             assertEquals(10, cursor.getCount());
@@ -89,38 +90,38 @@ public class QuoteProviderTestCase extends ProviderTestCase2<QuoteProvider> {
         }
     }
 
+    public void testShouldCreate4SettingDeleteSecondAndUpdatePositions(){
+        createSetting(1, 4);
+        try {
+            Cursor cursor = contentResolver.query(Settings.CONTENT_URI, null, null, null, null);
+            assertEquals(4, cursor.getCount());
+
+            LOGI(LOG_TAG, "I: cursor.getCount: " + cursor.getCount());
+            QuoteDataSource.printSetting(cursor);
+
+            contentResolverHelper.deleteSettingWithOthersPositionUpdate(2, WIDGET_ID, 2);
+//            contentResolver.delete(Settings.CONTENT_URI, Settings._ID + " = ?", new String[]{"2"});
+
+            cursor = contentResolver.query(Settings.CONTENT_URI, null, null, null, null);
+            assertEquals(3, cursor.getCount());
+
+            LOGI(LOG_TAG, "I: cursor.getCount: " + cursor.getCount());
+            QuoteDataSource.printSetting(cursor);
+        } catch (Exception ex) {
+            LOGE(LOG_TAG, "Error: " + ex.getClass() + ", " + ex.getMessage());
+        }
+    }
+
     public void testShouldCreateAndRetrieveTest(){
         fail();
     }
 
-    private ContentProviderResult[] createSetting() {
-
-        ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
-
-        for (int i = 0; i < 10; i++){
-            ContentValues values = new ContentValues();
-            values.put(Settings.SETTING_ID, WIDGET_ID + "_" + i);
-            values.put(Settings.SETTING_WIDGET_ID, WIDGET_ID);
-            values.put(Settings.SETTING_QUOTE_POSITION, i);
-            values.put(Settings.SETTING_QUOTE_TYPE, QuoteType.GOODS);
-            values.put(Settings.SETTING_QUOTE_SYMBOL, String.format("BZZ1%d.NYM", i));
-            values.put(Settings.LAST_TRADE_DATE, Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis());
-
-            ops.add(ContentProviderOperation.newInsert(Settings.CONTENT_URI)
-                    .withValues(values)
-                    .withYieldAllowed(true)
-                    .build());
+    private void createSetting(int firstPos, int len) {
+        List<String> symbols = new ArrayList<>();
+        for (int i = firstPos; i <= len; i++){
+            symbols.add("TEST.SYMBOL"+i);
         }
-
-        try {
-            return contentResolver.applyBatch(QuoteContract.CONTENT_AUTHORITY, ops);
-        } catch (RemoteException e) {
-            // do s.th.
-        } catch (OperationApplicationException e) {
-            // do s.th.
-        }
-
-        return null;
+        contentResolverHelper.addSettingsRec(WIDGET_ID, firstPos, QuoteType.GOODS, symbols.toArray(new String[len]));
     }
 
     private static QuoteLastTradeDate transformQuoteLastTradeDate(Cursor cursor) {

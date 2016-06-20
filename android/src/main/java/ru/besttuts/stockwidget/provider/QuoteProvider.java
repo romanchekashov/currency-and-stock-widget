@@ -56,8 +56,8 @@ public class QuoteProvider extends ContentProvider {
         matcher.addURI(authority, "models", QUOTES);
         matcher.addURI(authority, "models/*", QUOTES_ID);
 
-        matcher.addURI(authority, "quoteLastTradeDates", QUOTE_LAST_TRADE_DATES);
-        matcher.addURI(authority, "quoteLastTradeDates/*", QUOTE_LAST_TRADE_DATES_ID);
+        matcher.addURI(authority, "quote_last_trade_dates", QUOTE_LAST_TRADE_DATES);
+        matcher.addURI(authority, "quote_last_trade_dates/*", QUOTE_LAST_TRADE_DATES_ID);
 
         return matcher;
     }
@@ -171,7 +171,12 @@ public class QuoteProvider extends ContentProvider {
             case SETTINGS:
                 return builder.table(Tables.SETTINGS);
             case SETTINGS_ID:
-                return builder.table(Tables.SETTINGS).where(BaseColumns._ID + "=" + Settings.getId(uri));
+                return builder.table(Tables.SETTINGS).where(Settings._ID + "=" + Settings.getId(uri));
+            case QUOTE_LAST_TRADE_DATES:
+                return builder.table(Tables.QUOTE_LAST_TRADE_DATES);
+            case QUOTE_LAST_TRADE_DATES_ID:
+                return builder.table(Tables.QUOTE_LAST_TRADE_DATES)
+                        .where(QuoteLastTradeDates._ID + "=?", QuoteLastTradeDates.getId(uri));
             default:
                 throw new UnsupportedOperationException("Unknown uri for " + match + ": " + uri);
         }
@@ -189,6 +194,11 @@ public class QuoteProvider extends ContentProvider {
                 return builder.table(Tables.SETTINGS);
             case SETTINGS_ID:
                 return builder.table(Tables.SETTINGS).where(Settings._ID + "=?", Settings.getId(uri));
+            case QUOTE_LAST_TRADE_DATES:
+                return builder.table(Tables.QUOTE_LAST_TRADE_DATES);
+            case QUOTE_LAST_TRADE_DATES_ID:
+                return builder.table(Tables.QUOTE_LAST_TRADE_DATES)
+                        .where(QuoteLastTradeDates._ID + "=?", QuoteLastTradeDates.getId(uri));
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }

@@ -71,7 +71,7 @@ public class QuoteContract {
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     private static final String PATH_SETTINGS = "settings";
-    private static final String PATH_QUOTE_LAST_TRADE_DATES = "quoteLastTradeDates";
+    private static final String PATH_QUOTE_LAST_TRADE_DATES = "quote_last_trade_dates";
 
     public static class Settings implements SettingColumns, BaseColumns {
         public static final String BLOCK_TYPE_FREE = "free";

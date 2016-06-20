@@ -19,9 +19,11 @@ import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.model.Setting;
 import ru.besttuts.stockwidget.util.Utils;
+import ru.besttuts.stockwidget.provider.QuoteContract.Settings;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.LOGE;
+import static ru.besttuts.stockwidget.util.LogUtils.LOGI;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
 /**
@@ -535,8 +537,17 @@ public class QuoteDataSource {
         return list;
     }
 
+    public static void printSetting(Cursor cursor){
+        cursor.moveToFirst();
+        do {
+            Setting setting = transformCursorToSetting(cursor);
+            LOGI(TAG, setting.toString());
+        } while (cursor.moveToNext());
+    }
+
     public static Setting transformCursorToSetting(Cursor cursor) {
         Setting setting = new Setting();
+        setting.set_id(cursor.getInt(cursor.getColumnIndexOrThrow(Settings._ID)));
         setting.setId(cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_ID)));
         setting.setWidgetId(cursor.getInt(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_WIDGET_ID)));
         setting.setQuotePosition(cursor.getInt(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_QUOTE_POSITION)));

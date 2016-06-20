@@ -60,6 +60,7 @@ import ru.besttuts.stockwidget.util.Utils;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
+import ru.besttuts.stockwidget.provider.QuoteContract.Settings;
 
 /**
  * Фрагмет с отслеживаемыми котировками.
@@ -254,10 +255,15 @@ public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<
     }
 
     private void deleteItem(int pos) {
+
         Cursor cursor = (Cursor) mSimpleCursorAdapter.getItem(pos - 1);
+
+        int _id = cursor.getInt(cursor.getColumnIndexOrThrow(Settings._ID));
+        String settingId = cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_ID));
+        LOGD(TAG, String.format("deleteItem: pos = %d, settingId = %s, _id = %d", pos, settingId, _id));
+
         // извлекаем id записи и удаляем соответствующую запись в БД
-        EconomicWidgetConfigureActivity.mDataSource.deleteSettingsByIdAndUpdatePositions(cursor.getString(cursor
-                .getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_ID)), pos);
+        EconomicWidgetConfigureActivity.mDataSource.deleteSettingsByIdAndUpdatePositions(settingId, pos);
         // получаем новый курсор с данными
         getActivity().getSupportLoaderManager().getLoader(URL_LOADER).forceLoad();
     }

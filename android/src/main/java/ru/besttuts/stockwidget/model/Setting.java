@@ -5,12 +5,21 @@ package ru.besttuts.stockwidget.model;
  */
 public class Setting {
 
+    private int _id;
     private String id;
     private int widgetId;
     private int quotePosition;
     private int quoteType;
     private String quoteSymbol;
     private long lastTradeDate;
+
+    public int get_id() {
+        return _id;
+    }
+
+    public void set_id(int _id) {
+        this._id = _id;
+    }
 
     public String getId() {
         return id;
@@ -67,12 +76,13 @@ public class Setting {
     @Override
     public String toString() {
         return "Setting{" +
-                "id='" + id + '\'' +
+                "_id=" + _id +
+                ", id='" + id + '\'' +
                 ", widgetId=" + widgetId +
                 ", quotePosition=" + quotePosition +
                 ", quoteType=" + quoteType +
-                ", lastTradeDate=" + lastTradeDate +
                 ", quoteSymbol='" + quoteSymbol + '\'' +
+                ", lastTradeDate=" + lastTradeDate +
                 '}';
     }
 }
