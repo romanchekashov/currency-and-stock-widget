@@ -8,13 +8,20 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
 
+import com.jakewharton.rxrelay.PublishRelay;
+
+import ru.besttuts.stockwidget.Events;
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
+
+import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
+import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
 /**
  * Created by roman on 25.01.2015.
  */
 public class DataCleanPreference extends DialogPreference {
+    private static final String TAG = makeLogTag(DataCleanPreference.class);
 
     public DataCleanPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -32,6 +39,10 @@ public class DataCleanPreference extends DialogPreference {
             QuoteDataSource dataSource = new QuoteDataSource(getContext());
             dataSource.deleteAll();
             dataSource.close();
+
+            LOGD(TAG, "onDialogClosed");
+            PublishRelay<Integer> relay = PublishRelay.create();
+            relay.call(Events.ALL_DB_DATA_DELETED);
         }
     }
 

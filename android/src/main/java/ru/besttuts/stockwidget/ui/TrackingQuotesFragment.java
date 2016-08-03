@@ -41,6 +41,8 @@ import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.jakewharton.rxrelay.PublishRelay;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -48,6 +50,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import ru.besttuts.stockwidget.Events;
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.io.HandleJSON;
 import ru.besttuts.stockwidget.model.Model;
@@ -61,11 +64,12 @@ import ru.besttuts.stockwidget.util.Utils;
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 import ru.besttuts.stockwidget.provider.QuoteContract.Settings;
+import rx.Observer;
 
 /**
  * Фрагмет с отслеживаемыми котировками.
  */
-public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<Cursor>,
+public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<Cursor>, Observer<Integer>,
         NotificationManager.ColorChangedListener, NotificationManager.OptionsItemSelectListener,
         AdapterView.OnItemClickListener {
 
@@ -155,14 +159,7 @@ public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<
         gridView.setOnItemClickListener(this);
 
         // создаем лоадер для чтения данных
-        Loader loader = getActivity().getSupportLoaderManager().getLoader(URL_LOADER);
-        if (null == loader) {
-            LOGD(TAG, "Loader is null");
-            getActivity().getSupportLoaderManager().initLoader(URL_LOADER, null, this);
-        } else {
-            LOGD(TAG, "Loader is " + loader);
-            loader.forceLoad();
-        }
+        initLoader();
 
         Button button = (Button) mMainView.findViewById(R.id.btnAddQuote);
         button.setOnClickListener(new View.OnClickListener() {
@@ -172,7 +169,24 @@ public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<
             }
         });
 
+        PublishRelay<Integer> relay = PublishRelay.create();
+        relay.subscribe(TrackingQuotesFragment.this);
+
         return mMainView;
+    }
+
+    /**
+     * создаем лоадер для чтения данных
+     */
+    private void initLoader(){
+        Loader loader = getActivity().getSupportLoaderManager().getLoader(URL_LOADER);
+        if (null == loader) {
+            LOGD(TAG, "Loader is null");
+            getActivity().getSupportLoaderManager().initLoader(URL_LOADER, null, this);
+        } else {
+            LOGD(TAG, "Loader is " + loader);
+            loader.forceLoad();
+        }
     }
 
     @Override
@@ -353,6 +367,27 @@ public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<
          */
         public void showQuotePickerActivity(int quoteTypeValue, int position);
 
+    }
+
+    //=================================== rxJava events ===================================
+    @Override
+    public void onCompleted() {
+
+    }
+
+    @Override
+    public void onError(Throwable e) {
+
+    }
+
+    @Override
+    public void onNext(Integer event) {
+        LOGD(TAG, "onNext: event = " + event);
+        switch (event){
+            case Events.ALL_DB_DATA_DELETED:
+                initLoader();
+                break;
+        }
     }
 
     FetchQuote mFetchQuote;

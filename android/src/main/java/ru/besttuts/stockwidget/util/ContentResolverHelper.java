@@ -150,4 +150,20 @@ public class ContentResolverHelper {
 
         return calendar.getTimeInMillis();
     }
+
+    public void deleteAll() {
+        ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
+
+        ops.add(ContentProviderOperation.newDelete(Settings.CONTENT_URI)
+                .withYieldAllowed(true)
+                .build());
+
+        try {
+            contentResolver.applyBatch(QuoteContract.CONTENT_AUTHORITY, ops);
+        } catch (RemoteException e) {
+            // do s.th.
+        } catch (OperationApplicationException e) {
+            // do s.th.
+        }
+    }
 }

@@ -538,6 +538,8 @@ public class QuoteDataSource {
     }
 
     public static void printSetting(Cursor cursor){
+        if (0 == cursor.getCount()) return;
+
         cursor.moveToFirst();
         do {
             Setting setting = transformCursorToSetting(cursor);

@@ -112,6 +112,27 @@ public class QuoteProviderTestCase extends ProviderTestCase2<QuoteProvider> {
         }
     }
 
+    public void testShouldDeleteAllSettingsAndModels(){
+        createSetting(1, 4);
+        try {
+            Cursor cursor = contentResolver.query(Settings.CONTENT_URI, null, null, null, null);
+            assertEquals(4, cursor.getCount());
+
+            LOGI(LOG_TAG, "I: cursor.getCount: " + cursor.getCount());
+            QuoteDataSource.printSetting(cursor);
+
+            contentResolverHelper.deleteAll();
+
+            cursor = contentResolver.query(Settings.CONTENT_URI, null, null, null, null);
+            assertEquals(0, cursor.getCount());
+
+            LOGI(LOG_TAG, "I: cursor.getCount: " + cursor.getCount());
+            QuoteDataSource.printSetting(cursor);
+        } catch (Exception ex) {
+            LOGE(LOG_TAG, "Error: " + ex.getClass() + ", " + ex.getMessage());
+        }
+    }
+
     public void testShouldCreateAndRetrieveTest(){
         fail();
     }
