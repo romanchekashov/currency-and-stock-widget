@@ -8,8 +8,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.model.Setting;
+import ru.besttuts.stockwidget.sync.model.YahooMultiQueryData;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
@@ -21,7 +24,7 @@ public class RemoteYahooFinanceDataFetcher {
 
     private static final String TAG = makeLogTag(RemoteYahooFinanceDataFetcher.class);
 
-    private String baseUrl = "http://query.yahooapis.com/v1/public/yql?q=";
+    private static final String HTTP_QUERY_YAHOOAPIS_COM_V1_PUBLIC_YQL_Q = "http://query.yahooapis.com/v1/public/yql?q=";
 
     private String xchangeUrl = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.xchange%20where%20pair%20in%20('EURUSD'%2C'USDRUB'%2C'EURRUB'%2C'CNYRUB')%3B&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
 
@@ -126,6 +129,17 @@ public class RemoteYahooFinanceDataFetcher {
         String sUrl = buildYahooFinanceMultiQueryUrl();
         LOGD(TAG, "downloadQuotes: " + sUrl);
         return downloadUrl(sUrl);
+    }
+
+    public YahooMultiQueryData getYahooMultiQueryData() throws IOException {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(HTTP_QUERY_YAHOOAPIS_COM_V1_PUBLIC_YQL_Q)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        YahooFinanceService service = retrofit.create(YahooFinanceService.class);
+
+        return service.yahooMultiQueryData("d", "d").execute().body();
     }
 
     public String downloadUrl(String sUrl) throws IOException {
