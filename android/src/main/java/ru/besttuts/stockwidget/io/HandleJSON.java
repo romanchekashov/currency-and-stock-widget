@@ -1,13 +1,6 @@
 package ru.besttuts.stockwidget.io;
 
 import android.content.Context;
-import android.util.Log;
-
-import ru.besttuts.stockwidget.model.Currency;
-import ru.besttuts.stockwidget.model.Good;
-import ru.besttuts.stockwidget.model.Model;
-import ru.besttuts.stockwidget.model.QuoteType;
-import ru.besttuts.stockwidget.util.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,6 +17,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ru.besttuts.stockwidget.model.Currency;
+import ru.besttuts.stockwidget.model.Good;
+import ru.besttuts.stockwidget.model.Model;
+
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.LOGE;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
@@ -31,8 +28,8 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 /**
  * Created by roman on 05.01.2015.
  */
+@Deprecated
 public class HandleJSON {
-
     private static final String TAG = makeLogTag(HandleJSON.class);
 
     private List<Currency> currencies = null;
@@ -317,4 +314,5 @@ public class HandleJSON {
 
         return null;
     }
+
 }

@@ -6,7 +6,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -14,7 +13,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -52,19 +50,19 @@ import java.util.Set;
 
 import ru.besttuts.stockwidget.Events;
 import ru.besttuts.stockwidget.R;
-import ru.besttuts.stockwidget.io.HandleJSON;
 import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.provider.QuoteContract;
+import ru.besttuts.stockwidget.provider.QuoteContract.Settings;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
 import ru.besttuts.stockwidget.sync.RemoteYahooFinanceDataFetcher;
+import ru.besttuts.stockwidget.util.CustomConverter;
 import ru.besttuts.stockwidget.util.NotificationManager;
 import ru.besttuts.stockwidget.util.Utils;
+import rx.Observer;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
-import ru.besttuts.stockwidget.provider.QuoteContract.Settings;
-import rx.Observer;
 
 /**
  * Фрагмет с отслеживаемыми котировками.
@@ -637,11 +635,9 @@ public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<
 //            QuoteType quoteType = QuoteType.valueOf(params[0]);
 //            String symbol = params[1];
 
-            HandleJSON handleJSON = new HandleJSON(mContext);
             try {
-                handleJSON.readAndParseJSON(dataFetcher.downloadQuotes());
-
-                Map<String, Model> symbolModelMap = handleJSON.getSymbolModelMap();
+                Map<String, Model> symbolModelMap = CustomConverter.convertToModelMap(
+                        dataFetcher.getYahooMultiQueryData());
 
                 for (String symbol : symbolSet) {
                     Model model = symbolModelMap.get(symbol);

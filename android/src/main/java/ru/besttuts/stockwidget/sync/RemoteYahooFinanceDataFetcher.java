@@ -1,5 +1,8 @@
 package ru.besttuts.stockwidget.sync;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -12,7 +15,9 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.model.Setting;
+import ru.besttuts.stockwidget.sync.deserializer.YahooMultiQueryDataDeserializer;
 import ru.besttuts.stockwidget.sync.model.YahooMultiQueryData;
+import ru.besttuts.stockwidget.util.YahooQueryBuilder;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
@@ -21,10 +26,7 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
  * Created by roman on 07.01.2015.
  */
 public class RemoteYahooFinanceDataFetcher {
-
     private static final String TAG = makeLogTag(RemoteYahooFinanceDataFetcher.class);
-
-    private static final String HTTP_QUERY_YAHOOAPIS_COM_V1_PUBLIC_YQL_Q = "http://query.yahooapis.com/v1/public/yql?q=";
 
     private String xchangeUrl = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.xchange%20where%20pair%20in%20('EURUSD'%2C'USDRUB'%2C'EURRUB'%2C'CNYRUB')%3B&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
 
@@ -76,7 +78,7 @@ public class RemoteYahooFinanceDataFetcher {
         }
     }
 
-    public String buildYahooFinanceMultiQueryUrl() {
+    public String buildYahooFinanceMultiQuery() {
         StringBuilder builder = new StringBuilder();
         builder.append("SELECT%20*%20FROM%20query.multi%20WHERE%20queries%3D%22");
         if (null != currencyExchangeSet && currencyExchangeSet.size() > 0) {
@@ -88,15 +90,11 @@ public class RemoteYahooFinanceDataFetcher {
         }
         builder.append("%3B%22");
 
-        return baseYahooUrlreturnJsonPrepand + builder.toString() + baseYahooUrlreturnJsonAppend;
+        return builder.toString();
     }
 
-    public String getYahooFinanceXchangeUrl() {
-        return baseYahooUrlreturnJsonPrepand + getYahooFinanceXchangeQuery() + baseYahooUrlreturnJsonAppend;
-    }
-
-    public String getYahooFinanceQuotesUrl() {
-        return baseYahooUrlreturnJsonPrepand + getYahooFinanceQuotesQuery() + baseYahooUrlreturnJsonAppend;
+    public String buildYahooFinanceMultiQueryUrl() {
+        return baseYahooUrlreturnJsonPrepand + buildYahooFinanceMultiQuery() + baseYahooUrlreturnJsonAppend;
     }
 
     public String transformCurrencyExchangeSetToString(){
@@ -140,14 +138,20 @@ public class RemoteYahooFinanceDataFetcher {
     }
 
     public YahooMultiQueryData getYahooMultiQueryData() throws IOException {
+        Gson gson = new GsonBuilder().registerTypeAdapter(
+                YahooMultiQueryData.class, new YahooMultiQueryDataDeserializer())
+                .create();
+
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(HTTP_QUERY_YAHOOAPIS_COM_V1_PUBLIC_YQL_Q)
-                .addConverterFactory(GsonConverterFactory.create())
+                .baseUrl(YahooQueryBuilder.HTTP_QUERY_YAHOOAPIS_COM_V1_PUBLIC)
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
         YahooFinanceService service = retrofit.create(YahooFinanceService.class);
 
-        return service.yahooMultiQueryData(transformCurrencyExchangeSetToString(), transformQuoteSetToString()).execute().body();
+        return service.yahooMultiQueryData(YahooQueryBuilder
+                .buildYahooFinanceMultiQuery(currencyExchangeSet, goodSet)
+        ).execute().body();
     }
 
     public String downloadUrl(String sUrl) throws IOException {

@@ -14,12 +14,12 @@ import java.util.List;
 import java.util.Map;
 
 import ru.besttuts.stockwidget.R;
-import ru.besttuts.stockwidget.io.HandleJSON;
 import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.Setting;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
 import ru.besttuts.stockwidget.sync.RemoteYahooFinanceDataFetcher;
 import ru.besttuts.stockwidget.ui.EconomicWidget;
+import ru.besttuts.stockwidget.util.CustomConverter;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.LOGE;
@@ -111,11 +111,8 @@ public class UpdateService extends Service {
 
                 dataFetcher.populateQuoteSet(settings);
 
-                HandleJSON handleJSON = new HandleJSON(mContext);
-
-                handleJSON.readAndParseJSON(dataFetcher.downloadQuotes());
-
-                Map<String, Model> symbolModelMap = handleJSON.getSymbolModelMap();
+                Map<String, Model> symbolModelMap = CustomConverter.convertToModelMap(
+                        dataFetcher.getYahooMultiQueryData());
 
                 for (Setting setting : settings) {
                     int widgetId = setting.getWidgetId();
