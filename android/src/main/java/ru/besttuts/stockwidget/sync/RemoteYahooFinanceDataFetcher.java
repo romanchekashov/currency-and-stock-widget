@@ -99,24 +99,32 @@ public class RemoteYahooFinanceDataFetcher {
         return baseYahooUrlreturnJsonPrepand + getYahooFinanceQuotesQuery() + baseYahooUrlreturnJsonAppend;
     }
 
-    public String getYahooFinanceXchangeQuery() {
+    public String transformCurrencyExchangeSetToString(){
         StringBuilder builder = new StringBuilder();
         builder.append("'");
         for (String s : currencyExchangeSet) {
             builder.append(s);
             builder.append("'%2C'");
         }
-        return yahooFinanceXchangeQueryUrl + builder.substring(0, builder.length() - 4) + ")";
+        return builder.substring(0, builder.length() - 4);
     }
 
-    public String getYahooFinanceQuotesQuery() {
+    public String getYahooFinanceXchangeQuery() {
+        return yahooFinanceXchangeQueryUrl + transformCurrencyExchangeSetToString() + ")";
+    }
+
+    public String transformQuoteSetToString(){
         StringBuilder builder = new StringBuilder();
         builder.append("'");
         for (String s : goodSet) {
             builder.append(s);
             builder.append("'%2C'");
         }
-        return yahooFinanceQuotesQueryUrl + builder.substring(0, builder.length() - 4) + ")";
+        return builder.substring(0, builder.length() - 4);
+    }
+
+    public String getYahooFinanceQuotesQuery() {
+        return yahooFinanceQuotesQueryUrl + transformQuoteSetToString() + ")";
     }
 
     // Convert the InputStream into a string
@@ -139,7 +147,7 @@ public class RemoteYahooFinanceDataFetcher {
 
         YahooFinanceService service = retrofit.create(YahooFinanceService.class);
 
-        return service.yahooMultiQueryData("d", "d").execute().body();
+        return service.yahooMultiQueryData(transformCurrencyExchangeSetToString(), transformQuoteSetToString()).execute().body();
     }
 
     public String downloadUrl(String sUrl) throws IOException {
