@@ -1,14 +1,10 @@
-package ru.besttuts.stockwidget.ui;
+package ru.besttuts.stockwidget.ui.activities;
 
-import android.appwidget.AppWidgetManager;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NavUtils;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -19,7 +15,10 @@ import android.view.WindowManager;
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
-import ru.besttuts.stockwidget.util.Utils;
+import ru.besttuts.stockwidget.ui.fragments.CurrencyExchangeFragment;
+import ru.besttuts.stockwidget.ui.fragments.GoodsItemFragment;
+import ru.besttuts.stockwidget.ui.fragments.IQuoteTypeFragment;
+import ru.besttuts.stockwidget.ui.fragments.MyQuotesFragment;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
@@ -32,7 +31,7 @@ public class QuotePickerActivity extends ActionBarActivity
         MyQuotesFragment.OnFragmentInteractionListener {
 
     private static final String TAG = makeLogTag(QuotePickerActivity.class);
-    static QuoteDataSource mDataSource;
+    public static QuoteDataSource mDataSource;
     private int mAppWidgetId;
     private int mQuoteTypeValue;
     private int mWidgetItemPosition;

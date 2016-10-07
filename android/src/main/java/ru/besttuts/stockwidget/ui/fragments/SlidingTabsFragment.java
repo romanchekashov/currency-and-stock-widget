@@ -1,10 +1,7 @@
-package ru.besttuts.stockwidget.ui;
+package ru.besttuts.stockwidget.ui.fragments;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import ru.besttuts.stockwidget.R;
+import ru.besttuts.stockwidget.ui.activities.EconomicWidgetConfigureActivity;
 import ru.besttuts.stockwidget.ui.view.SlidingTabLayout;
 import ru.besttuts.stockwidget.util.NotificationManager;
 

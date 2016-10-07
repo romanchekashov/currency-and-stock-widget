@@ -1,21 +1,13 @@
-package ru.besttuts.stockwidget.ui;
+package ru.besttuts.stockwidget.ui.fragments;
 
-import android.content.ComponentName;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
-import android.preference.DialogPreference;
 import android.preference.ListPreference;
-import android.preference.Preference;
-import android.preference.PreferenceManager;
 
 import com.github.machinarius.preferencefragment.PreferenceFragment;
 
 import ru.besttuts.stockwidget.R;
-import ru.besttuts.stockwidget.ui.preferences.SliderPreference;
+import ru.besttuts.stockwidget.ui.EconomicWidget;
 import ru.besttuts.stockwidget.util.NotificationManager;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;

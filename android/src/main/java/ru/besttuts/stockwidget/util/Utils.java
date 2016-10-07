@@ -11,7 +11,7 @@ import android.support.v7.app.ActionBar;
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.QuoteType;
-import ru.besttuts.stockwidget.ui.ConfigPreferenceFragment;
+import ru.besttuts.stockwidget.ui.fragments.ConfigPreferenceFragment;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.LOGE;

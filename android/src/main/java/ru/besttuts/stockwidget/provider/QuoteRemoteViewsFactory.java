@@ -1,14 +1,9 @@
 package ru.besttuts.stockwidget.provider;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
-import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService.RemoteViewsFactory;
 
@@ -18,10 +13,8 @@ import java.util.List;
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.QuoteType;
-import ru.besttuts.stockwidget.ui.DynamicWebViewActivity;
-import ru.besttuts.stockwidget.ui.EconomicWidget;
-import ru.besttuts.stockwidget.ui.EconomicWidgetConfigureActivity;
-import ru.besttuts.stockwidget.ui.TrackingQuotesFragment;
+import ru.besttuts.stockwidget.ui.activities.EconomicWidgetConfigureActivity;
+import ru.besttuts.stockwidget.ui.fragments.TrackingQuotesFragment;
 import ru.besttuts.stockwidget.util.Utils;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;

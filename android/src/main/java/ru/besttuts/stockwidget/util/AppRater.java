@@ -17,7 +17,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import ru.besttuts.stockwidget.R;
-import ru.besttuts.stockwidget.ui.EconomicWidgetConfigureActivity;
 
 /**
  * see http://androidsnippets.com/prompt-engaged-users-to-rate-your-app-in-the-android-market-appirater

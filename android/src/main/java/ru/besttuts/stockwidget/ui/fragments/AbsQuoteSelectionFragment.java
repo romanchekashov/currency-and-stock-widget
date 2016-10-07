@@ -1,4 +1,4 @@
-package ru.besttuts.stockwidget.ui;
+package ru.besttuts.stockwidget.ui.fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
 import ru.besttuts.stockwidget.util.Utils;
 

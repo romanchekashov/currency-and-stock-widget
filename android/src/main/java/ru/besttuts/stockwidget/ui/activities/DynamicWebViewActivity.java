@@ -1,4 +1,4 @@
-package ru.besttuts.stockwidget.ui;
+package ru.besttuts.stockwidget.ui.activities;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -10,6 +10,7 @@ import android.webkit.WebView;
 import android.widget.ImageButton;
 
 import ru.besttuts.stockwidget.R;
+import ru.besttuts.stockwidget.ui.fragments.TrackingQuotesFragment;
 
 public class DynamicWebViewActivity extends ActionBarActivity implements View.OnClickListener {
 

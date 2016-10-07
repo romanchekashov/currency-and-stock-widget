@@ -3,6 +3,6 @@
     android:minWidth="250dp" android:minHeight="40dp" android:updatePeriodMillis="0"
     android:previewImage="@drawable/example_appwidget_preview"
     android:initialLayout="@layout/invisible"
-    android:configure="ru.besttuts.stockwidget.ui.EconomicWidgetConfigureActivity"
+    android:configure="ru.besttuts.stockwidget.ui.activities.EconomicWidgetConfigureActivity"
     android:resizeMode="horizontal|vertical" android:widgetCategory="home_screen"
     android:initialKeyguardLayout="@layout/invisible"></appwidget-provider>

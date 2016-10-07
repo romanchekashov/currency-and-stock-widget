@@ -1,4 +1,4 @@
-package ru.besttuts.stockwidget.ui;
+package ru.besttuts.stockwidget.ui.activities;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
@@ -35,6 +35,11 @@ import ru.besttuts.stockwidget.PrivateConstants;
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
 import ru.besttuts.stockwidget.service.UpdateService;
+import ru.besttuts.stockwidget.ui.App;
+import ru.besttuts.stockwidget.ui.EconomicWidget;
+import ru.besttuts.stockwidget.ui.fragments.ConfigPreferenceFragment;
+import ru.besttuts.stockwidget.ui.fragments.SlidingTabsFragment;
+import ru.besttuts.stockwidget.ui.fragments.TrackingQuotesFragment;
 import ru.besttuts.stockwidget.util.AppRater;
 import ru.besttuts.stockwidget.util.NotificationManager;
 
@@ -72,7 +77,7 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
     public static final String PREFS_NAME = "ru.besttuts.stockwidget.ui.EconomicWidget";
     private static final String PREF_PREFIX_KEY = "appwidget_";
 
-    static QuoteDataSource mDataSource;
+    public static QuoteDataSource mDataSource;
 
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
 
@@ -244,7 +249,7 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
 //        }
         //Получаю треккер отслеживания для Гугл-Аналитики (должен автоматически отправлять отчеты)
         if(Config.IS_DEV_MODE){
-            ((AnalyticsApp) getApplication()).getTracker(AnalyticsApp.TrackerName.APP_TRACKER);
+            ((App) getApplication()).getTracker(App.TrackerName.APP_TRACKER);
         }
 
     }
@@ -379,24 +384,24 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
         LOGD(TAG, "onDestroy");
     }
 
-    static void saveWidgetLayoutPref(Context context, int appWidgetId, int layout) {
+    public static void saveWidgetLayoutPref(Context context, int appWidgetId, int layout) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.putInt(PREF_PREFIX_KEY + appWidgetId + "_widget_layout", layout);
         prefs.commit();
     }
 
-    static int loadWidgetLayoutPref(Context context, int appWidgetId) {
+    public static int loadWidgetLayoutPref(Context context, int appWidgetId) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
         return prefs.getInt(PREF_PREFIX_KEY + appWidgetId + "_widget_layout", R.layout.economic_widget);
     }
 
-    static void deleteWidgetLayoutPref(Context context, int appWidgetId) {
+    public static void deleteWidgetLayoutPref(Context context, int appWidgetId) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.remove(PREF_PREFIX_KEY + appWidgetId + "_widget_layout");
         prefs.commit();
     }
 
-    static void saveWidgetLayoutGridItemPref(Context context, int appWidgetId, int layoutGridItem) {
+    public static void saveWidgetLayoutGridItemPref(Context context, int appWidgetId, int layoutGridItem) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.putInt(PREF_PREFIX_KEY + appWidgetId + "_widget_layout_grid_item", layoutGridItem);
         prefs.commit();
@@ -407,19 +412,19 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
         return prefs.getInt(PREF_PREFIX_KEY + appWidgetId + "_widget_layout_grid_item", R.layout.economic_widget_item);
     }
 
-    static void deleteWidgetLayoutGridItemPref(Context context, int appWidgetId) {
+    public static void deleteWidgetLayoutGridItemPref(Context context, int appWidgetId) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.remove(PREF_PREFIX_KEY + appWidgetId + "_widget_layout_grid_item");
         prefs.commit();
     }
 
-    static void saveLastUpdateTimePref(Context context, int appWidgetId, String text) {
+    public static void saveLastUpdateTimePref(Context context, int appWidgetId, String text) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.putString(PREF_PREFIX_KEY + appWidgetId + "_lastupdatetime", text);
         prefs.commit();
     }
 
-    static String loadLastUpdateTimePref(Context context, int appWidgetId) {
+    public static String loadLastUpdateTimePref(Context context, int appWidgetId) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
         String titleValue = prefs.getString(PREF_PREFIX_KEY + appWidgetId + "_lastupdatetime", null);
         if (titleValue != null) {
@@ -429,7 +434,7 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
         }
     }
 
-    static void deleteLastUpdateTimePref(Context context, int appWidgetId) {
+    public static void deleteLastUpdateTimePref(Context context, int appWidgetId) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.remove(PREF_PREFIX_KEY + appWidgetId + "_lastupdatetime");
         prefs.commit();
