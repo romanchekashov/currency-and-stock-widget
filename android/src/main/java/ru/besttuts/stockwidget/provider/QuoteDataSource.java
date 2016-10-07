@@ -516,11 +516,12 @@ public class QuoteDataSource {
                                 + " where code = ? and last_trade_date > ?"
                                 + " order by last_trade_date asc",
                         new String[]{code, String.valueOf(today)});
+
+                if (null == cursor || 0 == cursor.getCount()) return;
             } catch (IOException e) {
                 LOGE(TAG, e.getMessage());
+                return;
             }
-
-            if (null == cursor || 0 == cursor.getCount()) return;
         }
 
         cursor.moveToFirst();
