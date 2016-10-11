@@ -6,7 +6,6 @@ import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,10 +17,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import ru.besttuts.stockwidget.BuildConfig;
 import ru.besttuts.stockwidget.R;
@@ -30,15 +27,15 @@ import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
 import ru.besttuts.stockwidget.service.QuoteWidgetService;
 import ru.besttuts.stockwidget.service.UpdateService;
-import ru.besttuts.stockwidget.util.ContentResolverHelper;
+import ru.besttuts.stockwidget.ui.activities.DynamicWebViewActivity;
+import ru.besttuts.stockwidget.ui.activities.EconomicWidgetConfigureActivity;
+import ru.besttuts.stockwidget.ui.fragments.ConfigPreferenceFragment;
 import ru.besttuts.stockwidget.util.Utils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;

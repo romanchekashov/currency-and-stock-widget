@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ru.besttuts.stockwidget.ui;
+package ru.besttuts.stockwidget.ui.activities;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -50,7 +50,6 @@ import ru.besttuts.stockwidget.io.model.Result;
 import ru.besttuts.stockwidget.provider.QuoteContract;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
 import ru.besttuts.stockwidget.provider.SymbolProvider;
-import ru.besttuts.stockwidget.util.Utils;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.LOGE;

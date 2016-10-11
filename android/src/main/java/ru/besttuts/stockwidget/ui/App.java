@@ -26,7 +26,7 @@ import java.util.HashMap;
 
 import ru.besttuts.stockwidget.R;
 
-public class AnalyticsApp extends Application {
+public class App extends Application {
 
     // The following line should be changed to include the correct property id.
     private static final String PROPERTY_ID = "UA-XXXXX-Y";
@@ -41,11 +41,11 @@ public class AnalyticsApp extends Application {
 
     HashMap<TrackerName, Tracker> mTrackers = new HashMap<TrackerName, Tracker>();
 
-    public AnalyticsApp() {
+    public App() {
         super();
     }
 
-    synchronized Tracker getTracker(TrackerName trackerId) {
+    public synchronized Tracker getTracker(TrackerName trackerId) {
         if (!mTrackers.containsKey(trackerId)) {
 
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);

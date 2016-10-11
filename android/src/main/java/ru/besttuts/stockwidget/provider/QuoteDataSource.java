@@ -3,11 +3,10 @@ package ru.besttuts.stockwidget.provider;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
-import android.util.Log;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -16,10 +15,12 @@ import java.util.TimeZone;
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.io.model.Result;
 import ru.besttuts.stockwidget.model.Model;
+import ru.besttuts.stockwidget.model.QuoteLastTradeDate;
 import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.model.Setting;
-import ru.besttuts.stockwidget.util.Utils;
 import ru.besttuts.stockwidget.provider.QuoteContract.Settings;
+import ru.besttuts.stockwidget.sync.MyFinanceWS;
+import ru.besttuts.stockwidget.util.Utils;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.LOGE;
@@ -504,7 +505,24 @@ public class QuoteDataSource {
                 + " where code = ? and last_trade_date > ?"
                 + " order by last_trade_date asc",
                 new String[]{code, String.valueOf(today)});
-        if (null == cursor || 0 == cursor.getCount()) return;
+        if (null == cursor || 0 == cursor.getCount()){
+            try {
+                MyFinanceWS ws = new MyFinanceWS(context);
+                List<QuoteLastTradeDate> quoteLastTradeDates = ws.getQuotesWithLastTradeDate();
+
+                insertQuoteLastTradeDate(quoteLastTradeDates);
+
+                cursor = db.rawQuery("select * from " + QuoteDatabaseHelper.Tables.QUOTE_LAST_TRADE_DATES
+                                + " where code = ? and last_trade_date > ?"
+                                + " order by last_trade_date asc",
+                        new String[]{code, String.valueOf(today)});
+
+                if (null == cursor || 0 == cursor.getCount()) return;
+            } catch (IOException e) {
+                LOGE(TAG, e.getMessage());
+                return;
+            }
+        }
 
         cursor.moveToFirst();
 
@@ -517,6 +535,19 @@ public class QuoteDataSource {
         setting.setLastTradeDate(newLastTradeDate);
 
         cursor.close();
+    }
+
+    private void insertQuoteLastTradeDate(List<QuoteLastTradeDate> quoteLastTradeDates) {
+        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        for (QuoteLastTradeDate quote: quoteLastTradeDates){
+            ContentValues values = new ContentValues();
+            values.put(QuoteContract.QuoteLastTradeDateColumns.SYMBOL, quote.getSymbol());
+            values.put(QuoteContract.QuoteLastTradeDateColumns.CODE, quote.getCode());
+            values.put(QuoteContract.QuoteLastTradeDateColumns.LAST_TRADE_DATE, quote.getLastTradeDate());
+
+            db.insertWithOnConflict(QuoteDatabaseHelper.Tables.QUOTE_LAST_TRADE_DATES, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+        }
     }
 
     public List<Model> getModelsByWidgetId(int widgetId) {

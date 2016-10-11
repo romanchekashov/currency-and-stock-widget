@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.besttuts.stockwidget.R;
-import ru.besttuts.stockwidget.ui.ConfigPreferenceFragment;
+import ru.besttuts.stockwidget.ui.fragments.ConfigPreferenceFragment;
 import ru.besttuts.stockwidget.ui.view.CircleView;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;

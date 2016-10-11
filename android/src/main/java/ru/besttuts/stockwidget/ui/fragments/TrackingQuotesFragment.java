@@ -1,4 +1,4 @@
-package ru.besttuts.stockwidget.ui;
+package ru.besttuts.stockwidget.ui.fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -56,6 +56,8 @@ import ru.besttuts.stockwidget.provider.QuoteContract;
 import ru.besttuts.stockwidget.provider.QuoteContract.Settings;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
 import ru.besttuts.stockwidget.sync.RemoteYahooFinanceDataFetcher;
+import ru.besttuts.stockwidget.ui.activities.DynamicWebViewActivity;
+import ru.besttuts.stockwidget.ui.activities.EconomicWidgetConfigureActivity;
 import ru.besttuts.stockwidget.util.CustomConverter;
 import ru.besttuts.stockwidget.util.NotificationManager;
 import ru.besttuts.stockwidget.util.Utils;

@@ -9,7 +9,7 @@
     <bool name="ga_autoActivityTracking">true</bool>
 
     <!-- The screen names that will appear in reports -->
-    <screenName name="ru.besttuts.stockwidget.ui.EconomicWidgetConfigureActivity">
+    <screenName name="ru.besttuts.stockwidget.ui.activities.EconomicWidgetConfigureActivity">
         AnalyticsApp EconomicWidgetConfigureActivity
     </screenName>
 

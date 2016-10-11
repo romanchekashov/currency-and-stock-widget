@@ -1,4 +1,4 @@
-package ru.besttuts.stockwidget.ui;
+package ru.besttuts.stockwidget.ui.fragments;
 
 import android.app.Activity;
 import android.database.Cursor;
@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.provider.QuoteContract;
+import ru.besttuts.stockwidget.ui.activities.QuotePickerActivity;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
