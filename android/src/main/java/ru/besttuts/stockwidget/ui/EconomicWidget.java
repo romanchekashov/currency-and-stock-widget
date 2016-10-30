@@ -58,6 +58,8 @@ public class EconomicWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 
+        LOGD(TAG, "[onUpdate]: appWidgetIds = " + appWidgetIds.toString());
+
         onUpdate(context, appWidgetManager, appWidgetIds, isSyncAllowed(context, false));
 
     }
@@ -148,7 +150,7 @@ public class EconomicWidget extends AppWidgetProvider {
             for (int i: appWidgetIds) {
                 widgetIdStrBuilder.append(i+",");
             }
-            LOGD(TAG, "onDeleted: appWidgetIds: " + widgetIdStrBuilder.toString());
+            LOGD(TAG, "[onDeleted]: appWidgetIds: " + widgetIdStrBuilder.toString());
         }
     }
 
@@ -200,7 +202,9 @@ public class EconomicWidget extends AppWidgetProvider {
      * @param context
      */
     @Override
-    public void onEnabled(Context context) {
+    public void onEnabled(final Context context) {
+
+        LOGD(TAG, "[onEnabled]: context = " + context);
 
         ComponentName receiver = new ComponentName(context, BootReceiver.class);
         PackageManager pm = context.getPackageManager();
@@ -213,33 +217,38 @@ public class EconomicWidget extends AppWidgetProvider {
 
         ComponentName thisAppWidget = new ComponentName(context.getPackageName(), getClass().getName());
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-        int appWidgetIds[] = appWidgetManager.getAppWidgetIds(thisAppWidget);
+        final int appWidgetIds[] = appWidgetManager.getAppWidgetIds(thisAppWidget);
 
-        LOGD(TAG, "onEnabled: appWidgetId = " + appWidgetIds[0]);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                QuoteDataSource dataSource = new QuoteDataSource(context);
+
+                String lng = context.getResources().getConfiguration().locale.getLanguage();
+
+                final String[] defaultCommodities = new String[]{"BZF16.NYM", "NGZ15.NYM", "GCX15.CMX"};
+                if ("ru".equals(lng)) {
+                    dataSource.addSettingsRec(appWidgetIds[0], 1, QuoteType.CURRENCY,
+                            new String[]{"EURUSD", "USDRUB", "EURRUB"});
+                    dataSource.addSettingsRec(appWidgetIds[0], 4, QuoteType.GOODS, defaultCommodities);
+                } else if ("uk".equals(lng)) {
+                    dataSource.addSettingsRec(appWidgetIds[0], 1, QuoteType.CURRENCY,
+                            new String[]{"EURUSD", "USDUAH", "EURUAH"});
+                    dataSource.addSettingsRec(appWidgetIds[0], 4, QuoteType.GOODS, defaultCommodities);
+                } else {
+                    dataSource.addSettingsRec(appWidgetIds[0], 1, QuoteType.CURRENCY,
+                            new String[]{"EURUSD"});
+                    dataSource.addSettingsRec(appWidgetIds[0], 2, QuoteType.GOODS, defaultCommodities);
+                }
+
+                LOGD(TAG, "defaults set: settings set = " + dataSource.getAllSettings().size());
+
+                dataSource.close();
+
+            }
+        }).start();
 
 
-        QuoteDataSource dataSource = new QuoteDataSource(context);
-
-        String lng = context.getResources().getConfiguration().locale.getLanguage();
-        LOGD(TAG, "locale.getLanguage: " + lng);
-
-        final String[] defaultCommodities = new String[]{"BZF16.NYM", "NGZ15.NYM", "GCX15.CMX"};
-        if ("ru".equals(lng)) {
-//            new ContentResolverHelper(context.getContentResolver())
-//                    .addSettingsRec();
-
-            dataSource.addSettingsRec(appWidgetIds[0], 1, QuoteType.CURRENCY,
-                    new String[]{"EURUSD", "USDRUB", "EURRUB"});
-            dataSource.addSettingsRec(appWidgetIds[0], 4, QuoteType.GOODS, defaultCommodities);
-        } else if ("uk".equals(lng)) {
-            dataSource.addSettingsRec(appWidgetIds[0], 1, QuoteType.CURRENCY,
-                    new String[]{"EURUSD", "USDUAH", "EURUAH"});
-            dataSource.addSettingsRec(appWidgetIds[0], 4, QuoteType.GOODS, defaultCommodities);
-        } else {
-            dataSource.addSettingsRec(appWidgetIds[0], 1, QuoteType.CURRENCY,
-                    new String[]{"EURUSD"});
-            dataSource.addSettingsRec(appWidgetIds[0], 2, QuoteType.GOODS, defaultCommodities);
-        }
 
 //        dataSource.addModelRec(QuoteType.CURRENCY, "EURUSD");
 //        dataSource.addModelRec(QuoteType.CURRENCY, "USDRUB");
@@ -269,7 +278,6 @@ public class EconomicWidget extends AppWidgetProvider {
 //        dataSource.addModelRec(QuoteType.STOCK, "TMUS");
 //        dataSource.addModelRec(QuoteType.STOCK, "Visa");
 
-        dataSource.close();
 
     }
 

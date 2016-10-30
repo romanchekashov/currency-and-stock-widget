@@ -580,7 +580,7 @@ public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<
             Cursor cursor = mDataSource.getCursorSettingsWithModelByWidgetId(mWidgetId);
             LOGD(TAG, "loadInBackground: currentThread = " + Thread.currentThread());
 
-            LOGD(TAG, "loadInBackground: cursor.getCount: " + cursor.getCount());
+            LOGD(TAG, "[loadInBackground]: cursor.getCount: " + cursor.getCount());
 //            try {
 //                TimeUnit.SECONDS.sleep(3);
 //            } catch (InterruptedException e) {

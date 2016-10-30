@@ -80,9 +80,9 @@ public class QuoteDataSource {
             setting.setQuoteType(type);
             setting.setQuoteSymbol(symbol);
 
-            if (QuoteType.GOODS == type){
-                updateSettingWithNewSymbolAndLastTradeDate(setting, today);
-            }
+//            if (QuoteType.GOODS == type){
+//                updateSettingWithNewSymbolAndLastTradeDate(setting, today);
+//            }
 
             persist(setting);
         }
