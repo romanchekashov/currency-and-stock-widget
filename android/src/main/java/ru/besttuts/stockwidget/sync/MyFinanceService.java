@@ -13,7 +13,7 @@ import ru.besttuts.stockwidget.model.QuoteLastTradeDate;
 
 public interface MyFinanceService {
 
-    @GET("api/quote-last-trade-date")
+    @GET("api/quote-last-trade-dates")
     Call<List<QuoteLastTradeDate>> quotesWithLastTradeDate();
 
 }

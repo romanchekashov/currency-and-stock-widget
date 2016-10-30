@@ -12,7 +12,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -51,7 +51,7 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 /**
  * The configuration screen for the {@link EconomicWidget EconomicWidget} AppWidget.
  */
-public class EconomicWidgetConfigureActivity extends ActionBarActivity
+public class EconomicWidgetConfigureActivity extends AppCompatActivity
         implements SlidingTabsFragment.OnFragmentInteractionListener,
         TrackingQuotesFragment.OnFragmentInteractionListener,
         NotificationManager.ColorChangedListener {
@@ -73,6 +73,7 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
     public static final String ARG_WIDGET_ID = "widgetId";
     public static final String ARG_QUOTE_TYPE_VALUE = "quoteTypeValue";
     public static final String ARG_WIDGET_ITEM_POSITION = "widgetItemPosition";
+    static final String STATE_POSITION = "position";
 
     public static final String PREFS_NAME = "ru.besttuts.stockwidget.ui.EconomicWidget";
     private static final String PREF_PREFIX_KEY = "appwidget_";
@@ -216,7 +217,7 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
             AppRater.app_launched(this, getSupportFragmentManager());
 
         } else {
-            position = savedInstanceState.getInt("position");
+            position = savedInstanceState.getInt(STATE_POSITION);
         }
 
         // создаем объект для создания и управления версиями БД
@@ -252,12 +253,22 @@ public class EconomicWidgetConfigureActivity extends ActionBarActivity
             ((App) getApplication()).getTracker(App.TrackerName.APP_TRACKER);
         }
 
+        LOGD(TAG, "[onCreate]: complete");
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt(STATE_POSITION, position);
+
+        super.onSaveInstanceState(outState);
     }
 
     public void createAds() {
         if(Config.IS_DEV_MODE){
+            LOGD(TAG, "[createAds]: NO ADS cause in DEV mode!");
             return;
         }
+        LOGD(TAG, "[createAds]: creating...");
 
         // Создание экземпляра adView.
         AdView adView = new AdView(this);

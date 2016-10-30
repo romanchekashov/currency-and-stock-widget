@@ -24,7 +24,8 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 public class MyFinanceWS {
     private static final String TAG = makeLogTag(MyFinanceWS.class);
 
-    private static final String MY_FINANCE_BASE_URL = "http://10.0.2.2:3001/"; //TODO: change to real server url
+//    private static final String MY_FINANCE_BASE_URL = "http://10.0.2.2:3001/"; //TODO: change to real server url
+    private static final String MY_FINANCE_BASE_URL = "http://finance.besttuts.ru/";
     private static final String PREF_KEY_LAST_CALL_TIME = "MyFinanceWS_getQuotesWithLastTradeDate_lastCallTime";
 
     private Context mContext;
@@ -38,9 +39,8 @@ public class MyFinanceWS {
         long currentTimeInMillis = Calendar.getInstance().getTimeInMillis();
         long lastCallTime = (long) SharedPreferencesHelper.get(PREF_KEY_LAST_CALL_TIME, 0L, mContext);
 
-        if(currentTimeInMillis - lastCallTime > TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS)){
-            LOGD(TAG, "getQuotesWithLastTradeDate() call.");
-
+        LOGD(TAG, "[getQuotesWithLastTradeDate]: lastCallTime = " + lastCallTime);
+        if(currentTimeInMillis - lastCallTime > TimeUnit.MILLISECONDS.convert(5, TimeUnit.SECONDS)){
             SharedPreferencesHelper.update(PREF_KEY_LAST_CALL_TIME, currentTimeInMillis, mContext);
 
             Retrofit retrofit = new Retrofit.Builder()
@@ -50,7 +50,10 @@ public class MyFinanceWS {
 
             MyFinanceService service = retrofit.create(MyFinanceService.class);
 
-            return service.quotesWithLastTradeDate().execute().body();
+            List<QuoteLastTradeDate> quotes = service.quotesWithLastTradeDate().execute().body();
+            LOGD(TAG, "[getQuotesWithLastTradeDate]: quotes fetched = " + quotes.size());
+
+            return quotes;
         }
 
         return new ArrayList<>();
