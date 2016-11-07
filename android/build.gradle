@@ -45,6 +45,7 @@ android {
 ext {
     DAGGER_VERSION = '2.6.1'
     RETROFIT_VERSION = '2.1.0'
+    RX_JAVA_ANDROID_VERSION = '2.0.0'
     ANDROID_SUPPORT_LIB_VERSION = '23.3.0'
 }
 
@@ -60,15 +61,22 @@ dependencies {
     compile 'com.google.dagger:dagger:'+DAGGER_VERSION
     apt 'com.google.dagger:dagger-compiler:'+DAGGER_VERSION
 
-    compile 'com.squareup.retrofit2:retrofit:'+RETROFIT_VERSION
-    compile 'com.squareup.retrofit2:converter-gson:'+RETROFIT_VERSION
+
     compile 'com.google.code.gson:gson:2.7'
     compile 'com.google.android.gms:play-services:6.1.+'
 //    compile 'com.google.android.gms:play-services-ads:6.5.+'
     compile 'com.github.machinarius:preferencefragment:0.1.1'
-    compile 'com.jakewharton.rxrelay:rxrelay:1.1.0'
 //    compile 'com.squareup.okhttp:okhttp:2.3.0'
 
+    compile 'io.reactivex.rxjava2:rxandroid:'+RX_JAVA_ANDROID_VERSION
+    compile 'io.reactivex.rxjava2:rxjava:'+RX_JAVA_ANDROID_VERSION
+
+    compile 'com.squareup.retrofit2:retrofit:'+RETROFIT_VERSION
+    compile 'com.squareup.retrofit2:converter-gson:'+RETROFIT_VERSION
+//    compile 'com.squareup.retrofit2:adapter-rxjava:'+RETROFIT_VERSION
+    compile ('com.squareup.retrofit2:adapter-rxjava:'+RETROFIT_VERSION) {
+        exclude group: 'io.reactivex'
+    }
 //    testCompile "junit:junit:4.10"
 //    testCompile "org.assertj:assertj-core:1.7.0"
 //    testCompile "org.robolectric:robolectric:3.0"

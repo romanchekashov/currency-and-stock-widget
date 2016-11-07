@@ -80,9 +80,9 @@ public class QuoteDataSource {
             setting.setQuoteType(type);
             setting.setQuoteSymbol(symbol);
 
-//            if (QuoteType.GOODS == type){
-//                updateSettingWithNewSymbolAndLastTradeDate(setting, today);
-//            }
+            if (QuoteType.GOODS == type){
+                updateSettingWithNewSymbolAndLastTradeDate(setting);
+            }
 
             persist(setting);
         }
@@ -522,6 +522,42 @@ public class QuoteDataSource {
                 LOGE(TAG, e.getMessage());
                 return;
             }
+        }
+
+        cursor.moveToFirst();
+
+        String newSymbol = cursor.getString(cursor.getColumnIndexOrThrow(
+                QuoteContract.QuoteLastTradeDateColumns.SYMBOL));
+        long newLastTradeDate = cursor.getLong(cursor.getColumnIndexOrThrow(
+                QuoteContract.QuoteLastTradeDateColumns.LAST_TRADE_DATE));
+
+        setting.setQuoteSymbol(newSymbol);
+        setting.setLastTradeDate(newLastTradeDate);
+
+        cursor.close();
+    }
+
+    private void updateSettingWithNewSymbolAndLastTradeDate(Setting setting) {
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+
+        long today = calendar.getTimeInMillis();
+
+        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        String symbol = setting.getQuoteSymbol();
+        String code = symbol.substring(0, symbol.length() - 7);
+
+        Cursor cursor = db.rawQuery("select * from " + QuoteDatabaseHelper.Tables.QUOTE_LAST_TRADE_DATES
+                        + " where code = ? and last_trade_date > ?"
+                        + " order by last_trade_date asc",
+                new String[]{code, String.valueOf(today)});
+
+        if (null == cursor || 0 == cursor.getCount()) {
+            cursor.close();
+            return;
         }
 
         cursor.moveToFirst();

@@ -8,9 +8,6 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
 
-import com.jakewharton.rxrelay.PublishRelay;
-
-import ru.besttuts.stockwidget.Events;
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
 
@@ -41,8 +38,6 @@ public class DataCleanPreference extends DialogPreference {
             dataSource.close();
 
             LOGD(TAG, "onDialogClosed");
-            PublishRelay<Integer> relay = PublishRelay.create();
-            relay.call(Events.ALL_DB_DATA_DELETED);
         }
     }
 
