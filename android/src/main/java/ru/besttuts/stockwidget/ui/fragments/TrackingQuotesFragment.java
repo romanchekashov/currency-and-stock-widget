@@ -90,6 +90,7 @@ public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<
     // Идентификатор загрузчика используемый в данном компоненте
     private static final int URL_LOADER = 0;
 
+    private boolean isQuotesFetched = false;
     /**
      * Используйте этот фабричный метод для создания
      * нового объекта этого фрагмента с предоставляемыми параметрами.
@@ -186,6 +187,7 @@ public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<
     public void onResume() {
         super.onResume();
         LOGD(TAG, "onResume: currentThread = " + Thread.currentThread());
+        isQuotesFetched = false;
         Loader loader = getActivity().getSupportLoaderManager().getLoader(URL_LOADER);
         if (null != loader) {
             LOGD(TAG, "Loader is " + loader);
@@ -217,7 +219,10 @@ public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<
         } else {
             button.setVisibility(View.VISIBLE);
         }
-        new FetchQuote(getActivity()).execute(new String[]{String.valueOf(mWidgetId)});
+
+        if(!isQuotesFetched){
+            new FetchQuote(getActivity()).execute(new String[]{String.valueOf(mWidgetId)});
+        }
 
         LOGD(TAG, "onLoadFinished: currentThread = " + Thread.currentThread());
         LOGD(TAG, "swapCursor: cursor.getCount = mWidgetItemsNumber = " + mWidgetItemsNumber);
@@ -565,6 +570,8 @@ public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<
 
     private class FetchQuote extends AsyncTask<String, Void, List<Model>> {
 
+        private final String TAG = makeLogTag(FetchQuote.class);
+
         private final Context mContext;
 
         private FetchQuote(Context context) {
@@ -574,15 +581,18 @@ public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<
         @Override
         protected List<Model> doInBackground(String... params) { //TODO: Написать Unit-тесты!!!
 
-            List<Model> models = new ArrayList<>();
+            int widgetId = Integer.parseInt(params[0]);
+
+            List<Model> models = EconomicWidgetConfigureActivity.mDataSource.getModelsByWidgetId(widgetId);
 
             RemoteYahooFinanceDataFetcher dataFetcher = new RemoteYahooFinanceDataFetcher();
 
-            int widgetId = Integer.parseInt(params[0]);
 //            QuoteDataSource dataSource = new QuoteDataSource(getActivity());
 //            dataSource.open();
             Cursor cursor = EconomicWidgetConfigureActivity.mDataSource
                     .getCursorSettingsWithoutModelByWidgetId(widgetId);
+
+            LOGD(TAG, String.format("[doInBackground]: cursor.getCount() = %d", cursor.getCount()));
 
             if (0 == cursor.getCount()) {
                 cursor.close();
@@ -651,6 +661,7 @@ public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<
                 loader.forceLoad();
             }
 
+            isQuotesFetched = true;
         }
     }
 
@@ -678,13 +689,15 @@ public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<
                 switch (pos) {
                     case 0:
                         Cursor cursor = (Cursor) mSimpleCursorAdapter.getItem(position);
-                        String url;
+//                        String url = "http://finance.yahoo.com/quote/";
+                        String url = "http://finance.yahoo.com/chart/";
+                        String symbol = cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_ID));
                         if(QuoteType.CURRENCY == cursor.getInt(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_QUOTE_TYPE))) {
-                            url = String.format("http://finance.yahoo.com/q?s=%s=X&ql=1",
-                                    cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_ID)));
+//                            url += String.format("%s=X?p=%s=X&ql=1", symbol, symbol);
+                            url += symbol + "=X";
                         } else {
-                            url = String.format("http://finance.yahoo.com/q?s=%s&ql=1",
-                                    cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_ID)));
+//                            url += String.format("%s?p=%s&ql=1", symbol, symbol);
+                            url += symbol;
                         }
 
                         Intent intent = new Intent(getActivity(), DynamicWebViewActivity.class);

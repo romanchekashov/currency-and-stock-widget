@@ -222,6 +222,8 @@ public class EconomicWidget extends AppWidgetProvider {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                LOGD(TAG, "[onEnabled]: set defaultCommodities START");
+
                 QuoteDataSource dataSource = new QuoteDataSource(context);
 
                 String lng = context.getResources().getConfiguration().locale.getLanguage();
@@ -241,7 +243,7 @@ public class EconomicWidget extends AppWidgetProvider {
                     dataSource.addSettingsRec(appWidgetIds[0], 2, QuoteType.GOODS, defaultCommodities);
                 }
 
-                LOGD(TAG, "defaults set: settings set = " + dataSource.getAllSettings().size());
+                LOGD(TAG, "[onEnabled]: set defaultCommodities END size = " + dataSource.getAllSettings().size());
 
                 dataSource.close();
 

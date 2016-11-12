@@ -76,7 +76,7 @@ public class QuoteDataSource {
             Setting setting = new Setting();
             setting.setId(id);
             setting.setWidgetId(mAppWidgetId);
-            setting.setQuotePosition(widgetItemPosition);
+            setting.setQuotePosition(position);
             setting.setQuoteType(type);
             setting.setQuoteSymbol(symbol);
 
@@ -255,15 +255,21 @@ public class QuoteDataSource {
     public Cursor getCursorSettingsWithoutModelByWidgetId(int widgetId) {
         final SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
+//        List<Model> models = getModelsByWidgetId(widgetId);
+//        LOGD(TAG, "[getCursorSettingsWithoutModelByWidgetId]: models.size = " + models.size());
+//        if(models.isEmpty()){
+//            Cursor cursor = getCursorSettingsByWidgetId(widgetId);
+//            printSetting(cursor);
+//            return cursor;
+//        }
+
         String sqlQuery = "select * "
                 + "from "+QuoteDatabaseHelper.Tables.SETTINGS+" as s "
                 + "left join "+QuoteDatabaseHelper.Tables.MODELS+" as m "
                 + "on s.setting_quote_symbol = m.model_id "
                 + "where s.setting_widget_id = ? and m.model_id is null order by "
                 + QuoteContract.SettingColumns.SETTING_QUOTE_POSITION + " asc";
-
         return db.rawQuery(sqlQuery, new String[]{String.valueOf(widgetId)});
-
     }
 
     public Cursor getCursorModelsByWidgetId(int widgetId) {

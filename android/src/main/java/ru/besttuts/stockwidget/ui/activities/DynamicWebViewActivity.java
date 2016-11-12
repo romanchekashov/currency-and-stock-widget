@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageButton;
 
 import ru.besttuts.stockwidget.R;
@@ -23,6 +24,7 @@ public class DynamicWebViewActivity extends ActionBarActivity implements View.On
         WebSettings webSettings = myWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
 
+        myWebView.setWebViewClient(new WebViewClient());
         myWebView.loadUrl(getIntent().getStringExtra(TrackingQuotesFragment.ARG_URL));
 
         ImageButton imageButton = (ImageButton) findViewById(R.id.closeBtn);
