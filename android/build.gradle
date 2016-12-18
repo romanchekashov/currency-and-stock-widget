@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    compileSdkVersion 25
+    buildToolsVersion "25.0.1"
 
     defaultConfig {
         applicationId "ru.besttuts.stockwidget"
         minSdkVersion 10
-        targetSdkVersion 23
+        targetSdkVersion 25
         versionCode 10
         versionName "1.9"
 
@@ -46,7 +46,7 @@ ext {
     DAGGER_VERSION = '2.6.1'
     RETROFIT_VERSION = '2.1.0'
     RX_JAVA_ANDROID_VERSION = '2.0.0'
-    ANDROID_SUPPORT_LIB_VERSION = '23.3.0'
+    ANDROID_SUPPORT_LIB_VERSION = '25.0.0'
 }
 
 dependencies {
