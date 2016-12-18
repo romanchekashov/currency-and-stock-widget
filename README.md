@@ -1,5 +1,7 @@
 # Валютно-фондовый виджет для Android.
 
+<a href='https://travis-ci.org/romanchekashov/currency-and-stock-widget/builds'><img src='https://api.travis-ci.org/romanchekashov/currency-and-stock-widget.svg?branch=master'></a>
+
 ![Screenshot](art/hero.png)
 
 Отслеживайте изменение: курса валют, цен на нефть и золото, акций и индексов. 

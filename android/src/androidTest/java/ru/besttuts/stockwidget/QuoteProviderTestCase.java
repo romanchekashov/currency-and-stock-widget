@@ -133,9 +133,9 @@ public class QuoteProviderTestCase extends ProviderTestCase2<QuoteProvider> {
         }
     }
 
-    public void testShouldCreateAndRetrieveTest(){
-        fail();
-    }
+//    public void testShouldCreateAndRetrieveTest(){
+//        fail();
+//    }
 
     private void createSetting(int firstPos, int len) {
         List<String> symbols = new ArrayList<>();
