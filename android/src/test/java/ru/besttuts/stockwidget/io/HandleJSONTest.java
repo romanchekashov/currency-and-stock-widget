@@ -1,6 +1,7 @@
 package ru.besttuts.stockwidget.io;
 
 import org.json.JSONObject;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
@@ -29,6 +30,7 @@ public class HandleJSONTest {
     private String[] exchange = new String[]{"EURUSD", "USDRUB", "EURRUB", "CNYRUB"};
     private String[] goods = new String[]{"GCF15.CMX", "PLF15.NYM", "PAF15.NYM", "SIF15.CMX", "HGF15.CMX"};
 
+    @Ignore
     @Test
     public void testReadAndParseJSON() throws Exception {
 
@@ -51,6 +53,7 @@ public class HandleJSONTest {
 
     }
 
+    @Ignore
     @Test
     public void testReadCurrency() throws Exception {
 

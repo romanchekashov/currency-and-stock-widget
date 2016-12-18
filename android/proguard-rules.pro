@@ -42,6 +42,7 @@
 
 # for com.squareup.picasso
 -dontwarn com.squareup.okhttp.**
+-dontwarn okio.**
 
 -keep class com.google.ads.** # Don't proguard AdMob classes
 

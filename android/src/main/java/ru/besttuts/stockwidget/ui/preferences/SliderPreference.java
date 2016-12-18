@@ -98,7 +98,7 @@ public class SliderPreference extends DialogPreference {
     @Override
     public void setSummary(int summaryResId) {
         try {
-            setSummary(getContext().getResources().getStringArray(summaryResId));
+            setSummary(getContext().getResources().getString(summaryResId));
         } catch (Exception e) {
             super.setSummary(summaryResId);
         }

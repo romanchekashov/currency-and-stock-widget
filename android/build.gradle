@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.neenbedankt.android-apt'
+//apply plugin: 'com.neenbedankt.android-apt'
 
 android {
     compileSdkVersion 25
@@ -43,54 +43,39 @@ android {
 }
 
 ext {
-    DAGGER_VERSION = '2.6.1'
     RETROFIT_VERSION = '2.1.0'
-    RX_JAVA_ANDROID_VERSION = '2.0.0'
     ANDROID_SUPPORT_LIB_VERSION = '25.0.0'
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
+
     compile 'com.android.support:support-v4:'+ANDROID_SUPPORT_LIB_VERSION
     compile 'com.android.support:appcompat-v7:'+ANDROID_SUPPORT_LIB_VERSION
     compile 'com.android.support:design:'+ANDROID_SUPPORT_LIB_VERSION
 
-    compile 'com.google.dagger:dagger:'+DAGGER_VERSION
-    apt 'com.google.dagger:dagger-compiler:'+DAGGER_VERSION
-
-
-    compile 'com.google.code.gson:gson:2.7'
     compile 'com.google.android.gms:play-services:6.1.+'
 //    compile 'com.google.android.gms:play-services-ads:6.5.+'
     compile 'com.github.machinarius:preferencefragment:0.1.1'
-//    compile 'com.squareup.okhttp:okhttp:2.3.0'
 
-    compile 'io.reactivex.rxjava2:rxandroid:'+RX_JAVA_ANDROID_VERSION
-    compile 'io.reactivex.rxjava2:rxjava:'+RX_JAVA_ANDROID_VERSION
-
+    compile 'com.google.code.gson:gson:2.7'
     compile 'com.squareup.retrofit2:retrofit:'+RETROFIT_VERSION
     compile 'com.squareup.retrofit2:converter-gson:'+RETROFIT_VERSION
 //    compile 'com.squareup.retrofit2:adapter-rxjava:'+RETROFIT_VERSION
-    compile ('com.squareup.retrofit2:adapter-rxjava:'+RETROFIT_VERSION) {
-        exclude group: 'io.reactivex'
-    }
-//    testCompile "junit:junit:4.10"
-//    testCompile "org.assertj:assertj-core:1.7.0"
-//    testCompile "org.robolectric:robolectric:3.0"
-//
-//    // only required for android studio to see these dependencies
-//    androidTestCompile "junit:junit:4.10"
-//    androidTestCompile "org.assertj:assertj-core:1.7.0"
-//    androidTestCompile "org.robolectric:robolectric:3.0"
+//    compile ('com.squareup.retrofit2:adapter-rxjava:'+RETROFIT_VERSION) {
+//        exclude group: 'io.reactivex'
+//    }
+
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-all:1.10.19'
+    testCompile "org.robolectric:robolectric:3.1.4"
+    testCompile "org.robolectric:shadows-multidex:3.1.4"
     androidTestCompile 'com.android.support:support-annotations:'+ANDROID_SUPPORT_LIB_VERSION
     androidTestCompile 'com.android.support.test:runner:0.4.1'
     androidTestCompile 'com.android.support.test:rules:0.4.1'
-
-    testCompile 'junit:junit:4.12'
-    testCompile "org.assertj:assertj-core:1.7.0"
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
 }
 
 // play-service:6.5.+ не заработала, использую 6.1.+

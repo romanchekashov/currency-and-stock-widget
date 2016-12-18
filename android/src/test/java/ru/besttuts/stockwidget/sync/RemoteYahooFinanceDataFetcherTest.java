@@ -41,6 +41,7 @@ public class RemoteYahooFinanceDataFetcherTest {
 
     }
 
+    @Ignore
     @Test
     public void testBuildYahooFinanceMultiQueryUrl() throws Exception {
         String expected = "https://query.yahooapis.com/v1/public/yql?q=SELECT%20*%20FROM%20query.multi%20WHERE%20queries%3D%22select%20*%20from%20yahoo.finance.xchange%20where%20pair%20in%20('USDRUB'%2C'CNYRUB'%2C'EURRUB'%2C'EURUSD');select%20*%20from%20yahoo.finance.quotes%20where%20symbol%20in%20('SIF15.CMX'%2C'PAF15.NYM'%2C'PLF15.NYM'%2C'GCF15.CMX'%2C'HGF15.CMX')%3B%22&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
@@ -58,6 +59,7 @@ public class RemoteYahooFinanceDataFetcherTest {
 
     }
 
+    @Ignore
     @Test
     public void testDownloadUrl() throws Exception {
         String sUrl = "https://query.yahooapis.com/v1/public/yql?q=SELECT%20*%20FROM%20query.multi%20WHERE%20queries%3D%22select%20*%20from%20yahoo.finance.xchange%20where%20pair%20in%20('USDRUB'%2C'CNYRUB'%2C'EURRUB'%2C'EURUSD');select%20*%20from%20yahoo.finance.quotes%20where%20symbol%20in%20('SIF15.CMX'%2C'PAF15.NYM'%2C'PLF15.NYM'%2C'GCF15.CMX'%2C'HGF15.CMX')%3B%22&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
@@ -66,6 +68,7 @@ public class RemoteYahooFinanceDataFetcherTest {
 
     }
 
+    @Ignore
     @Test
     public void testDownloadQuotes() throws Exception {
         assertNotNull(dataFetcher.downloadQuotes());
