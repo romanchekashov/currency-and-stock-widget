@@ -1,5 +1,10 @@
 package ru.besttuts.stockwidget.model;
 
+import android.database.Cursor;
+
+import ru.besttuts.stockwidget.provider.db.DbContract.ModelColumns;
+import ru.besttuts.stockwidget.provider.db.DbContract.SettingColumns;
+
 /**
  * Created by roman on 08.01.2015.
  */
@@ -89,5 +94,22 @@ public class Model {
                 ", change=" + change +
                 ", percentChange='" + percentChange + '\'' +
                 '}';
+    }
+
+    public static Model map(Cursor cursor){
+        Model model = new Model();
+        model.setId(cursor.getString(cursor.getColumnIndexOrThrow(ModelColumns.MODEL_ID)));
+        model.setName(cursor.getString(cursor.getColumnIndexOrThrow(ModelColumns.MODEL_NAME)));
+        model.setRate(cursor.getDouble(cursor.getColumnIndexOrThrow(ModelColumns.MODEL_RATE)));
+        model.setChange(cursor.getDouble(cursor.getColumnIndexOrThrow(ModelColumns.MODEL_CHANGE)));
+        model.setPercentChange(cursor.getString(cursor.getColumnIndexOrThrow(ModelColumns.MODEL_PERCENT_CHANGE)));
+        model.setQuoteType(cursor.getInt(cursor.getColumnIndexOrThrow(SettingColumns.SETTING_QUOTE_TYPE)));
+        try {
+            model.setCurrency(cursor.getString(cursor.getColumnIndexOrThrow(ModelColumns.MODEL_CURRENCY)));
+        } catch (IllegalArgumentException e) {
+            // колонка 'model_currency' не существует у Валюты
+        }
+
+        return model;
     }
 }

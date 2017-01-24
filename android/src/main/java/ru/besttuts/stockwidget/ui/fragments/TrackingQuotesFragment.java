@@ -17,10 +17,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -40,7 +36,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +47,8 @@ import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.provider.QuoteContract;
 import ru.besttuts.stockwidget.provider.QuoteContract.Settings;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
+import ru.besttuts.stockwidget.provider.db.DbNotificationManager;
+import ru.besttuts.stockwidget.provider.db.DbProvider;
 import ru.besttuts.stockwidget.sync.RemoteYahooFinanceDataFetcher;
 import ru.besttuts.stockwidget.ui.activities.DynamicWebViewActivity;
 import ru.besttuts.stockwidget.ui.activities.EconomicWidgetConfigureActivity;
@@ -65,8 +62,8 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 /**
  * Фрагмет с отслеживаемыми котировками.
  */
-public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<Cursor>,
-        NotificationManager.ColorChangedListener, NotificationManager.OptionsItemSelectListener,
+public class TrackingQuotesFragment extends Fragment
+        implements NotificationManager.ColorChangedListener, NotificationManager.OptionsItemSelectListener,
         AdapterView.OnItemClickListener {
 
     private static final String TAG = makeLogTag(TrackingQuotesFragment.class);
@@ -78,6 +75,17 @@ public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<
     private int mWidgetId;
     private static int mWidgetItemsNumber;
 
+
+    private DbProvider mDbProvider;
+    private DbNotificationManager mNotifier;
+    private DbNotificationManager.Listener mDbListener = new DbNotificationManager.Listener() {
+        @Override
+        public void onDataUpdated() {
+            updateSettings();
+        }
+    };
+    private DbProvider.ResultCallback<Cursor> mUpdateCallback = null;
+
     private OnFragmentInteractionListener mListener;
 
 //    private QuoteDataSource mDataSource;
@@ -86,9 +94,6 @@ public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<
 
     private View mMainView;
     private GridView gridView;
-
-    // Идентификатор загрузчика используемый в данном компоненте
-    private static final int URL_LOADER = 0;
 
     private boolean isQuotesFetched = false;
     /**
@@ -155,9 +160,6 @@ public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<
         gridView.setAdapter(mSimpleCursorAdapter);
         gridView.setOnItemClickListener(this);
 
-        // создаем лоадер для чтения данных
-        initLoader();
-
         Button button = (Button) mMainView.findViewById(R.id.btnAddQuote);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -166,21 +168,12 @@ public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<
             }
         });
 
-        return mMainView;
-    }
+        mDbProvider = DbProvider.getInstance();
+        mNotifier = DbNotificationManager.getInstance();
+        mNotifier.addListener(mDbListener);
+        updateSettings();
 
-    /**
-     * создаем лоадер для чтения данных
-     */
-    private void initLoader(){
-        Loader loader = getActivity().getSupportLoaderManager().getLoader(URL_LOADER);
-        if (null == loader) {
-            LOGD(TAG, "Loader is null");
-            getActivity().getSupportLoaderManager().initLoader(URL_LOADER, null, this);
-        } else {
-            LOGD(TAG, "Loader is " + loader);
-            loader.forceLoad();
-        }
+        return mMainView;
     }
 
     @Override
@@ -188,30 +181,18 @@ public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<
         super.onResume();
         LOGD(TAG, "onResume: currentThread = " + Thread.currentThread());
         isQuotesFetched = false;
-        Loader loader = getActivity().getSupportLoaderManager().getLoader(URL_LOADER);
-        if (null != loader) {
-            LOGD(TAG, "Loader is " + loader);
-            loader.forceLoad();
+        updateSettings();
+    }
+
+    private void onSettingsUpdated(Cursor result){
+        if(null == result || 0 >= result.getCount()){
+            // Удаляем ссылку на Cursor в адаптере. Это предотвращает утечку памяти.
+            mSimpleCursorAdapter.changeCursor(null);
+            return;
         }
-    }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        NotificationManager.removeListener(this);
-//        if (null != mDataSource) mDataSource.close();
-        LOGD(TAG, "onDestroy");
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new MyCursorLoader(getActivity(), EconomicWidgetConfigureActivity.mDataSource, getArguments().getInt(ARG_WIDGET_ID));
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mSimpleCursorAdapter.changeCursor(data);
-        mWidgetItemsNumber = data.getCount();
+        mSimpleCursorAdapter.changeCursor(result);
+        mWidgetItemsNumber = result.getCount();
         mFetchQuote = null;
         Button button = (Button) mMainView.findViewById(R.id.btnAddQuote);
         if (0 < mWidgetItemsNumber) {
@@ -224,17 +205,34 @@ public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<
             new FetchQuote(getActivity()).execute(new String[]{String.valueOf(mWidgetId)});
         }
 
-        LOGD(TAG, "onLoadFinished: currentThread = " + Thread.currentThread());
         LOGD(TAG, "swapCursor: cursor.getCount = mWidgetItemsNumber = " + mWidgetItemsNumber);
     }
 
+    private void updateSettings() {
+        cancelUpdateSettings();
+        mUpdateCallback = new DbProvider.ResultCallback<Cursor>() {
+            @Override
+            public void onFinished(Cursor result) {
+                if (mUpdateCallback != this) return;
+                onSettingsUpdated(result);
+            }
+        };
+        mDbProvider.getCursorSettingsWithModelByWidgetId(mWidgetId, mUpdateCallback);
+    }
+
+    private void cancelUpdateSettings() {
+        if (mUpdateCallback == null) return;
+        mUpdateCallback = null;
+    }
+
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        /*
-         * Удаляем ссылку на Cursor в адаптере.
-         * Это предотвращает утечку памяти.
-         */
-        mSimpleCursorAdapter.changeCursor(null);
+    public void onDestroyView() {
+        super.onDestroyView();
+        LOGD(TAG, "onDestroyView");
+
+        NotificationManager.removeListener(this);
+        cancelUpdateSettings();
+        mNotifier.removeListener(mDbListener);
     }
 
     @Override
@@ -276,8 +274,7 @@ public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<
 
         // извлекаем id записи и удаляем соответствующую запись в БД
         EconomicWidgetConfigureActivity.mDataSource.deleteSettingsByIdAndUpdatePositions(settingId, pos);
-        // получаем новый курсор с данными
-        getActivity().getSupportLoaderManager().getLoader(URL_LOADER).forceLoad();
+        updateSettings();
     }
 
     private void onQuoteTypeSelected(int quoteTypePos, int position) {
@@ -305,8 +302,6 @@ public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<
     public void onDetach() {
         super.onDetach();
         mListener = null;
-//        if (null != mDataSource) mDataSource.close(); // закрываем подключение при выходе
-        getActivity().getSupportLoaderManager().destroyLoader(URL_LOADER);
         LOGD(TAG, "onDetach");
     }
 
@@ -539,35 +534,6 @@ public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<
         }
     }
 
-    static class MyCursorLoader extends CursorLoader {
-
-        QuoteDataSource mDataSource;
-        int mWidgetId;
-        private Context mContext;
-
-        public MyCursorLoader(Context context, QuoteDataSource dataSource, int widgetId) {
-            super(context);
-            mDataSource = dataSource;
-            mWidgetId = widgetId;
-            mContext = context;
-        }
-
-        @Override
-        public Cursor loadInBackground() {
-            Cursor cursor = mDataSource.getCursorSettingsWithModelByWidgetId(mWidgetId);
-            LOGD(TAG, "loadInBackground: currentThread = " + Thread.currentThread());
-
-            LOGD(TAG, "[loadInBackground]: cursor.getCount: " + cursor.getCount());
-//            try {
-//                TimeUnit.SECONDS.sleep(3);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-            return cursor;
-        }
-
-    }
-
     private class FetchQuote extends AsyncTask<String, Void, List<Model>> {
 
         private final String TAG = makeLogTag(FetchQuote.class);
@@ -652,14 +618,7 @@ public class TrackingQuotesFragment extends Fragment implements LoaderCallbacks<
             FragmentActivity activity = getActivity();
             if (null == activity) return;
 
-            LoaderManager loaderManager = activity.getSupportLoaderManager();
-            if (null == loaderManager) return;
-
-            Loader loader = loaderManager.getLoader(URL_LOADER);
-            if (null != loader) {
-                LOGD(TAG, "Loader is " + loader);
-                loader.forceLoad();
-            }
+            updateSettings();
 
             isQuotesFetched = true;
         }
