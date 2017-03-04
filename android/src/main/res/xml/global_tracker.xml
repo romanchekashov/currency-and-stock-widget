@@ -3,10 +3,11 @@
 
     <integer name="ga_sessionTimeout">300</integer>
 
-    <!-- the Local LogLevel for Analytics -->
+
+    <!-- the Local LogLevel for Analytics: Comment on prod -->
     <string name="ga_logLevel">verbose</string>
 
-    <!-- Treat events as test events and don't send to google -->
+    <!-- Treat events as test events and don't send to google: Comment on prod -->
     <bool name="ga_dryRun">true</bool>
 
     <!-- Enable automatic Activity measurement -->
