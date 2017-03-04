@@ -6,13 +6,24 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.VisibleForTesting;
 
-import java.util.ArrayList;
+import java.io.IOException;
+import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import ru.besttuts.stockwidget.model.Model;
+import ru.besttuts.stockwidget.model.QuoteLastTradeDate;
+import ru.besttuts.stockwidget.model.QuoteType;
+import ru.besttuts.stockwidget.model.Setting;
+import ru.besttuts.stockwidget.provider.QuoteContract;
+import ru.besttuts.stockwidget.provider.QuoteDatabaseHelper;
+import ru.besttuts.stockwidget.sync.MyFinanceWS;
+
+import static ru.besttuts.stockwidget.util.LogUtils.LOGE;
+import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
 /**
  * @author rchekashov
@@ -20,6 +31,8 @@ import ru.besttuts.stockwidget.model.Model;
  */
 
 public class DbProvider {
+    private static final String TAG = makeLogTag(DbProvider.class);
+
     private static int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
     class CustomExecutor extends ThreadPoolExecutor {
         CustomExecutor() {
@@ -28,6 +41,8 @@ public class DbProvider {
     }
 
     private static DbProvider sDbProviderInstance;
+
+    private Context mContext;
 
     private final DbBackend mDbBackend;
     private final DbBackendAdapter mDbBackendAdapter;
@@ -40,6 +55,7 @@ public class DbProvider {
     }
 
     private DbProvider(Context context) {
+        mContext = context;
         mDbBackend = new DbBackend(context);
         mDbBackendAdapter = new DbBackendAdapter(mDbBackend);
         mDbNotificationManager = DbNotificationManager.getInstance();
@@ -99,5 +115,74 @@ public class DbProvider {
                 });
             }
         });
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                syncQuotesWithLastTradeDate(widgetId);
+                final Cursor cursor = mDbBackend.getCursorSettingsWithModelByWidgetId(widgetId);
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onFinished(cursor);
+                    }
+                });
+            }
+        });
+    }
+
+    private void syncQuotesWithLastTradeDate(int widgetId){
+        List<Setting> settings = mDbBackendAdapter.getSettingsByWidgetId(widgetId);
+
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+
+        long today = calendar.getTimeInMillis();
+
+        for (Setting setting: settings){
+            if (QuoteType.GOODS != setting.getQuoteType() || today < setting.getLastTradeDate()){
+                continue;
+            }
+
+            updateSettingWithNewSymbolAndLastTradeDate(setting, today);
+
+            mDbBackend.persist(setting);
+        }
+    }
+
+    private void updateSettingWithNewSymbolAndLastTradeDate(Setting setting, long today) {
+        String symbol = setting.getQuoteSymbol();
+        String code = symbol.substring(0, symbol.length() - 7);
+
+        Cursor cursor = mDbBackend.getCursorQuoteLastTradeDateForCurrentDay(code, today);
+
+        if (null == cursor || 0 == cursor.getCount()){
+            try {
+                MyFinanceWS ws = new MyFinanceWS(mContext);
+                List<QuoteLastTradeDate> quoteLastTradeDates = ws.getQuotesWithLastTradeDate();
+
+                mDbBackend.insertQuoteLastTradeDate(quoteLastTradeDates);
+
+                cursor = mDbBackend.getCursorQuoteLastTradeDateForCurrentDay(code, today);
+
+                if (null == cursor || 0 == cursor.getCount()) return;
+            } catch (IOException e) {
+                LOGE(TAG, e.getMessage());
+                return;
+            }
+        }
+
+        cursor.moveToFirst();
+
+        String newSymbol = cursor.getString(cursor.getColumnIndexOrThrow(
+                QuoteContract.QuoteLastTradeDateColumns.SYMBOL));
+        long newLastTradeDate = cursor.getLong(cursor.getColumnIndexOrThrow(
+                QuoteContract.QuoteLastTradeDateColumns.LAST_TRADE_DATE));
+
+        setting.setQuoteSymbol(newSymbol);
+        setting.setLastTradeDate(newLastTradeDate);
+
+        cursor.close();
     }
 }

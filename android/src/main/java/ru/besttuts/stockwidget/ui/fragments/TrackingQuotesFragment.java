@@ -412,7 +412,7 @@ public class TrackingQuotesFragment extends Fragment
             Cursor cursor = (Cursor) getItem(position);
             String symbol = cursor.getString(cursor.getColumnIndexOrThrow(
                     QuoteContract.ModelColumns.MODEL_ID));
-            LOGD(TAG, "getView: symbol = " + symbol + " currentThread = " + Thread.currentThread());
+//            LOGD(TAG, "getView: symbol = " + symbol + " currentThread = " + Thread.currentThread());
 
             if (null == symbol || symbol.isEmpty()) {
                 int quoteType = cursor.getInt(cursor.getColumnIndexOrThrow(
@@ -614,10 +614,10 @@ public class TrackingQuotesFragment extends Fragment
 
             if (0 == models.size()) return;
 
-            LOGD(TAG, "FetchQuote.onPostExecute: currentThread = " + Thread.currentThread());
             FragmentActivity activity = getActivity();
             if (null == activity) return;
 
+            LOGD(TAG, "FetchQuote.onPostExecute: currentThread = " + Thread.currentThread());
             updateSettings();
 
             isQuotesFetched = true;
@@ -649,14 +649,12 @@ public class TrackingQuotesFragment extends Fragment
                     case 0:
                         Cursor cursor = (Cursor) mSimpleCursorAdapter.getItem(position);
 //                        String url = "http://finance.yahoo.com/quote/";
-                        String url = "http://finance.yahoo.com/chart/";
+                        String url = "http://finance.yahoo.com/q";
                         String symbol = cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_ID));
                         if(QuoteType.CURRENCY == cursor.getInt(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_QUOTE_TYPE))) {
-//                            url += String.format("%s=X?p=%s=X&ql=1", symbol, symbol);
-                            url += symbol + "=X";
+                            url += String.format("?s=%s=X&ql=1", symbol);
                         } else {
-//                            url += String.format("%s?p=%s&ql=1", symbol, symbol);
-                            url += symbol;
+                            url += String.format("?s=%s&ql=1", symbol);
                         }
 
                         Intent intent = new Intent(getActivity(), DynamicWebViewActivity.class);

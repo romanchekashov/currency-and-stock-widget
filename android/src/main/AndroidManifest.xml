@@ -52,6 +52,7 @@
 
         <!-- The main/home activity (it has no parent activity) -->
         <activity
+            android:screenOrientation="portrait"
             android:name=".ui.activities.EconomicWidgetConfigureActivity"
             android:theme="@style/AppTheme.Light" >
             <intent-filter>

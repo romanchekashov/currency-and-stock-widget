@@ -1,5 +1,9 @@
 package ru.besttuts.stockwidget.model;
 
+import android.database.Cursor;
+
+import ru.besttuts.stockwidget.provider.QuoteContract;
+
 /**
  * Created by roman on 15.01.2015.
  */
@@ -84,5 +88,18 @@ public class Setting {
                 ", quoteSymbol='" + quoteSymbol + '\'' +
                 ", lastTradeDate=" + lastTradeDate +
                 '}';
+    }
+
+    public static Setting map(Cursor cursor) {
+        Setting setting = new Setting();
+        setting.set_id(cursor.getInt(cursor.getColumnIndexOrThrow(QuoteContract.Settings._ID)));
+        setting.setId(cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_ID)));
+        setting.setWidgetId(cursor.getInt(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_WIDGET_ID)));
+        setting.setQuotePosition(cursor.getInt(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_QUOTE_POSITION)));
+        setting.setQuoteType(cursor.getInt(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_QUOTE_TYPE)));
+        setting.setQuoteSymbol(cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_QUOTE_SYMBOL)));
+        setting.setLastTradeDate(cursor.getLong(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.LAST_TRADE_DATE)));
+
+        return setting;
     }
 }
