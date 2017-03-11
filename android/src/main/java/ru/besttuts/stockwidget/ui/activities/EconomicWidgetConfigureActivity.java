@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -79,7 +78,6 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
     public static final String PREFS_NAME = "ru.besttuts.stockwidget.ui.EconomicWidget";
     private static final String PREF_PREFIX_KEY = "appwidget_";
 
-    private SyncSettingsTask mSyncSettingsTask;
     public static QuoteDataSource mDataSource;
 
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
@@ -225,8 +223,6 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
         // создаем объект для создания и управления версиями БД
         mDataSource = new QuoteDataSource(this);
 
-        mSyncSettingsTask = new SyncSettingsTask();
-        mSyncSettingsTask.execute((Void[]) null);
 //        DisplayMetrics metrics = new DisplayMetrics();
 //        getWindowManager().getDefaultDisplay().getMetrics(metrics);
 //        LOGD(TAG, String.format("onCreate: density = %f, densityDpi = %d, heightPixels = %d, " +
@@ -483,27 +479,6 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             getWindow().setStatusBarColor(color);
-        }
-    }
-
-    public class SyncSettingsTask extends AsyncTask<Void, Void, Integer> {
-
-        SyncSettingsTask() {}
-
-        @Override
-        protected Integer doInBackground(Void... params) {
-            mDataSource.getAllSettingsWithCheck();
-            return 0;
-        }
-
-        @Override
-        protected void onPostExecute(final Integer resId) {
-
-        }
-
-        @Override
-        protected void onCancelled() {
-            mSyncSettingsTask = null;
         }
     }
 }

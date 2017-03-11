@@ -104,7 +104,10 @@ public class DbBackend implements DbContract {
 
         for (QuoteLastTradeDate quote: quoteLastTradeDates){
             ContentValues values = new ContentValues();
+
+            if(null == quote.getSymbol()) continue;
             values.put(QuoteContract.QuoteLastTradeDateColumns.SYMBOL, quote.getSymbol());
+
             values.put(QuoteContract.QuoteLastTradeDateColumns.CODE, quote.getCode());
             values.put(QuoteContract.QuoteLastTradeDateColumns.LAST_TRADE_DATE, quote.getLastTradeDate());
 
@@ -134,7 +137,10 @@ public class DbBackend implements DbContract {
         values.put(QuoteContract.SettingColumns.SETTING_WIDGET_ID, setting.getWidgetId());
         values.put(QuoteContract.SettingColumns.SETTING_QUOTE_POSITION, setting.getQuotePosition());
         values.put(QuoteContract.SettingColumns.SETTING_QUOTE_TYPE, setting.getQuoteType());
+
+        if(null == setting.getQuoteSymbol()) return;
         values.put(QuoteContract.SettingColumns.SETTING_QUOTE_SYMBOL, setting.getQuoteSymbol());
+
         values.put(QuoteContract.SettingColumns.LAST_TRADE_DATE, setting.getLastTradeDate());
 
         long rowId = db.insertWithOnConflict(
