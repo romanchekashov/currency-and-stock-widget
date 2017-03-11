@@ -14,6 +14,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import ru.besttuts.stockwidget.io.model.Result;
 import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.QuoteLastTradeDate;
 import ru.besttuts.stockwidget.model.QuoteType;
@@ -86,6 +87,29 @@ public class DbProvider {
         mExecutor = executor;
     }
 
+    public List<Setting> getAllSettings(){
+        return mDbBackendAdapter.getAllSettings();
+    }
+
+    public List<Setting> getAllSettingsWithCheck(){
+        List<Setting> settings = getAllSettings();
+        syncQuotesWithLastTradeDate(settings);
+        return settings;
+    }
+
+    public void addSettingsRec(int mAppWidgetId, int widgetItemPosition,
+                               int type, String[] symbols){
+        mDbBackendAdapter.addSettingsRec(mAppWidgetId, widgetItemPosition, type, symbols);
+    }
+
+    public void addQuoteRec(Result result){
+        mDbBackend.addQuoteRec(result);
+    }
+
+    public void addModelRec(Model model){
+        mDbBackend.addModelRec(model);
+    }
+
     public void getModelsByWidgetId(final int widgetId, final ResultCallback<List<Model>> callback) {
         mExecutor.execute(new Runnable() {
             @Override
@@ -118,7 +142,9 @@ public class DbProvider {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                syncQuotesWithLastTradeDate(widgetId);
+                List<Setting> settings = mDbBackendAdapter.getSettingsByWidgetId(widgetId);
+                syncQuotesWithLastTradeDate(settings);
+
                 final Cursor cursor = mDbBackend.getCursorSettingsWithModelByWidgetId(widgetId);
                 mHandler.post(new Runnable() {
                     @Override
@@ -130,9 +156,7 @@ public class DbProvider {
         });
     }
 
-    private void syncQuotesWithLastTradeDate(int widgetId){
-        List<Setting> settings = mDbBackendAdapter.getSettingsByWidgetId(widgetId);
-
+    private void syncQuotesWithLastTradeDate(List<Setting> settings){
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);

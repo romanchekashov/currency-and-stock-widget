@@ -8,6 +8,7 @@ import java.util.List;
 
 import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.Setting;
+import ru.besttuts.stockwidget.model.SettingModel;
 
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
@@ -27,6 +28,37 @@ public class DbBackendAdapter implements DbContract {
 
     DbBackendAdapter(DbBackend dbBackend) {
         mDbBackend = dbBackend;
+    }
+
+    List<Setting> getAllSettings(){
+        Cursor cursor = mDbBackend.getAllSettings();
+        if (0 >= cursor.getCount()) return new ArrayList<>();
+
+        List<Setting> list = new ArrayList<>(cursor.getCount());
+        cursor.moveToFirst();
+        do {
+            list.add(Setting.map(cursor));
+        } while (cursor.moveToNext());
+
+        return list;
+    }
+
+    void addSettingsRec(int mAppWidgetId, int widgetItemPosition,
+                        int type, String[] symbols){
+        for (int i = 0; i < symbols.length; i++) {
+            String symbol = symbols[i];
+            int position = widgetItemPosition + i;
+            String id = mAppWidgetId + "_" + position;
+
+            Setting setting = new Setting();
+            setting.setId(id);
+            setting.setWidgetId(mAppWidgetId);
+            setting.setQuotePosition(position);
+            setting.setQuoteType(type);
+            setting.setQuoteSymbol(symbol);
+
+            mDbBackend.persist(setting);
+        }
     }
 
     public List<Model> getModelsByWidgetId(int widgetId) {
@@ -50,6 +82,19 @@ public class DbBackendAdapter implements DbContract {
         cursor.moveToFirst();
         do {
             list.add(Setting.map(cursor));
+        } while (cursor.moveToNext());
+
+        return list;
+    }
+
+    List<SettingModel> getSettingsWithModelByWidgetId(int widgetId){
+        final Cursor cursor = mDbBackend.getCursorSettingsWithModelByWidgetId(widgetId);
+        if (0 >= cursor.getCount()) return new ArrayList<>();
+
+        List<SettingModel> list = new ArrayList<>(cursor.getCount());
+        cursor.moveToFirst();
+        do {
+            list.add(SettingModel.map(cursor));
         } while (cursor.moveToNext());
 
         return list;
