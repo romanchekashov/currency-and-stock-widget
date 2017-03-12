@@ -17,7 +17,7 @@ public class Config {
     private static final String TAG = makeLogTag(Config.class);
 
     // General configuration
-    public static final boolean IS_DEV_MODE = false;
+    public static final boolean IS_DEV_MODE = true;
 
     // Is this an internal dogfood build?
     public static final boolean IS_DOGFOOD_BUILD = false;
