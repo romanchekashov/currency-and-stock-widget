@@ -37,12 +37,12 @@ public class CustomConverter {
         if(null != rate.Name) {
             currency.setName(rate.Name.replace(" to ", "/"));
         }
-        currency.setRate(rate.Rate);
+        if(null != rate.Rate) currency.setRate(rate.Rate);
 
         try {
-            Double ask = Double.parseDouble(rate.Ask);
-            Double bid = Double.parseDouble(rate.Bid);
-            currency.setChange(ask - bid);
+            Double ask = (null == rate.Ask) ? null : Double.parseDouble(rate.Ask);
+            Double bid = (null == rate.Bid) ? null : Double.parseDouble(rate.Bid);
+            if(null != ask && null != bid) currency.setChange(ask - bid);
         } catch (NumberFormatException e) {
             LOGE(TAG, e.getMessage());
         }

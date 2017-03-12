@@ -37,6 +37,19 @@ public class YahooMultiQueryData {
             Ask = ask;
             Bid = bid;
         }
+
+        @Override
+        public String toString() {
+            return "Rate{" +
+                    "id='" + id + '\'' +
+                    ", Name='" + Name + '\'' +
+                    ", Rate=" + Rate +
+                    ", Date='" + Date + '\'' +
+                    ", Time='" + Time + '\'' +
+                    ", Ask='" + Ask + '\'' +
+                    ", Bid='" + Bid + '\'' +
+                    '}';
+        }
     }
 
     public static class Quote {
@@ -237,6 +250,95 @@ public class YahooMultiQueryData {
             StockExchange = stockExchange;
             DividendYield = dividendYield;
             PercentChange = percentChange;
+        }
+
+        @Override
+        public String toString() {
+            return "Quote{" +
+                    "symbol='" + symbol + '\'' +
+                    ", Ask='" + Ask + '\'' +
+                    ", AverageDailyVolume='" + AverageDailyVolume + '\'' +
+                    ", Bid='" + Bid + '\'' +
+                    ", AskRealtime='" + AskRealtime + '\'' +
+                    ", BidRealtime='" + BidRealtime + '\'' +
+                    ", BookValue='" + BookValue + '\'' +
+                    ", Change_PercentChange='" + Change_PercentChange + '\'' +
+                    ", Change=" + Change +
+                    ", Commission='" + Commission + '\'' +
+                    ", Currency='" + Currency + '\'' +
+                    ", ChangeRealtime='" + ChangeRealtime + '\'' +
+                    ", AfterHoursChangeRealtime='" + AfterHoursChangeRealtime + '\'' +
+                    ", DividendShare='" + DividendShare + '\'' +
+                    ", LastTradeDate='" + LastTradeDate + '\'' +
+                    ", TradeDate='" + TradeDate + '\'' +
+                    ", EarningsShare='" + EarningsShare + '\'' +
+                    ", ErrorIndicationreturnedforsymbolchangedinvalid='" + ErrorIndicationreturnedforsymbolchangedinvalid + '\'' +
+                    ", EPSEstimateCurrentYear='" + EPSEstimateCurrentYear + '\'' +
+                    ", EPSEstimateNextYear='" + EPSEstimateNextYear + '\'' +
+                    ", EPSEstimateNextQuarter='" + EPSEstimateNextQuarter + '\'' +
+                    ", DaysLow='" + DaysLow + '\'' +
+                    ", DaysHigh='" + DaysHigh + '\'' +
+                    ", YearLow='" + YearLow + '\'' +
+                    ", YearHigh='" + YearHigh + '\'' +
+                    ", HoldingsGainPercent='" + HoldingsGainPercent + '\'' +
+                    ", AnnualizedGain='" + AnnualizedGain + '\'' +
+                    ", HoldingsGain='" + HoldingsGain + '\'' +
+                    ", HoldingsGainPercentRealtime='" + HoldingsGainPercentRealtime + '\'' +
+                    ", HoldingsGainRealtime='" + HoldingsGainRealtime + '\'' +
+                    ", MoreInfo='" + MoreInfo + '\'' +
+                    ", OrderBookRealtime='" + OrderBookRealtime + '\'' +
+                    ", MarketCapitalization='" + MarketCapitalization + '\'' +
+                    ", MarketCapRealtime='" + MarketCapRealtime + '\'' +
+                    ", EBITDA='" + EBITDA + '\'' +
+                    ", ChangeFromYearLow='" + ChangeFromYearLow + '\'' +
+                    ", PercentChangeFromYearLow='" + PercentChangeFromYearLow + '\'' +
+                    ", LastTradeRealtimeWithTime='" + LastTradeRealtimeWithTime + '\'' +
+                    ", ChangePercentRealtime='" + ChangePercentRealtime + '\'' +
+                    ", ChangeFromYearHigh='" + ChangeFromYearHigh + '\'' +
+                    ", PercebtChangeFromYearHigh='" + PercebtChangeFromYearHigh + '\'' +
+                    ", LastTradeWithTime='" + LastTradeWithTime + '\'' +
+                    ", LastTradePriceOnly=" + LastTradePriceOnly +
+                    ", HighLimit='" + HighLimit + '\'' +
+                    ", LowLimit='" + LowLimit + '\'' +
+                    ", DaysRange='" + DaysRange + '\'' +
+                    ", DaysRangeRealtime='" + DaysRangeRealtime + '\'' +
+                    ", FiftydayMovingAverage='" + FiftydayMovingAverage + '\'' +
+                    ", TwoHundreddayMovingAverage='" + TwoHundreddayMovingAverage + '\'' +
+                    ", ChangeFromTwoHundreddayMovingAverage='" + ChangeFromTwoHundreddayMovingAverage + '\'' +
+                    ", PercentChangeFromTwoHundreddayMovingAverage='" + PercentChangeFromTwoHundreddayMovingAverage + '\'' +
+                    ", ChangeFromFiftydayMovingAverage='" + ChangeFromFiftydayMovingAverage + '\'' +
+                    ", PercentChangeFromFiftydayMovingAverage='" + PercentChangeFromFiftydayMovingAverage + '\'' +
+                    ", Name='" + Name + '\'' +
+                    ", Notes='" + Notes + '\'' +
+                    ", Open='" + Open + '\'' +
+                    ", PreviousClose='" + PreviousClose + '\'' +
+                    ", PricePaid='" + PricePaid + '\'' +
+                    ", ChangeinPercent='" + ChangeinPercent + '\'' +
+                    ", PriceSales='" + PriceSales + '\'' +
+                    ", PriceBook='" + PriceBook + '\'' +
+                    ", ExDividendDate='" + ExDividendDate + '\'' +
+                    ", PERatio='" + PERatio + '\'' +
+                    ", DividendPayDate='" + DividendPayDate + '\'' +
+                    ", PERatioRealtime='" + PERatioRealtime + '\'' +
+                    ", PEGRatio='" + PEGRatio + '\'' +
+                    ", PriceEPSEstimateCurrentYear='" + PriceEPSEstimateCurrentYear + '\'' +
+                    ", PriceEPSEstimateNextYear='" + PriceEPSEstimateNextYear + '\'' +
+                    ", Symbol='" + Symbol + '\'' +
+                    ", SharesOwned='" + SharesOwned + '\'' +
+                    ", ShortRatio='" + ShortRatio + '\'' +
+                    ", LastTradeTime='" + LastTradeTime + '\'' +
+                    ", TickerTrend='" + TickerTrend + '\'' +
+                    ", OneyrTargetPrice='" + OneyrTargetPrice + '\'' +
+                    ", Volume='" + Volume + '\'' +
+                    ", HoldingsValue='" + HoldingsValue + '\'' +
+                    ", HoldingsValueRealtime='" + HoldingsValueRealtime + '\'' +
+                    ", YearRange='" + YearRange + '\'' +
+                    ", DaysValueChange='" + DaysValueChange + '\'' +
+                    ", DaysValueChangeRealtime='" + DaysValueChangeRealtime + '\'' +
+                    ", StockExchange='" + StockExchange + '\'' +
+                    ", DividendYield='" + DividendYield + '\'' +
+                    ", PercentChange='" + PercentChange + '\'' +
+                    '}';
         }
     }
 

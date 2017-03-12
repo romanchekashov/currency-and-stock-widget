@@ -149,9 +149,11 @@ public class RemoteYahooFinanceDataFetcher {
 
         YahooFinanceService service = retrofit.create(YahooFinanceService.class);
 
-        return service.yahooMultiQueryData(YahooQueryBuilder
-                .buildYahooFinanceMultiQuery(currencyExchangeSet, goodSet)
-        ).execute().body();
+        String yahooQuery = YahooQueryBuilder.buildYahooFinanceMultiQuery(currencyExchangeSet, goodSet);
+
+        LOGD(TAG, "(getYahooMultiQueryData): " + YahooQueryBuilder.HTTP_QUERY_YAHOOAPIS_COM_V1_PUBLIC + yahooQuery);
+
+        return service.yahooMultiQueryData(yahooQuery).execute().body();
     }
 
     public String downloadUrl(String sUrl) throws IOException {

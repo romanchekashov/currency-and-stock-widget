@@ -58,3 +58,13 @@
 -keepattributes Signature
 # Retain declared checked exceptions for use by a Proxy instance.
 -keepattributes Exceptions
+
+# Gson specific classes
+-keep class sun.misc.Unsafe { *; }
+-keep class com.google.gson.**
+-keep class ru.besttuts.stockwidget.sync.model.** { *; }
+-keep class ru.besttuts.stockwidget.io.model.** { *; }
+-keep class ru.besttuts.stockwidget.model.** { *; }
+
+#-keep class ru.besttuts.stockwidget.** # Don't proguard classes for Debug
+
