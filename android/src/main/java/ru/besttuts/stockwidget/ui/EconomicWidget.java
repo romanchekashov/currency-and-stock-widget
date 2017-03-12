@@ -21,10 +21,12 @@ import android.view.View;
 import android.widget.RemoteViews;
 
 import ru.besttuts.stockwidget.BuildConfig;
+import ru.besttuts.stockwidget.Config;
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
+import ru.besttuts.stockwidget.provider.db.DbProvider;
 import ru.besttuts.stockwidget.service.QuoteWidgetService;
 import ru.besttuts.stockwidget.service.UpdateService;
 import ru.besttuts.stockwidget.ui.activities.DynamicWebViewActivity;
@@ -136,14 +138,12 @@ public class EconomicWidget extends AppWidgetProvider {
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
         // Удаляем все данные ассоциированные с удаляемым виджетом.
-        QuoteDataSource dataSource = new QuoteDataSource(context);
         for (int widgetId: appWidgetIds) {
-            dataSource.deleteSettingsByWidgetId(widgetId);
+            DbProvider.getInstance().deleteSettingsByWidgetId(widgetId);
             EconomicWidgetConfigureActivity.deleteLastUpdateTimePref(context, widgetId);
             EconomicWidgetConfigureActivity.deleteWidgetLayoutPref(context, widgetId);
             EconomicWidgetConfigureActivity.deleteWidgetLayoutGridItemPref(context, widgetId);
         }
-        dataSource.close();
 
         if(BuildConfig.DEBUG) {
             StringBuilder widgetIdStrBuilder = new StringBuilder();
@@ -219,68 +219,22 @@ public class EconomicWidget extends AppWidgetProvider {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         final int appWidgetIds[] = appWidgetManager.getAppWidgetIds(thisAppWidget);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                LOGD(TAG, "[onEnabled]: set defaultCommodities START");
-
-                QuoteDataSource dataSource = new QuoteDataSource(context);
-
-                String lng = context.getResources().getConfiguration().locale.getLanguage();
-
-                final String[] defaultCommodities = new String[]{"BZF16.NYM", "NGZ15.NYM", "GCX15.CMX"};
-                if ("ru".equals(lng)) {
-                    dataSource.addSettingsRec(appWidgetIds[0], 1, QuoteType.CURRENCY,
-                            new String[]{"EURUSD", "USDRUB", "EURRUB"});
-                    dataSource.addSettingsRec(appWidgetIds[0], 4, QuoteType.GOODS, defaultCommodities);
-                } else if ("uk".equals(lng)) {
-                    dataSource.addSettingsRec(appWidgetIds[0], 1, QuoteType.CURRENCY,
-                            new String[]{"EURUSD", "USDUAH", "EURUAH"});
-                    dataSource.addSettingsRec(appWidgetIds[0], 4, QuoteType.GOODS, defaultCommodities);
-                } else {
-                    dataSource.addSettingsRec(appWidgetIds[0], 1, QuoteType.CURRENCY,
-                            new String[]{"EURUSD"});
-                    dataSource.addSettingsRec(appWidgetIds[0], 2, QuoteType.GOODS, defaultCommodities);
-                }
-
-                LOGD(TAG, "[onEnabled]: set defaultCommodities END size = " + dataSource.getAllSettings().size());
-
-                dataSource.close();
-
-            }
-        }).start();
-
-
-
-//        dataSource.addModelRec(QuoteType.CURRENCY, "EURUSD");
-//        dataSource.addModelRec(QuoteType.CURRENCY, "USDRUB");
-//        dataSource.addModelRec(QuoteType.CURRENCY, "EURRUB");
-//
-//        dataSource.addModelRec(QuoteType.GOODS, "BZH15.NYM");
-//        dataSource.addModelRec(QuoteType.GOODS, "NGH15.NYM");
-//        dataSource.addModelRec(QuoteType.GOODS, "GCF15.CMX");
-//
-//        dataSource.addModelRec(QuoteType.STOCK, "AAPL");
-//        dataSource.addModelRec(QuoteType.STOCK, "GOOG");
-//        dataSource.addModelRec(QuoteType.STOCK, "IBM");
-//        dataSource.addModelRec(QuoteType.STOCK, "MCD");
-//        dataSource.addModelRec(QuoteType.STOCK, "MSFT");
-//        dataSource.addModelRec(QuoteType.STOCK, "KO");
-//        dataSource.addModelRec(QuoteType.STOCK, "T");
-//        dataSource.addModelRec(QuoteType.STOCK, "PM");
-//        dataSource.addModelRec(QuoteType.STOCK, "CHL");
-//        dataSource.addModelRec(QuoteType.STOCK, "GE");
-//        dataSource.addModelRec(QuoteType.STOCK, "VOD");
-//        dataSource.addModelRec(QuoteType.STOCK, "VZ");
-//        dataSource.addModelRec(QuoteType.STOCK, "AMZN");
-//        dataSource.addModelRec(QuoteType.STOCK, "WMT");
-//        dataSource.addModelRec(QuoteType.STOCK, "WFC");
-//        dataSource.addModelRec(QuoteType.STOCK, "UPS");
-//        dataSource.addModelRec(QuoteType.STOCK, "HPQ");
-//        dataSource.addModelRec(QuoteType.STOCK, "TMUS");
-//        dataSource.addModelRec(QuoteType.STOCK, "Visa");
-
-
+        DbProvider dataSource = DbProvider.getInstance();
+        String lng = Config.getInstance().getLanguage();
+        final String[] defaultCommodities = new String[]{"BZF16.NYM", "NGZ15.NYM", "GCX15.CMX"};
+        if ("ru".equals(lng)) {
+            dataSource.addSettingsRec(appWidgetIds[0], 1, QuoteType.CURRENCY,
+                    new String[]{"EURUSD", "USDRUB", "EURRUB"});
+            dataSource.addSettingsRec(appWidgetIds[0], 4, QuoteType.GOODS, defaultCommodities);
+        } else if ("uk".equals(lng)) {
+            dataSource.addSettingsRec(appWidgetIds[0], 1, QuoteType.CURRENCY,
+                    new String[]{"EURUSD", "USDUAH", "EURUAH"});
+            dataSource.addSettingsRec(appWidgetIds[0], 4, QuoteType.GOODS, defaultCommodities);
+        } else {
+            dataSource.addSettingsRec(appWidgetIds[0], 1, QuoteType.CURRENCY,
+                    new String[]{"EURUSD"});
+            dataSource.addSettingsRec(appWidgetIds[0], 2, QuoteType.GOODS, defaultCommodities);
+        }
     }
 
     /**

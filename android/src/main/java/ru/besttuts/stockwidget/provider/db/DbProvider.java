@@ -97,9 +97,15 @@ public class DbProvider {
         return settings;
     }
 
-    public void addSettingsRec(int mAppWidgetId, int widgetItemPosition,
-                               int type, String[] symbols){
-        mDbBackendAdapter.addSettingsRec(mAppWidgetId, widgetItemPosition, type, symbols);
+    public void addSettingsRec(final int mAppWidgetId, final int widgetItemPosition,
+                               final int type, final String[] symbols){
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                mDbBackendAdapter.addSettingsRec(mAppWidgetId, widgetItemPosition, type, symbols);
+                mDbNotificationManager.notifyListeners();
+            }
+        });
     }
 
     public void addQuoteRec(Result result){
@@ -108,6 +114,10 @@ public class DbProvider {
 
     public void addModelRec(Model model){
         mDbBackend.addModelRec(model);
+    }
+
+    public List<Model> getModelsByWidgetId(final int widgetId) {
+        return mDbBackendAdapter.getModelsByWidgetId(widgetId);
     }
 
     public void getModelsByWidgetId(final int widgetId, final ResultCallback<List<Model>> callback) {
@@ -156,7 +166,51 @@ public class DbProvider {
         });
     }
 
-    private void syncQuotesWithLastTradeDate(List<Setting> settings){
+    public Cursor getCursorSettingsWithoutModelByWidgetId(int widgetId){
+        return mDbBackend.getCursorSettingsWithoutModelByWidgetId(widgetId);
+    }
+
+    public void deleteSettingsByWidgetId(final int widgetId){
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                mDbBackend.deleteSettingsByWidgetId(widgetId);
+                mDbNotificationManager.notifyListeners();
+            }
+        });
+    }
+
+    public void deleteSettingsById(final String settingId){
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                mDbBackend.deleteSettingsById(settingId);
+                mDbNotificationManager.notifyListeners();
+            }
+        });
+    }
+
+    public void deleteSettingsByIdAndUpdatePositions(final String settingId, final int position){
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                mDbBackend.deleteSettingsByIdAndUpdatePositions(settingId, position);
+                mDbNotificationManager.notifyListeners();
+            }
+        });
+    }
+
+    public void deleteAll(){
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                mDbBackend.deleteAll();
+                mDbNotificationManager.notifyListeners();
+            }
+        });
+    }
+
+    private synchronized void syncQuotesWithLastTradeDate(List<Setting> settings){
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);

@@ -16,7 +16,7 @@ import java.util.Map;
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.Setting;
-import ru.besttuts.stockwidget.provider.QuoteDataSource;
+import ru.besttuts.stockwidget.provider.db.DbProvider;
 import ru.besttuts.stockwidget.sync.RemoteYahooFinanceDataFetcher;
 import ru.besttuts.stockwidget.ui.EconomicWidget;
 import ru.besttuts.stockwidget.util.CustomConverter;
@@ -73,15 +73,10 @@ public class UpdateService extends Service {
 
         private Map<Integer, List<Model>> getCachedData() {
             Map<Integer, List<Model>> map = new HashMap<>();
-            QuoteDataSource dataSource = new QuoteDataSource(mContext);
 
-            final int N = allWidgetIds.length;
-            for (int i = 0; i < N; i++) {
-                int appWidgetId = allWidgetIds[i];
-                map.put(appWidgetId, dataSource.getModelsByWidgetId(appWidgetId));
+            for (int appWidgetId: allWidgetIds) {
+                map.put(appWidgetId, DbProvider.getInstance().getModelsByWidgetId(appWidgetId));
             }
-
-            dataSource.close();
 
             return map;
         }
@@ -101,7 +96,7 @@ public class UpdateService extends Service {
             }
 
             RemoteYahooFinanceDataFetcher dataFetcher = new RemoteYahooFinanceDataFetcher();
-            QuoteDataSource dataSource = new QuoteDataSource(mContext);
+            DbProvider dataSource = DbProvider.getInstance();
 
             try {
 
@@ -123,7 +118,6 @@ public class UpdateService extends Service {
                 }
 
                 for (Map.Entry<Integer, List<Model>> me : map.entrySet()) {
-                    int widgetId = me.getKey();
                     List<Model> models = me.getValue();
 
                     for (int i = 0, l = models.size(); i < l; i++) {
@@ -139,8 +133,6 @@ public class UpdateService extends Service {
                 LOGE(TAG, e.getMessage());
                 EconomicWidget.connectionStatus =
                         mContext.getString(R.string.connection_status_default_problem);
-            } finally {
-                dataSource.close();
             }
 
             return getCachedData();
@@ -150,11 +142,9 @@ public class UpdateService extends Service {
         protected void onPostExecute(Map<Integer, List<Model>> map) {
             super.onPostExecute(map);
 
-            // Обновляем все активные виджеты.
-            final int N = allWidgetIds.length;
-            for (int i = 0; i < N; i++) {
-                EconomicWidget.updateAppWidget(mContext, appWidgetManager, allWidgetIds[i],
-                        map.get(allWidgetIds[i]), hasInternet);
+            for (int widgetId: allWidgetIds) {
+                EconomicWidget.updateAppWidget(mContext, appWidgetManager, widgetId,
+                        map.get(widgetId), hasInternet);
             }
             LOGD(TAG, "Load Yahoo Finance Thread#" + startId + " end, stopSelfResult("
                     + startId + ") = " + stopSelfResult(startId));

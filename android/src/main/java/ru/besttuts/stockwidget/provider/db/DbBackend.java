@@ -103,6 +103,18 @@ public class DbBackend implements DbContract {
         return db.rawQuery(sqlQuery, new String[]{String.valueOf(widgetId)});
     }
 
+    Cursor getCursorSettingsWithoutModelByWidgetId(int widgetId) {
+        final SQLiteDatabase db = mDbOpenHelper.getReadableDatabase();
+
+        String sqlQuery = "select * "
+                + "from "+QuoteDatabaseHelper.Tables.SETTINGS+" as s "
+                + "left join "+QuoteDatabaseHelper.Tables.MODELS+" as m "
+                + "on s.setting_quote_symbol = m.model_id "
+                + "where s.setting_widget_id = ? and m.model_id is null order by "
+                + QuoteContract.SettingColumns.SETTING_QUOTE_POSITION + " asc";
+        return db.rawQuery(sqlQuery, new String[]{String.valueOf(widgetId)});
+    }
+
     public Cursor getCursorSettingsByWidgetId(int widgetId) {
         final SQLiteDatabase db = mDbOpenHelper.getReadableDatabase();
 
@@ -240,5 +252,71 @@ public class DbBackend implements DbContract {
                 SQLiteDatabase.CONFLICT_REPLACE);
 
         LOGD(TAG, "insertWithOnConflict rows count = " + count);
+    }
+
+    void deleteSettingsByWidgetId(int widgetId) {
+        final SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
+
+        int delCount = db.delete(QuoteDatabaseHelper.Tables.SETTINGS,
+                QuoteContract.SettingColumns.SETTING_WIDGET_ID + " = " + widgetId, null);
+
+        LOGD(TAG, "deleteSettingsByWidgetId: deleted rows count = " + delCount);
+
+        // Если все записи Setting удалены, то удаляем все записи Model
+        if (0 == db.rawQuery("select _id from "+ QuoteDatabaseHelper.Tables.SETTINGS, null).getCount()) {
+            db.delete(QuoteDatabaseHelper.Tables.MODELS, null, null);
+        }
+    }
+
+    void deleteSettingsById(String settingId) {
+        final SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
+
+        int delCount = db.delete(QuoteDatabaseHelper.Tables.SETTINGS,
+                QuoteContract.SettingColumns.SETTING_ID + " = '" + settingId + "'", null);
+        LOGD(TAG, "deleteSettingsById: deleted rows count = " + delCount);
+    }
+
+    void deleteSettingsByIdAndUpdatePositions(String settingId, int position) {
+        final SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
+
+        LOGD(TAG, String.format("deleteSettingsById: settingId = %s, position = %d",
+                settingId, position));
+
+        deleteSettingsById(settingId);
+
+        Cursor cursor = db.rawQuery("select * from " + QuoteDatabaseHelper.Tables.SETTINGS
+                + " where setting_quote_position > ?"
+                + " order by setting_quote_position asc", new String[]{String.valueOf(position)});
+        if (null == cursor || 0 == cursor.getCount()) return;
+
+        cursor.moveToFirst();
+        do {
+            String widgetId = cursor.getString(cursor.getColumnIndexOrThrow(
+                    QuoteContract.SettingColumns.SETTING_WIDGET_ID));
+            String id = cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_ID));
+
+            ContentValues args = new ContentValues();
+            args.put(QuoteContract.SettingColumns.SETTING_ID, widgetId+"_"+position);
+            args.put(QuoteContract.SettingColumns.SETTING_QUOTE_POSITION, position);
+
+            db.update(QuoteDatabaseHelper.Tables.SETTINGS, args,
+                    QuoteContract.SettingColumns.SETTING_ID + " = '" + id + "'", null);
+
+//            mDatabase.rawQuery("update " + QuoteDatabaseHelper.Tables.SETTINGS
+//                    + " set setting_quote_position = ?"
+//                    + " where setting_id = ?", new String[]{String.valueOf(position), id});
+            position++;
+        } while (cursor.moveToNext());
+
+        cursor.close();
+
+        LOGD(TAG, "deleteSettingsByIdAndUpdatePositions");
+    }
+
+    void deleteAll() {
+        final SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
+
+        db.delete(QuoteDatabaseHelper.Tables.SETTINGS, null, null);
+        db.delete(QuoteDatabaseHelper.Tables.MODELS, null, null);
     }
 }

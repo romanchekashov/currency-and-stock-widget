@@ -9,7 +9,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import ru.besttuts.stockwidget.R;
-import ru.besttuts.stockwidget.provider.QuoteDataSource;
+import ru.besttuts.stockwidget.provider.db.DbProvider;
+import ru.besttuts.stockwidget.ui.fragments.TrackingQuotesFragment;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
@@ -33,10 +34,8 @@ public class DataCleanPreference extends DialogPreference {
     @Override
     protected void onDialogClosed(boolean positiveResult) {
         if (positiveResult) {
-            QuoteDataSource dataSource = new QuoteDataSource(getContext());
-            dataSource.deleteAll();
-            dataSource.close();
-
+            DbProvider.getInstance().deleteAll();
+            TrackingQuotesFragment.mWidgetItemsNumber = 0;
             LOGD(TAG, "onDialogClosed");
         }
     }

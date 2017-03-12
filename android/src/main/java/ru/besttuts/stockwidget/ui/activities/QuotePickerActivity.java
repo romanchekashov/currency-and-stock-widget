@@ -15,6 +15,7 @@ import android.view.WindowManager;
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
+import ru.besttuts.stockwidget.provider.db.DbProvider;
 import ru.besttuts.stockwidget.ui.fragments.CurrencyExchangeFragment;
 import ru.besttuts.stockwidget.ui.fragments.GoodsItemFragment;
 import ru.besttuts.stockwidget.ui.fragments.IQuoteTypeFragment;
@@ -31,6 +32,8 @@ public class QuotePickerActivity extends ActionBarActivity
         MyQuotesFragment.OnFragmentInteractionListener {
 
     private static final String TAG = makeLogTag(QuotePickerActivity.class);
+
+    private DbProvider mDbProvider;
     public static QuoteDataSource mDataSource;
     private int mAppWidgetId;
     private int mQuoteTypeValue;
@@ -119,7 +122,7 @@ public class QuotePickerActivity extends ActionBarActivity
 
         // создаем объект для создания и управления версиями БД
         mDataSource = new QuoteDataSource(this);
-
+        mDbProvider = DbProvider.getInstance();
         LOGD(TAG, "onCreate");
 
     }
@@ -182,7 +185,7 @@ public class QuotePickerActivity extends ActionBarActivity
                 LOGD(TAG, "onOptionsItemSelected: fragment: " + fragment.getClass().getName());
                 if (fragment instanceof IQuoteTypeFragment) {
                     IQuoteTypeFragment quoteTypeFragment = (IQuoteTypeFragment) fragment;
-                    mDataSource.addSettingsRec(mAppWidgetId, mWidgetItemPosition,
+                    mDbProvider.addSettingsRec(mAppWidgetId, mWidgetItemPosition,
                             quoteTypeFragment.getQuoteType(), quoteTypeFragment.getSelectedSymbols());
                 }
                 finish();
@@ -235,6 +238,7 @@ public class QuotePickerActivity extends ActionBarActivity
 
     @Override
     public void deleteQuote(String[] symbols) {
+        LOGD(TAG, "[deleteQuote]: " + symbols);
         mDataSource.deleteQuotesByIds(symbols);
     }
 

@@ -13,6 +13,7 @@ import java.util.List;
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.QuoteType;
+import ru.besttuts.stockwidget.provider.db.DbProvider;
 import ru.besttuts.stockwidget.ui.activities.EconomicWidgetConfigureActivity;
 import ru.besttuts.stockwidget.ui.fragments.TrackingQuotesFragment;
 import ru.besttuts.stockwidget.util.Utils;
@@ -54,11 +55,7 @@ public class QuoteRemoteViewsFactory implements RemoteViewsFactory {
         if (null == models) models = new ArrayList<>();
         models.clear();
 
-        QuoteDataSource dataSource = new QuoteDataSource(mContext);
-
-        models.addAll(dataSource.getModelsByWidgetId(mAppWidgetId));
-
-        dataSource.close();
+        models.addAll(DbProvider.getInstance().getModelsByWidgetId(mAppWidgetId));
     }
 
     @Override

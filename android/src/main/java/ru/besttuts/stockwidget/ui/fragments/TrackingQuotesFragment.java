@@ -73,7 +73,7 @@ public class TrackingQuotesFragment extends Fragment
     public static final String ARG_URL = "url";
 
     private int mWidgetId;
-    private static int mWidgetItemsNumber;
+    public static int mWidgetItemsNumber;
 
 
     private DbProvider mDbProvider;
@@ -88,14 +88,12 @@ public class TrackingQuotesFragment extends Fragment
 
     private OnFragmentInteractionListener mListener;
 
-//    private QuoteDataSource mDataSource;
-
     private SimpleCursorAdapter mSimpleCursorAdapter;
 
     private View mMainView;
     private GridView gridView;
 
-    private boolean isQuotesFetched = false;
+    private volatile boolean isQuotesFetched = false;
     /**
      * Используйте этот фабричный метод для создания
      * нового объекта этого фрагмента с предоставляемыми параметрами.
@@ -123,9 +121,6 @@ public class TrackingQuotesFragment extends Fragment
         }
 
         NotificationManager.addListener(this);
-
-//        mDataSource = new QuoteDataSource(getActivity());
-//        mDataSource.open();
 
         LOGD(TAG, String.format("onCreate: mWidgetId = %d, mWidgetItemsNumber = %d",
                 mWidgetId, mWidgetItemsNumber));
@@ -273,8 +268,8 @@ public class TrackingQuotesFragment extends Fragment
         LOGD(TAG, String.format("deleteItem: pos = %d, settingId = %s, _id = %d", pos, settingId, _id));
 
         // извлекаем id записи и удаляем соответствующую запись в БД
-        EconomicWidgetConfigureActivity.mDataSource.deleteSettingsByIdAndUpdatePositions(settingId, pos);
-        updateSettings();
+        mDbProvider.deleteSettingsByIdAndUpdatePositions(settingId, pos);
+//        updateSettings();
     }
 
     private void onQuoteTypeSelected(int quoteTypePos, int position) {
@@ -549,14 +544,11 @@ public class TrackingQuotesFragment extends Fragment
 
             int widgetId = Integer.parseInt(params[0]);
 
-            List<Model> models = EconomicWidgetConfigureActivity.mDataSource.getModelsByWidgetId(widgetId);
+            List<Model> models = mDbProvider.getModelsByWidgetId(widgetId);
 
             RemoteYahooFinanceDataFetcher dataFetcher = new RemoteYahooFinanceDataFetcher();
 
-//            QuoteDataSource dataSource = new QuoteDataSource(getActivity());
-//            dataSource.open();
-            Cursor cursor = EconomicWidgetConfigureActivity.mDataSource
-                    .getCursorSettingsWithoutModelByWidgetId(widgetId);
+            Cursor cursor = mDbProvider.getCursorSettingsWithoutModelByWidgetId(widgetId);
 
             LOGD(TAG, String.format("[doInBackground]: cursor.getCount() = %d", cursor.getCount()));
 
@@ -582,9 +574,6 @@ public class TrackingQuotesFragment extends Fragment
             } while (cursor.moveToNext());
             cursor.close();
 
-//            QuoteType quoteType = QuoteType.valueOf(params[0]);
-//            String symbol = params[1];
-
             try {
                 Map<String, Model> symbolModelMap = CustomConverter.convertToModelMap(
                         dataFetcher.getYahooMultiQueryData());
@@ -596,7 +585,7 @@ public class TrackingQuotesFragment extends Fragment
                         model.setId(symbol);
                         model.setName(symbol);
                     }
-                    EconomicWidgetConfigureActivity.mDataSource.addModelRec(model);
+                    mDbProvider.addModelRec(model);
                     models.add(model);
                 }
 

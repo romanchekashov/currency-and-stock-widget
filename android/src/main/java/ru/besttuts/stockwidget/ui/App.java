@@ -24,6 +24,7 @@ import android.app.Application;
 
 import java.util.HashMap;
 
+import ru.besttuts.stockwidget.Config;
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.provider.db.DbProvider;
 
@@ -62,5 +63,6 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         DbProvider.init(getApplicationContext());
+        Config.init(getApplicationContext());
     }
 }

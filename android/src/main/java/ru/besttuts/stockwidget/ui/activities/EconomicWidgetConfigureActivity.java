@@ -33,7 +33,6 @@ import java.util.Calendar;
 import ru.besttuts.stockwidget.Config;
 import ru.besttuts.stockwidget.PrivateConstants;
 import ru.besttuts.stockwidget.R;
-import ru.besttuts.stockwidget.provider.QuoteDataSource;
 import ru.besttuts.stockwidget.service.UpdateService;
 import ru.besttuts.stockwidget.ui.App;
 import ru.besttuts.stockwidget.ui.EconomicWidget;
@@ -43,6 +42,8 @@ import ru.besttuts.stockwidget.ui.fragments.TrackingQuotesFragment;
 import ru.besttuts.stockwidget.util.AppRater;
 import ru.besttuts.stockwidget.util.NotificationManager;
 
+import static ru.besttuts.stockwidget.Config.PREFS_NAME;
+import static ru.besttuts.stockwidget.Config.PREF_PREFIX_KEY;
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.LOGE;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
@@ -74,11 +75,6 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
     public static final String ARG_QUOTE_TYPE_VALUE = "quoteTypeValue";
     public static final String ARG_WIDGET_ITEM_POSITION = "widgetItemPosition";
     static final String STATE_POSITION = "position";
-
-    public static final String PREFS_NAME = "ru.besttuts.stockwidget.ui.EconomicWidget";
-    private static final String PREF_PREFIX_KEY = "appwidget_";
-
-    public static QuoteDataSource mDataSource;
 
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
 
@@ -198,6 +194,7 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
         if (extras != null) {
             mAppWidgetId = extras.getInt(
                     AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+            Config.CURRENT_APP_WIDGET_ID = mAppWidgetId;
         }
 
         // If this activity was started with an intent without an app widget ID, finish with an error.
@@ -219,9 +216,6 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
         } else {
             position = savedInstanceState.getInt(STATE_POSITION);
         }
-
-        // создаем объект для создания и управления версиями БД
-        mDataSource = new QuoteDataSource(this);
 
 //        DisplayMetrics metrics = new DisplayMetrics();
 //        getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -390,7 +384,6 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (null != mDataSource) mDataSource.close();
         NotificationManager.removeListener(this);
         LOGD(TAG, "onDestroy");
     }
