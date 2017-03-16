@@ -65,6 +65,7 @@
 -keep class ru.besttuts.stockwidget.sync.model.** { *; }
 -keep class ru.besttuts.stockwidget.io.model.** { *; }
 -keep class ru.besttuts.stockwidget.model.** { *; }
+-keep class ru.besttuts.stockwidget.ui.EconomicWidget;
 
 #-keep class ru.besttuts.stockwidget.** # Don't proguard classes for Debug
 

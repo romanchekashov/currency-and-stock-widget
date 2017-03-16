@@ -73,8 +73,9 @@ public class QuoteRemoteViewsFactory implements RemoteViewsFactory {
         RemoteViews viewItem = new RemoteViews(mContext.getPackageName(), mLayout);
 //        viewItem.setInt(R.id.gridItemInnerLinearLayout, "setBackgroundColor",
 //                Color.BLACK);
-        Model model = models.get(position);
+        if(null == models || models.isEmpty()) return viewItem;
 
+        Model model = models.get(position);
 //        viewItem.setFloat(R.id.tvName, "setTextSize", 12);
         viewItem.setTextViewText(R.id.tvName, Utils.getModelNameFromResourcesBySymbol(mContext, model));
         viewItem.setTextViewText(R.id.tvRate, model.getRateToString());

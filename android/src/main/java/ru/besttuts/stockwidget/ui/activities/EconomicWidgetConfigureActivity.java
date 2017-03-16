@@ -132,11 +132,11 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
             case R.id.action_add_quote:
                 NotificationManager.notifyOptionsItemSelected(item);
                 return true;
-            case R.id.action_github:
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW,
-                        Uri.parse("https://github.com/romanchekashov/currency-and-stock-widget"));
-                startActivity(browserIntent);
-                return true;
+//            case R.id.action_github:
+//                Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+//                        Uri.parse("https://github.com/romanchekashov/currency-and-stock-widget"));
+//                startActivity(browserIntent);
+//                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

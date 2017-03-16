@@ -95,7 +95,6 @@ public class Setting implements Validable {
         if (null == id) return false;
         if (widgetId == 0) return false;
         if (quotePosition == 0) return false;
-        if (quoteType == 0) return false;
         if (null == quoteSymbol) return false;
 
         return true;

@@ -54,7 +54,6 @@ public class CustomConverter {
         Good good = new Good();
         good.setId(quote.symbol);
         good.setSymbol(quote.symbol);
-        LOGD(TAG, "" + quote + " == " + quote.LastTradePriceOnly);
 
         if(null == quote.LastTradePriceOnly){
             good.setRate(0.0);
