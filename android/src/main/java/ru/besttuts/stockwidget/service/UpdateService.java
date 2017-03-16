@@ -8,18 +8,14 @@ import android.os.AsyncTask;
 import android.os.IBinder;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.model.Model;
-import ru.besttuts.stockwidget.model.Setting;
 import ru.besttuts.stockwidget.provider.db.DbProvider;
 import ru.besttuts.stockwidget.sync.RemoteYahooFinanceDataFetcher;
 import ru.besttuts.stockwidget.ui.EconomicWidget;
-import ru.besttuts.stockwidget.util.CustomConverter;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.LOGE;
@@ -49,12 +45,12 @@ public class UpdateService extends Service {
 
         boolean hasInternet = intent.getBooleanExtra(EconomicWidget.ARG_HAS_INTERNET, true);
 
-        new FetchStockData(context, appWidgetManager, allWidgetIds, startId, hasInternet).execute();
+        new FetchStockDataAsyncTask(context, appWidgetManager, allWidgetIds, startId, hasInternet).execute();
 
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private class FetchStockData extends AsyncTask<Void, Void, Map<Integer, List<Model>>> {
+    private class FetchStockDataAsyncTask extends AsyncTask<Void, Void, Map<Integer, List<Model>>> {
 
         private final Context mContext;
         private final AppWidgetManager appWidgetManager;
@@ -62,8 +58,8 @@ public class UpdateService extends Service {
         private final int startId;
         private final boolean hasInternet;
 
-        private FetchStockData(Context context, AppWidgetManager appWidgetManager,
-                               int[] allWidgetIds, int startId, boolean hasInternet) {
+        private FetchStockDataAsyncTask(Context context, AppWidgetManager appWidgetManager,
+                                        int[] allWidgetIds, int startId, boolean hasInternet) {
             this.mContext = context;
             this.appWidgetManager = appWidgetManager;
             this.allWidgetIds = allWidgetIds;
@@ -71,71 +67,22 @@ public class UpdateService extends Service {
             this.hasInternet = hasInternet;
         }
 
-        private Map<Integer, List<Model>> getCachedData() {
-            Map<Integer, List<Model>> map = new HashMap<>();
-
-            for (int appWidgetId: allWidgetIds) {
-                map.put(appWidgetId, DbProvider.getInstance().getModelsByWidgetId(appWidgetId));
-            }
-
-            return map;
-        }
-
         @Override
         protected Map<Integer, List<Model>> doInBackground(Void... params) { //TODO: Написать Unit-тесты!!!
 
-            Map<Integer, List<Model>> map = new HashMap<>();
-
-            int ln = allWidgetIds.length;
-            if (0 >= ln) {
-                return map;
-            }
-
-            if (!hasInternet) {
-                return getCachedData();
-            }
-
-            RemoteYahooFinanceDataFetcher dataFetcher = new RemoteYahooFinanceDataFetcher();
-            DbProvider dataSource = DbProvider.getInstance();
+            FetchStockData fetchStockData = new FetchStockData(allWidgetIds, hasInternet,
+                    new RemoteYahooFinanceDataFetcher(), DbProvider.getInstance());
 
             try {
+                return fetchStockData.fetch();
 
-                List<Setting> settings = dataSource.getAllSettingsWithCheck();
-
-                if (0 == settings.size()) return map;
-
-                dataFetcher.populateQuoteSet(settings);
-
-                Map<String, Model> symbolModelMap = CustomConverter.convertToModelMap(
-                        dataFetcher.getYahooMultiQueryData());
-
-                for (Setting setting : settings) {
-                    int widgetId = setting.getWidgetId();
-                    if (!map.containsKey(widgetId)) {
-                        map.put(widgetId, new ArrayList<Model>());
-                    }
-                    map.get(widgetId).add(symbolModelMap.get(setting.getQuoteSymbol()));
-                }
-
-                for (Map.Entry<Integer, List<Model>> me : map.entrySet()) {
-                    List<Model> models = me.getValue();
-
-                    for (int i = 0, l = models.size(); i < l; i++) {
-                        dataSource.addModelRec(models.get(i));
-                    }
-                }
-
-                // при успешном получении данных, удаляем статус о проблемах соединения
-                EconomicWidget.connectionStatus = null;
-
-                return map;
             } catch (IOException e) {
                 LOGE(TAG, e.getMessage());
                 EconomicWidget.connectionStatus =
                         mContext.getString(R.string.connection_status_default_problem);
             }
 
-            return getCachedData();
+            return fetchStockData.getCachedData();
         }
 
         @Override

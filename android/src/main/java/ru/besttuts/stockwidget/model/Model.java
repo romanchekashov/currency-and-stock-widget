@@ -8,7 +8,7 @@ import ru.besttuts.stockwidget.provider.db.DbContract.SettingColumns;
 /**
  * Created by roman on 08.01.2015.
  */
-public class Model {
+public class Model implements Validable {
 
     protected String id; // symbol
     protected String name;
@@ -94,6 +94,15 @@ public class Model {
                 ", change=" + change +
                 ", percentChange='" + percentChange + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean isValid(){
+        if (null == id) return false;
+        if (null == name) return false;
+        if (null == percentChange) return false;
+
+        return true;
     }
 
     public static Model map(Cursor cursor){

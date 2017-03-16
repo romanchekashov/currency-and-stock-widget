@@ -4,7 +4,7 @@ package ru.besttuts.stockwidget.model;
  * @author rchekashov
  *         created on 18.06.2016
  */
-public class QuoteLastTradeDate {
+public class QuoteLastTradeDate implements Validable {
     private int _id;
     private String code;
     private String symbol;
@@ -40,6 +40,14 @@ public class QuoteLastTradeDate {
 
     public void setLastTradeDate(long lastTradeDate) {
         this.lastTradeDate = lastTradeDate;
+    }
+
+    @Override
+    public boolean isValid() {
+        if (null == code) return false;
+        if (null == symbol) return false;
+
+        return true;
     }
 
     @Override

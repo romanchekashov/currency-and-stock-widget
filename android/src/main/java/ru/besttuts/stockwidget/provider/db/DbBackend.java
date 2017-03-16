@@ -18,7 +18,7 @@ import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.QuoteLastTradeDate;
 import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.model.Setting;
-import ru.besttuts.stockwidget.provider.QuoteContract;
+import ru.besttuts.stockwidget.provider.QuoteContract.*;
 import ru.besttuts.stockwidget.provider.QuoteDatabaseHelper;
 import ru.besttuts.stockwidget.sync.MyFinanceWS;
 
@@ -54,16 +54,16 @@ public class DbBackend implements DbContract {
         // you will actually use after this query.
         String[] projection = {
                 BaseColumns._ID,
-                QuoteContract.SettingColumns.SETTING_ID,
-                QuoteContract.SettingColumns.SETTING_WIDGET_ID,
-                QuoteContract.SettingColumns.SETTING_QUOTE_POSITION,
-                QuoteContract.SettingColumns.SETTING_QUOTE_TYPE,
-                QuoteContract.SettingColumns.SETTING_QUOTE_SYMBOL,
-                QuoteContract.SettingColumns.LAST_TRADE_DATE
+                SettingColumns.SETTING_ID,
+                SettingColumns.SETTING_WIDGET_ID,
+                SettingColumns.SETTING_QUOTE_POSITION,
+                SettingColumns.SETTING_QUOTE_TYPE,
+                SettingColumns.SETTING_QUOTE_SYMBOL,
+                SettingColumns.LAST_TRADE_DATE
         };
 
         // How you want the results sorted in the resulting Cursor
-        String sortOrder = QuoteContract.SettingColumns.SETTING_QUOTE_POSITION + " ASC";
+        String sortOrder = SettingColumns.SETTING_QUOTE_POSITION + " ASC";
 
         return db.query(
                 QuoteDatabaseHelper.Tables.SETTINGS,  // The table to query
@@ -85,7 +85,7 @@ public class DbBackend implements DbContract {
                 + "inner join "+QuoteDatabaseHelper.Tables.MODELS+" as m "
                 + "on s.setting_quote_symbol = m.model_id "
                 + "where s.setting_widget_id = ? order by "
-                + QuoteContract.SettingColumns.SETTING_QUOTE_POSITION + " asc";
+                + SettingColumns.SETTING_QUOTE_POSITION + " asc";
 
         return db.rawQuery(sqlQuery, new String[]{String.valueOf(widgetId)});
     }
@@ -98,7 +98,7 @@ public class DbBackend implements DbContract {
                 + "left join "+QuoteDatabaseHelper.Tables.MODELS+" as m "
                 + "on s.setting_quote_symbol = m.model_id "
                 + "where s.setting_widget_id = ? order by "
-                + QuoteContract.SettingColumns.SETTING_QUOTE_POSITION + " asc;";
+                + SettingColumns.SETTING_QUOTE_POSITION + " asc;";
 
         return db.rawQuery(sqlQuery, new String[]{String.valueOf(widgetId)});
     }
@@ -111,7 +111,7 @@ public class DbBackend implements DbContract {
                 + "left join "+QuoteDatabaseHelper.Tables.MODELS+" as m "
                 + "on s.setting_quote_symbol = m.model_id "
                 + "where s.setting_widget_id = ? and m.model_id is null order by "
-                + QuoteContract.SettingColumns.SETTING_QUOTE_POSITION + " asc";
+                + SettingColumns.SETTING_QUOTE_POSITION + " asc";
         return db.rawQuery(sqlQuery, new String[]{String.valueOf(widgetId)});
     }
 
@@ -122,16 +122,16 @@ public class DbBackend implements DbContract {
         // you will actually use after this query.
         String[] projection = {
                 BaseColumns._ID,
-                QuoteContract.SettingColumns.SETTING_ID,
-                QuoteContract.SettingColumns.SETTING_WIDGET_ID,
-                QuoteContract.SettingColumns.SETTING_QUOTE_POSITION,
-                QuoteContract.SettingColumns.SETTING_QUOTE_TYPE,
-                QuoteContract.SettingColumns.SETTING_QUOTE_SYMBOL,
-                QuoteContract.SettingColumns.LAST_TRADE_DATE
+                SettingColumns.SETTING_ID,
+                SettingColumns.SETTING_WIDGET_ID,
+                SettingColumns.SETTING_QUOTE_POSITION,
+                SettingColumns.SETTING_QUOTE_TYPE,
+                SettingColumns.SETTING_QUOTE_SYMBOL,
+                SettingColumns.LAST_TRADE_DATE
         };
 
         // How you want the results sorted in the resulting Cursor
-        String sortOrder = QuoteContract.SettingColumns.SETTING_QUOTE_POSITION + " ASC";
+        String sortOrder = SettingColumns.SETTING_QUOTE_POSITION + " ASC";
 
         return db.query(
                 QuoteDatabaseHelper.Tables.SETTINGS,     // The table to query
@@ -151,10 +151,10 @@ public class DbBackend implements DbContract {
             ContentValues values = new ContentValues();
 
             if(null == quote.getSymbol()) continue;
-            values.put(QuoteContract.QuoteLastTradeDateColumns.SYMBOL, quote.getSymbol());
+            values.put(QuoteLastTradeDateColumns.SYMBOL, quote.getSymbol());
 
-            values.put(QuoteContract.QuoteLastTradeDateColumns.CODE, quote.getCode());
-            values.put(QuoteContract.QuoteLastTradeDateColumns.LAST_TRADE_DATE, quote.getLastTradeDate());
+            values.put(QuoteLastTradeDateColumns.CODE, quote.getCode());
+            values.put(QuoteLastTradeDateColumns.LAST_TRADE_DATE, quote.getLastTradeDate());
 
             db.insertWithOnConflict(QuoteDatabaseHelper.Tables.QUOTE_LAST_TRADE_DATES, null, values, SQLiteDatabase.CONFLICT_REPLACE);
         }
@@ -169,24 +169,25 @@ public class DbBackend implements DbContract {
                 new String[]{code, String.valueOf(today)});
     }
 
-    void persist(Setting setting) {
+    boolean persist(Setting setting) {
         final SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
+
+        if (null == setting) return false;
 
         if(null == setting.getId() || setting.getId().isEmpty()){
             setting.setId(setting.getWidgetId() + "_" + setting.getQuotePosition());
         }
 
+        if(!setting.isValid()) return false;
+
         // New value for one column
         ContentValues values = new ContentValues();
-        values.put(QuoteContract.SettingColumns.SETTING_ID, setting.getId());
-        values.put(QuoteContract.SettingColumns.SETTING_WIDGET_ID, setting.getWidgetId());
-        values.put(QuoteContract.SettingColumns.SETTING_QUOTE_POSITION, setting.getQuotePosition());
-        values.put(QuoteContract.SettingColumns.SETTING_QUOTE_TYPE, setting.getQuoteType());
-
-        if(null == setting.getQuoteSymbol()) return;
-        values.put(QuoteContract.SettingColumns.SETTING_QUOTE_SYMBOL, setting.getQuoteSymbol());
-
-        values.put(QuoteContract.SettingColumns.LAST_TRADE_DATE, setting.getLastTradeDate());
+        values.put(SettingColumns.SETTING_ID, setting.getId());
+        values.put(SettingColumns.SETTING_WIDGET_ID, setting.getWidgetId());
+        values.put(SettingColumns.SETTING_QUOTE_POSITION, setting.getQuotePosition());
+        values.put(SettingColumns.SETTING_QUOTE_TYPE, setting.getQuoteType());
+        values.put(SettingColumns.SETTING_QUOTE_SYMBOL, setting.getQuoteSymbol());
+        values.put(SettingColumns.LAST_TRADE_DATE, setting.getLastTradeDate());
 
         long rowId = db.insertWithOnConflict(
                 QuoteDatabaseHelper.Tables.SETTINGS,
@@ -195,19 +196,23 @@ public class DbBackend implements DbContract {
                 SQLiteDatabase.CONFLICT_REPLACE);
 
         LOGD(TAG, "insertWithOnConflict id = " + rowId);
+
+        return true;
     }
 
-    void addQuoteRec(Result result) {
+    boolean addQuoteRec(Result result) {
         final SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
+
+        if(null == result || null == result.symbol || null == result.name) return false;
 
         // New value for one column
         ContentValues values = new ContentValues();
-        values.put(QuoteContract.QuoteColumns.QUOTE_SYMBOL, result.symbol);
-        values.put(QuoteContract.QuoteColumns.QUOTE_NAME, result.name);
-        values.put(QuoteContract.QuoteColumns.QUOTE_TYPE, QuoteType.QUOTES);
+        values.put(QuoteColumns.QUOTE_SYMBOL, result.symbol);
+        values.put(QuoteColumns.QUOTE_NAME, result.name);
+        values.put(QuoteColumns.QUOTE_TYPE, QuoteType.QUOTES);
 
         // Which row to update, based on the ID
-        String selection = QuoteContract.QuoteColumns.QUOTE_SYMBOL + " LIKE ?";
+        String selection = QuoteColumns.QUOTE_SYMBOL + " LIKE ?";
         String[] selectionArgs = { result.symbol };
 
         long count = db.insert(
@@ -220,27 +225,29 @@ public class DbBackend implements DbContract {
             throw new IllegalArgumentException(result.symbol + " " +
                     mContext.getString(R.string.exc_already_exists));
         }
+
+        return true;
     }
 
-    void addModelRec(Model model) {
+    boolean addModelRec(Model model) {
         final SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
 
-        if (null == model) {
+        if (null == model || !model.isValid()) {
             LOGE(TAG, "Model is NULL");
-            return;
+            return false;
         }
 
         // New value for one column
         ContentValues values = new ContentValues();
-        values.put(QuoteContract.ModelColumns.MODEL_ID, model.getId());
-        values.put(QuoteContract.ModelColumns.MODEL_NAME, model.getName());
-        values.put(QuoteContract.ModelColumns.MODEL_RATE, model.getRate());
-        values.put(QuoteContract.ModelColumns.MODEL_CHANGE, model.getChange());
-        values.put(QuoteContract.ModelColumns.MODEL_PERCENT_CHANGE, model.getPercentChange());
-        values.put(QuoteContract.ModelColumns.MODEL_CURRENCY, model.getCurrency());
+        values.put(ModelColumns.MODEL_ID, model.getId());
+        values.put(ModelColumns.MODEL_NAME, model.getName());
+        values.put(ModelColumns.MODEL_RATE, model.getRate());
+        values.put(ModelColumns.MODEL_CHANGE, model.getChange());
+        values.put(ModelColumns.MODEL_PERCENT_CHANGE, model.getPercentChange());
+        values.put(ModelColumns.MODEL_CURRENCY, model.getCurrency());
 
         // Which row to update, based on the ID
-        String selection = QuoteContract.ModelColumns.MODEL_ID + " LIKE ?";
+        String selection = ModelColumns.MODEL_ID + " LIKE ?";
         String[] selectionArgs = { model.getId() };
 
 //        if (null == mDatabase || !mDatabase.isOpen()) return;
@@ -252,13 +259,41 @@ public class DbBackend implements DbContract {
                 SQLiteDatabase.CONFLICT_REPLACE);
 
         LOGD(TAG, "insertWithOnConflict rows count = " + count);
+
+        return true;
+    }
+
+    Cursor getModelById(String modelId) {
+        final SQLiteDatabase db = mDbOpenHelper.getReadableDatabase();
+
+        // Define a projection that specifies which columns from the database
+        // you will actually use after this query.
+        String[] projection = {
+                BaseColumns._ID,
+                ModelColumns.MODEL_ID,
+                ModelColumns.MODEL_NAME,
+                ModelColumns.MODEL_RATE,
+                ModelColumns.MODEL_CHANGE,
+                ModelColumns.MODEL_PERCENT_CHANGE,
+                ModelColumns.MODEL_CURRENCY
+        };
+
+        return db.query(
+                QuoteDatabaseHelper.Tables.MODELS,      // The table to query
+                projection,                             // The columns to return
+                ModelColumns.MODEL_ID + "=?",           // The columns for the WHERE clause
+                new String[]{String.valueOf(modelId)},  // The values for the WHERE clause
+                null,                                   // don't group the rows
+                null,                                   // don't filter by row groups
+                null                                    // The sort order
+        );
     }
 
     void deleteSettingsByWidgetId(int widgetId) {
         final SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
 
         int delCount = db.delete(QuoteDatabaseHelper.Tables.SETTINGS,
-                QuoteContract.SettingColumns.SETTING_WIDGET_ID + " = " + widgetId, null);
+                SettingColumns.SETTING_WIDGET_ID + " = " + widgetId, null);
 
         LOGD(TAG, "deleteSettingsByWidgetId: deleted rows count = " + delCount);
 
@@ -272,7 +307,7 @@ public class DbBackend implements DbContract {
         final SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
 
         int delCount = db.delete(QuoteDatabaseHelper.Tables.SETTINGS,
-                QuoteContract.SettingColumns.SETTING_ID + " = '" + settingId + "'", null);
+                SettingColumns.SETTING_ID + " = '" + settingId + "'", null);
         LOGD(TAG, "deleteSettingsById: deleted rows count = " + delCount);
     }
 
@@ -292,15 +327,15 @@ public class DbBackend implements DbContract {
         cursor.moveToFirst();
         do {
             String widgetId = cursor.getString(cursor.getColumnIndexOrThrow(
-                    QuoteContract.SettingColumns.SETTING_WIDGET_ID));
-            String id = cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_ID));
+                    SettingColumns.SETTING_WIDGET_ID));
+            String id = cursor.getString(cursor.getColumnIndexOrThrow(SettingColumns.SETTING_ID));
 
             ContentValues args = new ContentValues();
-            args.put(QuoteContract.SettingColumns.SETTING_ID, widgetId+"_"+position);
-            args.put(QuoteContract.SettingColumns.SETTING_QUOTE_POSITION, position);
+            args.put(SettingColumns.SETTING_ID, widgetId+"_"+position);
+            args.put(SettingColumns.SETTING_QUOTE_POSITION, position);
 
             db.update(QuoteDatabaseHelper.Tables.SETTINGS, args,
-                    QuoteContract.SettingColumns.SETTING_ID + " = '" + id + "'", null);
+                    SettingColumns.SETTING_ID + " = '" + id + "'", null);
 
 //            mDatabase.rawQuery("update " + QuoteDatabaseHelper.Tables.SETTINGS
 //                    + " set setting_quote_position = ?"

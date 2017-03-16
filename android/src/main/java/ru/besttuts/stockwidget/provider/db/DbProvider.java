@@ -20,7 +20,6 @@ import ru.besttuts.stockwidget.model.QuoteLastTradeDate;
 import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.model.Setting;
 import ru.besttuts.stockwidget.provider.QuoteContract;
-import ru.besttuts.stockwidget.provider.QuoteDatabaseHelper;
 import ru.besttuts.stockwidget.sync.MyFinanceWS;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGE;
@@ -112,8 +111,12 @@ public class DbProvider {
         mDbBackend.addQuoteRec(result);
     }
 
-    public void addModelRec(Model model){
-        mDbBackend.addModelRec(model);
+    public boolean addModelRec(Model model){
+        return mDbBackend.addModelRec(model);
+    }
+
+    public Model getModelById(String modelId){
+        return mDbBackendAdapter.getModelById(modelId);
     }
 
     public List<Model> getModelsByWidgetId(final int widgetId) {

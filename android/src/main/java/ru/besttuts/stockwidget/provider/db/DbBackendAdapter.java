@@ -61,6 +61,20 @@ public class DbBackendAdapter implements DbContract {
         }
     }
 
+    Model getModelById(String modelId) {
+        Cursor cursor = mDbBackend.getModelById(modelId);
+        if (0 >= cursor.getCount()) return null;
+
+        Model model;
+
+        cursor.moveToFirst();
+        do {
+            model = Model.map(cursor);
+        } while (cursor.moveToNext());
+
+        return model;
+    }
+
     public List<Model> getModelsByWidgetId(int widgetId) {
         Cursor cursor = mDbBackend.getCursorModelsByWidgetId(widgetId);
         if (0 >= cursor.getCount()) return new ArrayList<Model>();

@@ -7,7 +7,7 @@ import ru.besttuts.stockwidget.provider.QuoteContract;
 /**
  * Created by roman on 15.01.2015.
  */
-public class Setting {
+public class Setting implements Validable {
 
     private int _id;
     private String id;
@@ -88,6 +88,17 @@ public class Setting {
                 ", quoteSymbol='" + quoteSymbol + '\'' +
                 ", lastTradeDate=" + lastTradeDate +
                 '}';
+    }
+
+    @Override
+    public boolean isValid() {
+        if (null == id) return false;
+        if (widgetId == 0) return false;
+        if (quotePosition == 0) return false;
+        if (quoteType == 0) return false;
+        if (null == quoteSymbol) return false;
+
+        return true;
     }
 
     public static Setting map(Cursor cursor) {
