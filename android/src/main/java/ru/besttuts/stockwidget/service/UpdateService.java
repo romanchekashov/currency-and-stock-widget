@@ -77,7 +77,7 @@ public class UpdateService extends Service {
                 return fetchStockData.fetch();
 
             } catch (IOException e) {
-                LOGE(TAG, e.getMessage());
+//                LOGE(TAG, e.getMessage());
                 EconomicWidget.connectionStatus =
                         mContext.getString(R.string.connection_status_default_problem);
             }

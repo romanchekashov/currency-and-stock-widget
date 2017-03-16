@@ -44,7 +44,6 @@ public class YahooMultiQueryDataDeserializerTest {
             assertNotNull(rate.id);
             assertNotNull(rate.Name);
             assertNotNull(rate.Rate);
-            System.out.println(rate.toString());
         }
     }
 }

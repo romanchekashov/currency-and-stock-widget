@@ -407,7 +407,6 @@ public class TrackingQuotesFragment extends Fragment
             Cursor cursor = (Cursor) getItem(position);
             String symbol = cursor.getString(cursor.getColumnIndexOrThrow(
                     QuoteContract.ModelColumns.MODEL_ID));
-//            LOGD(TAG, "getView: symbol = " + symbol + " currentThread = " + Thread.currentThread());
 
             if (null == symbol || symbol.isEmpty()) {
                 int quoteType = cursor.getInt(cursor.getColumnIndexOrThrow(
@@ -435,8 +434,11 @@ public class TrackingQuotesFragment extends Fragment
             holder.progressBar.setVisibility(View.GONE);
             holder.linearLayout.setVisibility(View.VISIBLE);
 
-            holder.tvPosition.setText(String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(
-                    QuoteContract.SettingColumns.SETTING_QUOTE_POSITION))));
+            String quotePosition = String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(
+                    QuoteContract.SettingColumns.SETTING_QUOTE_POSITION)));
+            holder.tvPosition.setText(quotePosition);
+
+            LOGD(TAG, "getView: symbol = " + symbol + " quotePosition = " + quotePosition);
 
             Model model = QuoteDataSource.transformCursorToModel(cursor);
             holder.tvName.setText(Utils.getModelNameFromResourcesBySymbol(getActivity(), model));

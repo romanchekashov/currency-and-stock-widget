@@ -314,14 +314,16 @@ public class DbBackend implements DbContract {
     void deleteSettingsByIdAndUpdatePositions(String settingId, int position) {
         final SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
 
-        LOGD(TAG, String.format("deleteSettingsById: settingId = %s, position = %d",
+        LOGD(TAG, String.format("(deleteSettingsByIdAndUpdatePositions): settingId = %s, position = %d",
                 settingId, position));
 
         deleteSettingsById(settingId);
 
+        String deletedSettingWidgetId = settingId.split("_")[0];
+
         Cursor cursor = db.rawQuery("select * from " + QuoteDatabaseHelper.Tables.SETTINGS
-                + " where setting_quote_position > ?"
-                + " order by setting_quote_position asc", new String[]{String.valueOf(position)});
+                + " where setting_widget_id = ? and setting_quote_position > ?"
+                + " order by setting_quote_position asc", new String[]{deletedSettingWidgetId, String.valueOf(position)});
         if (null == cursor || 0 == cursor.getCount()) return;
 
         cursor.moveToFirst();
@@ -337,6 +339,8 @@ public class DbBackend implements DbContract {
             db.update(QuoteDatabaseHelper.Tables.SETTINGS, args,
                     SettingColumns.SETTING_ID + " = '" + id + "'", null);
 
+            LOGD(TAG, String.format("(deleteSettingsByIdAndUpdatePositions)[update]: settingId = %s, position = %d",
+                    (widgetId+"_"+position), position));
 //            mDatabase.rawQuery("update " + QuoteDatabaseHelper.Tables.SETTINGS
 //                    + " set setting_quote_position = ?"
 //                    + " where setting_id = ?", new String[]{String.valueOf(position), id});
@@ -344,8 +348,6 @@ public class DbBackend implements DbContract {
         } while (cursor.moveToNext());
 
         cursor.close();
-
-        LOGD(TAG, "deleteSettingsByIdAndUpdatePositions");
     }
 
     void deleteAll() {

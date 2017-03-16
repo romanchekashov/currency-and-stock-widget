@@ -23,10 +23,6 @@ public class HandleJSONTest {
 
     private static final String TAG = makeLogTag(HandleJSONTest.class);
 
-    private static void println(String s) {
-        System.out.println(TAG + ": " + s);
-    }
-
     private String[] exchange = new String[]{"EURUSD", "USDRUB", "EURRUB", "CNYRUB"};
     private String[] goods = new String[]{"GCF15.CMX", "PLF15.NYM", "PAF15.NYM", "SIF15.CMX", "HGF15.CMX"};
 

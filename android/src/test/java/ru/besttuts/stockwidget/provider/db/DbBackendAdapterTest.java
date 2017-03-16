@@ -47,4 +47,26 @@ public class DbBackendAdapterTest implements DbContract {
         List<Setting> settings = dbBackendAdapter.getSettingsByWidgetId(WIDGET_IDS[0]);
         assertEquals(6, settings.size());
     }
+
+    @Test
+    public void deleteSettingsByIdAndUpdatePositions_shouldSaveSettings(){
+        dbBackendAdapter.addSettingsRec(WIDGET_IDS[0], 1, QuoteType.CURRENCY,
+                new String[]{"EURUSD", "USDRUB", "EURRUB"});
+        dbBackendAdapter.addSettingsRec(WIDGET_IDS[0], 4, QuoteType.GOODS, DEFAULT_COMMODITIES);
+
+        List<Setting> settings = dbBackendAdapter.getSettingsByWidgetId(WIDGET_IDS[0]);
+        assertEquals(6, settings.size());
+        for (int i = 1; i <= 6; i++){
+            assertEquals(i, settings.get(i-1).getQuotePosition());
+        }
+
+        Setting setting = settings.get(0);
+        dbBackend.deleteSettingsByIdAndUpdatePositions(setting.getId(), setting.getQuotePosition());
+
+        settings = dbBackendAdapter.getSettingsByWidgetId(WIDGET_IDS[0]);
+        assertEquals(5, settings.size());
+        for (int i = 1; i <= 5; i++){
+            assertEquals(i, settings.get(i-1).getQuotePosition());
+        }
+    }
 }

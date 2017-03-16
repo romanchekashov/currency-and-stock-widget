@@ -22,10 +22,6 @@ public class RemoteYahooFinanceDataFetcherTest {
 
     private static final String TAG = makeLogTag(RemoteYahooFinanceDataFetcherTest.class);
 
-    private static void println(String s) {
-        System.out.println(TAG + ": " + s);
-    }
-
     private static final String SYMBOL_CURRENCY_USDRUB = "USDRUB";
     private static final String SYMBOL_BRENT_OIL = "BZZ16.NYM";
     private static final String SYMBOL_CRUDE_OIL = "CLX16.NYM";
