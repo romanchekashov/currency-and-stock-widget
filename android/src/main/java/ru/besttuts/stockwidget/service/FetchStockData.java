@@ -80,6 +80,7 @@ class FetchStockData {
 
             for (int i = 0, l = models.size(); i < l; i++) {
                 Model model = models.get(i);
+                if (null == model) continue;
                 if(!dbProvider.addModelRec(model)){
                     models.set(i, dbProvider.getModelById(model.getId()));
                 }
