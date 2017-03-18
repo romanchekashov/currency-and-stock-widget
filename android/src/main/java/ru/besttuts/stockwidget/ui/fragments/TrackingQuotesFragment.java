@@ -308,9 +308,10 @@ public class TrackingQuotesFragment extends Fragment
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-        if (0 <= mLastSelectedItemPosition) {
-            gridView.getChildAt(mLastSelectedItemPosition).setBackgroundColor(Color.TRANSPARENT);
-        }
+        LOGD(TAG, "(onItemClick): " + String.format("view = %s, pos = %d, id = %d", view, position, id));
+
+        clearGridViewCellSelection();
+
         mLastSelectedItemPosition = position;
         view.setBackgroundColor(Color.parseColor("#33ffffff"));
 
@@ -327,15 +328,22 @@ public class TrackingQuotesFragment extends Fragment
         popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
             public void onDismiss() {
-                if (0 <= mLastSelectedItemPosition) {
-                    if(null != gridView && null != gridView.getChildAt(mLastSelectedItemPosition)) {
-                        gridView.getChildAt(mLastSelectedItemPosition).setBackgroundColor(Color.TRANSPARENT);
-                    }
-                }
+                LOGD(TAG, "(onDismiss): " + String.format("mLastSelectedItemPosition = %d", mLastSelectedItemPosition));
+                clearGridViewCellSelection();
                 mLastSelectedItemPosition = -1;
             }
         });
 
+    }
+
+    private void clearGridViewCellSelection(){
+        if(null == gridView) return;
+        LOGD(TAG, "(clearGridViewCellSelection):");
+        View view;
+        for (int i = 0, count = gridView.getChildCount(); i < count; i++){
+            view = gridView.getChildAt(i);
+            if (null != view) view.setBackgroundColor(Color.TRANSPARENT);
+        }
     }
 
     /**
@@ -652,6 +660,7 @@ public class TrackingQuotesFragment extends Fragment
                         intent.putExtra(ARG_URL, url);
 
                         popupWindow.dismiss();
+                        clearGridViewCellSelection();
 
                         startActivity(intent);
                         break;
@@ -659,10 +668,12 @@ public class TrackingQuotesFragment extends Fragment
                         StockItemTypeDialogFragment dialog = new StockItemTypeDialogFragment();
                         dialog.set(position + 1, TrackingQuotesFragment.this);
                         popupWindow.dismiss();
+                        clearGridViewCellSelection();
                         dialog.show(getActivity().getSupportFragmentManager(), "StockItemTypeDialogFragment");
                         break;
                     case 2:
                         popupWindow.dismiss();
+                        clearGridViewCellSelection();
                         deleteItem(position + 1);
                         break;
                 }
@@ -697,6 +708,15 @@ public class TrackingQuotesFragment extends Fragment
         // set the list view as pop up window content
         popupWindow.setContentView(listViewDogs);
 
+        popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                LOGD(TAG, "(popupWindowDogs)(onDismiss)");
+                clearGridViewCellSelection();
+            }
+        });
+
+        popupWindow.setOutsideTouchable(true);
         return popupWindow;
     }
 
