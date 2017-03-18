@@ -8,6 +8,10 @@ import android.graphics.drawable.ColorDrawable;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
+import org.joda.time.DateTimeZone;
+
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.QuoteType;
@@ -90,4 +94,61 @@ public class Utils {
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor(color)));
     }
 
+    public static String getNYSEInfo(Context context){
+        DateTimeZone nyTZ = DateTimeZone.forID("America/New_York");
+        DateTime now = new DateTime(nyTZ);
+        int[] daysHoursMinutes;
+        switch (now.getDayOfWeek()){
+            case DateTimeConstants.SATURDAY:
+                DateTime temp = now.plusDays(2);
+                DateTime nextTradeStart = new DateTime(temp.getYear(), temp.getMonthOfYear(),
+                        temp.getDayOfMonth(), 9, 30, nyTZ);
+                temp = nextTradeStart.minus(now.getMillis());
+                daysHoursMinutes = getDaysHoursMinutes(temp.getMillis());
+                return String.format(context.getString(R.string.nyse_is_closed), daysHoursMinutes[0],
+                        daysHoursMinutes[1], daysHoursMinutes[2]);
+            case DateTimeConstants.SUNDAY:
+                temp = now.plusDays(1);
+                nextTradeStart = new DateTime(temp.getYear(), temp.getMonthOfYear(),
+                        temp.getDayOfMonth(), 9, 30, nyTZ);
+                temp = nextTradeStart.minus(now.getMillis());
+                daysHoursMinutes = getDaysHoursMinutes(temp.getMillis());
+                return String.format(context.getString(R.string.nyse_is_closed), daysHoursMinutes[0],
+                        daysHoursMinutes[1], daysHoursMinutes[2]);
+            default:
+                nextTradeStart = new DateTime(now.getYear(), now.getMonthOfYear(),
+                        now.getDayOfMonth(), 9, 30, nyTZ);
+                DateTime nextTradeEnd = new DateTime(now.getYear(), now.getMonthOfYear(),
+                        now.getDayOfMonth(), 16, 0, nyTZ);
+                if(now.isBefore(nextTradeStart.getMillis())){
+                    temp = nextTradeStart.minus(now.getMillis());
+                    daysHoursMinutes = getDaysHoursMinutes(temp.getMillis());
+                    return String.format(context.getString(R.string.nyse_is_closed), daysHoursMinutes[0],
+                            daysHoursMinutes[1], daysHoursMinutes[2]);
+                }
+                if (now.isAfter(nextTradeEnd.getMillis())){
+                    temp = nextTradeStart.plusDays(1).minus(now.getMillis());
+                    daysHoursMinutes = getDaysHoursMinutes(temp.getMillis());
+                    return String.format(context.getString(R.string.nyse_is_closed), daysHoursMinutes[0],
+                            daysHoursMinutes[1], daysHoursMinutes[2]);
+                }
+                temp = nextTradeEnd.minus(now.getMillis());
+                daysHoursMinutes = getDaysHoursMinutes(temp.getMillis());
+                return String.format(context.getString(R.string.nyse_is_open), daysHoursMinutes[0],
+                        daysHoursMinutes[1], daysHoursMinutes[2]);
+        }
+    }
+
+    private static int[] getDaysHoursMinutes(long time){
+        int[] dhm = new int[3];
+        time /= 1000;
+        time /= 60; // time in min
+        dhm[2] = (int) time % 60; // get min
+        time /= 60; // time in hours
+        dhm[1] = (int) time % 24; // get hours
+        time /= 24;
+        dhm[0] = (int) time;
+
+        return dhm;
+    }
 }

@@ -155,6 +155,9 @@ public class TrackingQuotesFragment extends Fragment
         gridView.setAdapter(mSimpleCursorAdapter);
         gridView.setOnItemClickListener(this);
 
+        TextView tvNYSEInfo = (TextView) mMainView.findViewById(R.id.tvNYSEInfo);
+        tvNYSEInfo.setText(Utils.getNYSEInfo(getContext()));
+
         Button button = (Button) mMainView.findViewById(R.id.btnAddQuote);
         button.setOnClickListener(new View.OnClickListener() {
             @Override

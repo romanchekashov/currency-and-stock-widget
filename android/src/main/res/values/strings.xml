@@ -27,7 +27,7 @@
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
 
-    <string name="action_quotes">Quotes</string>
+    <string name="action_quotes">Quotes NYSE</string>
     <string name="action_display">Display</string>
     <string name="action_settings">Settings</string>
     <string name="action_search">Search</string>
@@ -265,5 +265,8 @@
         <item>wi-fi</item>
         <item>any</item>
     </string-array>
+
+    <string name="nyse_is_open">NYSE is open. Closing in %1$d d %2$d h %3$d m.</string>
+    <string name="nyse_is_closed">NYSE is closed. Opening in %1$d d %2$d h %3$d m.</string>
 
 </resources>

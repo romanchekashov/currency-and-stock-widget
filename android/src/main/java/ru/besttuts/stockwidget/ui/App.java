@@ -22,6 +22,8 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 
 import android.app.Application;
 
+import net.danlew.android.joda.JodaTimeAndroid;
+
 import java.util.HashMap;
 
 import ru.besttuts.stockwidget.Config;
@@ -62,7 +64,8 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        DbProvider.init(getApplicationContext());
+        JodaTimeAndroid.init(getApplicationContext());
         Config.init(getApplicationContext());
+        DbProvider.init(getApplicationContext());
     }
 }
