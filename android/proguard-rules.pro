@@ -41,8 +41,9 @@
 -keep class android.support.v7.widget.SearchView { *; }
 
 # for com.squareup.picasso
--dontwarn com.squareup.okhttp.**
+-dontwarn okhttp3.**
 -dontwarn okio.**
+-dontwarn javax.annotation.**
 
 -keep class com.google.ads.** # Don't proguard AdMob classes
 

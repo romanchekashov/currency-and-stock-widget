@@ -265,4 +265,7 @@
     <string name="exc_already_exists">уже существует!</string>
     <string name="data_will_be_lost">Данные будут утеряны!</string>
 
+    <string name="nyse_is_open">NYSE открыт. Закроется через %1$d d %2$d h %3$d мин.</string>
+    <string name="nyse_is_closed">NYSE закрыт. Откроется через %1$d d %2$d h %3$d мин.</string>
+
 </resources>
