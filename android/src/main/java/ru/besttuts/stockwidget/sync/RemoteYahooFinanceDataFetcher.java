@@ -11,15 +11,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.model.Setting;
 import ru.besttuts.stockwidget.sync.deserializer.YahooMultiQueryDataDeserializer;
 import ru.besttuts.stockwidget.sync.model.YahooMultiQueryData;
+import ru.besttuts.stockwidget.util.Utils;
 import ru.besttuts.stockwidget.util.YahooQueryBuilder;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
+import static ru.besttuts.stockwidget.util.LogUtils.LOGE;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
 /**
@@ -150,10 +153,20 @@ public class RemoteYahooFinanceDataFetcher {
         YahooFinanceService service = retrofit.create(YahooFinanceService.class);
 
         String yahooQuery = YahooQueryBuilder.buildYahooFinanceMultiQuery(currencyExchangeSet, goodSet);
+        String encodedYahooQuery = Utils.encodeYahooApiQuery(yahooQuery);
 
-        LOGD(TAG, "(getYahooMultiQueryData): " + YahooQueryBuilder.HTTP_QUERY_YAHOOAPIS_COM_V1_PUBLIC + yahooQuery);
+        Call<YahooMultiQueryData> callYahooMultiQueryData = service.yahooMultiQueryData(encodedYahooQuery);
 
-        return service.yahooMultiQueryData(yahooQuery).execute().body();
+        LOGD(TAG, "(getYahooMultiQueryData): " + callYahooMultiQueryData.request().url());
+
+        YahooMultiQueryData data = callYahooMultiQueryData.execute().body();
+
+        if(null == data) {
+            LOGE(TAG, "[FAIL] load or parse data from yahoo api: YahooMultiQueryData = " + data);
+            return new YahooMultiQueryData();
+        }
+
+        return data;
     }
 
     public String downloadUrl(String sUrl) throws IOException {

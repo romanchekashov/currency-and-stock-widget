@@ -9,8 +9,8 @@ android {
         applicationId "ru.besttuts.stockwidget"
         minSdkVersion 10
         targetSdkVersion 25
-        versionCode 13
-        versionName "2.1.1"
+        versionCode 14
+        versionName "2.1.2"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -44,7 +44,7 @@ android {
 }
 
 ext {
-    RETROFIT_VERSION = '2.1.0'
+    RETROFIT_VERSION = '2.3.0'
     ANDROID_SUPPORT_LIB_VERSION = '25.0.0'
 }
 

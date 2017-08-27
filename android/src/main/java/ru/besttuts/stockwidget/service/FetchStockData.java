@@ -20,7 +20,7 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
  *         created on 16.03.2017
  */
 
-class FetchStockData {
+public class FetchStockData {
     private static final String TAG = makeLogTag(FetchStockData.class);
 
     private int[] allWidgetIds;
@@ -28,7 +28,7 @@ class FetchStockData {
     private RemoteYahooFinanceDataFetcher dataFetcher;
     private DbProvider dbProvider;
 
-    FetchStockData(int[] allWidgetIds, boolean hasInternet, RemoteYahooFinanceDataFetcher dataFetcher,
+    public FetchStockData(int[] allWidgetIds, boolean hasInternet, RemoteYahooFinanceDataFetcher dataFetcher,
                    DbProvider dbProvider) {
         this.allWidgetIds = allWidgetIds;
         this.hasInternet = hasInternet;
@@ -36,7 +36,7 @@ class FetchStockData {
         this.dbProvider = dbProvider;
     }
 
-    Map<Integer, List<Model>> getCachedData() {
+    public Map<Integer, List<Model>> getCachedData() {
         Map<Integer, List<Model>> map = new HashMap<>();
 
         for (int appWidgetId: allWidgetIds) {
@@ -46,7 +46,7 @@ class FetchStockData {
         return map;
     }
 
-    Map<Integer, List<Model>> fetch() throws IOException {
+    public Map<Integer, List<Model>> fetch() throws IOException {
         Map<Integer, List<Model>> map = new HashMap<>();
 
         int ln = allWidgetIds.length;

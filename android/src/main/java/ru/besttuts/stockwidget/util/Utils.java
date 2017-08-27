@@ -139,6 +139,14 @@ public class Utils {
         }
     }
 
+    public static String encodeYahooApiQuery(String query){
+        String encoded = query.replace(" ", "%20");
+        encoded = encoded.replace("\"", "%22");
+        encoded = encoded.replace("=", "%3D");
+        encoded = encoded.replace(";", "%3B%0A");
+        return encoded.replace(",", "%2C");
+    }
+
     private static int[] getDaysHoursMinutes(long time){
         int[] dhm = new int[3];
         time /= 1000;
