@@ -13,6 +13,6 @@ import ru.besttuts.stockwidget.sync.model.YahooMultiQueryData;
 public interface YahooFinanceService {
 
     @GET("yql?format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=")
-    Call<YahooMultiQueryData> yahooMultiQueryData(@Query(value = "q", encoded = true) String query);
+    Call<YahooMultiQueryData> yahooMultiQueryData(@Query(value = "q") String query);
 
 }

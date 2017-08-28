@@ -5,11 +5,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.Setting;
 import ru.besttuts.stockwidget.provider.db.DbProvider;
 import ru.besttuts.stockwidget.sync.RemoteYahooFinanceDataFetcher;
+import ru.besttuts.stockwidget.sync.model.YahooMultiQueryData;
 import ru.besttuts.stockwidget.ui.EconomicWidget;
 import ru.besttuts.stockwidget.util.CustomConverter;
 
@@ -64,8 +66,17 @@ public class FetchStockData {
 
         dataFetcher.populateQuoteSet(settings);
 
-        Map<String, Model> symbolModelMap = CustomConverter.convertToModelMap(
-                dataFetcher.getYahooMultiQueryData());
+        YahooMultiQueryData yahooMultiQueryData;
+        int requestNumber = 0;
+        do {
+            yahooMultiQueryData = dataFetcher.getYahooMultiQueryData();
+            try {
+                if (null == yahooMultiQueryData.created) TimeUnit.SECONDS.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } while (requestNumber++ < 3 && null == yahooMultiQueryData.created);
+        Map<String, Model> symbolModelMap = CustomConverter.convertToModelMap(yahooMultiQueryData);
 
         for (Setting setting : settings) {
             int widgetId = setting.getWidgetId();

@@ -53,12 +53,10 @@ public class FetchStockDataAsyncTask extends AsyncTask<Void, Void, Map<Integer, 
 
         try {
             return fetchStockData.fetch();
-        } catch (IOException e) {
-            LOGE(TAG, e.getMessage());
+        } catch (Exception e) {
+            LOGE(TAG, "" + e.getMessage());
             EconomicWidget.connectionStatus =
                     mContext.getString(R.string.connection_status_default_problem);
-        } catch (Exception e){
-            LOGE(TAG, e.getMessage());
         }
 
         return fetchStockData.getCachedData();
@@ -72,8 +70,9 @@ public class FetchStockDataAsyncTask extends AsyncTask<Void, Void, Map<Integer, 
             EconomicWidget.updateAppWidget(mContext, appWidgetManager, widgetId,
                     map.get(widgetId), hasInternet);
         }
-        LOGD(TAG, "Load Yahoo Finance Thread#" + startId + " end, stopSelfResult("
-                + startId + ") = " + mService.stopSelfResult(startId));
+
+        boolean serviceStopped = (null != mService) && mService.stopSelfResult(startId);
+        LOGD(TAG, "Load Yahoo Finance Thread#" + startId + " end, can be stopped: " + serviceStopped);
         LOGD(TAG, "onPostExecute: Current thread: " + Thread.currentThread().getName());
     }
 }

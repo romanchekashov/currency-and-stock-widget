@@ -145,7 +145,23 @@ public class RemoteYahooFinanceDataFetcher {
                 YahooMultiQueryData.class, new YahooMultiQueryDataDeserializer())
                 .create();
 
+//        OkHttpClient client = new OkHttpClient.Builder()
+//                .addNetworkInterceptor(new Interceptor() {
+//                    @Override
+//                    public Response intercept(Chain chain) throws IOException {
+//                        Request request = chain.request();
+//                        Request newRequest;
+//                        String newUrl = YahooQueryBuilder.HTTP_QUERY_YAHOOAPIS_COM_V1_PUBLIC + "yql?"
+//                                + Utils.encodeYahooApiQuery(request.url().query());
+//                        LOGD(TAG, "request.url.query: " + newUrl);
+//                        newRequest = request.newBuilder().url(newUrl).build();
+//                        return chain.proceed(newRequest);
+//                    }
+//                })
+//                .build();
+
         Retrofit retrofit = new Retrofit.Builder()
+//                .client(client)
                 .baseUrl(YahooQueryBuilder.HTTP_QUERY_YAHOOAPIS_COM_V1_PUBLIC)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
@@ -153,9 +169,9 @@ public class RemoteYahooFinanceDataFetcher {
         YahooFinanceService service = retrofit.create(YahooFinanceService.class);
 
         String yahooQuery = YahooQueryBuilder.buildYahooFinanceMultiQuery(currencyExchangeSet, goodSet);
-        String encodedYahooQuery = Utils.encodeYahooApiQuery(yahooQuery);
+//        String encodedYahooQuery = Utils.encodeYahooApiQuery(yahooQuery);
 
-        Call<YahooMultiQueryData> callYahooMultiQueryData = service.yahooMultiQueryData(encodedYahooQuery);
+        Call<YahooMultiQueryData> callYahooMultiQueryData = service.yahooMultiQueryData(yahooQuery);
 
         LOGD(TAG, "(getYahooMultiQueryData): " + callYahooMultiQueryData.request().url());
 
@@ -163,22 +179,16 @@ public class RemoteYahooFinanceDataFetcher {
 
         if(null == data) {
             LOGE(TAG, "[FAIL] load or parse data from yahoo api: YahooMultiQueryData = " + data);
+//            String newUrl = YahooQueryBuilder.HTTP_QUERY_YAHOOAPIS_COM_V1_PUBLIC + "yql?" + encodedYahooQuery;
+//            LOGD(TAG, "[SUCCESS] load: " + downloadUrl(newUrl));
             return new YahooMultiQueryData();
         }
 
+        LOGD(TAG, "[SUCCESS] load or parse data from yahoo api: YahooMultiQueryData = " + data);
         return data;
     }
 
     public String downloadUrl(String sUrl) throws IOException {
-//        OkHttpClient client = new OkHttpClient();
-//
-//        Request request = new Request.Builder()
-//                .url(sUrl)
-//                .build();
-//
-//        Response response = client.newCall(request).execute();
-//        return response.body().string();
-
         InputStream is = null;
 
         try {

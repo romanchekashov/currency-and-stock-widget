@@ -345,4 +345,30 @@ public class YahooMultiQueryData {
         }
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sbRates = new StringBuilder();
+        sbRates.append("[");
+        for (Rate rate: rates) {
+            sbRates.append(rate.toString());
+            sbRates.append(",");
+        }
+        sbRates.append("]");
+
+        StringBuilder sbQuotes = new StringBuilder();
+        sbQuotes.append("[");
+        for (Quote quote: quotes) {
+            sbQuotes.append(quote.toString());
+            sbQuotes.append(",");
+        }
+        sbQuotes.append("]");
+
+        return "YahooMultiQueryData{" +
+                "count=" + count +
+                ", created='" + created + '\'' +
+                ", lang='" + lang + '\'' +
+                ", rates=" + sbRates.toString() +
+                ", quotes=" + sbQuotes.toString() +
+                '}';
+    }
 }
