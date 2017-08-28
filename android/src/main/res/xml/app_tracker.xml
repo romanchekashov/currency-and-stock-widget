@@ -14,6 +14,5 @@
     </screenName>
 
     <!--  The following value should be replaced with correct property id. -->
-    <string name="ga_trackingId">UA-60087009-1</string>
-    <!--<string name="ga_trackingId">UA-XXXXXXXX-1</string>-->
+    <string name="ga_trackingId">UA-XXXXXXXX-1</string>
 </resources>
