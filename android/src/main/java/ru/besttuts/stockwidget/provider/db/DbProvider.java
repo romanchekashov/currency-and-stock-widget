@@ -22,6 +22,7 @@ import ru.besttuts.stockwidget.model.Setting;
 import ru.besttuts.stockwidget.provider.QuoteContract;
 import ru.besttuts.stockwidget.sync.MyFinanceWS;
 
+import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.LOGE;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
@@ -98,6 +99,8 @@ public class DbProvider {
 
     public void addSettingsRec(final int mAppWidgetId, final int widgetItemPosition,
                                final int type, final String[] symbols){
+        LOGD(TAG, String.format("addSettingsRec: %d %s", type, symbols));
+
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
