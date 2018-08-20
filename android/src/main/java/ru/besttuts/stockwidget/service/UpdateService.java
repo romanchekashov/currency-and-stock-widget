@@ -1,9 +1,11 @@
 package ru.besttuts.stockwidget.service;
 
+import android.app.IntentService;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.os.IBinder;
+import android.support.annotation.Nullable;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -33,11 +35,13 @@ import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.LOGE;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
-public class UpdateService extends Service {
+public class UpdateService extends IntentService {
 
     private static final String TAG = makeLogTag(UpdateService.class);
 
-    public UpdateService() {}
+    public UpdateService() {
+        super("UpdateService");
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, final int startId) {
@@ -50,20 +54,20 @@ public class UpdateService extends Service {
             return START_NOT_STICKY;
         }
 
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    protected void onHandleIntent(@Nullable Intent intent) {
+
         final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
         final int[] allWidgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
         boolean hasInternet = intent.getBooleanExtra(EconomicWidget.ARG_HAS_INTERNET, true);
 
 //        new FetchStockDataAsyncTask(this, appWidgetManager, allWidgetIds, startId, hasInternet).execute();
 
-        updateData(this, appWidgetManager, allWidgetIds, startId, hasInternet);
+        updateData(this, appWidgetManager, allWidgetIds, -1, hasInternet);
 
-        return super.onStartCommand(intent, flags, startId);
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
@@ -74,7 +78,7 @@ public class UpdateService extends Service {
     }
 
     private void updateData(final Service service, final AppWidgetManager appWidgetManager,
-                            final int[] allWidgetIds, final int startId, final boolean hasInternet){
+                            final int[] allWidgetIds, final int startId, final boolean hasInternet) {
         final List<Setting> settings = DbProvider.getInstance().getAllSettingsWithCheck();
         String url = YahooQueryBuilder.buildYahooFinanceMultiQueryUrl(settings);
         final Gson gson = new GsonBuilder().registerTypeAdapter(YahooMultiQueryData.class,
@@ -138,8 +142,8 @@ public class UpdateService extends Service {
                     map.get(widgetId), hasInternet);
         }
 
-        boolean serviceStopped = (null != service) && service.stopSelfResult(startId);
-        LOGD(TAG, "Load Yahoo Finance Thread#" + startId + " end, can be stopped: " + serviceStopped);
+//        boolean serviceStopped = (null != service) && service.stopSelfResult(startId);
+//        LOGD(TAG, "Load Yahoo Finance Thread#" + startId + " end, can be stopped: " + serviceStopped);
         LOGD(TAG, "onPostExecute: Current thread: " + Thread.currentThread().getName());
     }
 }

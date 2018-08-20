@@ -2,101 +2,96 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/widget_margin"
-    android:id="@+id/relativeLayout">
+    android:background="#ff2c3e50"
+    android:id="@+id/bgWidget">
+
+    <GridView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/gridView2"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/linearLayout"
+        android:layout_toStartOf="@+id/linearLayout"
+        android:columnWidth="@dimen/widget_grid_column_width"
+        android:gravity="center"
+        android:horizontalSpacing="@dimen/widget_grid_horizontal_spacing"
+        android:numColumns="auto_fit"
+        android:verticalSpacing="@dimen/widget_grid_vertical_spacing"
+        android:stretchMode="columnWidth"
+        android:paddingLeft="@dimen/widget_grid_left_padding"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
+        android:paddingTop="@dimen/widget_grid_top_padding"
+        android:paddingBottom="@dimen/widget_grid_bottom_padding"
+        android:paddingRight="@dimen/widget_grid_right_padding" />
 
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/bgWidget"
-        android:background="#ff2c3e50">
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:weightSum="100"
+        android:layout_alignParentRight="true"
+        android:id="@+id/linearLayout"
+        android:layout_centerVertical="true">
+
+        <TextView
+            android:id="@+id/tvSyncTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="10"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:maxLines="1"
+            android:text="sync time"
+            android:textColor="#ffffffff"
+            android:textSize="10sp">
+
+            <requestFocus
+                android:duplicateParentState="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true" />
+        </TextView>
 
         <LinearLayout
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="0dp"
+            android:layout_weight="45">
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="0dp"
+            <ProgressBar
+                style="?android:attr/progressBarStyleSmall"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/firstLinearLayout"
-                android:layout_weight="3">
+                android:id="@+id/progressBar"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:padding="9dp" />
 
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="0dp"
+            <ImageButton
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:weightSum="100">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:text="sync time"
-                    android:id="@+id/tvSyncTime"
-                    android:textColor="#ffffffff"
-                    android:textSize="10sp"
-                    android:layout_weight="10"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    android:ellipsize="marquee"
-                    android:marqueeRepeatLimit="marquee_forever"
-                    android:scrollHorizontally="true"
-                    android:singleLine="true" >
-                    <requestFocus
-                        android:duplicateParentState="true"
-                        android:focusable="true"
-                        android:focusableInTouchMode="true" />
-                </TextView>
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="45"
-                    android:layout_gravity="center"
-                    android:gravity="center_vertical|center_horizontal">
-
-                    <ProgressBar
-                        style="?android:attr/progressBarStyleSmall"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/progressBar"
-                        android:layout_gravity="center"
-                        android:visibility="gone"
-                        android:padding="9dp" />
-
-                    <ImageButton
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/ibRefresh"
-                        android:src="@drawable/refresh_btn"
-                        android:layout_alignParentBottom="true"
-                        android:background="#00ffffff"
-                        android:layout_marginBottom="2dp"
-                        android:adjustViewBounds="true"
-                        android:scaleType="fitCenter" />
-                </LinearLayout>
-
-                <ImageButton
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:id="@+id/ibSettings"
-                    android:src="@drawable/ic_action_settings"
-                    android:layout_alignParentBottom="true"
-                    android:background="#00ffffff"
-                    android:focusable="false"
-                    android:layout_weight="45"
-                    android:focusableInTouchMode="false"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitCenter" />
-            </LinearLayout>
+                android:id="@+id/ibRefresh"
+                android:src="@drawable/refresh_btn"
+                android:layout_alignParentBottom="true"
+                android:background="?android:selectableItemBackground"
+                android:layout_marginBottom="2dp" />
         </LinearLayout>
 
+        <ImageButton
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:id="@+id/ibSettings"
+            android:src="@drawable/ic_action_settings"
+            android:layout_alignParentBottom="true"
+            android:background="?android:selectableItemBackground"
+            android:focusable="false"
+            android:layout_weight="45"
+            android:focusableInTouchMode="false" />
     </LinearLayout>
 
 </RelativeLayout>

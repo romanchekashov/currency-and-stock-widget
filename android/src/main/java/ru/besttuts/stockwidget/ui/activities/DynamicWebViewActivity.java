@@ -1,6 +1,6 @@
 package ru.besttuts.stockwidget.ui.activities;
 
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,7 +13,7 @@ import android.widget.ImageButton;
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.ui.fragments.TrackingQuotesFragment;
 
-public class DynamicWebViewActivity extends ActionBarActivity implements View.OnClickListener {
+public class DynamicWebViewActivity extends AppCompatActivity implements View.OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

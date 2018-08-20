@@ -5,7 +5,7 @@
 Refer to App Widget Documentation for margin information
 http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     -->
-    <dimen name="widget_margin">8dp</dimen>
+    <dimen name="widget_margin">0dp</dimen>
 
     <!-- wrap_content(-2dp); match_parent,fill_parent(-1dp) -->
     <!--<dimen name="widget_grid_item_height">-2dp</dimen>-->

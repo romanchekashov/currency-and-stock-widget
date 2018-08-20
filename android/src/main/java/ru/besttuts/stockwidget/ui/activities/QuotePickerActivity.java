@@ -5,7 +5,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,7 +27,7 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 /**
  * Created by roman on 07.01.2015.
  */
-public class QuotePickerActivity extends ActionBarActivity
+public class QuotePickerActivity extends AppCompatActivity
         implements GoodsItemFragment.OnFragmentInteractionListener,
         MyQuotesFragment.OnFragmentInteractionListener {
 

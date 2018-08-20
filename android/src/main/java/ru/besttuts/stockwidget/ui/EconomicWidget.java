@@ -276,20 +276,14 @@ public class EconomicWidget extends AppWidgetProvider {
 
         readPrefsSettings(context, views); // считываем настройки виджета
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-//            calcWidgetViewData(context, appWidgetId, appWidgetManager.getAppWidgetInfo(appWidgetId).minHeight, false);
-            setGrid(views, context, appWidgetId);
-        } else {
-            int columns = getCellsForSize(appWidgetManager.getAppWidgetInfo(appWidgetId).minWidth);
-            setWidgetViewForApi10(views, context, models, columns);
-        }
+        setGrid(views, context, appWidgetId);
 
         if (hasInternet && null == connectionStatus) {
             String time = new SimpleDateFormat().format(Calendar.getInstance().getTime());
             views.setTextViewText(R.id.tvSyncTime, time);
             views.setTextColor(R.id.tvSyncTime, Color.WHITE);
             EconomicWidgetConfigureActivity.saveLastUpdateTimePref(context, appWidgetId, time);
-        } else if(null != connectionStatus) {
+        } else if (null != connectionStatus) {
             String time = EconomicWidgetConfigureActivity.loadLastUpdateTimePref(context, appWidgetId);
             views.setTextViewText(R.id.tvSyncTime, time + " - " + connectionStatus);
             int color = context.getResources().getColor(R.color.arrow_red);
@@ -310,9 +304,7 @@ public class EconomicWidget extends AppWidgetProvider {
         appWidgetManager.updateAppWidget(appWidgetId, views);
 
         // для 11-ой и поздней версии оповещаем менеджер виджетов о изменении данных для GridView
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.gridView2);
-        }
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.gridView2);
 
         LOGD(TAG, "updateAppWidget: appWidgetId = " + appWidgetId);
 
@@ -370,40 +362,6 @@ public class EconomicWidget extends AppWidgetProvider {
         PendingIntent viewPendingIntent = PendingIntent.getActivity(context, appWidgetId, intent, 0);
         rv.setPendingIntentTemplate(R.id.gridView2, viewPendingIntent);
 
-    }
-
-    private static void setWidgetViewForApi10(RemoteViews views, Context context, List<Model> models, int columns) {
-        int i = 0;
-        int viewId = R.id.firstLinearLayout;
-        views.removeAllViews(viewId);
-        for (Model model: models) {
-            if (null == model) continue;
-
-            RemoteViews viewItem = new RemoteViews(context.getPackageName(), R.layout.economic_widget_item);
-            viewItem.setTextViewText(R.id.tvName, Utils.getModelNameFromResourcesBySymbol(context, model));
-            viewItem.setTextViewText(R.id.tvRate, model.getRateToString());
-            viewItem.setTextViewText(R.id.tvChange, model.getChangeToString());
-            viewItem.setTextViewText(R.id.tvChangePercentage, model.getPercentChange());
-
-            int color = context.getResources().getColor(R.color.arrow_green);
-            if (0 < model.getChange()) {
-                viewItem.setImageViewResource(R.id.imageView, R.drawable.ic_widget_green_arrow_up);
-            } else {
-                viewItem.setImageViewResource(R.id.imageView, R.drawable.ic_widget_green_arrow_down);
-                color = context.getResources().getColor(R.color.arrow_red);
-            }
-
-            viewItem.setTextColor(R.id.tvChange, color);
-            viewItem.setTextColor(R.id.tvChangePercentage, color);
-
-            views.addView(viewId, viewItem);
-
-            if (3 == ++i) { // одну колонку занимают кнопки обновления и настроек
-                LOGD(TAG, "setWidgetViewForApi10: columns = " + columns);
-                break;
-            }
-
-        }
     }
 
     @Override
@@ -537,11 +495,7 @@ public class EconomicWidget extends AppWidgetProvider {
     }
 
     private static int getWidgetLayoutId(Context context, int appWidgetId) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            return EconomicWidgetConfigureActivity.loadWidgetLayoutPref(context, appWidgetId);
-        } else {
-            return R.layout.economic_widget;
-        }
+        return EconomicWidgetConfigureActivity.loadWidgetLayoutPref(context, appWidgetId);
     }
 
     private static void calcWidgetViewData(Context context, int appWidgetId, int height) {

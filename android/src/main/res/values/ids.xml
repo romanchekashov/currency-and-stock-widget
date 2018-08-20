@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="progressBar" type="id"/>
+    <item name="tvSyncTime" type="id"/>
+    <item name="ibRefresh" type="id"/>
+    <item name="bgWidget" type="id"/>
+    <item name="gridView2" type="id"/>
+    <!--<item name="economic_widget" type="layout"/>-->
+    <!--<item name="economic_widget_item" type="layout"/>-->
+    <!--<item name="economic_widget_item_row2" type="layout"/>-->
+    <!--<item name="economic_widget_item_row_3" type="layout"/>-->
+    <!--<item name="economic_widget_item_row_4" type="layout"/>-->
+</resources>

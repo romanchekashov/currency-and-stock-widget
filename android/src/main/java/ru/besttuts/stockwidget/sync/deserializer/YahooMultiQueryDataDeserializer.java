@@ -36,15 +36,16 @@ public class YahooMultiQueryDataDeserializer implements JsonDeserializer<YahooMu
             mapJsonElement(resultsJsonElement, yahooMultiQueryData);
         } else {
             JsonArray results = (JsonArray) resultsJsonElement;
-            if (null == results) return yahooMultiQueryData;
             for (JsonElement je2 : results) {
-                mapJsonElement(je2, yahooMultiQueryData);
+                if (je2.isJsonObject()) {
+                    mapJsonElement(je2, yahooMultiQueryData);
+                }
             }
         }
         return yahooMultiQueryData;
     }
 
-    private void mapJsonElement(JsonElement je2, YahooMultiQueryData yahooMultiQueryData){
+    private void mapJsonElement(JsonElement je2, YahooMultiQueryData yahooMultiQueryData) {
         JsonElement je3 = je2.getAsJsonObject().get("rate");
         if(null != je3){
             if(je3 instanceof JsonObject){

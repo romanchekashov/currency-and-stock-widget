@@ -21,7 +21,7 @@
             android:id="@+id/closeBtn"
             android:padding="10dp"
             android:src="@drawable/ic_action_remove"
-            android:background="#eeeeeeee" />
+            android:background="?android:selectableItemBackground" />
 
     </LinearLayout>
 

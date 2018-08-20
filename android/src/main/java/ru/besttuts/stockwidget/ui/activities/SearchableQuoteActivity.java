@@ -31,7 +31,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
@@ -60,7 +60,7 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
  * Displays search results triggered by the search dialog and handles
  * actions from search suggestions.
  */
-public class SearchableQuoteActivity extends ActionBarActivity
+public class SearchableQuoteActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = makeLogTag(SearchableQuoteActivity.class);
