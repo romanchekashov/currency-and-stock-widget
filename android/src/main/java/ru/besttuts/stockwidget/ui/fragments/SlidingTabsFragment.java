@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.ui.activities.EconomicWidgetConfigureActivity;
+import ru.besttuts.stockwidget.ui.fragments.tracking.TrackingQuotesFragment;
 import ru.besttuts.stockwidget.ui.view.SlidingTabLayout;
 import ru.besttuts.stockwidget.util.NotificationManager;
 

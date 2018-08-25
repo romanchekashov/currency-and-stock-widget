@@ -14,7 +14,7 @@ import java.util.TimeZone;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.io.model.Result;
-import ru.besttuts.stockwidget.model.Model;
+import ru.besttuts.stockwidget.provider.model.Model;
 import ru.besttuts.stockwidget.model.QuoteLastTradeDate;
 import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.model.Setting;
@@ -645,7 +645,6 @@ public class QuoteDataSource {
         model.setName(cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_NAME)));
         model.setRate(cursor.getDouble(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_RATE)));
         model.setChange(cursor.getDouble(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_CHANGE)));
-        model.setPercentChange(cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_PERCENT_CHANGE)));
         model.setQuoteType(cursor.getInt(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_QUOTE_TYPE)));
         try {
             model.setCurrency(cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_CURRENCY)));

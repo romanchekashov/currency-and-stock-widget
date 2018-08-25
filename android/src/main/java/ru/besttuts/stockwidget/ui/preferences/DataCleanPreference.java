@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.provider.db.DbProvider;
-import ru.besttuts.stockwidget.ui.fragments.TrackingQuotesFragment;
+import ru.besttuts.stockwidget.ui.fragments.tracking.TrackingQuotesFragment;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;

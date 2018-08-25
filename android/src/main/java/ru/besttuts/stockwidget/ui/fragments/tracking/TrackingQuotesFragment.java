@@ -1,4 +1,4 @@
-package ru.besttuts.stockwidget.ui.fragments;
+package ru.besttuts.stockwidget.ui.fragments.tracking;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -36,20 +36,21 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import ru.besttuts.stockwidget.R;
-import ru.besttuts.stockwidget.model.Model;
+import ru.besttuts.stockwidget.provider.model.Model;
 import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.provider.QuoteContract;
 import ru.besttuts.stockwidget.provider.QuoteContract.Settings;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
 import ru.besttuts.stockwidget.provider.db.DbNotificationManager;
 import ru.besttuts.stockwidget.provider.db.DbProvider;
+import ru.besttuts.stockwidget.provider.model.Setting;
+import ru.besttuts.stockwidget.sync.MyFinanceWS;
 import ru.besttuts.stockwidget.sync.RemoteYahooFinanceDataFetcher;
+import ru.besttuts.stockwidget.sync.sparklab.QuoteDto;
 import ru.besttuts.stockwidget.ui.activities.DynamicWebViewActivity;
 import ru.besttuts.stockwidget.ui.activities.EconomicWidgetConfigureActivity;
 import ru.besttuts.stockwidget.util.CustomConverter;
@@ -370,108 +371,6 @@ public class TrackingQuotesFragment extends Fragment
 
     FetchQuote mFetchQuote;
 
-    /**
-     * http://developer.android.com/training/improving-layouts/smooth-scrolling.html#ViewHolder
-     */
-    static class ViewHolder {
-        ProgressBar progressBar;
-        LinearLayout linearLayout;
-        TextView tvName;
-        TextView tvRate;
-        TextView tvChange;
-        TextView tvChangePercentage;
-        TextView tvCurrency;
-        TextView tvPosition;
-        ImageView imageView;
-    }
-
-    class MySimpleCursorAdapter extends SimpleCursorAdapter {
-        MySimpleCursorAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
-            super(context, layout, c, from, to, flags);
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View row = convertView;
-            ViewHolder holder = null;
-            if(row == null) {
-                LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                row = inflater.inflate(R.layout.configure_quote_grid_item, parent, false);
-                //Now create the ViewHolder
-                holder = new ViewHolder();
-                holder.progressBar = (ProgressBar) row.findViewById(R.id.progressBar2);
-                holder.linearLayout = (LinearLayout) row.findViewById(R.id.lLayoutRate);
-                holder.tvName =  (TextView) row.findViewById(R.id.tvName);
-                holder.tvRate =  (TextView) row.findViewById(R.id.tvRate);
-                holder.tvChange =  (TextView) row.findViewById(R.id.tvChange);
-                holder.tvChangePercentage =  (TextView) row.findViewById(R.id.tvChangePercentage);
-                holder.tvCurrency =  (TextView) row.findViewById(R.id.tvCurrency);
-                holder.tvPosition =  (TextView) row.findViewById(R.id.tvPosition);
-                holder.imageView = (ImageView) row.findViewById(R.id.imageView);
-                //and store it as the 'tag' of our view
-                row.setTag(holder);
-            } else {
-                //We've already seen this one before!
-                holder = (ViewHolder) row.getTag();
-            }
-
-            Cursor cursor = (Cursor) getItem(position);
-            String symbol = cursor.getString(cursor.getColumnIndexOrThrow(
-                    QuoteContract.ModelColumns.MODEL_ID));
-
-            if (null == symbol || symbol.isEmpty()) {
-                int quoteType = cursor.getInt(cursor.getColumnIndexOrThrow(
-                        QuoteContract.SettingColumns.SETTING_QUOTE_TYPE));
-                symbol = cursor.getString(cursor.getColumnIndexOrThrow(
-                        QuoteContract.SettingColumns.SETTING_QUOTE_SYMBOL));
-                holder.tvName.setText(
-                        Utils.getModelNameFromResourcesBySymbol(getActivity(), quoteType, symbol));
-
-
-                holder.linearLayout.setVisibility(View.GONE);
-                holder.progressBar.setVisibility(View.VISIBLE);
-
-//                if (null == mFetchQuote) {
-//                    LOGD(TAG, "before FetchQuote: getView: currentThread = " + Thread.currentThread());
-//                    LOGD(TAG, String.format("getView: quoteType = %s, symbol = %s", quoteType, symbol));
-//
-//                    mFetchQuote = (FetchQuote) new FetchQuote(getActivity())
-//                            .execute(new String[]{String.valueOf(quoteType), symbol});
-//                }
-
-                return row;
-            }
-
-            holder.progressBar.setVisibility(View.GONE);
-            holder.linearLayout.setVisibility(View.VISIBLE);
-
-            String quotePosition = String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(
-                    QuoteContract.SettingColumns.SETTING_QUOTE_POSITION)));
-            holder.tvPosition.setText(quotePosition);
-
-            LOGD(TAG, "getView: symbol = " + symbol + " quotePosition = " + quotePosition);
-
-            Model model = QuoteDataSource.transformCursorToModel(cursor);
-            holder.tvName.setText(Utils.getModelNameFromResourcesBySymbol(getActivity(), model));
-            holder.tvRate.setText(model.getRateToString());
-            holder.tvChange.setText(model.getChangeToString());
-            holder.tvChangePercentage.setText(model.getPercentChange());
-
-            int color = getResources().getColor(R.color.arrow_green);
-            if (0 < model.getChange()) {
-                holder.imageView.setImageResource(R.drawable.ic_widget_green_arrow_up);
-            } else {
-                holder.imageView.setImageResource(R.drawable.ic_widget_green_arrow_down);
-                color = getResources().getColor(R.color.arrow_red);
-            }
-            holder.tvChange.setTextColor(color);
-            holder.tvChangePercentage.setTextColor(color);
-
-            holder.tvCurrency.setText(model.getCurrency());
-            return row;
-        }
-    }
-
     public static class StockItemTypeDialogFragment extends DialogFragment {
 
         private static final String ARG_POSITION = "position";
@@ -561,43 +460,24 @@ public class TrackingQuotesFragment extends Fragment
 
             RemoteYahooFinanceDataFetcher dataFetcher = new RemoteYahooFinanceDataFetcher();
 
-            Cursor cursor = mDbProvider.getCursorSettingsWithoutModelByWidgetId(widgetId);
+            List<Setting> settingsWithoutModel = mDbProvider.getCursorSettingsWithoutModelByWidgetId(widgetId);
 
-            LOGD(TAG, String.format("[doInBackground]: cursor.getCount() = %d", cursor.getCount()));
+            LOGD(TAG, String.format("[doInBackground]: cursor.getCount() = %d", settingsWithoutModel.size()));
 
-            if (0 == cursor.getCount()) {
-                cursor.close();
+            if (settingsWithoutModel.isEmpty()) {
                 return models;
             }
 
-            Set<String> symbolSet = new HashSet<>(cursor.getCount());
+            List<String> symbols = new ArrayList<>(settingsWithoutModel.size());
 
-            cursor.moveToFirst();
-            do {
-                String symbol = cursor.getString(cursor.getColumnIndexOrThrow(
-                        QuoteContract.SettingColumns.SETTING_QUOTE_SYMBOL));
-                int quoteType = cursor.getInt(cursor.getColumnIndexOrThrow(
-                        QuoteContract.SettingColumns.SETTING_QUOTE_TYPE));
-
-                LOGD(TAG, String.format("FetchQuote.doInBackground: quoteType = %s, symbol = %s", quoteType, symbol));
-
-                dataFetcher.populateQuoteSet(quoteType, symbol);
-
-                symbolSet.add(symbol);
-            } while (cursor.moveToNext());
-            cursor.close();
+            for (Setting setting: settingsWithoutModel) {
+                symbols.add(setting.getQuoteSymbol());
+            }
 
             try {
-                Map<String, Model> symbolModelMap = CustomConverter.convertToModelMap(
-                        dataFetcher.getYahooMultiQueryData());
-
-                for (String symbol : symbolSet) {
-                    Model model = symbolModelMap.get(symbol);
-                    if (model == null) {
-                        model = new Model();
-                        model.setId(symbol);
-                        model.setName(symbol);
-                    }
+                List<QuoteDto> quoteDtos = new MyFinanceWS(mContext).getQuotes(symbols);
+                for (QuoteDto dto: quoteDtos) {
+                    Model model = CustomConverter.toModel(dto);
                     mDbProvider.addModelRec(model);
                     models.add(model);
                 }

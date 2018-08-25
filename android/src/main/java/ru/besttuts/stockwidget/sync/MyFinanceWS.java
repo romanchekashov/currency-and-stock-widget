@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import ru.besttuts.stockwidget.model.QuoteLastTradeDate;
+import ru.besttuts.stockwidget.sync.sparklab.QuoteDto;
 import ru.besttuts.stockwidget.util.SharedPreferencesHelper;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
@@ -57,5 +58,26 @@ public class MyFinanceWS {
         }
 
         return new ArrayList<>();
+    }
+
+    public List<QuoteDto> getQuotes(List<String> symbols) throws IOException {
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(MY_FINANCE_BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        MyFinanceService service = retrofit.create(MyFinanceService.class);
+
+        StringBuilder builder = new StringBuilder();
+        for (String s: symbols) {
+            builder.append(s).append(",");
+        }
+
+        String sSymbols = builder.substring(0, builder.length() - 1);
+        List<QuoteDto> quotes = service.quotes(sSymbols).execute().body();
+        LOGD(TAG, "[getQuotes]: quotes fetched = " + quotes.size());
+
+        return quotes;
     }
 }

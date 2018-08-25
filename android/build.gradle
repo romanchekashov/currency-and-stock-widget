@@ -45,7 +45,12 @@ ext {
 }
 
 dependencies {
+    def room_version = "1.1.1"
+
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+
+    implementation "android.arch.persistence.room:runtime:$room_version"
+    annotationProcessor "android.arch.persistence.room:compiler:$room_version" // use kapt for Kotlin
 
     implementation 'com.android.support:support-v4:'+ANDROID_SUPPORT_LIB_VERSION
     implementation 'com.android.support:appcompat-v7:'+ANDROID_SUPPORT_LIB_VERSION
@@ -69,6 +74,7 @@ dependencies {
     testImplementation 'org.mockito:mockito-all:1.10.19'
     testImplementation "org.robolectric:robolectric:3.1.4"
     testImplementation "org.robolectric:shadows-multidex:3.1.4"
+    testImplementation "android.arch.persistence.room:testing:$room_version"
     androidTestImplementation 'com.android.support:support-annotations:'+ANDROID_SUPPORT_LIB_VERSION
     androidTestImplementation 'com.android.support.test:runner:0.4.1'
     androidTestImplementation 'com.android.support.test:rules:0.4.1'

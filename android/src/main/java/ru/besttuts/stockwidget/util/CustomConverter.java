@@ -5,8 +5,9 @@ import java.util.Map;
 
 import ru.besttuts.stockwidget.model.Currency;
 import ru.besttuts.stockwidget.model.Good;
-import ru.besttuts.stockwidget.model.Model;
+import ru.besttuts.stockwidget.provider.model.Model;
 import ru.besttuts.stockwidget.sync.model.YahooMultiQueryData;
+import ru.besttuts.stockwidget.sync.sparklab.QuoteDto;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.LOGE;
@@ -23,10 +24,10 @@ public class CustomConverter {
     public static synchronized Map<String, Model> convertToModelMap(YahooMultiQueryData yahooMultiQueryData){
         Map<String, Model> symbolModelMap = new HashMap<>();
         for (YahooMultiQueryData.Rate rate: yahooMultiQueryData.rates){
-            symbolModelMap.put(rate.id, readCurrency(rate));
+//            symbolModelMap.put(rate.id, readCurrency(rate));
         }
         for (YahooMultiQueryData.Quote quote: yahooMultiQueryData.quotes){
-            symbolModelMap.put(quote.symbol, readGood(quote));
+//            symbolModelMap.put(quote.symbol, readGood(quote));
         }
         return symbolModelMap;
     }
@@ -71,5 +72,16 @@ public class CustomConverter {
         good.setCurrency(quote.Currency);
 
         return good;
+    }
+
+    public static Model toModel(QuoteDto dto) {
+        Model model = new Model();
+        model.setId(dto.getSymbol());
+        model.setChange(dto.getChange());
+        model.setRate(dto.getRate());
+        model.setCurrency(dto.getCurrency());
+        model.setName(dto.getName());
+        model.setQuoteType(dto.getType());
+        return model;
     }
 }

@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -38,7 +37,7 @@ import ru.besttuts.stockwidget.ui.App;
 import ru.besttuts.stockwidget.ui.EconomicWidget;
 import ru.besttuts.stockwidget.ui.fragments.ConfigPreferenceFragment;
 import ru.besttuts.stockwidget.ui.fragments.SlidingTabsFragment;
-import ru.besttuts.stockwidget.ui.fragments.TrackingQuotesFragment;
+import ru.besttuts.stockwidget.ui.fragments.tracking.TrackingQuotesFragment;
 import ru.besttuts.stockwidget.util.AppRater;
 import ru.besttuts.stockwidget.util.NotificationManager;
 

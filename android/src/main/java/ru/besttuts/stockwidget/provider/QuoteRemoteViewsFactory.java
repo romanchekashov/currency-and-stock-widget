@@ -15,7 +15,7 @@ import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.provider.db.DbProvider;
 import ru.besttuts.stockwidget.ui.activities.EconomicWidgetConfigureActivity;
-import ru.besttuts.stockwidget.ui.fragments.TrackingQuotesFragment;
+import ru.besttuts.stockwidget.ui.fragments.tracking.TrackingQuotesFragment;
 import ru.besttuts.stockwidget.util.Utils;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;

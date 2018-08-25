@@ -4,7 +4,6 @@ import android.app.IntentService;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
-import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.android.volley.Request;
@@ -16,17 +15,19 @@ import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ru.besttuts.stockwidget.model.Model;
-import ru.besttuts.stockwidget.model.Setting;
 import ru.besttuts.stockwidget.provider.db.DbProvider;
-import ru.besttuts.stockwidget.service.tasks.FetchStockDataAsyncTask;
+import ru.besttuts.stockwidget.provider.model.Model;
+import ru.besttuts.stockwidget.provider.model.Setting;
+import ru.besttuts.stockwidget.sync.MyFinanceWS;
 import ru.besttuts.stockwidget.sync.deserializer.YahooMultiQueryDataDeserializer;
 import ru.besttuts.stockwidget.sync.model.YahooMultiQueryData;
+import ru.besttuts.stockwidget.sync.sparklab.QuoteDto;
 import ru.besttuts.stockwidget.ui.EconomicWidget;
 import ru.besttuts.stockwidget.util.CustomConverter;
 import ru.besttuts.stockwidget.util.YahooQueryBuilder;
@@ -45,14 +46,12 @@ public class UpdateService extends IntentService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, final int startId) {
-        LOGD(TAG, "onStartCommand");
-
-//        LOGD(TAG, "intent=" + intent + ", action=" + intent.getAction() + ", flags=" + flags + " bits=" + Integer.toBinaryString(flags));
-        if (null == intent) {
+        if (null == intent || null == intent.getAction()) {
             String source = null == intent ? "intent" : "action";
             LOGE(TAG, source + " was null, flags=" + flags + " bits=" + Integer.toBinaryString(flags));
             return START_NOT_STICKY;
         }
+        LOGD(TAG, "[onStartCommand]intent=" + intent + ", action=" + intent.getAction() + ", flags=" + flags + " bits=" + Integer.toBinaryString(flags));
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -64,10 +63,7 @@ public class UpdateService extends IntentService {
         final int[] allWidgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
         boolean hasInternet = intent.getBooleanExtra(EconomicWidget.ARG_HAS_INTERNET, true);
 
-//        new FetchStockDataAsyncTask(this, appWidgetManager, allWidgetIds, startId, hasInternet).execute();
-
         updateData(this, appWidgetManager, allWidgetIds, -1, hasInternet);
-
     }
 
     @Override
@@ -78,68 +74,51 @@ public class UpdateService extends IntentService {
     }
 
     private void updateData(final Service service, final AppWidgetManager appWidgetManager,
-                            final int[] allWidgetIds, final int startId, final boolean hasInternet) {
+                            final int[] allWidgetIds, final int startId,
+                            final boolean hasInternet) {
         final List<Setting> settings = DbProvider.getInstance().getAllSettingsWithCheck();
-        String url = YahooQueryBuilder.buildYahooFinanceMultiQueryUrl(settings);
-        final Gson gson = new GsonBuilder().registerTypeAdapter(YahooMultiQueryData.class,
-                new YahooMultiQueryDataDeserializer()).create();
-
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        LOGD(TAG, "Response is: "+ response.substring(0,500));
-                        YahooMultiQueryData yahooMultiQueryData = gson.fromJson(response, YahooMultiQueryData.class);
-                        Map<Integer, List<Model>> map = map(settings, yahooMultiQueryData);
-                        updateWidget(map, service, appWidgetManager, allWidgetIds, startId, hasInternet);
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                LOGE(TAG, "That didn't work!");
+        List<String> symbols = new ArrayList<>(settings.size());
+        Map<String, List<Integer>> symbolWidgetId = new HashMap<>();
+        for (Setting setting: settings) {
+            String symbol = setting.getQuoteSymbol();
+            symbols.add(symbol);
+            if (symbolWidgetId.get(symbol) == null) {
+                symbolWidgetId.put(symbol, new ArrayList<Integer>());
             }
-        });
-        requestQueue.add(stringRequest);
-    }
-
-    private Map<Integer, List<Model>> map(List<Setting> settings, YahooMultiQueryData yahooMultiQueryData){
-        Map<Integer, List<Model>> map = new HashMap<>();
-        DbProvider dbProvider = DbProvider.getInstance();
-        Map<String, Model> symbolModelMap = CustomConverter.convertToModelMap(yahooMultiQueryData);
-
-        for (Setting setting : settings) {
-            int widgetId = setting.getWidgetId();
-            if (!map.containsKey(widgetId)) {
-                map.put(widgetId, new ArrayList<Model>());
-            }
-            map.get(widgetId).add(symbolModelMap.get(setting.getQuoteSymbol()));
+            symbolWidgetId.get(symbol).add(setting.getWidgetId());
         }
 
-        for (Map.Entry<Integer, List<Model>> me : map.entrySet()) {
-            List<Model> models = me.getValue();
-
-            for (int i = 0, l = models.size(); i < l; i++) {
-                Model model = models.get(i);
-                if (null == model) continue;
-                if(!dbProvider.addModelRec(model)){
-                    models.set(i, dbProvider.getModelById(model.getId()));
+        try {
+            List<QuoteDto> quoteDtos = new MyFinanceWS(this).getQuotes(symbols);
+            Map<Integer, List<Model>> modelsByWidgetId = new HashMap<>();
+            for (QuoteDto dto: quoteDtos) {
+                Model model = CustomConverter.toModel(dto);
+                List<Integer> widgetIds = symbolWidgetId.get(dto.getSymbol());
+                for (Integer i: widgetIds) {
+                    if (modelsByWidgetId.get(i) == null) {
+                        modelsByWidgetId.put(i, new ArrayList<Model>());
+                    }
+                    modelsByWidgetId.get(i).add(model);
                 }
             }
+
+            // при успешном получении данных, удаляем статус о проблемах соединения
+            EconomicWidget.connectionStatus = null;
+
+            updateWidget(modelsByWidgetId, service, appWidgetManager,
+                    allWidgetIds, startId, hasInternet);
+        } catch (IOException e) {
+            e.printStackTrace();
+            LOGE(TAG, "That didn't work!");
         }
-
-        // при успешном получении данных, удаляем статус о проблемах соединения
-        EconomicWidget.connectionStatus = null;
-
-        return map;
     }
 
     private void updateWidget(Map<Integer, List<Model>> map, Service service, AppWidgetManager appWidgetManager,
                               int[] allWidgetIds, int startId, boolean hasInternet){
 
         for (int widgetId: allWidgetIds) {
-            EconomicWidget.updateAppWidget(service.getApplicationContext(), appWidgetManager, widgetId,
-                    map.get(widgetId), hasInternet);
+            EconomicWidget.updateAppWidget(service.getApplicationContext(), appWidgetManager,
+                    widgetId, map.get(widgetId), hasInternet);
         }
 
 //        boolean serviceStopped = (null != service) && service.stopSelfResult(startId);

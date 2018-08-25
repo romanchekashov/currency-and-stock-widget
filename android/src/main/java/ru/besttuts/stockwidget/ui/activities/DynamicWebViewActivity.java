@@ -11,7 +11,7 @@ import android.webkit.WebViewClient;
 import android.widget.ImageButton;
 
 import ru.besttuts.stockwidget.R;
-import ru.besttuts.stockwidget.ui.fragments.TrackingQuotesFragment;
+import ru.besttuts.stockwidget.ui.fragments.tracking.TrackingQuotesFragment;
 
 public class DynamicWebViewActivity extends AppCompatActivity implements View.OnClickListener {
 
