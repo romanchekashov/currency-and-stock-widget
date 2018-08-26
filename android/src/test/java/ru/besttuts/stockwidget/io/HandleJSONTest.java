@@ -19,6 +19,7 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 /**
  * Created by roman on 14.02.2015.
  */
+@Deprecated
 public class HandleJSONTest {
 
     private static final String TAG = makeLogTag(HandleJSONTest.class);

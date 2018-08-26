@@ -42,7 +42,6 @@ import ru.besttuts.stockwidget.provider.model.Model;
 import ru.besttuts.stockwidget.provider.model.Setting;
 import ru.besttuts.stockwidget.provider.model.wrap.ModelSetting;
 import ru.besttuts.stockwidget.sync.MyFinanceWS;
-import ru.besttuts.stockwidget.sync.RemoteYahooFinanceDataFetcher;
 import ru.besttuts.stockwidget.sync.sparklab.dto.QuoteDto;
 import ru.besttuts.stockwidget.ui.activities.DynamicWebViewActivity;
 import ru.besttuts.stockwidget.ui.activities.EconomicWidgetConfigureActivity;
@@ -57,7 +56,8 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
  * Фрагмет с отслеживаемыми котировками.
  */
 public class TrackingQuotesFragment extends Fragment
-        implements NotificationManager.ColorChangedListener, NotificationManager.OptionsItemSelectListener,
+        implements NotificationManager.ColorChangedListener,
+        NotificationManager.OptionsItemSelectListener,
         AdapterView.OnItemClickListener {
 
     private static final String TAG = makeLogTag(TrackingQuotesFragment.class);
@@ -82,7 +82,6 @@ public class TrackingQuotesFragment extends Fragment
 
     private OnFragmentInteractionListener mListener;
 
-//    private SimpleCursorAdapter mSimpleCursorAdapter;
     private TrackingQuotesAdapter trackingQuotesAdapter;
 
     private View mMainView;
@@ -145,7 +144,6 @@ public class TrackingQuotesFragment extends Fragment
                 R.id.tvChangePercentage, R.id.tvPosition};
 
         // создааем адаптер и настраиваем список
-//        mSimpleCursorAdapter = new MySimpleCursorAdapter(getActivity(), R.layout.configure_quote_grid_item, null, from, to, 0);
         trackingQuotesAdapter = new TrackingQuotesAdapter(getActivity(), R.layout.configure_quote_grid_item, new ArrayList<ModelSetting>());
         gridView = (GridView) mMainView.findViewById(R.id.gridView);
         gridView.setAdapter(trackingQuotesAdapter);
@@ -453,9 +451,17 @@ public class TrackingQuotesFragment extends Fragment
 
             List<Model> models = mDbProvider.getModelsByWidgetId(widgetId);
 
-            RemoteYahooFinanceDataFetcher dataFetcher = new RemoteYahooFinanceDataFetcher();
+//            try {
+//                List<String> symbols = new ArrayList<>(models.size());
+//                for (Model model: models) symbols.add(model.getId());
+//                List<QuoteDto> dtos = new MyFinanceWS(mContext).getQuotes(symbols);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
 
-            List<Setting> settingsWithoutModel = mDbProvider.getCursorSettingsWithoutModelByWidgetId(widgetId);
+
+            List<Setting> settingsWithoutModel = mDbProvider.getDatabaseAdapter()
+                    .getSettingsWithoutModelByWidgetId(widgetId);
 
             LOGD(TAG, String.format("[doInBackground]: cursor.getCount() = %d", settingsWithoutModel.size()));
 

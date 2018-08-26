@@ -93,7 +93,7 @@ public abstract class AbsQuoteSelectionFragment extends Fragment implements IQuo
         LOGD(TAG, "onDestroy: ");
     }
 
-    protected void setSelectedBgView(View view) {
+    public void setSelectedBgView(View view) {
         if (0 == mColor) {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
             String bgColor = "#" + ConfigPreferenceFragment.KEY_PREF_BG_VISIBILITY_DEFAULT_VALUE +

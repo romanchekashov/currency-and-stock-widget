@@ -113,8 +113,7 @@ public class EconomicWidget extends AppWidgetProvider {
 //        }
 
         // Создаем intent для вызова сервиса
-        Intent intent = new Intent(context.getApplicationContext(),
-                UpdateService.class);
+        Intent intent = new Intent(context.getApplicationContext(), UpdateService.class);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
         intent.putExtra(ARG_HAS_INTERNET, hasInternet);
 
@@ -382,10 +381,11 @@ public class EconomicWidget extends AppWidgetProvider {
         AppWidgetManager appWidgetManager = AppWidgetManager
                 .getInstance(context);
         int appWidgetIds[] = appWidgetManager.getAppWidgetIds(thisAppWidget);
-        LOGD(TAG, "[onReceive] appWidgetIds[] = " + appWidgetIds);
+        for (Integer id: appWidgetIds) {
+            LOGD(TAG, "[onReceive] appWidgetId = " + id);
+        }
 
         onUpdate(context, appWidgetManager, appWidgetIds, isSyncAllowed(context));
-
     }
 
     private void handleResize(Context context, Intent intent) {

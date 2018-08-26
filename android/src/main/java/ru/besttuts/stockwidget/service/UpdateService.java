@@ -34,9 +34,9 @@ public class UpdateService extends IntentService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, final int startId) {
-        if (null == intent || null == intent.getAction()) {
-            String source = null == intent ? "intent" : "action";
-            LOGE(TAG, source + " was null, flags=" + flags + " bits=" + Integer.toBinaryString(flags));
+        if (null == intent) {
+            LOGE(TAG, intent + " was null, flags=" + flags
+                    + " bits=" + Integer.toBinaryString(flags));
             return START_NOT_STICKY;
         }
         LOGD(TAG, "[onStartCommand]intent=" + intent + ", action=" + intent.getAction() + ", flags=" + flags + " bits=" + Integer.toBinaryString(flags));

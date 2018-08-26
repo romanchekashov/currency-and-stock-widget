@@ -97,7 +97,7 @@ public class Setting {
     @Override
     public String toString() {
         return "Setting{" +
-                " _id='" + _id + '\'' +
+                "_id=" + _id +
                 ", id='" + id + '\'' +
                 ", widgetId=" + widgetId +
                 ", quotePosition=" + quotePosition +
@@ -107,7 +107,7 @@ public class Setting {
                 '}';
     }
 
-//    @Override
+    //    @Override
     public boolean isValid() {
         if (null == id) return false;
         if (widgetId == 0) return false;

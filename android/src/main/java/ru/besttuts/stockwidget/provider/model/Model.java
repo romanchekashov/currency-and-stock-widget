@@ -110,13 +110,17 @@ public class Model {
     @Override
     public String toString() {
         return "Model{" +
-                "name='" + name + '\'' +
+                "_id=" + _id +
+                ", id='" + id + '\'' +
+                ", name='" + name + '\'' +
                 ", rate=" + rate +
                 ", change=" + change +
+                ", currency='" + currency + '\'' +
+                ", quoteType=" + quoteType +
                 '}';
     }
 
-//    @Override
+    //    @Override
     public boolean isValid(){
         if (null == id) return false;
         if (null == name) return false;

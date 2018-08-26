@@ -16,7 +16,7 @@ import ru.besttuts.stockwidget.sync.model.YahooMultiQueryData;
  * @author rchekashov
  *         created on 06.10.2016
  */
-
+@Deprecated
 public class YahooMultiQueryDataDeserializer implements JsonDeserializer<YahooMultiQueryData> {
 
     @Override

@@ -2,7 +2,6 @@ package ru.besttuts.stockwidget;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
-import android.support.test.InstrumentationRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,12 +11,10 @@ import ru.besttuts.stockwidget.model.QuoteLastTradeDate;
 import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.model.Setting;
 import ru.besttuts.stockwidget.provider.QuoteContract;
-import ru.besttuts.stockwidget.provider.QuoteContract.*;
-import ru.besttuts.stockwidget.provider.QuoteDataSource;
-import ru.besttuts.stockwidget.provider.QuoteProvider;
-import ru.besttuts.stockwidget.util.ContentResolverHelper;
 import ru.besttuts.stockwidget.provider.QuoteContract.QuoteLastTradeDates;
-
+import ru.besttuts.stockwidget.provider.QuoteContract.Settings;
+import ru.besttuts.stockwidget.provider.QuoteDataSource;
+import ru.besttuts.stockwidget.util.ContentResolverHelper;
 
 import static org.junit.Assert.assertEquals;
 import static ru.besttuts.stockwidget.util.LogUtils.LOGE;

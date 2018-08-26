@@ -1,12 +1,10 @@
 package ru.besttuts.stockwidget.ui.fragments.quotes;
 
 import android.app.Activity;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +15,13 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.provider.QuoteContract;
-import ru.besttuts.stockwidget.ui.activities.QuotePickerActivity;
+import ru.besttuts.stockwidget.provider.db.DbProvider;
+import ru.besttuts.stockwidget.provider.model.Quote;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
@@ -29,7 +29,8 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 /**
  *
  */
-public class MyQuotesFragment extends AbsQuoteSelectionFragment implements LoaderCallbacks<Cursor> {
+public class MyQuotesFragment extends AbsQuoteSelectionFragment
+        implements LoaderCallbacks<List<Quote>> {
 
     private static final String TAG = makeLogTag(MyQuotesFragment.class);
 
@@ -42,7 +43,7 @@ public class MyQuotesFragment extends AbsQuoteSelectionFragment implements Loade
     private String mSymbol;
     private Set<String> mSymbols;
 
-    private SimpleCursorAdapter mSimpleCursorAdapter;
+    private QuotesAdapter quotesAdapter;
 
     private View mMainView;
 
@@ -82,7 +83,7 @@ public class MyQuotesFragment extends AbsQuoteSelectionFragment implements Loade
 
     public void deleteSelectedSymbols() {
         String[] symbols = getSelectedSymbols();
-        QuotePickerActivity.mDataSource.deleteQuotesByIds(symbols);
+        DbProvider.getInstance().getDatabaseAdapter().deleteQuotesByIds(symbols);
         mSymbols = new HashSet<>();
         Toast.makeText(getActivity(), String.format("%d quotes deleted!", symbols.length),
                 Toast.LENGTH_SHORT).show();
@@ -141,12 +142,13 @@ public class MyQuotesFragment extends AbsQuoteSelectionFragment implements Loade
         int[] to = new int[]{android.R.id.text1, android.R.id.text2};
 
         // создааем адаптер и настраиваем список
-        mSimpleCursorAdapter = new MySimpleCursorAdapter(getActivity(),
-                android.R.layout.simple_list_item_2, null, from, to, 0);
-
+        quotesAdapter = new QuotesAdapter(getActivity(), android.R.layout.simple_list_item_2, new ArrayList<Quote>());
+        quotesAdapter.setSymbols(mSymbols);
+        quotesAdapter.setQuoteType(mQuoteType);
+        quotesAdapter.setFragment(this);
         mListView = (ListView) mMainView.findViewById(R.id.listView2);
 //        listView.setBackground(getResources().getDrawable(R.drawable.bg_key));
-        mListView.setAdapter(mSimpleCursorAdapter);
+        mListView.setAdapter(quotesAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -204,34 +206,34 @@ public class MyQuotesFragment extends AbsQuoteSelectionFragment implements Loade
     }
 
     @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new MyCursorLoader(getActivity(), QuotePickerActivity.mDataSource, mQuoteType);
+    public Loader<List<Quote>> onCreateLoader(int id, Bundle args) {
+        return new QuoteLoader(getActivity(), mQuoteType);
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mSimpleCursorAdapter.changeCursor(data);
-        mWidgetItemsNumber = data.getCount();
+    public void onLoadFinished(Loader<List<Quote>> loader, List<Quote> data) {
+        quotesAdapter.setData(data);
+        mWidgetItemsNumber = data.size();
         LOGD(TAG, "onLoadFinished: currentThread = " + Thread.currentThread());
         LOGD(TAG, "swapCursor: cursor.getCount = mWidgetItemsNumber = " + mWidgetItemsNumber);
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
+    public void onLoaderReset(Loader<List<Quote>> loader) {
         /*
          * Удаляем ссылку на Cursor в адаптере.
          * Это предотвращает утечку памяти.
          */
-        mSimpleCursorAdapter.changeCursor(null);
+        quotesAdapter.setData(new ArrayList<Quote>());
     }
 
     private void deleteItem(int pos) {
-        Cursor cursor = (Cursor) mSimpleCursorAdapter.getItem(pos - 1);
-        // извлекаем id записи и удаляем соответствующую запись в БД
-        QuotePickerActivity.mDataSource.deleteSettingsByIdAndUpdatePositions(cursor.getString(
-                cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_ID)), pos);
-        // получаем новый курсор с данными
-        getActivity().getSupportLoaderManager().getLoader(URL_LOADER).forceLoad();
+//        Cursor cursor = (Cursor) mSimpleCursorAdapter.getItem(pos - 1);
+//        // извлекаем id записи и удаляем соответствующую запись в БД
+//        QuotePickerActivity.mDataSource.deleteSettingsByIdAndUpdatePositions(cursor.getString(
+//                cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_ID)), pos);
+//        // получаем новый курсор с данными
+//        getActivity().getSupportLoaderManager().getLoader(URL_LOADER).forceLoad();
     }
 
     @Override

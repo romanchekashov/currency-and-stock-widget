@@ -27,4 +27,12 @@ public class ModelSetting {
     public void setModel(Model model) {
         this.model = model;
     }
+
+    @Override
+    public String toString() {
+        return "ModelSetting{" +
+                "setting=" + setting +
+                ", model=" + model +
+                '}';
+    }
 }

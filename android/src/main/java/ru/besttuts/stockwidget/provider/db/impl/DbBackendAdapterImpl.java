@@ -18,6 +18,7 @@ import ru.besttuts.stockwidget.provider.model.Quote;
 import ru.besttuts.stockwidget.provider.model.Setting;
 import ru.besttuts.stockwidget.provider.model.wrap.ModelSetting;
 
+import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
 /**
@@ -118,20 +119,23 @@ public class DbBackendAdapterImpl implements DbBackendAdapter {
 
     @Override
     public List<ModelSetting> getSettingsWithModelByWidgetId(int widgetId) {
-        List<Setting> settings = database.settingDao().allByWidgetId(widgetId);
+        List<ModelSetting> modelSettings = new ArrayList<>();
         List<Model> models = getModelsByWidgetId(widgetId);
+        if (models.isEmpty()) return modelSettings;
+
+        List<Setting> settings = database.settingDao().allByWidgetId(widgetId);
         Map<String, Model> symbolModel = new HashMap<>();
 
         for (Model model: models) {
             symbolModel.put(model.getId(), model);
         }
 
-        List<ModelSetting> modelSettings = new ArrayList<>();
-
         for (Setting setting: settings) {
             modelSettings.add(new ModelSetting(
                     setting, symbolModel.get(setting.getQuoteSymbol())));
         }
+
+        for (ModelSetting modelSetting: modelSettings) LOGD(TAG, modelSetting.toString());
 
         return modelSettings;
     }

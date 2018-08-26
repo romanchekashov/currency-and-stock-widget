@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import ru.besttuts.stockwidget.model.QuoteLastTradeDate;
+import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.sync.sparklab.dto.QuoteDto;
 import ru.besttuts.stockwidget.util.SharedPreferencesHelper;
 
@@ -62,22 +63,42 @@ public class MyFinanceWS {
 
     public List<QuoteDto> getQuotes(List<String> symbols) throws IOException {
 
+        return testData(symbols);
+
+//        StringBuilder builder = new StringBuilder();
+//        for (String s: symbols) {
+//            builder.append(s).append(",");
+//        }
+//
+//        String sSymbols = builder.substring(0, builder.length() - 1);
+//        List<QuoteDto> quotes = getService().quotes(sSymbols).execute().body();
+//        LOGD(TAG, "[getQuotes]: quotes fetched = " + quotes.size());
+//
+//        return quotes;
+    }
+
+    private MyFinanceService getService() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(MY_FINANCE_BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        MyFinanceService service = retrofit.create(MyFinanceService.class);
+        return retrofit.create(MyFinanceService.class);
+    }
 
-        StringBuilder builder = new StringBuilder();
+    private List<QuoteDto> testData(List<String> symbols) {
+        List<QuoteDto> dtos = new ArrayList<>();
         for (String s: symbols) {
-            builder.append(s).append(",");
+            QuoteDto dto = new QuoteDto();
+            dto.setSymbol(s);
+            dto.setRate(60.5);
+            dto.setChange(0.5);
+            dto.setName(s + "Name");
+            dto.setCurrency("USD");
+            dto.setTimestamp(System.currentTimeMillis());
+            dto.setType(QuoteType.CURRENCY);
+            dtos.add(dto);
         }
-
-        String sSymbols = builder.substring(0, builder.length() - 1);
-        List<QuoteDto> quotes = service.quotes(sSymbols).execute().body();
-        LOGD(TAG, "[getQuotes]: quotes fetched = " + quotes.size());
-
-        return quotes;
+        return dtos;
     }
 }

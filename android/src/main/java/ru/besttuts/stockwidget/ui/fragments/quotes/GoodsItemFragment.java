@@ -1,12 +1,10 @@
 package ru.besttuts.stockwidget.ui.fragments.quotes;
 
 import android.app.Activity;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ru.besttuts.stockwidget.R;
@@ -48,7 +47,7 @@ public class GoodsItemFragment extends AbsQuoteSelectionFragment
 
     private OnFragmentInteractionListener mListener;
 
-    private SimpleCursorAdapter mSimpleCursorAdapter;
+    private QuotesAdapter quotesAdapter;
 
 
     // Идентификатор загрузчика используемый в данном компоненте
@@ -103,12 +102,13 @@ public class GoodsItemFragment extends AbsQuoteSelectionFragment
         int[] to = new int[]{android.R.id.text1, android.R.id.text2};
 
         // создааем адаптер и настраиваем список
-        mSimpleCursorAdapter = new MySimpleCursorAdapter(getActivity(),
-                android.R.layout.simple_list_item_2, null, from, to, 0);
-
+        quotesAdapter = new QuotesAdapter(getActivity(), android.R.layout.simple_list_item_2, new ArrayList<Quote>());
+        quotesAdapter.setSymbols(mSymbols);
+        quotesAdapter.setQuoteType(mQuoteType);
+        quotesAdapter.setFragment(this);
         mListView = (ListView) view.findViewById(R.id.listView2);
 //        listView.setBackground(getResources().getDrawable(R.drawable.bg_key));
-        mListView.setAdapter(mSimpleCursorAdapter);
+        mListView.setAdapter(quotesAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -126,7 +126,7 @@ public class GoodsItemFragment extends AbsQuoteSelectionFragment
                 } else {
                     if (null != mListener) mListener.showAcceptItem(false);
                 }
-                LOGD(TAG, "onItemClick: " + mSimpleCursorAdapter.getItem(position));
+                LOGD(TAG, "onItemClick: " + quotesAdapter.getItem(position));
             }
         });
 
@@ -184,13 +184,13 @@ public class GoodsItemFragment extends AbsQuoteSelectionFragment
     }
 
     @Override
-    public void onLoadFinished(Loader<List<Quote>> loader, Cursor data) {
-        mSimpleCursorAdapter.changeCursor(data);
+    public void onLoadFinished(Loader<List<Quote>> loader, List<Quote> data) {
+        quotesAdapter.setData(data);
     }
 
     @Override
     public void onLoaderReset(Loader<List<Quote>> loader) {
-        mSimpleCursorAdapter.changeCursor(null);
+        quotesAdapter.setData(new ArrayList<Quote>());
     }
 
     /**

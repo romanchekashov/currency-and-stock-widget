@@ -30,6 +30,7 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 /**
  * Created by roman on 14.01.2015.
  */
+@Deprecated
 public class QuoteDataSource {
 
     private static final String TAG = makeLogTag(QuoteDataSource.class);

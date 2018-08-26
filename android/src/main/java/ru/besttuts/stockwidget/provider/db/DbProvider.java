@@ -5,6 +5,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.VisibleForTesting;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -15,6 +17,9 @@ import ru.besttuts.stockwidget.provider.db.impl.DbBackendAdapterImpl;
 import ru.besttuts.stockwidget.provider.model.Model;
 import ru.besttuts.stockwidget.provider.model.Setting;
 import ru.besttuts.stockwidget.provider.model.wrap.ModelSetting;
+import ru.besttuts.stockwidget.sync.MyFinanceWS;
+import ru.besttuts.stockwidget.sync.sparklab.dto.QuoteDto;
+import ru.besttuts.stockwidget.util.CustomConverter;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
@@ -144,12 +149,31 @@ public class DbProvider {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                final List<ModelSetting> modelSettings = mDbBackendAdapter
+                List<ModelSetting> modelSettings = mDbBackendAdapter
                         .getSettingsWithModelByWidgetId(widgetId);
+                if (modelSettings.isEmpty()) {
+                    List<Setting> settings = mDbBackendAdapter.getSettingsByWidgetId(widgetId);
+                    List<String> symbols = new ArrayList<>(settings.size());
+                    for (Setting setting: settings) symbols.add(setting.getQuoteSymbol());
+
+                    try {
+                        List<QuoteDto> quoteDtos = new MyFinanceWS(mContext).getQuotes(symbols);
+                        for (QuoteDto dto: quoteDtos) {
+                            database.modelDao().insertAll(CustomConverter.toModel(dto));
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    modelSettings = mDbBackendAdapter
+                            .getSettingsWithModelByWidgetId(widgetId);
+                }
+
+                final List<ModelSetting> modelSettingsFinal = modelSettings;
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        callback.onFinished(modelSettings);
+                        callback.onFinished(modelSettingsFinal);
                     }
                 });
             }

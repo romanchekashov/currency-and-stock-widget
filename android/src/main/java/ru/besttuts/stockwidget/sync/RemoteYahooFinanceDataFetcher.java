@@ -27,6 +27,7 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 /**
  * Created by roman on 07.01.2015.
  */
+@Deprecated
 public class RemoteYahooFinanceDataFetcher {
     private static final String TAG = makeLogTag(RemoteYahooFinanceDataFetcher.class);
 

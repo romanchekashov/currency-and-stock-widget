@@ -7,7 +7,7 @@ import java.util.List;
  * @author rchekashov
  *         created on 04.10.2016
  */
-
+@Deprecated
 public class YahooMultiQueryData {
     public int count;
     public String created;
