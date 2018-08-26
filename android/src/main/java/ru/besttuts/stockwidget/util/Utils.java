@@ -33,7 +33,7 @@ public class Utils {
         if (null == model) return "-";
         if (null == model.getId()) return model.getName();
 
-        if (QuoteType.GOODS == model.getQuoteType()){
+        if (QuoteType.COMMODITY == model.getQuoteType()){
             String symbol = model.getId();
             String field = symbol.toLowerCase().substring(0, symbol.length() - 7);
             try {
@@ -49,7 +49,7 @@ public class Utils {
     }
 
     public static String getModelNameFromResourcesBySymbol(Context context, String symbol) {
-        return getModelNameFromResourcesBySymbol(context, QuoteType.GOODS, symbol);
+        return getModelNameFromResourcesBySymbol(context, QuoteType.COMMODITY, symbol);
     }
 
     public static String getModelNameFromResourcesBySymbol(Context context, int quoteType,
@@ -60,7 +60,7 @@ public class Utils {
             return symbol.substring(0, 3) + "/" + symbol.substring(3);
         }
 
-        if(QuoteType.GOODS != quoteType){
+        if(QuoteType.COMMODITY != quoteType){
             return symbol;
         }
 

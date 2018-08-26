@@ -60,6 +60,7 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
  * Displays search results triggered by the search dialog and handles
  * actions from search suggestions.
  */
+@Deprecated
 public class SearchableQuoteActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
 

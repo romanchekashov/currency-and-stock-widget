@@ -8,18 +8,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.provider.BaseColumns;
-import android.util.Log;
-
-import ru.besttuts.stockwidget.BuildConfig;
-import ru.besttuts.stockwidget.provider.QuoteContract.*;
-import ru.besttuts.stockwidget.provider.QuoteContract.Settings;
-import ru.besttuts.stockwidget.provider.QuoteContract.QuoteLastTradeDates;
-
-import ru.besttuts.stockwidget.provider.QuoteDatabaseHelper.*;
-import ru.besttuts.stockwidget.provider.QuoteDatabaseHelper.Tables;
-import ru.besttuts.stockwidget.util.SelectionBuilder;
 
 import java.util.Arrays;
+
+import ru.besttuts.stockwidget.BuildConfig;
+import ru.besttuts.stockwidget.provider.QuoteContract.QuoteLastTradeDates;
+import ru.besttuts.stockwidget.provider.QuoteContract.Settings;
+import ru.besttuts.stockwidget.provider.QuoteDatabaseHelper.Tables;
+import ru.besttuts.stockwidget.util.SelectionBuilder;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;

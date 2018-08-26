@@ -6,6 +6,7 @@ import android.provider.BaseColumns;
 /**
  * Created by roman on 10.01.2015.
  */
+@Deprecated
 public class QuoteContract {
 
     public interface SettingColumns {

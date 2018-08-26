@@ -6,15 +6,6 @@ import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,12 +16,9 @@ import ru.besttuts.stockwidget.provider.db.DbProvider;
 import ru.besttuts.stockwidget.provider.model.Model;
 import ru.besttuts.stockwidget.provider.model.Setting;
 import ru.besttuts.stockwidget.sync.MyFinanceWS;
-import ru.besttuts.stockwidget.sync.deserializer.YahooMultiQueryDataDeserializer;
-import ru.besttuts.stockwidget.sync.model.YahooMultiQueryData;
-import ru.besttuts.stockwidget.sync.sparklab.QuoteDto;
+import ru.besttuts.stockwidget.sync.sparklab.dto.QuoteDto;
 import ru.besttuts.stockwidget.ui.EconomicWidget;
 import ru.besttuts.stockwidget.util.CustomConverter;
-import ru.besttuts.stockwidget.util.YahooQueryBuilder;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.LOGE;

@@ -36,7 +36,7 @@ public class HandleJSONTest {
             dataFetcher.populateQuoteSet(QuoteType.CURRENCY, symbol);
         }
         for (String symbol : goods) {
-            dataFetcher.populateQuoteSet(QuoteType.GOODS, symbol);
+            dataFetcher.populateQuoteSet(QuoteType.COMMODITY, symbol);
         }
 
         HandleJSON handleJSON = new HandleJSON(null);

@@ -20,6 +20,7 @@ import ru.besttuts.stockwidget.util.Utils;
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
+@Deprecated
 public class MySimpleCursorAdapter extends SimpleCursorAdapter {
     private static final String TAG = makeLogTag(MySimpleCursorAdapter.class);
 

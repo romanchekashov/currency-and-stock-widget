@@ -1,30 +1,22 @@
 package ru.besttuts.stockwidget.provider.db;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.VisibleForTesting;
 
-import java.io.IOException;
-import java.util.Calendar;
 import java.util.List;
-import java.util.TimeZone;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import ru.besttuts.stockwidget.model.QuoteLastTradeDate;
-import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.provider.AppDatabase;
-import ru.besttuts.stockwidget.provider.QuoteContract;
 import ru.besttuts.stockwidget.provider.db.impl.DbBackendAdapterImpl;
 import ru.besttuts.stockwidget.provider.model.Model;
 import ru.besttuts.stockwidget.provider.model.Setting;
-import ru.besttuts.stockwidget.sync.MyFinanceWS;
+import ru.besttuts.stockwidget.provider.model.wrap.ModelSetting;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
-import static ru.besttuts.stockwidget.util.LogUtils.LOGE;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
 /**
@@ -62,6 +54,14 @@ public class DbProvider {
         mDbBackendAdapter = new DbBackendAdapterImpl(database);
         mDbNotificationManager = DbNotificationManager.getInstance();
         mExecutor = new CustomExecutor();
+    }
+
+    public AppDatabase getDatabase() {
+        return database;
+    }
+
+    public DbBackendAdapter getDatabaseAdapter() {
+        return mDbBackendAdapter;
     }
 
     public static void init(Context context) {
@@ -139,35 +139,36 @@ public class DbProvider {
         });
     }
 
-    public void getCursorSettingsWithModelByWidgetId(
-            final int widgetId, final ResultCallback<Cursor> callback) {
+    public void getSettingsWithModelByWidgetId(final int widgetId,
+                                               final ResultCallback<List<ModelSetting>> callback) {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                final Cursor cursor = mDbBackend.getCursorSettingsWithModelByWidgetId(widgetId);
+                final List<ModelSetting> modelSettings = mDbBackendAdapter
+                        .getSettingsWithModelByWidgetId(widgetId);
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        callback.onFinished(cursor);
+                        callback.onFinished(modelSettings);
                     }
                 });
             }
         });
-        mExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                List<Setting> settings = mDbBackendAdapter.getSettingsByWidgetId(widgetId);
+//        mExecutor.execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                List<Setting> settings = mDbBackendAdapter.getSettingsByWidgetId(widgetId);
 //                syncQuotesWithLastTradeDate(settings);
-
-                final Cursor cursor = mDbBackend.getCursorSettingsWithModelByWidgetId(widgetId);
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        callback.onFinished(cursor);
-                    }
-                });
-            }
-        });
+//
+//                final Cursor cursor = mDbBackend.getCursorSettingsWithModelByWidgetId(widgetId);
+//                mHandler.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        callback.onFinished(cursor);
+//                    }
+//                });
+//            }
+//        });
     }
 
     public List<Setting> getCursorSettingsWithoutModelByWidgetId(int widgetId){
@@ -184,7 +185,8 @@ public class DbProvider {
         });
     }
 
-    public void deleteSettingsByIdAndUpdatePositions(final String settingId, final int position) {
+    public void deleteSettingsByIdAndUpdatePositions(final String settingId,
+                                                     final int position) {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
@@ -213,7 +215,7 @@ public class DbProvider {
 //        long today = calendar.getTimeInMillis();
 //
 //        for (Setting setting: settings){
-//            if (QuoteType.GOODS != setting.getQuoteType() || today < setting.getLastTradeDate()){
+//            if (QuoteType.COMMODITY != setting.getQuoteType() || today < setting.getLastTradeDate()){
 //                continue;
 //            }
 //

@@ -1,4 +1,4 @@
-package ru.besttuts.stockwidget.ui.fragments;
+package ru.besttuts.stockwidget.ui.fragments.quotes;
 
 import android.app.Activity;
 import android.database.Cursor;
@@ -14,9 +14,11 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.List;
+
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.provider.QuoteContract;
-import ru.besttuts.stockwidget.ui.activities.QuotePickerActivity;
+import ru.besttuts.stockwidget.provider.model.Quote;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
@@ -30,7 +32,8 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class GoodsItemFragment extends AbsQuoteSelectionFragment implements LoaderCallbacks<Cursor> {
+public class GoodsItemFragment extends AbsQuoteSelectionFragment
+        implements LoaderCallbacks<List<Quote>> {
 
     private static final String TAG = makeLogTag(GoodsItemFragment.class);
 
@@ -176,17 +179,17 @@ public class GoodsItemFragment extends AbsQuoteSelectionFragment implements Load
     }
 
     @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new MyCursorLoader(getActivity(), QuotePickerActivity.mDataSource, mQuoteType);
+    public Loader<List<Quote>> onCreateLoader(int id, Bundle args) {
+        return new QuoteLoader(getActivity(), mQuoteType);
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+    public void onLoadFinished(Loader<List<Quote>> loader, Cursor data) {
         mSimpleCursorAdapter.changeCursor(data);
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
+    public void onLoaderReset(Loader<List<Quote>> loader) {
         mSimpleCursorAdapter.changeCursor(null);
     }
 

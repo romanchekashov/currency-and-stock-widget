@@ -3,7 +3,9 @@ package ru.besttuts.stockwidget.provider.db;
 import java.util.List;
 
 import ru.besttuts.stockwidget.provider.model.Model;
+import ru.besttuts.stockwidget.provider.model.Quote;
 import ru.besttuts.stockwidget.provider.model.Setting;
+import ru.besttuts.stockwidget.provider.model.wrap.ModelSetting;
 
 public interface DbBackendAdapter {
     void deleteAll();
@@ -18,4 +20,9 @@ public interface DbBackendAdapter {
 
     Model getModelById(String modelId);
     List<Model> getModelsByWidgetId(int widgetId);
+
+    List<ModelSetting> getSettingsWithModelByWidgetId(int widgetId);
+
+    void deleteQuotesByIds(String[] symbols);
+    List<Quote> getQuotesByType(int quoteType);
 }

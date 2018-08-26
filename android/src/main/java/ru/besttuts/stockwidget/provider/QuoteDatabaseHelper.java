@@ -86,23 +86,23 @@ public class QuoteDatabaseHelper extends SQLiteOpenHelper {
     }
 
     private void createDefaults(SQLiteDatabase db) {
-        insertQuote(db, "GCX15.CMX", "Gold", QuoteType.GOODS);
-        insertQuote(db, "SIZ15.CMX", "Silver", QuoteType.GOODS);
-        insertQuote(db, "PLZ15.NYM", "Platinum", QuoteType.GOODS);
-        insertQuote(db, "PAZ15.NYM", "Palladium", QuoteType.GOODS);
-        insertQuote(db, "HGX15.CMX", "Copper", QuoteType.GOODS);
-        insertQuote(db, "BZF16.NYM", "Brent Oil", QuoteType.GOODS);
-        insertQuote(db, "CLZ15.NYM", "Light Oil", QuoteType.GOODS);
-        insertQuote(db, "NGZ15.NYM", "Natural Gas", QuoteType.GOODS);
-        insertQuote(db, "CZ15.CBT", "Corn", QuoteType.GOODS);
-        insertQuote(db, "SF16.CBT", "Soybeans", QuoteType.GOODS);
-        insertQuote(db, "ZWZ15.CBT", "Wheat", QuoteType.GOODS);
-        insertQuote(db, "CCH15.NYB", "Cocoa", QuoteType.GOODS);
-        insertQuote(db, "KCH15.NYB", "Coffee", QuoteType.GOODS);
-        insertQuote(db, "CTH15.NYB", "Cotton", QuoteType.GOODS);
-        insertQuote(db, "LBH15.CME", "Lumber", QuoteType.GOODS);
-        insertQuote(db, "OJH15.NYB", "Orange Juice", QuoteType.GOODS);
-        insertQuote(db, "SBH15.NYB", "Sugar", QuoteType.GOODS);
+        insertQuote(db, "GCX15.CMX", "Gold", QuoteType.COMMODITY);
+        insertQuote(db, "SIZ15.CMX", "Silver", QuoteType.COMMODITY);
+        insertQuote(db, "PLZ15.NYM", "Platinum", QuoteType.COMMODITY);
+        insertQuote(db, "PAZ15.NYM", "Palladium", QuoteType.COMMODITY);
+        insertQuote(db, "HGX15.CMX", "Copper", QuoteType.COMMODITY);
+        insertQuote(db, "BZF16.NYM", "Brent Oil", QuoteType.COMMODITY);
+        insertQuote(db, "CLZ15.NYM", "Light Oil", QuoteType.COMMODITY);
+        insertQuote(db, "NGZ15.NYM", "Natural Gas", QuoteType.COMMODITY);
+        insertQuote(db, "CZ15.CBT", "Corn", QuoteType.COMMODITY);
+        insertQuote(db, "SF16.CBT", "Soybeans", QuoteType.COMMODITY);
+        insertQuote(db, "ZWZ15.CBT", "Wheat", QuoteType.COMMODITY);
+        insertQuote(db, "CCH15.NYB", "Cocoa", QuoteType.COMMODITY);
+        insertQuote(db, "KCH15.NYB", "Coffee", QuoteType.COMMODITY);
+        insertQuote(db, "CTH15.NYB", "Cotton", QuoteType.COMMODITY);
+        insertQuote(db, "LBH15.CME", "Lumber", QuoteType.COMMODITY);
+        insertQuote(db, "OJH15.NYB", "Orange Juice", QuoteType.COMMODITY);
+        insertQuote(db, "SBH15.NYB", "Sugar", QuoteType.COMMODITY);
         // indices
 //        insertQuote(db, "MICEXINDEXCF.ME", "MICEX", QuoteType.INDICES);
         insertQuote(db, "RTS.RS", "RTS", QuoteType.INDICES);
@@ -282,22 +282,22 @@ public class QuoteDatabaseHelper extends SQLiteOpenHelper {
                 onCreate(db);
                 break;
             case 2:
-                insertQuote(db, "BZZ15.NYM", "Brent(Dec) Oil", QuoteType.GOODS);
-                insertQuote(db, "CLX15.NYM", "Light(Nov) Oil", QuoteType.GOODS);
-                insertQuote(db, "CLZ15.NYM", "Light(Dec) Oil", QuoteType.GOODS);
-                insertQuote(db, "GCV15.CMX", "Gold(Oct)", QuoteType.GOODS);
-                insertQuote(db, "SIV15.CMX", "Silver(Oct)", QuoteType.GOODS);
+                insertQuote(db, "BZZ15.NYM", "Brent(Dec) Oil", QuoteType.COMMODITY);
+                insertQuote(db, "CLX15.NYM", "Light(Nov) Oil", QuoteType.COMMODITY);
+                insertQuote(db, "CLZ15.NYM", "Light(Dec) Oil", QuoteType.COMMODITY);
+                insertQuote(db, "GCV15.CMX", "Gold(Oct)", QuoteType.COMMODITY);
+                insertQuote(db, "SIV15.CMX", "Silver(Oct)", QuoteType.COMMODITY);
             case 3:
-                insertQuote(db, "GCX15.CMX", "Gold(Current)", QuoteType.GOODS);
-                insertQuote(db, "SIZ15.CMX", "Silver(Current)", QuoteType.GOODS);
-                insertQuote(db, "PLZ15.NYM", "Platinum(Current)", QuoteType.GOODS);
-                insertQuote(db, "PAZ15.NYM", "Palladium(Current)", QuoteType.GOODS);
-                insertQuote(db, "HGX15.CMX", "Copper(Current)", QuoteType.GOODS);
-                insertQuote(db, "BZF16.NYM", "Brent(Current) Oil", QuoteType.GOODS);
-                insertQuote(db, "NGZ15.NYM", "Natural Gas(Current)", QuoteType.GOODS);
-                insertQuote(db, "CZ15.CBT", "Corn(Current)", QuoteType.GOODS);
-                insertQuote(db, "SF16.CBT", "Soybeans(Current)", QuoteType.GOODS);
-                insertQuote(db, "ZWZ15.CBT", "Wheat(Current)", QuoteType.GOODS);
+                insertQuote(db, "GCX15.CMX", "Gold(Current)", QuoteType.COMMODITY);
+                insertQuote(db, "SIZ15.CMX", "Silver(Current)", QuoteType.COMMODITY);
+                insertQuote(db, "PLZ15.NYM", "Platinum(Current)", QuoteType.COMMODITY);
+                insertQuote(db, "PAZ15.NYM", "Palladium(Current)", QuoteType.COMMODITY);
+                insertQuote(db, "HGX15.CMX", "Copper(Current)", QuoteType.COMMODITY);
+                insertQuote(db, "BZF16.NYM", "Brent(Current) Oil", QuoteType.COMMODITY);
+                insertQuote(db, "NGZ15.NYM", "Natural Gas(Current)", QuoteType.COMMODITY);
+                insertQuote(db, "CZ15.CBT", "Corn(Current)", QuoteType.COMMODITY);
+                insertQuote(db, "SF16.CBT", "Soybeans(Current)", QuoteType.COMMODITY);
+                insertQuote(db, "ZWZ15.CBT", "Wheat(Current)", QuoteType.COMMODITY);
             case 4:
                 db.execSQL(String.format("ALTER TABLE %s ADD COLUMN %s INTEGER",
                         Tables.SETTINGS, SettingColumns.LAST_TRADE_DATE));

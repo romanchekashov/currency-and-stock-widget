@@ -32,7 +32,7 @@ public class YahooQueryBuilder {
                 case QuoteType.CURRENCY:
                     currencyExchangeSet.add(setting.getQuoteSymbol());
                     break;
-                case QuoteType.GOODS:
+                case QuoteType.COMMODITY:
                 case QuoteType.INDICES:
                 case QuoteType.STOCK:
                 case QuoteType.QUOTES:

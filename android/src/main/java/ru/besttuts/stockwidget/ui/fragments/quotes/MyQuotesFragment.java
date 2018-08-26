@@ -1,4 +1,4 @@
-package ru.besttuts.stockwidget.ui.fragments;
+package ru.besttuts.stockwidget.ui.fragments.quotes;
 
 import android.app.Activity;
 import android.database.Cursor;

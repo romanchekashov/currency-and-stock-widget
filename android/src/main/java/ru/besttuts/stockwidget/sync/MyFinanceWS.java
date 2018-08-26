@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import ru.besttuts.stockwidget.model.QuoteLastTradeDate;
-import ru.besttuts.stockwidget.sync.sparklab.QuoteDto;
+import ru.besttuts.stockwidget.sync.sparklab.dto.QuoteDto;
 import ru.besttuts.stockwidget.util.SharedPreferencesHelper;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;

@@ -46,7 +46,7 @@ public class RemoteYahooFinanceDataFetcherTest {
             dataFetcher.populateQuoteSet(QuoteType.CURRENCY, symbol);
         }
         for (String symbol : goods) {
-            dataFetcher.populateQuoteSet(QuoteType.GOODS, symbol);
+            dataFetcher.populateQuoteSet(QuoteType.COMMODITY, symbol);
         }
 
         String actual = dataFetcher.buildYahooFinanceMultiQueryUrl();
@@ -87,8 +87,8 @@ public class RemoteYahooFinanceDataFetcherTest {
     public void testGetYahooMultiQueryData() throws Exception {
         List<Setting> settings = new ArrayList<>();
         settings.add(createSetting(QuoteType.CURRENCY, SYMBOL_CURRENCY_USDRUB));
-        settings.add(createSetting(QuoteType.GOODS, SYMBOL_BRENT_OIL));
-        settings.add(createSetting(QuoteType.GOODS, SYMBOL_CRUDE_OIL));
+        settings.add(createSetting(QuoteType.COMMODITY, SYMBOL_BRENT_OIL));
+        settings.add(createSetting(QuoteType.COMMODITY, SYMBOL_CRUDE_OIL));
 
         dataFetcher.populateQuoteSet(settings);
 

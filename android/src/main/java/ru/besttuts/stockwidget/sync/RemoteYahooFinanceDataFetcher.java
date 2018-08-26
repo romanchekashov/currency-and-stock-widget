@@ -18,7 +18,6 @@ import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.model.Setting;
 import ru.besttuts.stockwidget.sync.deserializer.YahooMultiQueryDataDeserializer;
 import ru.besttuts.stockwidget.sync.model.YahooMultiQueryData;
-import ru.besttuts.stockwidget.util.Utils;
 import ru.besttuts.stockwidget.util.YahooQueryBuilder;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
@@ -52,7 +51,7 @@ public class RemoteYahooFinanceDataFetcher {
             case QuoteType.CURRENCY:
                 currencyExchangeSet.add(symbol);
                 break;
-            case QuoteType.GOODS:
+            case QuoteType.COMMODITY:
             case QuoteType.INDICES:
             case QuoteType.STOCK:
             case QuoteType.QUOTES:
@@ -69,7 +68,7 @@ public class RemoteYahooFinanceDataFetcher {
                 case QuoteType.CURRENCY:
                     currencyExchangeSet.add(setting.getQuoteSymbol());
                     break;
-                case QuoteType.GOODS:
+                case QuoteType.COMMODITY:
                 case QuoteType.INDICES:
                 case QuoteType.STOCK:
                 case QuoteType.QUOTES:

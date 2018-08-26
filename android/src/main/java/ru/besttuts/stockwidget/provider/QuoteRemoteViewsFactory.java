@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.besttuts.stockwidget.R;
-import ru.besttuts.stockwidget.model.Model;
+import ru.besttuts.stockwidget.provider.model.Model;
 import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.provider.db.DbProvider;
 import ru.besttuts.stockwidget.ui.activities.EconomicWidgetConfigureActivity;

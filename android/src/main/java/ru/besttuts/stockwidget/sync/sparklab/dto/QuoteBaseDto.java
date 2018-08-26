@@ -1,4 +1,4 @@
-package ru.besttuts.stockwidget.sync.sparklab;
+package ru.besttuts.stockwidget.sync.sparklab.dto;
 
 public class QuoteBaseDto {
     private String symbol;

@@ -6,7 +6,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
@@ -17,7 +16,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -28,11 +26,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -40,17 +35,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.besttuts.stockwidget.R;
-import ru.besttuts.stockwidget.provider.model.Model;
-import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.provider.QuoteContract;
-import ru.besttuts.stockwidget.provider.QuoteContract.Settings;
-import ru.besttuts.stockwidget.provider.QuoteDataSource;
 import ru.besttuts.stockwidget.provider.db.DbNotificationManager;
 import ru.besttuts.stockwidget.provider.db.DbProvider;
+import ru.besttuts.stockwidget.provider.model.Model;
 import ru.besttuts.stockwidget.provider.model.Setting;
+import ru.besttuts.stockwidget.provider.model.wrap.ModelSetting;
 import ru.besttuts.stockwidget.sync.MyFinanceWS;
 import ru.besttuts.stockwidget.sync.RemoteYahooFinanceDataFetcher;
-import ru.besttuts.stockwidget.sync.sparklab.QuoteDto;
+import ru.besttuts.stockwidget.sync.sparklab.dto.QuoteDto;
 import ru.besttuts.stockwidget.ui.activities.DynamicWebViewActivity;
 import ru.besttuts.stockwidget.ui.activities.EconomicWidgetConfigureActivity;
 import ru.besttuts.stockwidget.util.CustomConverter;
@@ -85,11 +78,12 @@ public class TrackingQuotesFragment extends Fragment
             updateSettings();
         }
     };
-    private DbProvider.ResultCallback<Cursor> mUpdateCallback = null;
+    private DbProvider.ResultCallback<List<ModelSetting>> mUpdateCallback = null;
 
     private OnFragmentInteractionListener mListener;
 
-    private SimpleCursorAdapter mSimpleCursorAdapter;
+//    private SimpleCursorAdapter mSimpleCursorAdapter;
+    private TrackingQuotesAdapter trackingQuotesAdapter;
 
     private View mMainView;
     private GridView gridView;
@@ -151,9 +145,10 @@ public class TrackingQuotesFragment extends Fragment
                 R.id.tvChangePercentage, R.id.tvPosition};
 
         // создааем адаптер и настраиваем список
-        mSimpleCursorAdapter = new MySimpleCursorAdapter(getActivity(), R.layout.configure_quote_grid_item, null, from, to, 0);
+//        mSimpleCursorAdapter = new MySimpleCursorAdapter(getActivity(), R.layout.configure_quote_grid_item, null, from, to, 0);
+        trackingQuotesAdapter = new TrackingQuotesAdapter(getActivity(), R.layout.configure_quote_grid_item, new ArrayList<ModelSetting>());
         gridView = (GridView) mMainView.findViewById(R.id.gridView);
-        gridView.setAdapter(mSimpleCursorAdapter);
+        gridView.setAdapter(trackingQuotesAdapter);
         gridView.setOnItemClickListener(this);
 
         TextView tvNYSEInfo = (TextView) mMainView.findViewById(R.id.tvNYSEInfo);
@@ -183,15 +178,16 @@ public class TrackingQuotesFragment extends Fragment
         updateSettings();
     }
 
-    private void onSettingsUpdated(Cursor result){
-        if(null == result || 0 >= result.getCount()){
-            // Удаляем ссылку на Cursor в адаптере. Это предотвращает утечку памяти.
-            mSimpleCursorAdapter.changeCursor(null);
-            return;
-        }
+    private void onSettingsUpdated(List<ModelSetting> result){
+//        if(null == result || 0 >= result.getCount()){
+//            // Удаляем ссылку на Cursor в адаптере. Это предотвращает утечку памяти.
+//            mSimpleCursorAdapter.changeCursor(null);
+//            return;
+//        }
 
-        mSimpleCursorAdapter.changeCursor(result);
-        mWidgetItemsNumber = result.getCount();
+//        mSimpleCursorAdapter.changeCursor(result);
+        trackingQuotesAdapter.setData(result);
+        mWidgetItemsNumber = result.size();
         mFetchQuote = null;
         Button button = (Button) mMainView.findViewById(R.id.btnAddQuote);
         if (0 < mWidgetItemsNumber) {
@@ -201,7 +197,9 @@ public class TrackingQuotesFragment extends Fragment
         }
 
         if(!isQuotesFetched){
-            new FetchQuote(getActivity()).execute(new String[]{String.valueOf(mWidgetId)});
+            new FetchQuote(getActivity()).execute(new String[]{
+                    String.valueOf(mWidgetId)
+            });
         }
 
         LOGD(TAG, "swapCursor: cursor.getCount = mWidgetItemsNumber = " + mWidgetItemsNumber);
@@ -209,14 +207,14 @@ public class TrackingQuotesFragment extends Fragment
 
     private void updateSettings() {
         cancelUpdateSettings();
-        mUpdateCallback = new DbProvider.ResultCallback<Cursor>() {
+        mUpdateCallback = new DbProvider.ResultCallback<List<ModelSetting>>() {
             @Override
-            public void onFinished(Cursor result) {
+            public void onFinished(List<ModelSetting> result) {
                 if (mUpdateCallback != this) return;
                 onSettingsUpdated(result);
             }
         };
-        mDbProvider.getCursorSettingsWithModelByWidgetId(mWidgetId, mUpdateCallback);
+        mDbProvider.getSettingsWithModelByWidgetId(mWidgetId, mUpdateCallback);
     }
 
     private void cancelUpdateSettings() {
@@ -264,15 +262,13 @@ public class TrackingQuotesFragment extends Fragment
     }
 
     private void deleteItem(int pos) {
-
-        Cursor cursor = (Cursor) mSimpleCursorAdapter.getItem(pos - 1);
-
-        int _id = cursor.getInt(cursor.getColumnIndexOrThrow(Settings._ID));
-        String settingId = cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_ID));
-        LOGD(TAG, String.format("deleteItem: pos = %d, settingId = %s, _id = %d", pos, settingId, _id));
-
+        ModelSetting modelSetting = (ModelSetting) trackingQuotesAdapter.getItem(pos - 1);
+        LOGD(TAG, String.format("deleteItem: pos = %d, settingId = %s, _id = %d",
+                pos, modelSetting.getSetting().getId(), modelSetting.getSetting().get_id()));
         // извлекаем id записи и удаляем соответствующую запись в БД
-        mDbProvider.deleteSettingsByIdAndUpdatePositions(settingId, pos);
+        mDbProvider.deleteSettingsByIdAndUpdatePositions(
+                modelSetting.getSetting().getId(), pos);
+
 //        updateSettings();
     }
 
@@ -280,7 +276,6 @@ public class TrackingQuotesFragment extends Fragment
         if (null == mListener) return;
 
         mListener.showQuotePickerActivity(quoteTypePos, position);
-
     }
 
     @Override
@@ -529,15 +524,14 @@ public class TrackingQuotesFragment extends Fragment
 
                 switch (pos) {
                     case 0:
-                        Cursor cursor = (Cursor) mSimpleCursorAdapter.getItem(position);
-//                        String url = "http://finance.yahoo.com/quote/";
+//                        Cursor cursor = (Cursor) mSimpleCursorAdapter.getItem(position);
                         String url = "http://finance.yahoo.com/q";
-                        String symbol = cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_ID));
-                        if(QuoteType.CURRENCY == cursor.getInt(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_QUOTE_TYPE))) {
-                            url += String.format("?s=%s=X&ql=1", symbol);
-                        } else {
-                            url += String.format("?s=%s&ql=1", symbol);
-                        }
+//                        String symbol = cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_ID));
+//                        if(QuoteType.CURRENCY == cursor.getInt(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_QUOTE_TYPE))) {
+//                            url += String.format("?s=%s=X&ql=1", symbol);
+//                        } else {
+//                            url += String.format("?s=%s&ql=1", symbol);
+//                        }
 
                         Intent intent = new Intent(getActivity(), DynamicWebViewActivity.class);
                         intent.putExtra(ARG_URL, url);

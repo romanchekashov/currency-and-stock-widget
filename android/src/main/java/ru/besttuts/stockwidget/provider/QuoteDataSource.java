@@ -80,7 +80,7 @@ public class QuoteDataSource {
             setting.setQuoteType(type);
             setting.setQuoteSymbol(symbol);
 
-            if (QuoteType.GOODS == type){
+            if (QuoteType.COMMODITY == type){
                 updateSettingWithNewSymbolAndLastTradeDate(setting);
             }
 
@@ -492,7 +492,7 @@ public class QuoteDataSource {
         long today = calendar.getTimeInMillis();
 
         for (Setting setting: settings){
-            if (QuoteType.GOODS != setting.getQuoteType() || today < setting.getLastTradeDate()){
+            if (QuoteType.COMMODITY != setting.getQuoteType() || today < setting.getLastTradeDate()){
                 continue;
             }
 

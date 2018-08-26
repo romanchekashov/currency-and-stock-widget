@@ -6,6 +6,7 @@ import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
 import ru.besttuts.stockwidget.provider.dao.ModelDao;
+import ru.besttuts.stockwidget.provider.dao.QuoteDao;
 import ru.besttuts.stockwidget.provider.dao.SettingDao;
 import ru.besttuts.stockwidget.provider.model.Model;
 import ru.besttuts.stockwidget.provider.model.Quote;
@@ -21,6 +22,8 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract SettingDao settingDao();
 
     public abstract ModelDao modelDao();
+
+    public abstract QuoteDao quoteDao();
 
     public static AppDatabase getInstance(final Context context) {
         if (sInstance == null) {

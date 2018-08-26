@@ -24,8 +24,6 @@ import ru.besttuts.stockwidget.BuildConfig;
 import ru.besttuts.stockwidget.Config;
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.model.QuoteType;
-import ru.besttuts.stockwidget.provider.AppDatabase;
-import ru.besttuts.stockwidget.provider.QuoteDataSource;
 import ru.besttuts.stockwidget.provider.db.DbProvider;
 import ru.besttuts.stockwidget.provider.model.Model;
 import ru.besttuts.stockwidget.service.QuoteWidgetService;
@@ -33,7 +31,6 @@ import ru.besttuts.stockwidget.service.UpdateService;
 import ru.besttuts.stockwidget.ui.activities.DynamicWebViewActivity;
 import ru.besttuts.stockwidget.ui.activities.EconomicWidgetConfigureActivity;
 import ru.besttuts.stockwidget.ui.fragments.ConfigPreferenceFragment;
-import ru.besttuts.stockwidget.util.Utils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -226,15 +223,15 @@ public class EconomicWidget extends AppWidgetProvider {
         if ("ru".equals(lng)) {
             dataSource.addSettingsRec(appWidgetIds[0], 1, QuoteType.CURRENCY,
                     new String[]{"EURUSD", "USDRUB", "EURRUB"});
-            dataSource.addSettingsRec(appWidgetIds[0], 4, QuoteType.GOODS, defaultCommodities);
+            dataSource.addSettingsRec(appWidgetIds[0], 4, QuoteType.COMMODITY, defaultCommodities);
         } else if ("uk".equals(lng)) {
             dataSource.addSettingsRec(appWidgetIds[0], 1, QuoteType.CURRENCY,
                     new String[]{"EURUSD", "USDUAH", "EURUAH"});
-            dataSource.addSettingsRec(appWidgetIds[0], 4, QuoteType.GOODS, defaultCommodities);
+            dataSource.addSettingsRec(appWidgetIds[0], 4, QuoteType.COMMODITY, defaultCommodities);
         } else {
             dataSource.addSettingsRec(appWidgetIds[0], 1, QuoteType.CURRENCY,
                     new String[]{"EURUSD"});
-            dataSource.addSettingsRec(appWidgetIds[0], 2, QuoteType.GOODS, defaultCommodities);
+            dataSource.addSettingsRec(appWidgetIds[0], 2, QuoteType.COMMODITY, defaultCommodities);
         }
     }
 

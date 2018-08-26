@@ -30,7 +30,7 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
  * @author rchekashov
  *         created on 1/24/2017.
  */
-
+@Deprecated
 public class DbBackend implements DbContract {
     private static final String TAG = makeLogTag(DbBackend.class);
 

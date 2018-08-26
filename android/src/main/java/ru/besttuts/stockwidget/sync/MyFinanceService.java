@@ -6,7 +6,8 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 import ru.besttuts.stockwidget.model.QuoteLastTradeDate;
-import ru.besttuts.stockwidget.sync.sparklab.QuoteDto;
+import ru.besttuts.stockwidget.sync.sparklab.dto.InitDataDto;
+import ru.besttuts.stockwidget.sync.sparklab.dto.QuoteDto;
 
 /**
  * @author rchekashov
@@ -20,5 +21,8 @@ public interface MyFinanceService {
 
     @GET("api/quotes")
     Call<List<QuoteDto>> quotes(@Query(value = "symbols") String symbols);
+
+    @GET("api/supported-data")
+    Call<InitDataDto> supportedData();
 
 }

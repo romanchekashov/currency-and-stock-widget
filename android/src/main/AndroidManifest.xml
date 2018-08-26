@@ -74,18 +74,19 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.activities.EconomicWidgetConfigureActivity" />
         </activity>
+        <!--
         <activity
             android:name=".ui.activities.SearchableQuoteActivity"
             android:launchMode="singleInstance"
             android:parentActivityName=".ui.activities.QuotePickerActivity"
             android:theme="@style/AppTheme.Light" >
 
-            <!-- Parent activity meta-data to support 4.0 and lower -->
+            &lt;!&ndash; Parent activity meta-data to support 4.0 and lower &ndash;&gt;
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.activities.QuotePickerActivity" />
 
-            <!-- This Activity handles the search intent -->
+            &lt;!&ndash; This Activity handles the search intent &ndash;&gt;
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
@@ -94,6 +95,7 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
+        -->
         !-- Points to searchable activity so the whole app can invoke search. -->
         <meta-data
             android:name="android.app.default_searchable"
@@ -105,10 +107,11 @@
             android:enabled="true"
             android:exported="true" >
         </service>
-
+<!--
         <provider
             android:name=".provider.SymbolProvider"
             android:authorities="ru.besttuts.stockwidget.provider.SymbolProvider" />
+-->
 
         <activity
             android:name=".ui.activities.DynamicWebViewActivity"

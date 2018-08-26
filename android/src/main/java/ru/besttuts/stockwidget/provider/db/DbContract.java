@@ -3,6 +3,7 @@ package ru.besttuts.stockwidget.provider.db;
 /**
  * Created by roman on 10.01.2015.
  */
+@Deprecated
 public interface DbContract {
 
     public interface SettingColumns {

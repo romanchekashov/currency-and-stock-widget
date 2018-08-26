@@ -22,6 +22,7 @@ import ru.besttuts.stockwidget.sync.RemoteYahooFinanceDataFetcher;
 
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
+@Deprecated
 public class SymbolProvider extends ContentProvider {
 
     private static final String TAG = makeLogTag(SymbolProvider.class);

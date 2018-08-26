@@ -14,12 +14,11 @@ import android.view.WindowManager;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.model.QuoteType;
-import ru.besttuts.stockwidget.provider.QuoteDataSource;
 import ru.besttuts.stockwidget.provider.db.DbProvider;
 import ru.besttuts.stockwidget.ui.fragments.CurrencyExchangeFragment;
-import ru.besttuts.stockwidget.ui.fragments.GoodsItemFragment;
+import ru.besttuts.stockwidget.ui.fragments.quotes.GoodsItemFragment;
 import ru.besttuts.stockwidget.ui.fragments.IQuoteTypeFragment;
-import ru.besttuts.stockwidget.ui.fragments.MyQuotesFragment;
+import ru.besttuts.stockwidget.ui.fragments.quotes.MyQuotesFragment;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
@@ -34,7 +33,6 @@ public class QuotePickerActivity extends AppCompatActivity
     private static final String TAG = makeLogTag(QuotePickerActivity.class);
 
     private DbProvider mDbProvider;
-    public static QuoteDataSource mDataSource;
     private int mAppWidgetId;
     private int mQuoteTypeValue;
     private int mWidgetItemPosition;
@@ -76,7 +74,7 @@ public class QuotePickerActivity extends AppCompatActivity
                 case QuoteType.CURRENCY:
                     fragment = CurrencyExchangeFragment.newInstance(mWidgetItemPosition, mQuoteTypeValue);
                     break;
-                case QuoteType.GOODS:
+                case QuoteType.COMMODITY:
                 case QuoteType.INDICES:
                 case QuoteType.STOCK:
                     fragment = GoodsItemFragment.newInstance(mWidgetItemPosition, mQuoteTypeValue);
@@ -106,7 +104,7 @@ public class QuotePickerActivity extends AppCompatActivity
             case QuoteType.CURRENCY:
                 getSupportActionBar().setTitle(R.string.configure_menu_item_currency);
                 break;
-            case QuoteType.GOODS:
+            case QuoteType.COMMODITY:
                 getSupportActionBar().setTitle(R.string.configure_menu_item_goods);
                 break;
             case QuoteType.INDICES:
@@ -121,7 +119,6 @@ public class QuotePickerActivity extends AppCompatActivity
         }
 
         // создаем объект для создания и управления версиями БД
-        mDataSource = new QuoteDataSource(this);
         mDbProvider = DbProvider.getInstance();
         LOGD(TAG, "onCreate");
 
@@ -212,7 +209,9 @@ public class QuotePickerActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (null != mDataSource) mDataSource.close(); // закрываем соединение с БД
+        if (null != mDbProvider && null != mDbProvider.getDatabase()) {
+            mDbProvider.getDatabase().close(); // закрываем соединение с БД
+        }
         LOGD(TAG, "onDestroy");
     }
 
@@ -239,7 +238,7 @@ public class QuotePickerActivity extends AppCompatActivity
     @Override
     public void deleteQuote(String[] symbols) {
         LOGD(TAG, "[deleteQuote]: " + symbols);
-        mDataSource.deleteQuotesByIds(symbols);
+        mDbProvider.getDatabaseAdapter().deleteQuotesByIds(symbols);
     }
 
 }

@@ -7,7 +7,7 @@ import ru.besttuts.stockwidget.model.Currency;
 import ru.besttuts.stockwidget.model.Good;
 import ru.besttuts.stockwidget.provider.model.Model;
 import ru.besttuts.stockwidget.sync.model.YahooMultiQueryData;
-import ru.besttuts.stockwidget.sync.sparklab.QuoteDto;
+import ru.besttuts.stockwidget.sync.sparklab.dto.QuoteDto;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.LOGE;

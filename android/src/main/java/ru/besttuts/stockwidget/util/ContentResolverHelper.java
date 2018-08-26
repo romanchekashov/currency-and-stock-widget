@@ -12,7 +12,6 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 import ru.besttuts.stockwidget.model.QuoteType;
-import ru.besttuts.stockwidget.model.Setting;
 import ru.besttuts.stockwidget.provider.QuoteContract;
 import ru.besttuts.stockwidget.provider.QuoteContract.QuoteLastTradeDates;
 import ru.besttuts.stockwidget.provider.QuoteContract.Settings;
@@ -45,7 +44,7 @@ public class ContentResolverHelper {
             values.put(Settings.SETTING_QUOTE_TYPE, type);
             values.put(Settings.SETTING_QUOTE_SYMBOL, symbol);
 
-            if (QuoteType.GOODS == type){
+            if (QuoteType.COMMODITY == type){
                 updateSettingWithNewSymbolAndLastTradeDate(values);
             }
 

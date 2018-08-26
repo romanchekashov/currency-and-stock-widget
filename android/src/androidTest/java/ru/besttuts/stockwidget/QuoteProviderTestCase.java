@@ -1,20 +1,11 @@
 package ru.besttuts.stockwidget;
 
-import android.content.ContentProviderOperation;
-import android.content.ContentProviderResult;
 import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.OperationApplicationException;
 import android.database.Cursor;
-import android.net.Uri;
-import android.os.RemoteException;
 import android.support.test.InstrumentationRegistry;
-import android.test.ProviderTestCase2;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.TimeZone;
 
 import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.QuoteLastTradeDate;
@@ -28,6 +19,7 @@ import ru.besttuts.stockwidget.util.ContentResolverHelper;
 import ru.besttuts.stockwidget.provider.QuoteContract.QuoteLastTradeDates;
 
 
+import static org.junit.Assert.assertEquals;
 import static ru.besttuts.stockwidget.util.LogUtils.LOGE;
 import static ru.besttuts.stockwidget.util.LogUtils.LOGI;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
@@ -36,7 +28,7 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
  * @author roman
  * @since 07.05.2016
  */
-public class QuoteProviderTestCase extends ProviderTestCase2<QuoteProvider> {
+public class QuoteProviderTestCase {
     private static final String LOG_TAG = makeLogTag(QuoteProviderTestCase.class);
 
     private static final int WIDGET_ID = 1;
@@ -44,17 +36,12 @@ public class QuoteProviderTestCase extends ProviderTestCase2<QuoteProvider> {
     private ContentResolver contentResolver;
     private ContentResolverHelper contentResolverHelper;
 
-    public QuoteProviderTestCase() {
-        super(QuoteProvider.class, QuoteContract.CONTENT_AUTHORITY);
-    }
-
-    @Override
-    public void setUp() throws Exception {
-        setContext(InstrumentationRegistry.getTargetContext());
-        super.setUp();
-        contentResolver = getMockContentResolver();
-        contentResolverHelper = new ContentResolverHelper(contentResolver);
-    }
+//    public void setUp() throws Exception {
+//        setContext(InstrumentationRegistry.getTargetContext());
+//        super.setUp();
+//        contentResolver = getMockContentResolver();
+//        contentResolverHelper = new ContentResolverHelper(contentResolver);
+//    }
 
     public void testShouldCreateAndRetrieveSetting1(){
 //        insertQuoteLastTradeDate();
@@ -142,7 +129,7 @@ public class QuoteProviderTestCase extends ProviderTestCase2<QuoteProvider> {
         for (int i = firstPos; i <= len; i++){
             symbols.add("TEST.SYMBOL"+i);
         }
-        contentResolverHelper.addSettingsRec(WIDGET_ID, firstPos, QuoteType.GOODS, symbols.toArray(new String[len]));
+        contentResolverHelper.addSettingsRec(WIDGET_ID, firstPos, QuoteType.COMMODITY, symbols.toArray(new String[len]));
     }
 
     private static QuoteLastTradeDate transformQuoteLastTradeDate(Cursor cursor) {
