@@ -43,7 +43,7 @@ public class QuotePickerActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_second_configure);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar2);
+        Toolbar toolbar = findViewById(R.id.toolbar2);
         setSupportActionBar(toolbar);
 
 //        Utils.onActivityCreateSetActionBarColor(getSupportActionBar());

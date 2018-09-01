@@ -106,14 +106,14 @@ public class SlidingTabsFragment extends Fragment
                 getActivity().getSupportFragmentManager(), mWidgetId);
         // BEGIN_INCLUDE (setup_viewpager)
         // Get the ViewPager and set it's PagerAdapter so that it can display items
-        mViewPager = (ViewPager) view.findViewById(R.id.viewpager);
+        mViewPager = view.findViewById(R.id.viewpager);
         mViewPager.setAdapter(mSlidingTabsPagerAdapter);
         // END_INCLUDE (setup_viewpager)
 
         // BEGIN_INCLUDE (setup_slidingtablayout)
         // Give the SlidingTabLayout the ViewPager, this must be done AFTER the ViewPager has had
         // it's PagerAdapter set.
-        mSlidingTabLayout = (SlidingTabLayout) view.findViewById(R.id.sliding_tabs);
+        mSlidingTabLayout = view.findViewById(R.id.sliding_tabs);
         mSlidingTabLayout.setViewPager(mViewPager);
         mSlidingTabLayout.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override

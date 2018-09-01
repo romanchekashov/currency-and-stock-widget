@@ -4,13 +4,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -145,20 +143,15 @@ public class TrackingQuotesFragment extends Fragment
 
         // создааем адаптер и настраиваем список
         trackingQuotesAdapter = new TrackingQuotesAdapter(getActivity(), R.layout.configure_quote_grid_item, new ArrayList<ModelSetting>());
-        gridView = (GridView) mMainView.findViewById(R.id.gridView);
+        gridView = mMainView.findViewById(R.id.gridView);
         gridView.setAdapter(trackingQuotesAdapter);
         gridView.setOnItemClickListener(this);
 
-        TextView tvNYSEInfo = (TextView) mMainView.findViewById(R.id.tvNYSEInfo);
+        TextView tvNYSEInfo = mMainView.findViewById(R.id.tvNYSEInfo);
         tvNYSEInfo.setText(Utils.getNYSEInfo(getContext()));
 
-        Button button = (Button) mMainView.findViewById(R.id.btnAddQuote);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showQuoteTypeDialog();
-            }
-        });
+        Button button = mMainView.findViewById(R.id.btnAddQuote);
+        button.setOnClickListener(v -> showQuoteTypeDialog());
 
         mDbProvider = DbProvider.getInstance();
         mNotifier = DbNotificationManager.getInstance();
@@ -187,17 +180,15 @@ public class TrackingQuotesFragment extends Fragment
         trackingQuotesAdapter.setData(result);
         mWidgetItemsNumber = result.size();
         mFetchQuote = null;
-        Button button = (Button) mMainView.findViewById(R.id.btnAddQuote);
+        Button button = mMainView.findViewById(R.id.btnAddQuote);
         if (0 < mWidgetItemsNumber) {
             button.setVisibility(View.GONE);
         } else {
             button.setVisibility(View.VISIBLE);
         }
 
-        if(!isQuotesFetched){
-            new FetchQuote(getActivity()).execute(new String[]{
-                    String.valueOf(mWidgetId)
-            });
+        if (!isQuotesFetched) {
+            new FetchQuote(getActivity()).execute(String.valueOf(mWidgetId));
         }
 
         LOGD(TAG, "swapCursor: cursor.getCount = mWidgetItemsNumber = " + mWidgetItemsNumber);
@@ -216,7 +207,6 @@ public class TrackingQuotesFragment extends Fragment
     }
 
     private void cancelUpdateSettings() {
-        if (mUpdateCallback == null) return;
         mUpdateCallback = null;
     }
 
@@ -313,22 +303,17 @@ public class TrackingQuotesFragment extends Fragment
         view.setBackgroundColor(Color.parseColor("#33ffffff"));
 
         PopupWindow popupWindow = popupWindowDogs(position);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            if(0 == (position + 1) % gridView.getNumColumns()) {
+            if (0 == (position + 1) % gridView.getNumColumns()) {
                 popupWindow.showAsDropDown(view, -popupWindow.getWidth(), -view.getHeight());
                 return;
             }
-        }
         // show the list view as dropdown
         popupWindow.showAsDropDown(view, view.getWidth(), -view.getHeight());
 
-        popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
-            @Override
-            public void onDismiss() {
-                LOGD(TAG, "(onDismiss): " + String.format("mLastSelectedItemPosition = %d", mLastSelectedItemPosition));
-                clearGridViewCellSelection();
-                mLastSelectedItemPosition = -1;
-            }
+        popupWindow.setOnDismissListener(() -> {
+            LOGD(TAG, "(onDismiss): " + String.format("mLastSelectedItemPosition = %d", mLastSelectedItemPosition));
+            clearGridViewCellSelection();
+            mLastSelectedItemPosition = -1;
         });
 
     }
@@ -358,7 +343,7 @@ public class TrackingQuotesFragment extends Fragment
          * @param quoteTypeValue цифровое значение типа котировки
          * @param position       Порядковый номер котировки на виджете.
          */
-        public void showQuotePickerActivity(int quoteTypeValue, int position);
+        void showQuotePickerActivity(int quoteTypeValue, int position);
 
     }
 
@@ -403,20 +388,18 @@ public class TrackingQuotesFragment extends Fragment
 
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle(R.string.select_quotes_type)
-                    .setItems(R.array.quotes_type_array, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
+                    .setItems(R.array.quotes_type_array, (dialog, which) -> {
 
-                            // The 'which' argument contains the index position
-                            // of the selected item
-                            if (-1 == mPosition) {
-                                mFragment.onQuoteTypeSelected(which, mWidgetItemsNumber + 1);
-                            } else {
-                                mFragment.onQuoteTypeSelected(which, mPosition);
-                            }
-
-                            // закрываем диалоговое окно
-                            StockItemTypeDialogFragment.this.dismiss();
+                        // The 'which' argument contains the index position
+                        // of the selected item
+                        if (-1 == mPosition) {
+                            mFragment.onQuoteTypeSelected(which, mWidgetItemsNumber + 1);
+                        } else {
+                            mFragment.onQuoteTypeSelected(which, mPosition);
                         }
+
+                        // закрываем диалоговое окно
+                        StockItemTypeDialogFragment.this.dismiss();
                     });
 
 //            if (-1 != mPosition) {
@@ -574,15 +557,11 @@ public class TrackingQuotesFragment extends Fragment
         WindowManager windowManager = (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
         Display display = windowManager.getDefaultDisplay();
         int popupWidth;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             Point windowSize = new Point();
             display.getSize(windowSize);
             popupWidth = windowSize.x / 2;
-        } else {
-            popupWidth = display.getWidth() / 2;
-        }
 
-        if(350 < popupWidth) {
+        if (350 < popupWidth) {
             popupWindow.setWidth(350);
         } else {
             popupWindow.setWidth(popupWidth);
@@ -591,12 +570,9 @@ public class TrackingQuotesFragment extends Fragment
         // set the list view as pop up window content
         popupWindow.setContentView(listViewDogs);
 
-        popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
-            @Override
-            public void onDismiss() {
-                LOGD(TAG, "(popupWindowDogs)(onDismiss)");
-                clearGridViewCellSelection();
-            }
+        popupWindow.setOnDismissListener(() -> {
+            LOGD(TAG, "(popupWindowDogs)(onDismiss)");
+            clearGridViewCellSelection();
         });
 
         popupWindow.setOutsideTouchable(true);

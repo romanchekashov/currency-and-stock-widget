@@ -88,9 +88,9 @@ public class CurrencyExchangeFragment extends Fragment implements IQuoteTypeFrag
         // Вызываем и заполняем отображение для этого фрагмента
         View view = inflater.inflate(R.layout.fragment_currency_exchange, container, false);
 
-        final TextView tvCurrency = (TextView) view.findViewById(R.id.tvCurrency);
+        final TextView tvCurrency = view.findViewById(R.id.tvCurrency);
 
-        final Spinner spinner = (Spinner) view.findViewById(R.id.spinnerCurrencyFrom);
+        final Spinner spinner = view.findViewById(R.id.spinnerCurrencyFrom);
         // Создаем ArrayAdapter с параметрами: массив строк, layout по умолчанию для выпадающего списка
         final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.currency_array, android.R.layout.simple_spinner_item);
@@ -118,7 +118,7 @@ public class CurrencyExchangeFragment extends Fragment implements IQuoteTypeFrag
             }
         });
 
-        final Spinner spinner1 = (Spinner) view.findViewById(R.id.spinnerCurrencyTo);
+        final Spinner spinner1 = view.findViewById(R.id.spinnerCurrencyTo);
         final ArrayAdapter<CharSequence> adapter1 = ArrayAdapter.createFromResource(getActivity(),
                 R.array.currency_array, android.R.layout.simple_spinner_item);
         adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -159,11 +159,11 @@ public class CurrencyExchangeFragment extends Fragment implements IQuoteTypeFrag
     public void onResume() {
         super.onResume();
         if (null != mCurrencyFrom) {
-            Spinner spinner = (Spinner) getActivity().findViewById(R.id.spinnerCurrencyFrom);
+            Spinner spinner = getActivity().findViewById(R.id.spinnerCurrencyFrom);
             spinner.setSelection(mCurrencyFromPosition);
         }
         if (null != mCurrencyTo) {
-            Spinner spinner = (Spinner) getActivity().findViewById(R.id.spinnerCurrencyTo);
+            Spinner spinner = getActivity().findViewById(R.id.spinnerCurrencyTo);
             spinner.setSelection(mCurrencyToPosition);
         }
     }

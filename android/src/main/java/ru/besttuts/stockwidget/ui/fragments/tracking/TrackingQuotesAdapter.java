@@ -68,21 +68,21 @@ public class TrackingQuotesAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
-        ViewHolder holder = null;
-        if(row == null) {
+        ViewHolder holder;
+        if (row == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             row = inflater.inflate(R.layout.configure_quote_grid_item, parent, false);
             //Now create the ViewHolder
             holder = new ViewHolder();
-            holder.progressBar = (ProgressBar) row.findViewById(R.id.progressBar2);
-            holder.linearLayout = (LinearLayout) row.findViewById(R.id.lLayoutRate);
-            holder.tvName =  (TextView) row.findViewById(R.id.tvName);
-            holder.tvRate =  (TextView) row.findViewById(R.id.tvRate);
-            holder.tvChange =  (TextView) row.findViewById(R.id.tvChange);
-            holder.tvChangePercentage =  (TextView) row.findViewById(R.id.tvChangePercentage);
-            holder.tvCurrency =  (TextView) row.findViewById(R.id.tvCurrency);
-            holder.tvPosition =  (TextView) row.findViewById(R.id.tvPosition);
-            holder.imageView = (ImageView) row.findViewById(R.id.imageView);
+            holder.progressBar = row.findViewById(R.id.progressBar2);
+            holder.linearLayout = row.findViewById(R.id.lLayoutRate);
+            holder.tvName =  row.findViewById(R.id.tvName);
+            holder.tvRate =  row.findViewById(R.id.tvRate);
+            holder.tvChange =  row.findViewById(R.id.tvChange);
+            holder.tvChangePercentage = row.findViewById(R.id.tvChangePercentage);
+            holder.tvCurrency = row.findViewById(R.id.tvCurrency);
+            holder.tvPosition = row.findViewById(R.id.tvPosition);
+            holder.imageView = row.findViewById(R.id.imageView);
             //and store it as the 'tag' of our view
             row.setTag(holder);
         } else {
