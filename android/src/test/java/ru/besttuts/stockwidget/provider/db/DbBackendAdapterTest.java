@@ -10,7 +10,7 @@ import org.robolectric.annotation.Config;
 import java.util.List;
 
 import ru.besttuts.stockwidget.BuildConfig;
-import ru.besttuts.stockwidget.model.QuoteType;
+import ru.besttuts.stockwidget.provider.model.QuoteType;
 import ru.besttuts.stockwidget.provider.model.Setting;
 import ru.besttuts.stockwidget.provider.AppDatabase;
 import ru.besttuts.stockwidget.provider.QuoteDatabaseHelper;

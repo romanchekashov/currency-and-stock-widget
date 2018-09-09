@@ -138,7 +138,7 @@ public class TrackingQuotesFragment extends Fragment
                 QuoteContract.ModelColumns.MODEL_PERCENT_CHANGE,
                 QuoteContract.SettingColumns.SETTING_QUOTE_POSITION};
 
-        int[] to = new int[]{R.id.tvName, R.id.tvRate, R.id.tvCurrency, R.id.tvChange,
+        int[] to = new int[]{R.id.quoteName, R.id.tvRate, R.id.tvCurrency, R.id.tvChange,
                 R.id.tvChangePercentage, R.id.tvPosition};
 
         // создааем адаптер и настраиваем список

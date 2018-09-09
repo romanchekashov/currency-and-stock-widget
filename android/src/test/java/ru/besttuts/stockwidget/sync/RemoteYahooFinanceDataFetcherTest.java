@@ -7,7 +7,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.besttuts.stockwidget.model.QuoteType;
+import ru.besttuts.stockwidget.provider.model.QuoteType;
 import ru.besttuts.stockwidget.model.Setting;
 import ru.besttuts.stockwidget.sync.model.YahooMultiQueryData;
 

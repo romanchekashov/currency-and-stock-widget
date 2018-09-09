@@ -8,6 +8,10 @@ public class QuoteBaseDto {
     private String currency;
     private int type;
     private long timestamp;
+    private String provider;
+
+    public QuoteBaseDto() {
+    }
 
     public String getSymbol() {
         return symbol;
@@ -63,5 +67,13 @@ public class QuoteBaseDto {
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
     }
 }

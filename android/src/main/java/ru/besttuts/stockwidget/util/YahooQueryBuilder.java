@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import ru.besttuts.stockwidget.model.QuoteType;
+import ru.besttuts.stockwidget.provider.model.QuoteType;
 import ru.besttuts.stockwidget.model.Setting;
 
 /**

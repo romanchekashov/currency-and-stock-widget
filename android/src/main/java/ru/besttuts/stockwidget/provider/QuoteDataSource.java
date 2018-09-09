@@ -16,7 +16,7 @@ import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.io.model.Result;
 import ru.besttuts.stockwidget.provider.model.Model;
 import ru.besttuts.stockwidget.model.QuoteLastTradeDate;
-import ru.besttuts.stockwidget.model.QuoteType;
+import ru.besttuts.stockwidget.provider.model.QuoteType;
 import ru.besttuts.stockwidget.model.Setting;
 import ru.besttuts.stockwidget.provider.QuoteContract.Settings;
 import ru.besttuts.stockwidget.sync.MyFinanceWS;

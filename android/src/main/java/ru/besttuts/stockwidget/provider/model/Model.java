@@ -44,6 +44,10 @@ public class Model {
     @Getter @Setter
     private int quoteType;
 
+    @ColumnInfo(name = "quote_provider")
+    @Getter @Setter
+    private int quoteProvider;
+
     public String getRateToString() {
         return String.valueOf((float)Math.round(rate*100)/100);
     }

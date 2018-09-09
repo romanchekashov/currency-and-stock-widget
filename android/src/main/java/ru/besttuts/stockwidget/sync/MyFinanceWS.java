@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import ru.besttuts.stockwidget.model.QuoteLastTradeDate;
-import ru.besttuts.stockwidget.model.QuoteType;
+import ru.besttuts.stockwidget.provider.model.QuoteType;
 import ru.besttuts.stockwidget.sync.sparklab.dto.QuoteDto;
 import ru.besttuts.stockwidget.util.SharedPreferencesHelper;
 
@@ -98,6 +98,10 @@ public class MyFinanceWS {
             dto.setTimestamp(System.currentTimeMillis());
             dto.setType(QuoteType.CURRENCY);
             dtos.add(dto);
+        }
+
+        if (symbols != null && !symbols.isEmpty()) {
+            dtos.get(0).setProvider("ALFA_BANK");
         }
         return dtos;
     }

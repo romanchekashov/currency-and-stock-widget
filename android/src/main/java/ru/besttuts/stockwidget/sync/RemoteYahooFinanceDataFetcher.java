@@ -14,7 +14,7 @@ import java.util.Set;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import ru.besttuts.stockwidget.model.QuoteType;
+import ru.besttuts.stockwidget.provider.model.QuoteType;
 import ru.besttuts.stockwidget.model.Setting;
 import ru.besttuts.stockwidget.sync.deserializer.YahooMultiQueryDataDeserializer;
 import ru.besttuts.stockwidget.sync.model.YahooMultiQueryData;

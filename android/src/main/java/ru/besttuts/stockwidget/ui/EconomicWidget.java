@@ -23,7 +23,7 @@ import android.widget.RemoteViews;
 import ru.besttuts.stockwidget.BuildConfig;
 import ru.besttuts.stockwidget.Config;
 import ru.besttuts.stockwidget.R;
-import ru.besttuts.stockwidget.model.QuoteType;
+import ru.besttuts.stockwidget.provider.model.QuoteType;
 import ru.besttuts.stockwidget.provider.db.DbProvider;
 import ru.besttuts.stockwidget.provider.model.Model;
 import ru.besttuts.stockwidget.service.QuoteWidgetService;

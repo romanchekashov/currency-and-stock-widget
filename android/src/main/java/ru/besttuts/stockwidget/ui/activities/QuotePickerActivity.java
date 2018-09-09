@@ -13,7 +13,7 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 
 import ru.besttuts.stockwidget.R;
-import ru.besttuts.stockwidget.model.QuoteType;
+import ru.besttuts.stockwidget.provider.model.QuoteType;
 import ru.besttuts.stockwidget.provider.db.DbProvider;
 import ru.besttuts.stockwidget.ui.fragments.CurrencyExchangeFragment;
 import ru.besttuts.stockwidget.ui.fragments.quotes.GoodsItemFragment;

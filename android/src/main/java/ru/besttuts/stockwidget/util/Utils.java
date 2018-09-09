@@ -14,7 +14,7 @@ import org.joda.time.DateTimeZone;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.provider.model.Model;
-import ru.besttuts.stockwidget.model.QuoteType;
+import ru.besttuts.stockwidget.provider.model.QuoteType;
 import ru.besttuts.stockwidget.ui.fragments.ConfigPreferenceFragment;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;

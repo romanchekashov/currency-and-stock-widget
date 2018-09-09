@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
+import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService.RemoteViewsFactory;
 
@@ -12,7 +13,8 @@ import java.util.List;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.provider.model.Model;
-import ru.besttuts.stockwidget.model.QuoteType;
+import ru.besttuts.stockwidget.provider.model.QuoteProvider;
+import ru.besttuts.stockwidget.provider.model.QuoteType;
 import ru.besttuts.stockwidget.provider.db.DbProvider;
 import ru.besttuts.stockwidget.ui.activities.EconomicWidgetConfigureActivity;
 import ru.besttuts.stockwidget.ui.fragments.tracking.TrackingQuotesFragment;
@@ -52,10 +54,14 @@ public class QuoteRemoteViewsFactory implements RemoteViewsFactory {
     public void onDataSetChanged() {
         mLayout = EconomicWidgetConfigureActivity.loadWidgetLayoutGridItemPref(mContext, mAppWidgetId);
 
-        if (null == models) models = new ArrayList<>();
-        models.clear();
+        if (null == models) {
+            models = new ArrayList<>();
+        } else {
+            models.clear();
+        }
 
         models.addAll(DbProvider.getInstance().getModelsByWidgetId(mAppWidgetId));
+//        models.forEach(m -> System.out.println(m.toString()));
     }
 
     @Override
@@ -77,7 +83,14 @@ public class QuoteRemoteViewsFactory implements RemoteViewsFactory {
 
         Model model = models.get(position);
 //        viewItem.setFloat(R.id.tvName, "setTextSize", 12);
-        viewItem.setTextViewText(R.id.tvName, Utils.getModelNameFromResourcesBySymbol(mContext, model));
+        int quoteIcon = QuoteProvider.getDrawableId(model.getQuoteProvider());
+        if (quoteIcon >= 0) {
+            viewItem.setImageViewResource(R.id.quoteIcon, quoteIcon);
+            viewItem.setViewVisibility(R.id.quoteIcon, View.VISIBLE);
+        } else {
+            viewItem.setViewVisibility(R.id.quoteIcon, View.GONE);
+        }
+        viewItem.setTextViewText(R.id.quoteName, Utils.getModelNameFromResourcesBySymbol(mContext, model));
         viewItem.setTextViewText(R.id.tvRate, model.getRateToString());
         viewItem.setTextViewText(R.id.tvChange, model.getChangeToString());
         viewItem.setTextViewText(R.id.tvChangePercentage, model.getPercentChange());
@@ -100,7 +113,7 @@ public class QuoteRemoteViewsFactory implements RemoteViewsFactory {
             url = String.format("http://finance.yahoo.com/q?s=%s&ql=1", model.getId());
         }
         intent.putExtra(TrackingQuotesFragment.ARG_URL, url);
-        viewItem.setOnClickFillInIntent(R.id.tvName, intent);
+        viewItem.setOnClickFillInIntent(R.id.quoteName, intent);
         viewItem.setOnClickFillInIntent(R.id.tvRate, intent);
         viewItem.setOnClickFillInIntent(R.id.tvChange, intent);
         viewItem.setOnClickFillInIntent(R.id.tvChangePercentage, intent);

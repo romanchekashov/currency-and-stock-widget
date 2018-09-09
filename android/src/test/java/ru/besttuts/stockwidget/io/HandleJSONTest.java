@@ -9,7 +9,7 @@ import java.util.Map;
 
 import ru.besttuts.stockwidget.model.Currency;
 import ru.besttuts.stockwidget.model.Model;
-import ru.besttuts.stockwidget.model.QuoteType;
+import ru.besttuts.stockwidget.provider.model.QuoteType;
 import ru.besttuts.stockwidget.sync.RemoteYahooFinanceDataFetcher;
 
 import static junit.framework.Assert.assertEquals;

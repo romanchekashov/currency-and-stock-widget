@@ -6,6 +6,7 @@ import java.util.Map;
 import ru.besttuts.stockwidget.model.Currency;
 import ru.besttuts.stockwidget.model.Good;
 import ru.besttuts.stockwidget.provider.model.Model;
+import ru.besttuts.stockwidget.provider.model.QuoteProvider;
 import ru.besttuts.stockwidget.sync.model.YahooMultiQueryData;
 import ru.besttuts.stockwidget.sync.sparklab.dto.QuoteDto;
 
@@ -82,6 +83,7 @@ public class CustomConverter {
         model.setCurrency(dto.getCurrency());
         model.setName(dto.getName());
         model.setQuoteType(dto.getType());
+        model.setQuoteProvider(QuoteProvider.getProvider(dto.getProvider()));
         return model;
     }
 }

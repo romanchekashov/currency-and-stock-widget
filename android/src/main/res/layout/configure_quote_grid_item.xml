@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Name"
-        android:id="@+id/tvName"
+        android:id="@+id/quoteName"
         android:textColor="#ffffff"
         android:textSize="12sp"
         android:singleLine="true" />

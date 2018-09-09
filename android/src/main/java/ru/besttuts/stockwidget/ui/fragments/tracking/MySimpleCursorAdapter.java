@@ -30,7 +30,7 @@ public class MySimpleCursorAdapter extends SimpleCursorAdapter {
     static class ViewHolder {
         ProgressBar progressBar;
         LinearLayout linearLayout;
-        TextView tvName;
+        TextView quoteName;
         TextView tvRate;
         TextView tvChange;
         TextView tvChangePercentage;
@@ -54,7 +54,7 @@ public class MySimpleCursorAdapter extends SimpleCursorAdapter {
             holder = new ViewHolder();
             holder.progressBar = (ProgressBar) row.findViewById(R.id.progressBar2);
             holder.linearLayout = (LinearLayout) row.findViewById(R.id.lLayoutRate);
-            holder.tvName =  (TextView) row.findViewById(R.id.tvName);
+            holder.quoteName =  (TextView) row.findViewById(R.id.quoteName);
             holder.tvRate =  (TextView) row.findViewById(R.id.tvRate);
             holder.tvChange =  (TextView) row.findViewById(R.id.tvChange);
             holder.tvChangePercentage =  (TextView) row.findViewById(R.id.tvChangePercentage);
@@ -77,7 +77,7 @@ public class MySimpleCursorAdapter extends SimpleCursorAdapter {
                     QuoteContract.SettingColumns.SETTING_QUOTE_TYPE));
             symbol = cursor.getString(cursor.getColumnIndexOrThrow(
                     QuoteContract.SettingColumns.SETTING_QUOTE_SYMBOL));
-            holder.tvName.setText(
+            holder.quoteName.setText(
                     Utils.getModelNameFromResourcesBySymbol(mContext, quoteType, symbol));
 
 
@@ -105,7 +105,7 @@ public class MySimpleCursorAdapter extends SimpleCursorAdapter {
         LOGD(TAG, "getView: symbol = " + symbol + " quotePosition = " + quotePosition);
 
         Model model = QuoteDataSource.transformCursorToModel(cursor);
-        holder.tvName.setText(Utils.getModelNameFromResourcesBySymbol(mContext, model));
+        holder.quoteName.setText(Utils.getModelNameFromResourcesBySymbol(mContext, model));
         holder.tvRate.setText(model.getRateToString());
         holder.tvChange.setText(model.getChangeToString());
         holder.tvChangePercentage.setText(model.getPercentChange());

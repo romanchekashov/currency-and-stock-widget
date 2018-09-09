@@ -4,15 +4,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:id="@+id/quoteIcon"
+            android:src="@drawable/ic_widget_green_arrow_up"
+            android:background="#00ffffff"
+            android:layout_gravity="center_vertical" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Name"
-            android:id="@+id/tvName"
+            android:id="@+id/quoteName"
             android:textColor="#ffffff"
             android:textSize="@dimen/widget_grid_item_name_text_size_row_3"
             android:singleLine="true" />
+    </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"

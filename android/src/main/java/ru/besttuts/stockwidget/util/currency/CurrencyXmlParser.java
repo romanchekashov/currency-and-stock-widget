@@ -17,13 +17,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-
-import ru.besttuts.stockwidget.io.HandleJSON;
-import ru.besttuts.stockwidget.model.Model;
-import ru.besttuts.stockwidget.model.QuoteType;
-import ru.besttuts.stockwidget.sync.RemoteYahooFinanceDataFetcher;
 
 /**
  * Создаем ресурсный файл с массивом валют.

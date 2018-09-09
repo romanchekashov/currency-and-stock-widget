@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "c596ada79a02db6e30e9b2b9225e81d2",
+    "identityHash": "cd720b399f37bb7f1f66f353d86953e5",
     "entities": [
       {
         "tableName": "settings",
@@ -62,7 +62,7 @@
       },
       {
         "tableName": "models",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `id` TEXT, `name` TEXT, `rate` REAL NOT NULL, `change` REAL NOT NULL, `currency` TEXT, `quote_type` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `id` TEXT, `name` TEXT, `rate` REAL NOT NULL, `change` REAL NOT NULL, `currency` TEXT, `quote_type` INTEGER NOT NULL, `quote_provider` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "_id",
@@ -103,6 +103,12 @@
           {
             "fieldPath": "quoteType",
             "columnName": "quote_type",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "quoteProvider",
+            "columnName": "quote_provider",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -195,7 +201,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"c596ada79a02db6e30e9b2b9225e81d2\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"cd720b399f37bb7f1f66f353d86953e5\")"
     ]
   }
 }

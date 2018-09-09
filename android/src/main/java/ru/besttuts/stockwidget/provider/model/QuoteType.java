@@ -1,4 +1,4 @@
-package ru.besttuts.stockwidget.model;
+package ru.besttuts.stockwidget.provider.model;
 
 /**
  * Created by roman on 15.01.2015.

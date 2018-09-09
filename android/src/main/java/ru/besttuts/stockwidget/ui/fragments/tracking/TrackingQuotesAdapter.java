@@ -29,7 +29,7 @@ public class TrackingQuotesAdapter extends BaseAdapter {
     static class ViewHolder {
         ProgressBar progressBar;
         LinearLayout linearLayout;
-        TextView tvName;
+        TextView quoteName;
         TextView tvRate;
         TextView tvChange;
         TextView tvChangePercentage;
@@ -76,7 +76,7 @@ public class TrackingQuotesAdapter extends BaseAdapter {
             holder = new ViewHolder();
             holder.progressBar = row.findViewById(R.id.progressBar2);
             holder.linearLayout = row.findViewById(R.id.lLayoutRate);
-            holder.tvName =  row.findViewById(R.id.tvName);
+            holder.quoteName =  row.findViewById(R.id.quoteName);
             holder.tvRate =  row.findViewById(R.id.tvRate);
             holder.tvChange =  row.findViewById(R.id.tvChange);
             holder.tvChangePercentage = row.findViewById(R.id.tvChangePercentage);
@@ -96,7 +96,7 @@ public class TrackingQuotesAdapter extends BaseAdapter {
         if (null == symbol || symbol.isEmpty()) {
             int quoteType = modelSetting.getModel().getQuoteType();
             symbol = modelSetting.getModel().getId();
-            holder.tvName.setText(
+            holder.quoteName.setText(
                     Utils.getModelNameFromResourcesBySymbol(context, quoteType, symbol));
 
 
@@ -123,7 +123,7 @@ public class TrackingQuotesAdapter extends BaseAdapter {
         LOGD(TAG, "getView: symbol = " + symbol + " quotePosition = " + quotePosition);
 
         Model model = modelSetting.getModel();
-        holder.tvName.setText(Utils.getModelNameFromResourcesBySymbol(context, model));
+        holder.quoteName.setText(Utils.getModelNameFromResourcesBySymbol(context, model));
         holder.tvRate.setText(model.getRateToString());
         holder.tvChange.setText(model.getChangeToString());
         holder.tvChangePercentage.setText(model.getPercentChange());
