@@ -9,6 +9,12 @@
     <string name="add_widget">Add widget</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+
     <string name="rate_app">Rate app</string>
     <string name="rate_app_text">If you enjoy using Currency and Stock Widget, please take a moment to rate it. Thanks for your support!</string>
     <string name="rate_now">Rate Now</string>
