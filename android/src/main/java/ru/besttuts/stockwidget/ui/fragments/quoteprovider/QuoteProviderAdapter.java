@@ -8,23 +8,20 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import ru.besttuts.stockwidget.provider.model.Quote;
 import ru.besttuts.stockwidget.provider.model.QuoteProvider;
-import ru.besttuts.stockwidget.ui.fragments.quotes.AbsQuoteSelectionFragment;
-import ru.besttuts.stockwidget.util.Utils;
 
 public class QuoteProviderAdapter extends BaseAdapter {
 
     Context context;
     List<QuoteProvider> data;
-    Set<String> symbols;
+    Set<String> providerCodes = new HashSet<>();
     LayoutInflater lInflater;
     int layout;
-    int quoteType;
-    AbsQuoteSelectionFragment fragment;
+    QuoteProviderFragment fragment;
 
     public QuoteProviderAdapter(Context context, int layout, List<QuoteProvider> data) {
         this.context = context;
@@ -53,15 +50,11 @@ public class QuoteProviderAdapter extends BaseAdapter {
         this.data = data;
     }
 
-    public void setSymbols(Set<String> symbols) {
-        this.symbols = symbols;
+    public void setProviderCodes(Set<String> providerCodes) {
+        this.providerCodes = providerCodes;
     }
 
-    public void setQuoteType(int quoteType) {
-        this.quoteType = quoteType;
-    }
-
-    public void setFragment(AbsQuoteSelectionFragment fragment) {
+    public void setFragment(QuoteProviderFragment fragment) {
         this.fragment = fragment;
     }
 
@@ -72,17 +65,20 @@ public class QuoteProviderAdapter extends BaseAdapter {
             view = lInflater.inflate(layout, parent, false);
         }
 
-        String symbol = String.valueOf(((TextView) view.findViewById(android.R.id.text2)).getText());
-        if (symbols.contains(symbol)) {
+        QuoteProvider quoteProvider = data.get(position);
+//        String providerCode = String.valueOf(((TextView) view.findViewById(android.R.id.text2)).getText());
+        if (providerCodes.contains(quoteProvider.getCode())) {
             fragment.setSelectedBgView(view);
         } else {
             view.setBackgroundColor(Color.TRANSPARENT);
         }
 
-        String name = Utils.getModelNameFromResourcesBySymbol(context, quoteType, symbol);
-        if (!symbol.equals(name)) {
-            ((TextView) view.findViewById(android.R.id.text1)).setText(name);
-        }
+//        String name = Utils.getModelNameFromResourcesBySymbol(context, quoteType, symbol);
+//        if (!symbol.equals(name)) {
+//            ((TextView) view.findViewById(android.R.id.text1)).setText(name);
+//        }
+        TextView text1 = view.findViewById(android.R.id.text1);
+        text1.setText(quoteProvider.getName());
 
         return view;
     }

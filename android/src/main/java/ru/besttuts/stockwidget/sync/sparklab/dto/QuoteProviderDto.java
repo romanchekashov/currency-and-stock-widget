@@ -6,11 +6,12 @@ import java.util.List;
 import lombok.Data;
 
 /**
- * Created by rchekashov on 26.08.2018.
+ * @author romanchekashov
+ * @since 22.10.2016
  */
 @Data
-public class InitDataDto {
+public class QuoteProviderDto {
+    private String provider;
+    private String providerName;
     private List<CurrencyInfoDto> currencies = new ArrayList<>();
-    private List<CommodityInfoDto> commodities = new ArrayList<>();
-    private List<QuoteProviderDto> quoteProviders = new ArrayList<>();
 }

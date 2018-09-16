@@ -15,11 +15,8 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 public class QuoteProviderLoader extends AsyncTaskLoader<List<QuoteProvider>> {
     protected static String TAG = makeLogTag(QuoteProviderLoader.class);
 
-    private int mQuoteType;
-
-    public QuoteProviderLoader(@NonNull Context context, int quoteType) {
+    public QuoteProviderLoader(@NonNull Context context) {
         super(context);
-        mQuoteType = quoteType;
     }
 
     @Nullable

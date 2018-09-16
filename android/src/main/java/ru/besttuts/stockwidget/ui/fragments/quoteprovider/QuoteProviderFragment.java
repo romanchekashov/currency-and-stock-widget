@@ -1,8 +1,10 @@
 package ru.besttuts.stockwidget.ui.fragments.quoteprovider;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
@@ -20,7 +22,7 @@ import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.provider.QuoteContract;
 import ru.besttuts.stockwidget.provider.model.Quote;
 import ru.besttuts.stockwidget.provider.model.QuoteProvider;
-import ru.besttuts.stockwidget.ui.fragments.quotes.AbsQuoteSelectionFragment;
+import ru.besttuts.stockwidget.ui.fragments.ConfigPreferenceFragment;
 import ru.besttuts.stockwidget.ui.fragments.quotes.QuoteLoader;
 import ru.besttuts.stockwidget.ui.fragments.quotes.QuotesAdapter;
 
@@ -49,10 +51,12 @@ public class QuoteProviderFragment extends Fragment
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    // цвет для выделенного элемента списка
+    private int mColor;
 
     private OnFragmentInteractionListener mListener;
 
-    private QuotesAdapter quotesAdapter;
+    private QuoteProviderAdapter quoteProviderAdapter;
 
 
     // Идентификатор загрузчика используемый в данном компоненте
@@ -63,11 +67,10 @@ public class QuoteProviderFragment extends Fragment
      */
     private ListView mListView;
 
-    public static QuoteProviderFragment newInstance(int widgetItemPosition, int quoteType) {
+    public static QuoteProviderFragment newInstance(int widgetItemPosition) {
         QuoteProviderFragment fragment = new QuoteProviderFragment();
         Bundle args = new Bundle();
         args.putInt("widgetItemPosition", widgetItemPosition);
-        args.putInt(ARG_QUOTE_TYPE, quoteType);
         fragment.setArguments(args);
         return fragment;
     }
@@ -90,7 +93,6 @@ public class QuoteProviderFragment extends Fragment
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         LOGD(TAG, "onCreate");
-
     }
 
 
@@ -98,7 +100,7 @@ public class QuoteProviderFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_my_quotes, container, false);
+        View view = inflater.inflate(R.layout.fragment_quote_provider, container, false);
 
         // формируем столбцы сопоставления
         String[] from = new String[]{QuoteContract.QuoteColumns.QUOTE_NAME,
@@ -107,32 +109,30 @@ public class QuoteProviderFragment extends Fragment
         int[] to = new int[]{android.R.id.text1, android.R.id.text2};
 
         // создааем адаптер и настраиваем список
-        quotesAdapter = new QuotesAdapter(getActivity(), android.R.layout.simple_list_item_2, new ArrayList<Quote>());
-        quotesAdapter.setSymbols(mSymbols);
-        quotesAdapter.setQuoteType(mQuoteType);
-        quotesAdapter.setFragment(this);
-        mListView = (ListView) view.findViewById(R.id.listView2);
+        quoteProviderAdapter = new QuoteProviderAdapter(getActivity(), android.R.layout.simple_list_item_2, new ArrayList<>());
+//        quoteProviderAdapter.setProviderCodes(mSymbols);
+//        quoteProviderAdapter.setQuoteType(mQuoteType);
+        quoteProviderAdapter.setFragment(this);
+        mListView = view.findViewById(R.id.fragment_quote_provider_listView);
 //        listView.setBackground(getResources().getDrawable(R.drawable.bg_key));
-        mListView.setAdapter(quotesAdapter);
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        mListView.setAdapter(quoteProviderAdapter);
+        mListView.setOnItemClickListener((parent, view1, position, id) -> {
 
-                String symbol = String.valueOf(((TextView) view.findViewById(android.R.id.text2)).getText());
-                if (mSymbols.contains(symbol)) {
-                    view.setBackgroundColor(Color.TRANSPARENT);
-                    mSymbols.remove(symbol);
-                } else {
-                    mSymbols.add(symbol);
-                    setSelectedBgView(view);
-                }
-                if (0 < mSymbols.size()) {
-                    if (null != mListener) mListener.showAcceptItem(true);
-                } else {
-                    if (null != mListener) mListener.showAcceptItem(false);
-                }
-                LOGD(TAG, "onItemClick: " + quotesAdapter.getItem(position));
-            }
+            TextView text2 = view1.findViewById(android.R.id.text2);
+            String providerCode = String.valueOf(text2.getText());
+//            if (mSymbols.contains(providerCode)) {
+//                view1.setBackgroundColor(Color.TRANSPARENT);
+//                mSymbols.remove(providerCode);
+//            } else {
+//                mSymbols.add(providerCode);
+//                setSelectedBgView(view1);
+//            }
+//            if (0 < mSymbols.size()) {
+//                if (null != mListener) mListener.showAcceptItem(true);
+//            } else {
+//                if (null != mListener) mListener.showAcceptItem(false);
+//            }
+            LOGD(TAG, "onItemClick: " + quoteProviderAdapter.getItem(position));
         });
 
         reload();
@@ -143,7 +143,7 @@ public class QuoteProviderFragment extends Fragment
     @Override
     public void onResume() {
         super.onResume();
-        if (0 < mSymbols.size()) {
+        if (0 < quoteProviderAdapter.getCount()) {
             if (null != mListener) mListener.showAcceptItem(true);
         } else {
             if (null != mListener) mListener.showAcceptItem(false);
@@ -184,18 +184,18 @@ public class QuoteProviderFragment extends Fragment
     }
 
     @Override
-    public Loader<List<Quote>> onCreateLoader(int id, Bundle args) {
-        return new QuoteLoader(getActivity(), mQuoteType);
+    public Loader<List<QuoteProvider>> onCreateLoader(int id, Bundle args) {
+        return new QuoteProviderLoader(getActivity());
     }
 
     @Override
-    public void onLoadFinished(Loader<List<Quote>> loader, List<Quote> data) {
-        quotesAdapter.setData(data);
+    public void onLoadFinished(Loader<List<QuoteProvider>> loader, List<QuoteProvider> data) {
+        quoteProviderAdapter.setData(data);
     }
 
     @Override
-    public void onLoaderReset(Loader<List<Quote>> loader) {
-        quotesAdapter.setData(new ArrayList<Quote>());
+    public void onLoaderReset(Loader<List<QuoteProvider>> loader) {
+        quoteProviderAdapter.setData(new ArrayList<>());
     }
 
     /**
@@ -210,10 +210,22 @@ public class QuoteProviderFragment extends Fragment
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onFragmentInteraction(String id);
+        void onFragmentInteraction(String id);
 
-        public void showAcceptItem(boolean isVisible);
-
+        void showAcceptItem(boolean isVisible);
     }
 
+
+
+    public void setSelectedBgView(View view) {
+        if (0 == mColor) {
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String bgColor = "#" + ConfigPreferenceFragment.KEY_PREF_BG_VISIBILITY_DEFAULT_VALUE +
+                    sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_COLOR,
+                            ConfigPreferenceFragment.KEY_PREF_BG_COLOR_DEFAULT_VALUE).substring(1);
+            mColor = Color.parseColor(bgColor);
+        }
+
+        view.setBackgroundColor(mColor);
+    }
 }

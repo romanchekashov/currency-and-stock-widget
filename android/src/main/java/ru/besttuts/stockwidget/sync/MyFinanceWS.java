@@ -12,6 +12,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import ru.besttuts.stockwidget.model.QuoteLastTradeDate;
 import ru.besttuts.stockwidget.provider.model.QuoteType;
+import ru.besttuts.stockwidget.sync.sparklab.dto.InitDataDto;
 import ru.besttuts.stockwidget.sync.sparklab.dto.QuoteDto;
 import ru.besttuts.stockwidget.util.SharedPreferencesHelper;
 
@@ -75,6 +76,11 @@ public class MyFinanceWS {
 //        LOGD(TAG, "[getQuotes]: quotes fetched = " + quotes.size());
 //
 //        return quotes;
+    }
+
+    public InitDataDto getSupportedData() {
+        InitDataDto dto = new InitDataDto();
+        return dto;
     }
 
     private MyFinanceService getService() {
