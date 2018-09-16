@@ -5,27 +5,28 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="0dp"
+        android:orientation="horizontal">
 
         <ImageView
-            android:layout_width="15dp"
-            android:layout_height="15dp"
             android:id="@+id/quoteIcon"
-            android:src="@drawable/ic_widget_green_arrow_up"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_gravity="center_vertical"
             android:background="#00ffffff"
-            android:layout_gravity="center_vertical" />
+            android:src="@drawable/ic_widget_green_arrow_up" />
 
         <TextView
+            android:id="@+id/quoteName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:singleLine="true"
             android:text="Name"
-            android:id="@+id/quoteName"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#ffffff"
-            android:textSize="@dimen/widget_grid_item_name_text_size_row_3"
-            android:singleLine="true" />
+            android:textSize="@dimen/widget_grid_item_name_text_size_row_3" />
     </LinearLayout>
 
         <TextView
