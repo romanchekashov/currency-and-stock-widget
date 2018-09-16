@@ -11,6 +11,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -37,6 +38,7 @@ import ru.besttuts.stockwidget.provider.QuoteContract;
 import ru.besttuts.stockwidget.provider.db.DbNotificationManager;
 import ru.besttuts.stockwidget.provider.db.DbProvider;
 import ru.besttuts.stockwidget.provider.model.Model;
+import ru.besttuts.stockwidget.provider.model.QuoteType;
 import ru.besttuts.stockwidget.provider.model.Setting;
 import ru.besttuts.stockwidget.provider.model.wrap.ModelSetting;
 import ru.besttuts.stockwidget.sync.MyFinanceWS;
@@ -128,6 +130,13 @@ public class TrackingQuotesFragment extends Fragment
         mMainView = inflater.inflate(R.layout.fragment_configure_stock_items, container, false);
 
         changeColor();
+
+        FloatingActionButton fab = mMainView.findViewById(R.id.fab);
+        fab.setOnClickListener(view -> {
+            mListener.showQuotePickerActivity(QuoteType.COMMODITY, trackingQuotesAdapter.getCount());
+//            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                    .setAction("Action", null).show();
+        });
 
         // формируем столбцы сопоставления
         String[] from = new String[]{

@@ -9,23 +9,20 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
-import ru.besttuts.stockwidget.provider.model.Setting;
+import ru.besttuts.stockwidget.provider.model.QuoteProvider;
 
 @Dao
-public interface SettingDao {
+public interface QuoteProviderDao {
 
-    @Query("SELECT * FROM settings")
-    List<Setting> getAll();
-
-    @Query("SELECT * FROM settings WHERE widget_id = :widgetId ORDER BY quote_position ASC")
-    List<Setting> allByWidgetId(int widgetId);
+    @Query("SELECT * FROM quote_providers")
+    List<QuoteProvider> getAll();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertAll(Setting... settings);
+    void insertAll(QuoteProvider... settings);
 
     @Update
-    void updateAll(Setting... settings);
+    void updateAll(QuoteProvider... settings);
 
     @Delete
-    void deleteAll(Setting... settings);
+    void deleteAll(QuoteProvider... settings);
 }

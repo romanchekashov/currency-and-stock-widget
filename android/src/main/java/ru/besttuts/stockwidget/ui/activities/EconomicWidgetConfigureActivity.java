@@ -35,6 +35,7 @@ import java.util.Calendar;
 import ru.besttuts.stockwidget.Config;
 import ru.besttuts.stockwidget.PrivateConstants;
 import ru.besttuts.stockwidget.R;
+import ru.besttuts.stockwidget.provider.model.QuoteType;
 import ru.besttuts.stockwidget.service.UpdateService;
 import ru.besttuts.stockwidget.ui.App;
 import ru.besttuts.stockwidget.ui.EconomicWidget;
@@ -183,11 +184,6 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(view -> Snackbar
-                .make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show());
 
         NotificationManager.addListener(this);
 
@@ -396,62 +392,6 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
         super.onDestroy();
         NotificationManager.removeListener(this);
         LOGD(TAG, "onDestroy");
-    }
-
-    public static void saveWidgetLayoutPref(Context context, int appWidgetId, int layout) {
-        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
-        prefs.putInt(PREF_PREFIX_KEY + appWidgetId + "_widget_layout", layout);
-        prefs.commit();
-    }
-
-    public static int loadWidgetLayoutPref(Context context, int appWidgetId) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
-        return prefs.getInt(PREF_PREFIX_KEY + appWidgetId + "_widget_layout", R.layout.economic_widget);
-    }
-
-    public static void deleteWidgetLayoutPref(Context context, int appWidgetId) {
-        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
-        prefs.remove(PREF_PREFIX_KEY + appWidgetId + "_widget_layout");
-        prefs.commit();
-    }
-
-    public static void saveWidgetLayoutGridItemPref(Context context, int appWidgetId, int layoutGridItem) {
-        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
-        prefs.putInt(PREF_PREFIX_KEY + appWidgetId + "_widget_layout_grid_item", layoutGridItem);
-        prefs.commit();
-    }
-
-    public static int loadWidgetLayoutGridItemPref(Context context, int appWidgetId) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
-        return prefs.getInt(PREF_PREFIX_KEY + appWidgetId + "_widget_layout_grid_item", R.layout.economic_widget_item);
-    }
-
-    public static void deleteWidgetLayoutGridItemPref(Context context, int appWidgetId) {
-        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
-        prefs.remove(PREF_PREFIX_KEY + appWidgetId + "_widget_layout_grid_item");
-        prefs.commit();
-    }
-
-    public static void saveLastUpdateTimePref(Context context, int appWidgetId, String text) {
-        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
-        prefs.putString(PREF_PREFIX_KEY + appWidgetId + "_lastupdatetime", text);
-        prefs.commit();
-    }
-
-    public static String loadLastUpdateTimePref(Context context, int appWidgetId) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
-        String titleValue = prefs.getString(PREF_PREFIX_KEY + appWidgetId + "_lastupdatetime", null);
-        if (titleValue != null) {
-            return titleValue;
-        } else {
-            return new SimpleDateFormat().format(Calendar.getInstance().getTime());
-        }
-    }
-
-    public static void deleteLastUpdateTimePref(Context context, int appWidgetId) {
-        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
-        prefs.remove(PREF_PREFIX_KEY + appWidgetId + "_lastupdatetime");
-        prefs.commit();
     }
 
     public static int getColor(Context context, boolean hasAlpha) {

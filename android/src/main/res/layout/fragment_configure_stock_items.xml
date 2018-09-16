@@ -1,5 +1,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="ru.besttuts.stockwidget.ui.fragments.tracking.TrackingQuotesFragment">
 
@@ -40,6 +42,14 @@
             android:paddingBottom="10dp"
             android:layout_below="@+id/btnAddQuote" />
 
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_margin="@dimen/fab_margin"
+            ads:srcCompat="@drawable/ic_action_new" />
     </RelativeLayout>
 
 </FrameLayout>

@@ -142,9 +142,9 @@ public class EconomicWidget extends AppWidgetProvider {
         // Удаляем все данные ассоциированные с удаляемым виджетом.
         for (int widgetId: appWidgetIds) {
             DbProvider.getInstance().deleteSettingsByWidgetId(widgetId);
-            EconomicWidgetConfigureActivity.deleteLastUpdateTimePref(context, widgetId);
-            EconomicWidgetConfigureActivity.deleteWidgetLayoutPref(context, widgetId);
-            EconomicWidgetConfigureActivity.deleteWidgetLayoutGridItemPref(context, widgetId);
+            SharedPreferencesUtils.LastUpdateTime.delete(context, widgetId);
+            SharedPreferencesUtils.WidgetLayout.delete(context, widgetId);
+            SharedPreferencesUtils.WidgetLayoutGridItem.delete(context, widgetId);
         }
 
         if(BuildConfig.DEBUG) {
@@ -284,14 +284,14 @@ public class EconomicWidget extends AppWidgetProvider {
             String time = new SimpleDateFormat().format(Calendar.getInstance().getTime());
             views.setTextViewText(R.id.tvSyncTime, time);
             views.setTextColor(R.id.tvSyncTime, Color.WHITE);
-            EconomicWidgetConfigureActivity.saveLastUpdateTimePref(context, appWidgetId, time);
+            SharedPreferencesUtils.LastUpdateTime.save(context, appWidgetId, time);
         } else if (null != connectionStatus) {
-            String time = EconomicWidgetConfigureActivity.loadLastUpdateTimePref(context, appWidgetId);
+            String time = SharedPreferencesUtils.LastUpdateTime.load(context, appWidgetId);
             views.setTextViewText(R.id.tvSyncTime, time + " - " + connectionStatus);
             int color = context.getResources().getColor(R.color.arrow_red);
             views.setTextColor(R.id.tvSyncTime, color);
         } else {
-            String time = EconomicWidgetConfigureActivity.loadLastUpdateTimePref(context, appWidgetId);
+            String time = SharedPreferencesUtils.LastUpdateTime.load(context, appWidgetId);
             views.setTextViewText(R.id.tvSyncTime, time);
             views.setTextColor(R.id.tvSyncTime, Color.WHITE);
         }
@@ -494,7 +494,7 @@ public class EconomicWidget extends AppWidgetProvider {
     }
 
     private static int getWidgetLayoutId(Context context, int appWidgetId) {
-        return EconomicWidgetConfigureActivity.loadWidgetLayoutPref(context, appWidgetId);
+        return SharedPreferencesUtils.WidgetLayout.load(context, appWidgetId);
     }
 
     private static void calcWidgetViewData(Context context, int appWidgetId, int height) {
@@ -505,20 +505,20 @@ public class EconomicWidget extends AppWidgetProvider {
         SharedPreferencesUtils.Rows.save(context, rows);
         switch (rows) {
             case 1:
-                EconomicWidgetConfigureActivity.saveWidgetLayoutPref(context, appWidgetId, R.layout.economic_widget);
-                EconomicWidgetConfigureActivity.saveWidgetLayoutGridItemPref(context, appWidgetId, R.layout.economic_widget_item);
+                SharedPreferencesUtils.WidgetLayout.save(context, appWidgetId, R.layout.economic_widget);
+                SharedPreferencesUtils.WidgetLayoutGridItem.save(context, appWidgetId, R.layout.economic_widget_item);
                 break;
             case 2:
-                EconomicWidgetConfigureActivity.saveWidgetLayoutPref(context, appWidgetId, R.layout.economic_widget_row2);
-                EconomicWidgetConfigureActivity.saveWidgetLayoutGridItemPref(context, appWidgetId, R.layout.economic_widget_item_row2);
+                SharedPreferencesUtils.WidgetLayout.save(context, appWidgetId, R.layout.economic_widget_row2);
+                SharedPreferencesUtils.WidgetLayoutGridItem.save(context, appWidgetId, R.layout.economic_widget_item_row2);
                 break;
             case 3:
-                EconomicWidgetConfigureActivity.saveWidgetLayoutPref(context, appWidgetId, R.layout.economic_widget_row_3);
-                EconomicWidgetConfigureActivity.saveWidgetLayoutGridItemPref(context, appWidgetId, R.layout.economic_widget_item_row_3);
+                SharedPreferencesUtils.WidgetLayout.save(context, appWidgetId, R.layout.economic_widget_row_3);
+                SharedPreferencesUtils.WidgetLayoutGridItem.save(context, appWidgetId, R.layout.economic_widget_item_row_3);
                 break;
             default:
-                EconomicWidgetConfigureActivity.saveWidgetLayoutPref(context, appWidgetId, R.layout.economic_widget_row_4);
-                EconomicWidgetConfigureActivity.saveWidgetLayoutGridItemPref(context, appWidgetId, R.layout.economic_widget_item_row_4);
+                SharedPreferencesUtils.WidgetLayout.save(context, appWidgetId, R.layout.economic_widget_row_4);
+                SharedPreferencesUtils.WidgetLayoutGridItem.save(context, appWidgetId, R.layout.economic_widget_item_row_4);
                 break;
         }
 

@@ -146,37 +146,34 @@ public class DbProvider {
 
     public void getSettingsWithModelByWidgetId(final int widgetId,
                                                final ResultCallback<List<ModelSetting>> callback) {
-        mExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                List<ModelSetting> modelSettings = mDbBackendAdapter
-                        .getSettingsWithModelByWidgetId(widgetId);
-                if (modelSettings.isEmpty()) {
-                    List<Setting> settings = mDbBackendAdapter.getSettingsByWidgetId(widgetId);
-                    List<String> symbols = new ArrayList<>(settings.size());
-                    for (Setting setting: settings) symbols.add(setting.getQuoteSymbol());
+        mExecutor.execute(() -> {
+            List<ModelSetting> modelSettings = mDbBackendAdapter
+                    .getSettingsWithModelByWidgetId(widgetId);
+            if (modelSettings.isEmpty()) {
+                List<Setting> settings = mDbBackendAdapter.getSettingsByWidgetId(widgetId);
+                List<String> symbols = new ArrayList<>(settings.size());
+                for (Setting setting: settings) symbols.add(setting.getQuoteSymbol());
 
-                    try {
-                        List<QuoteDto> quoteDtos = new MyFinanceWS(mContext).getQuotes(symbols);
-                        for (QuoteDto dto: quoteDtos) {
-                            database.modelDao().insertAll(CustomConverter.toModel(dto));
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                try {
+                    List<QuoteDto> quoteDtos = new MyFinanceWS(mContext).getQuotes(symbols);
+                    for (QuoteDto dto: quoteDtos) {
+                        database.modelDao().insertAll(CustomConverter.toModel(dto));
                     }
-
-                    modelSettings = mDbBackendAdapter
-                            .getSettingsWithModelByWidgetId(widgetId);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
 
-                final List<ModelSetting> modelSettingsFinal = modelSettings;
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        callback.onFinished(modelSettingsFinal);
-                    }
-                });
+                modelSettings = mDbBackendAdapter
+                        .getSettingsWithModelByWidgetId(widgetId);
             }
+
+            final List<ModelSetting> modelSettingsFinal = modelSettings;
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    callback.onFinished(modelSettingsFinal);
+                }
+            });
         });
 //        mExecutor.execute(new Runnable() {
 //            @Override

@@ -15,6 +15,7 @@ import ru.besttuts.stockwidget.provider.dao.SettingDao;
 import ru.besttuts.stockwidget.provider.db.DbBackendAdapter;
 import ru.besttuts.stockwidget.provider.model.Model;
 import ru.besttuts.stockwidget.provider.model.Quote;
+import ru.besttuts.stockwidget.provider.model.QuoteProvider;
 import ru.besttuts.stockwidget.provider.model.Setting;
 import ru.besttuts.stockwidget.provider.model.wrap.ModelSetting;
 
@@ -149,6 +150,11 @@ public class DbBackendAdapterImpl implements DbBackendAdapter {
     @Override
     public List<Quote> getQuotesByType(int quoteType) {
         return database.quoteDao().getAllByQuoteType(quoteType);
+    }
+
+    @Override
+    public List<QuoteProvider> getQuoteProviders() {
+        return database.quoteProviderDao().getAll();
     }
 
     @Override

@@ -18,6 +18,7 @@ import ru.besttuts.stockwidget.provider.model.QuoteType;
 import ru.besttuts.stockwidget.provider.db.DbProvider;
 import ru.besttuts.stockwidget.ui.activities.EconomicWidgetConfigureActivity;
 import ru.besttuts.stockwidget.ui.fragments.tracking.TrackingQuotesFragment;
+import ru.besttuts.stockwidget.util.SharedPreferencesUtils;
 import ru.besttuts.stockwidget.util.Utils;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
@@ -52,7 +53,7 @@ public class QuoteRemoteViewsFactory implements RemoteViewsFactory {
 
     @Override
     public void onDataSetChanged() {
-        mLayout = EconomicWidgetConfigureActivity.loadWidgetLayoutGridItemPref(mContext, mAppWidgetId);
+        mLayout = SharedPreferencesUtils.WidgetLayoutGridItem.load(mContext, mAppWidgetId);
 
         if (null == models) {
             models = new ArrayList<>();

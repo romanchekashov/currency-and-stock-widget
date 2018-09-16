@@ -4,6 +4,7 @@ import java.util.List;
 
 import ru.besttuts.stockwidget.provider.model.Model;
 import ru.besttuts.stockwidget.provider.model.Quote;
+import ru.besttuts.stockwidget.provider.model.QuoteProvider;
 import ru.besttuts.stockwidget.provider.model.Setting;
 import ru.besttuts.stockwidget.provider.model.wrap.ModelSetting;
 
@@ -25,4 +26,6 @@ public interface DbBackendAdapter {
 
     void deleteQuotesByIds(String[] symbols);
     List<Quote> getQuotesByType(int quoteType);
+
+    List<QuoteProvider> getQuoteProviders();
 }

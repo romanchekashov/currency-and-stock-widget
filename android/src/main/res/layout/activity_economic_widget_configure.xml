@@ -30,15 +30,6 @@
         android:id="@+id/adViewFrameLayout"
         android:layout_alignParentBottom="true"></FrameLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_margin="@dimen/fab_margin"
-        ads:srcCompat="@drawable/ic_action_new" />
-
 <!--
     <com.google.android.gms.ads.AdView android:id="@+id/adView"
         android:layout_width="wrap_content"

@@ -1,12 +1,27 @@
 package ru.besttuts.stockwidget.provider.model;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+
+import lombok.Data;
 import ru.besttuts.stockwidget.R;
 
 /**
  * Created by roman on 09.09.2018.
  */
-public interface QuoteProvider {
-    int AlFA_BANK = 1;
+@Entity(tableName = "quote_providers")
+@Data
+public class QuoteProvider {
+
+    @PrimaryKey
+    @ColumnInfo(name = "code")
+    private String code;
+
+    @ColumnInfo(name = "name")
+    private String name;
+
+    static final int AlFA_BANK = 1;
 
     static int getProvider(String provider) {
         if (provider == null) return 0;
