@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -17,6 +18,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.RemoteViews;
 
@@ -31,6 +34,7 @@ import ru.besttuts.stockwidget.service.UpdateService;
 import ru.besttuts.stockwidget.ui.activities.DynamicWebViewActivity;
 import ru.besttuts.stockwidget.ui.activities.EconomicWidgetConfigureActivity;
 import ru.besttuts.stockwidget.ui.fragments.ConfigPreferenceFragment;
+import ru.besttuts.stockwidget.util.SharedPreferencesUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -100,6 +104,7 @@ public class EconomicWidget extends AppWidgetProvider {
         for (int widgetId: appWidgetIds) {
             RemoteViews views = new RemoteViews(context.getPackageName(),
                     getWidgetLayoutId(context, widgetId));
+            calcPaddingsGridView(views, context);
             views.setViewVisibility(R.id.ibRefresh, View.GONE);
             views.setViewVisibility(R.id.progressBar, View.VISIBLE);
             appWidgetManager.updateAppWidget(widgetId, views);
@@ -348,12 +353,8 @@ public class EconomicWidget extends AppWidgetProvider {
         Uri data = Uri.parse(adapter.toUri(Intent.URI_INTENT_SCHEME));
         adapter.setData(data);
 
-        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
-        if (currentapiVersion >= Build.VERSION_CODES.ICE_CREAM_SANDWICH){
-            rv.setRemoteAdapter(R.id.gridView2, adapter);
-        } else if (currentapiVersion >= Build.VERSION_CODES.HONEYCOMB) {
-            rv.setRemoteAdapter(appWidgetId, R.id.gridView2, adapter);
-        }
+        rv.setRemoteAdapter(R.id.gridView2, adapter);
+        calcPaddingsGridView(rv, context);
 
         Intent intent = new Intent(context, DynamicWebViewActivity.class);
         PendingIntent viewPendingIntent = PendingIntent.getActivity(context, appWidgetId, intent, 0);
@@ -501,6 +502,7 @@ public class EconomicWidget extends AppWidgetProvider {
         // Находим кол-во строк по минимальной высоте виджета.
         int rows = getCellsForSize(height);
         LOGD(TAG, "calcWidgetViewData: rows = " + rows);
+        SharedPreferencesUtils.Rows.save(context, rows);
         switch (rows) {
             case 1:
                 EconomicWidgetConfigureActivity.saveWidgetLayoutPref(context, appWidgetId, R.layout.economic_widget);
@@ -519,6 +521,26 @@ public class EconomicWidget extends AppWidgetProvider {
                 EconomicWidgetConfigureActivity.saveWidgetLayoutGridItemPref(context, appWidgetId, R.layout.economic_widget_item_row_4);
                 break;
         }
+
+    }
+
+    private static int dip(int dp, Context context) {
+        return (int) Math.ceil(dp * SharedPreferencesUtils.Density.load(context));
+    }
+
+    private static void calcPaddingsGridView(RemoteViews rv, Context context) {
+//        int rows = SharedPreferencesUtils.Rows.load(context);
+//        switch (rows) {
+//            case 1:
+//                rv.setViewPadding(R.id.gridView2, dip(10, context), dip(8, context), 0, dip(8, context));
+//                break;
+//            case 2:
+//                rv.setViewPadding(R.id.gridView2, dip(10, context), 0, dip(10, context), dip(6, context));
+//                break;
+//            case 3:
+//                rv.setViewPadding(R.id.gridView2, dip(10, context), 0, dip(10, context), dip(6, context));
+//                break;
+//        }
 
     }
 

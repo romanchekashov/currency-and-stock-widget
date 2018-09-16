@@ -9,9 +9,9 @@
     <dimen name="widget_grid_vertical_spacing">5dp</dimen>
 
     <dimen name="widget_grid_left_padding">10dp</dimen>
-    <dimen name="widget_grid_top_padding">17dp</dimen>
+    <dimen name="widget_grid_top_padding">10dp</dimen>
     <dimen name="widget_grid_right_padding">0dp</dimen>
-    <dimen name="widget_grid_bottom_padding">17dp</dimen>
+    <dimen name="widget_grid_bottom_padding">10dp</dimen>
 
     <dimen name="widget_grid_item_name_text_size">12sp</dimen>
     <dimen name="widget_grid_item_rate_text_size">18sp</dimen>

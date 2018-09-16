@@ -15,6 +15,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -42,6 +43,7 @@ import ru.besttuts.stockwidget.ui.fragments.SlidingTabsFragment;
 import ru.besttuts.stockwidget.ui.fragments.tracking.TrackingQuotesFragment;
 import ru.besttuts.stockwidget.util.AppRater;
 import ru.besttuts.stockwidget.util.NotificationManager;
+import ru.besttuts.stockwidget.util.SharedPreferencesUtils;
 
 import static ru.besttuts.stockwidget.Config.PREFS_NAME;
 import static ru.besttuts.stockwidget.Config.PREF_PREFIX_KEY;
@@ -223,12 +225,14 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
             position = savedInstanceState.getInt(STATE_POSITION);
         }
 
-//        DisplayMetrics metrics = new DisplayMetrics();
-//        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-//        LOGD(TAG, String.format("onCreate: density = %f, densityDpi = %d, heightPixels = %d, " +
-//                        "widthPixels = %d, scaledDensity = %f, xdpi = %f, ydpi = %f",
-//                metrics.density, metrics.densityDpi, metrics.heightPixels, metrics.widthPixels,
-//                metrics.scaledDensity, metrics.xdpi, metrics.ydpi));
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        SharedPreferencesUtils.Density.save(this, metrics.density);
+
+        LOGD(TAG, String.format("DisplayMetrics: density = %f, densityDpi = %d, heightPixels = %d, " +
+                        "widthPixels = %d, scaledDensity = %f, xdpi = %f, ydpi = %f",
+                metrics.density, metrics.densityDpi, metrics.heightPixels, metrics.widthPixels,
+                metrics.scaledDensity, metrics.xdpi, metrics.ydpi));
 
 //        if (BuildConfig.DEBUG) {
 //            File file = new File("/data/data/ru.besttuts.stockwidget");
