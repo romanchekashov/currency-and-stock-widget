@@ -28,13 +28,9 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.analytics.GoogleAnalytics;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
 import ru.besttuts.stockwidget.Config;
 import ru.besttuts.stockwidget.PrivateConstants;
 import ru.besttuts.stockwidget.R;
-import ru.besttuts.stockwidget.provider.model.QuoteType;
 import ru.besttuts.stockwidget.service.UpdateService;
 import ru.besttuts.stockwidget.ui.App;
 import ru.besttuts.stockwidget.ui.EconomicWidget;
@@ -45,8 +41,6 @@ import ru.besttuts.stockwidget.util.AppRater;
 import ru.besttuts.stockwidget.util.NotificationManager;
 import ru.besttuts.stockwidget.util.SharedPreferencesUtils;
 
-import static ru.besttuts.stockwidget.Config.PREFS_NAME;
-import static ru.besttuts.stockwidget.Config.PREF_PREFIX_KEY;
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.LOGE;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
@@ -63,15 +57,19 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
     private static final String TAG = makeLogTag(EconomicWidgetConfigureActivity.class);
 
 
-    /** Your ad unit id. Replace with your actual ad unit id. */
+    /**
+     * Your ad unit id. Replace with your actual ad unit id.
+     */
     private static final String BANNER_AD_UNIT_ID = PrivateConstants.BANNER_AD_UNIT_ID;
-//            Config.getProperty("ru.besttuts.stockwidget.PrivateConstants", "BANNER_AD_UNIT_ID");
+    //            Config.getProperty("ru.besttuts.stockwidget.PrivateConstants", "BANNER_AD_UNIT_ID");
     private static final String INTERSTITIAL_AD_UNIT_ID = PrivateConstants.INTERSTITIAL_AD_UNIT_ID;
-//            Config.getProperty("ru.besttuts.stockwidget.PrivateConstants", "INTERSTITIAL_AD_UNIT_ID");
+    //            Config.getProperty("ru.besttuts.stockwidget.PrivateConstants", "INTERSTITIAL_AD_UNIT_ID");
     private static final String HASHED_DEVICE_ID = PrivateConstants.HASHED_DEVICE_ID;
 //            Config.getProperty("ru.besttuts.stockwidget.PrivateConstants", "HASHED_DEVICE_ID");
 
-    /** The interstitial ad. */
+    /**
+     * The interstitial ad.
+     */
     private InterstitialAd interstitialAd;
 
     public static final String ARG_WIDGET_ID = "widgetId";
@@ -109,7 +107,7 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
 
     @Override
     public void showAddQuoteItem(boolean isVisible) {
-        if(null != mMenu) {
+        if (null != mMenu) {
             mMenu.findItem(R.id.action_add_quote).setVisible(isVisible);
         }
     }
@@ -174,7 +172,7 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
         // out of the widget placement if the user presses the back button.
         setResult(RESULT_CANCELED);
 
-        PreferenceManager.setDefaultValues(this, R.xml.preference_config, false);
+//        PreferenceManager.setDefaultValues(this, R.xml.preference_config, false);
 
         setContentView(R.layout.activity_economic_widget_configure);
 
@@ -248,7 +246,7 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
 //            }
 //        }
         //Получаю треккер отслеживания для Гугл-Аналитики (должен автоматически отправлять отчеты)
-        if(Config.IS_DEV_MODE){
+        if (Config.IS_DEV_MODE) {
             ((App) getApplication()).getTracker(App.TrackerName.APP_TRACKER);
         }
 
@@ -263,7 +261,7 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
     }
 
     public void createAds() {
-        if(Config.IS_DEV_MODE){
+        if (Config.IS_DEV_MODE) {
             LOGD(TAG, "[createAds]: NO ADS cause in DEV mode!");
             return;
         }
@@ -276,7 +274,7 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
 
         // Поиск разметки LinearLayout (предполагается, что ей был присвоен
         // атрибут android:id="@+id/mainLayout").
-        FrameLayout adViewFrameLayout = (FrameLayout)findViewById(R.id.adViewFrameLayout);
+        FrameLayout adViewFrameLayout = (FrameLayout) findViewById(R.id.adViewFrameLayout);
 
         // Добавление в разметку экземпляра adView.
         adViewFrameLayout.addView(adView);
@@ -317,9 +315,11 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
         interstitialAd.loadAd(interstitialAdRequest);
     }
 
-    /** Called when the Show Interstitial button is clicked. */
+    /**
+     * Called when the Show Interstitial button is clicked.
+     */
     public void showInterstitial() {
-        if(Config.IS_DEV_MODE){
+        if (Config.IS_DEV_MODE) {
             return;
         }
 
@@ -334,10 +334,12 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
         }
     }
 
-    /** Gets a string error reason from an error code. */
+    /**
+     * Gets a string error reason from an error code.
+     */
     private String getErrorReason(int errorCode) {
         String errorReason = "";
-        switch(errorCode) {
+        switch (errorCode) {
             case AdRequest.ERROR_CODE_INTERNAL_ERROR:
                 errorReason = "Internal error";
                 break;
@@ -365,7 +367,7 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-        if(Config.IS_DEV_MODE){
+        if (Config.IS_DEV_MODE) {
             //Get an Analytics tracker to report app starts & uncaught exceptions etc.
             GoogleAnalytics.getInstance(this).reportActivityStart(this);
         }
@@ -380,7 +382,7 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         super.onStop();
-        if(Config.IS_DEV_MODE){
+        if (Config.IS_DEV_MODE) {
             //Stop the analytics tracking
             GoogleAnalytics.getInstance(this).reportActivityStop(this);
         }

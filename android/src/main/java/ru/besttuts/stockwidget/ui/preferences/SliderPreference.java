@@ -9,12 +9,13 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Build;
-import android.preference.DialogPreference;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import androidx.preference.DialogPreference;
 
 import ru.besttuts.stockwidget.R;
 
@@ -121,70 +122,70 @@ public class SliderPreference extends DialogPreference {
         }
     }
 
-    @Override
-    protected View onCreateDialogView() {
-        mSeekBarValue = Math.round(Integer.parseInt(mValue, 16) / 2.55f);
-        View view = super.onCreateDialogView();
-        final TextView textView = (TextView) view.findViewById(R.id.slider_preference_textView);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-            textView.setTextColor(Color.WHITE);
-        }
-        textView.setText(getSummary());
-        SeekBar seekbar = (SeekBar) view.findViewById(R.id.slider_preference_seekbar);
-        seekbar.setMax(SEEKBAR_RESOLUTION);
-        seekbar.setProgress(mSeekBarValue);
-        seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                int progress = seekBar.getProgress();
-                switch (progress) {
-                    case 0:
-                        textView.setText(getContext().getString(R.string.pref_slider_fully_transparent));
-                        break;
-                    case 100:
-                        textView.setText(getContext().getString(R.string.pref_slider_fully_opaque));
-                        break;
-                    default:
-                        textView.setText(progress + getContext().getString(R.string.pref_slider_visible));
-                        break;
-                }
-                SliderPreference.this.mSeekBarValue = progress;
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (fromUser) {
-                    switch (progress) {
-                        case 0:
-                            textView.setText(getContext().getString(R.string.pref_slider_fully_transparent));
-                            break;
-                        case 100:
-                            textView.setText(getContext().getString(R.string.pref_slider_fully_opaque));
-                            break;
-                        default:
-                            textView.setText(progress + getContext().getString(R.string.pref_slider_visible));
-                            break;
-                    }
-                    SliderPreference.this.mSeekBarValue = progress;
-                }
-            }
-        });
-        return view;
-    }
-
-    @Override
-    protected void onDialogClosed(boolean positiveResult) {
-        final String newValue = Integer.toHexString(Math.round(mSeekBarValue * 2.55f)) ;
-        if (positiveResult && callChangeListener(newValue)) {
-            setValue(newValue);
-        }
-        super.onDialogClosed(positiveResult);
-    }
+//    @Override
+//    protected View onCreateDialogView() {
+//        mSeekBarValue = Math.round(Integer.parseInt(mValue, 16) / 2.55f);
+//        View view = super.onCreateDialogView();
+//        final TextView textView = (TextView) view.findViewById(R.id.slider_preference_textView);
+//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+//            textView.setTextColor(Color.WHITE);
+//        }
+//        textView.setText(getSummary());
+//        SeekBar seekbar = (SeekBar) view.findViewById(R.id.slider_preference_seekbar);
+//        seekbar.setMax(SEEKBAR_RESOLUTION);
+//        seekbar.setProgress(mSeekBarValue);
+//        seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+//
+//            @Override
+//            public void onStopTrackingTouch(SeekBar seekBar) {
+//                int progress = seekBar.getProgress();
+//                switch (progress) {
+//                    case 0:
+//                        textView.setText(getContext().getString(R.string.pref_slider_fully_transparent));
+//                        break;
+//                    case 100:
+//                        textView.setText(getContext().getString(R.string.pref_slider_fully_opaque));
+//                        break;
+//                    default:
+//                        textView.setText(progress + getContext().getString(R.string.pref_slider_visible));
+//                        break;
+//                }
+//                SliderPreference.this.mSeekBarValue = progress;
+//            }
+//
+//            @Override
+//            public void onStartTrackingTouch(SeekBar seekBar) {
+//            }
+//
+//            @Override
+//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//                if (fromUser) {
+//                    switch (progress) {
+//                        case 0:
+//                            textView.setText(getContext().getString(R.string.pref_slider_fully_transparent));
+//                            break;
+//                        case 100:
+//                            textView.setText(getContext().getString(R.string.pref_slider_fully_opaque));
+//                            break;
+//                        default:
+//                            textView.setText(progress + getContext().getString(R.string.pref_slider_visible));
+//                            break;
+//                    }
+//                    SliderPreference.this.mSeekBarValue = progress;
+//                }
+//            }
+//        });
+//        return view;
+//    }
+//
+//    @Override
+//    protected void onDialogClosed(boolean positiveResult) {
+//        final String newValue = Integer.toHexString(Math.round(mSeekBarValue * 2.55f)) ;
+//        if (positiveResult && callChangeListener(newValue)) {
+//            setValue(newValue);
+//        }
+//        super.onDialogClosed(positiveResult);
+//    }
 
     // TODO: Save and restore preference state.
 }

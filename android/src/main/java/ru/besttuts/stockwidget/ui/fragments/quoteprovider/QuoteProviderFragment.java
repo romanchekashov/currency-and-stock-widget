@@ -22,6 +22,7 @@ import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.provider.QuoteContract;
 import ru.besttuts.stockwidget.provider.model.QuoteProvider;
 import ru.besttuts.stockwidget.ui.fragments.ConfigPreferenceFragment;
+import ru.besttuts.stockwidget.util.SharedPreferencesHelper;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
@@ -215,11 +216,7 @@ public class QuoteProviderFragment extends Fragment
 
     public void setSelectedBgView(View view) {
         if (0 == mColor) {
-            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            String bgColor = "#" + ConfigPreferenceFragment.KEY_PREF_BG_VISIBILITY_DEFAULT_VALUE +
-                    sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_COLOR,
-                            ConfigPreferenceFragment.KEY_PREF_BG_COLOR_DEFAULT_VALUE).substring(1);
-            mColor = Color.parseColor(bgColor);
+            mColor = SharedPreferencesHelper.getWidgetBgColor(getActivity());
         }
 
         view.setBackgroundColor(mColor);

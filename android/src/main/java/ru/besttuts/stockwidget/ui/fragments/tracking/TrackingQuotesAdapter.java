@@ -123,22 +123,24 @@ public class TrackingQuotesAdapter extends BaseAdapter {
         LOGD(TAG, "getView: symbol = " + symbol + " quotePosition = " + quotePosition);
 
         Model model = modelSetting.getModel();
-        holder.quoteName.setText(Utils.getModelNameFromResourcesBySymbol(context, model));
-        holder.tvRate.setText(model.getRateToString());
-        holder.tvChange.setText(model.getChangeToString());
-        holder.tvChangePercentage.setText(model.getPercentChange());
+        if (model != null) {
+            holder.quoteName.setText(Utils.getModelNameFromResourcesBySymbol(context, model));
+            holder.tvRate.setText(model.getRateToString());
+            holder.tvChange.setText(model.getChangeToString());
+            holder.tvChangePercentage.setText(model.getPercentChange());
 
-        int color = context.getResources().getColor(R.color.arrow_green);
-        if (0 < model.getChange()) {
-            holder.imageView.setImageResource(R.drawable.ic_widget_green_arrow_up);
-        } else {
-            holder.imageView.setImageResource(R.drawable.ic_widget_green_arrow_down);
-            color = context.getResources().getColor(R.color.arrow_red);
+            int color = context.getResources().getColor(R.color.arrow_green);
+            if (0 < model.getChange()) {
+                holder.imageView.setImageResource(R.drawable.ic_widget_green_arrow_up);
+            } else {
+                holder.imageView.setImageResource(R.drawable.ic_widget_green_arrow_down);
+                color = context.getResources().getColor(R.color.arrow_red);
+            }
+            holder.tvChange.setTextColor(color);
+            holder.tvChangePercentage.setTextColor(color);
+
+            holder.tvCurrency.setText(model.getCurrency());
         }
-        holder.tvChange.setTextColor(color);
-        holder.tvChangePercentage.setTextColor(color);
-
-        holder.tvCurrency.setText(model.getCurrency());
         return row;
     }
 }

@@ -10,36 +10,33 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.View;
 import android.widget.RemoteViews;
-
-import ru.besttuts.stockwidget.BuildConfig;
-import ru.besttuts.stockwidget.Config;
-import ru.besttuts.stockwidget.R;
-import ru.besttuts.stockwidget.provider.model.QuoteType;
-import ru.besttuts.stockwidget.provider.db.DbProvider;
-import ru.besttuts.stockwidget.provider.model.Model;
-import ru.besttuts.stockwidget.service.QuoteWidgetService;
-import ru.besttuts.stockwidget.service.UpdateService;
-import ru.besttuts.stockwidget.ui.activities.DynamicWebViewActivity;
-import ru.besttuts.stockwidget.ui.activities.EconomicWidgetConfigureActivity;
-import ru.besttuts.stockwidget.ui.fragments.ConfigPreferenceFragment;
-import ru.besttuts.stockwidget.util.SharedPreferencesUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import ru.besttuts.stockwidget.BuildConfig;
+import ru.besttuts.stockwidget.Config;
+import ru.besttuts.stockwidget.R;
+import ru.besttuts.stockwidget.provider.db.DbProvider;
+import ru.besttuts.stockwidget.provider.model.Model;
+import ru.besttuts.stockwidget.provider.model.QuoteType;
+import ru.besttuts.stockwidget.service.QuoteWidgetService;
+import ru.besttuts.stockwidget.service.UpdateService;
+import ru.besttuts.stockwidget.ui.activities.DynamicWebViewActivity;
+import ru.besttuts.stockwidget.ui.activities.EconomicWidgetConfigureActivity;
+import ru.besttuts.stockwidget.ui.fragments.ConfigPreferenceFragment;
+import ru.besttuts.stockwidget.util.SharedPreferencesHelper;
+import ru.besttuts.stockwidget.util.SharedPreferencesUtils;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
@@ -86,10 +83,10 @@ public class EconomicWidget extends AppWidgetProvider {
 //            return;
 //        }
 
-        if(BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             StringBuilder widgetIdStrBuilder = new StringBuilder();
-            for (int i: allWidgetIds) {
-                widgetIdStrBuilder.append(i+",");
+            for (int i : allWidgetIds) {
+                widgetIdStrBuilder.append(i + ",");
             }
             LOGD(TAG, String.format("onUpdate: context(%s), appWidgetManager(%s), allWidgetIds(%s), hasInternet(%s)",
                     context, appWidgetManager, widgetIdStrBuilder.toString(), hasInternet));
@@ -101,7 +98,7 @@ public class EconomicWidget extends AppWidgetProvider {
     private void update(Context context, AppWidgetManager appWidgetManager,
                         int[] appWidgetIds, boolean hasInternet) {
 
-        for (int widgetId: appWidgetIds) {
+        for (int widgetId : appWidgetIds) {
             RemoteViews views = new RemoteViews(context.getPackageName(),
                     getWidgetLayoutId(context, widgetId));
             calcPaddingsGridView(views, context);
@@ -123,8 +120,7 @@ public class EconomicWidget extends AppWidgetProvider {
         intent.putExtra(ARG_HAS_INTERNET, hasInternet);
 
         // Обновляем виджеты через сервис
-        context.startService(intent);
-
+        UpdateService.enqueueWork(context, intent);
 
         // Возможно активны несколько виджетов, поэтому обновляем их все
 //        final int N = appWidgetIds.length;
@@ -140,17 +136,17 @@ public class EconomicWidget extends AppWidgetProvider {
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
         // Удаляем все данные ассоциированные с удаляемым виджетом.
-        for (int widgetId: appWidgetIds) {
+        for (int widgetId : appWidgetIds) {
             DbProvider.getInstance().deleteSettingsByWidgetId(widgetId);
             SharedPreferencesUtils.LastUpdateTime.delete(context, widgetId);
             SharedPreferencesUtils.WidgetLayout.delete(context, widgetId);
             SharedPreferencesUtils.WidgetLayoutGridItem.delete(context, widgetId);
         }
 
-        if(BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             StringBuilder widgetIdStrBuilder = new StringBuilder();
-            for (int i: appWidgetIds) {
-                widgetIdStrBuilder.append(i+",");
+            for (int i : appWidgetIds) {
+                widgetIdStrBuilder.append(i + ",");
             }
             LOGD(TAG, "[onDeleted]: appWidgetIds: " + widgetIdStrBuilder.toString());
         }
@@ -192,7 +188,7 @@ public class EconomicWidget extends AppWidgetProvider {
         AlarmManager alarmManager = (AlarmManager) context
                 .getSystemService(Context.ALARM_SERVICE);
 
-        if (alarmManager!= null) {
+        if (alarmManager != null) {
             alarmManager.cancel(pIntent);
         }
 
@@ -201,6 +197,7 @@ public class EconomicWidget extends AppWidgetProvider {
 
     /**
      * Вызывается при создании первого экземпляра виджета.
+     *
      * @param context
      */
     @Override
@@ -241,6 +238,7 @@ public class EconomicWidget extends AppWidgetProvider {
 
     /**
      * Вызывается при удалении последнего экземпляра виджета.
+     *
      * @param context
      */
     @Override
@@ -261,10 +259,11 @@ public class EconomicWidget extends AppWidgetProvider {
 
     /**
      * Обновляем отображение и данные виджета
+     *
      * @param context
      * @param appWidgetManager
-     * @param appWidgetId идентификатор виджета
-     * @param models новые данные
+     * @param appWidgetId      идентификатор виджета
+     * @param models           новые данные
      * @param hasInternet
      */
     public static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
@@ -317,7 +316,7 @@ public class EconomicWidget extends AppWidgetProvider {
         Intent updateIntent = new Intent(context, EconomicWidget.class);
         updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
         updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,
-                new int[] { appWidgetId });
+                new int[]{appWidgetId});
         PendingIntent pIntent = PendingIntent.getBroadcast(context, appWidgetId, updateIntent, 0);
         views.setOnClickPendingIntent(R.id.ibRefresh, pIntent);
     }
@@ -333,15 +332,7 @@ public class EconomicWidget extends AppWidgetProvider {
     }
 
     private static void readPrefsSettings(Context context, RemoteViews views) {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        String sVisibility = sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_VISIBILITY,
-                ConfigPreferenceFragment.KEY_PREF_BG_VISIBILITY_DEFAULT_VALUE);
-        if (2 != sVisibility.length()){
-            sVisibility = "0" + sVisibility;
-        }
-        String bgColor = "#" + sVisibility + sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_COLOR,
-                ConfigPreferenceFragment.KEY_PREF_BG_COLOR_DEFAULT_VALUE).substring(1);
-        views.setInt(R.id.bgWidget, "setBackgroundColor", Color.parseColor(bgColor));
+        views.setInt(R.id.bgWidget, "setBackgroundColor", SharedPreferencesHelper.getWidgetBgColor(context));
     }
 
     @SuppressLint("NewApi")
@@ -382,7 +373,7 @@ public class EconomicWidget extends AppWidgetProvider {
         AppWidgetManager appWidgetManager = AppWidgetManager
                 .getInstance(context);
         int appWidgetIds[] = appWidgetManager.getAppWidgetIds(thisAppWidget);
-        for (Integer id: appWidgetIds) {
+        for (Integer id : appWidgetIds) {
             LOGD(TAG, "[onReceive] appWidgetId = " + id);
         }
 
@@ -406,7 +397,7 @@ public class EconomicWidget extends AppWidgetProvider {
         int widgetSpanX = intent.getIntExtra("widgetspanx", 0);
         int widgetSpanY = intent.getIntExtra("widgetspany", 0);
 
-        if(appWidgetId > 0 && widgetSpanX > 0 && widgetSpanY > 0) {
+        if (appWidgetId > 0 && widgetSpanX > 0 && widgetSpanY > 0) {
             newOptions.putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, widgetSpanY * 74);
             newOptions.putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, widgetSpanX * 74);
         }

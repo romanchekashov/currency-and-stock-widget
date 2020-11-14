@@ -1,11 +1,12 @@
 package ru.besttuts.stockwidget.service;
 
-import android.app.IntentService;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
+import android.content.Context;
 import android.content.Intent;
 
-import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.core.app.JobIntentService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,12 +26,29 @@ import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.LOGE;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
-public class UpdateService extends IntentService {
+public class UpdateService extends JobIntentService {
 
     private static final String TAG = makeLogTag(UpdateService.class);
 
-    public UpdateService() {
-        super("UpdateService");
+    /**
+     * Unique job ID for this service.
+     */
+    public static final int JOB_ID = 1;
+
+    /**
+     * Convenience method for enqueuing work in to this service.
+     */
+    public static void enqueueWork(Context context, Intent work) {
+        enqueueWork(context, UpdateService.class, JOB_ID, work);
+    }
+
+    @Override
+    protected void onHandleWork(@NonNull Intent intent) {
+        final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
+        final int[] allWidgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
+        boolean hasInternet = intent.getBooleanExtra(EconomicWidget.ARG_HAS_INTERNET, true);
+
+        updateData(this, appWidgetManager, allWidgetIds, -1, hasInternet);
     }
 
     @Override
@@ -46,16 +64,6 @@ public class UpdateService extends IntentService {
     }
 
     @Override
-    protected void onHandleIntent(@Nullable Intent intent) {
-
-        final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
-        final int[] allWidgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
-        boolean hasInternet = intent.getBooleanExtra(EconomicWidget.ARG_HAS_INTERNET, true);
-
-        updateData(this, appWidgetManager, allWidgetIds, -1, hasInternet);
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
 
@@ -68,7 +76,7 @@ public class UpdateService extends IntentService {
         final List<Setting> settings = DbProvider.getInstance().getAllSettingsWithCheck();
         List<String> symbols = new ArrayList<>(settings.size());
         Map<String, List<Integer>> symbolWidgetId = new HashMap<>();
-        for (Setting setting: settings) {
+        for (Setting setting : settings) {
             String symbol = setting.getQuoteSymbol();
             symbols.add(symbol);
             if (symbolWidgetId.get(symbol) == null) {
@@ -80,10 +88,10 @@ public class UpdateService extends IntentService {
         try {
             List<QuoteDto> quoteDtos = new MyFinanceWS(this).getQuotes(symbols);
             Map<Integer, List<Model>> modelsByWidgetId = new HashMap<>();
-            for (QuoteDto dto: quoteDtos) {
+            for (QuoteDto dto : quoteDtos) {
                 Model model = CustomConverter.toModel(dto);
                 List<Integer> widgetIds = symbolWidgetId.get(dto.getSymbol());
-                for (Integer i: widgetIds) {
+                for (Integer i : widgetIds) {
                     if (modelsByWidgetId.get(i) == null) {
                         modelsByWidgetId.put(i, new ArrayList<Model>());
                     }
@@ -103,9 +111,9 @@ public class UpdateService extends IntentService {
     }
 
     private void updateWidget(Map<Integer, List<Model>> map, Service service, AppWidgetManager appWidgetManager,
-                              int[] allWidgetIds, int startId, boolean hasInternet){
+                              int[] allWidgetIds, int startId, boolean hasInternet) {
 
-        for (int widgetId: allWidgetIds) {
+        for (int widgetId : allWidgetIds) {
             EconomicWidget.updateAppWidget(service.getApplicationContext(), appWidgetManager,
                     widgetId, map.get(widgetId), hasInternet);
         }

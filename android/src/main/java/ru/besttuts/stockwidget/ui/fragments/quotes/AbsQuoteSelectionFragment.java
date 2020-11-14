@@ -19,6 +19,7 @@ import java.util.Set;
 
 import ru.besttuts.stockwidget.ui.fragments.ConfigPreferenceFragment;
 import ru.besttuts.stockwidget.ui.fragments.IQuoteTypeFragment;
+import ru.besttuts.stockwidget.util.SharedPreferencesHelper;
 import ru.besttuts.stockwidget.util.Utils;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
@@ -97,11 +98,7 @@ public abstract class AbsQuoteSelectionFragment extends Fragment implements IQuo
 
     public void setSelectedBgView(View view) {
         if (0 == mColor) {
-            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            String bgColor = "#" + ConfigPreferenceFragment.KEY_PREF_BG_VISIBILITY_DEFAULT_VALUE +
-                    sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_COLOR,
-                            ConfigPreferenceFragment.KEY_PREF_BG_COLOR_DEFAULT_VALUE).substring(1);
-            mColor = Color.parseColor(bgColor);
+            mColor = SharedPreferencesHelper.getWidgetBgColor(getActivity());
         }
 
         view.setBackgroundColor(mColor);

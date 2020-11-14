@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:asp="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory android:title="@string/pref_auto_update">
         <ListPreference
@@ -38,19 +39,21 @@
             android:title="@string/pref_bg_visibility">
         </ListPreference>-->
 
-        <ru.besttuts.stockwidget.ui.preferences.SliderPreference
-            android:defaultValue="C0"
+        <SeekBarPreference
             android:key="pref_listBgVisibility"
+            android:title="@string/pref_bg_visibility"
             android:summary="@string/pref_bg_visibility"
-            android:title="@string/pref_bg_visibility" />
+            android:defaultValue="25"
+            android:max="100"
+            asp:min="0" />
 
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_data">
         <ru.besttuts.stockwidget.ui.preferences.DataCleanPreference
-            android:summary="@string/pref_clean_database"
-            android:title="@string/pref_clean_database">
-        </ru.besttuts.stockwidget.ui.preferences.DataCleanPreference>
+            android:key="pref_data_clean"
+            android:title="@string/pref_clean_database"
+            android:summary="@string/pref_clean_database" />
     </PreferenceCategory>
 
 </PreferenceScreen>

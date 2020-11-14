@@ -113,8 +113,7 @@
         <!-- Service to perform web API queries -->
         <service
             android:name=".service.UpdateService"
-            android:enabled="true"
-            android:exported="true" >
+            android:permission="android.permission.BIND_JOB_SERVICE">
         </service>
 <!--
         <provider
