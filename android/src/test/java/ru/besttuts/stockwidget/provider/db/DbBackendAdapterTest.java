@@ -7,6 +7,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ru.besttuts.stockwidget.BuildConfig;
@@ -15,6 +16,7 @@ import ru.besttuts.stockwidget.provider.model.Setting;
 import ru.besttuts.stockwidget.provider.AppDatabase;
 import ru.besttuts.stockwidget.provider.QuoteDatabaseHelper;
 import ru.besttuts.stockwidget.provider.db.impl.DbBackendAdapterImpl;
+import ru.besttuts.stockwidget.util.UtilsTest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -42,12 +44,15 @@ public class DbBackendAdapterTest implements DbContract {
     }
 
     @Test
-    public void addSettingsRec_shouldSaveSettings(){
-        dbBackendAdapter.addSettingsRec(WIDGET_IDS[0], 1, QuoteType.CURRENCY,
-                new String[]{"EURUSD", "USDRUB", "EURRUB"});
-        dbBackendAdapter.addSettingsRec(WIDGET_IDS[0], 4, QuoteType.COMMODITY, DEFAULT_COMMODITIES);
+    public void addSettingsRec_shouldSaveSettings() throws InterruptedException {
+        final List<Setting> settings = new ArrayList<>();
+        UtilsTest.runBackgroundSync(() -> {
+            dbBackendAdapter.addSettingsRec(WIDGET_IDS[0], 1, QuoteType.CURRENCY,
+                    new String[]{"EURUSD", "USDRUB", "EURRUB"});
+            dbBackendAdapter.addSettingsRec(WIDGET_IDS[0], 4, QuoteType.COMMODITY, DEFAULT_COMMODITIES);
 
-        List<Setting> settings = dbBackendAdapter.getSettingsByWidgetId(WIDGET_IDS[0]);
+            settings.addAll(dbBackendAdapter.getSettingsByWidgetId(WIDGET_IDS[0]));
+        });
         assertEquals(6, settings.size());
     }
 

@@ -15,7 +15,7 @@ import ru.besttuts.stockwidget.BuildConfig;
  *         created on 28.08.2017
  */
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = 23)
+@Config(sdk = 23)
 public class CurrencyXmlParserTest {
     private static final String PATH_TO_SAVE = "D:/androidWorkspace/currency-and-stock-widget/android/src/main/res/values/currency_new.xml";
 
