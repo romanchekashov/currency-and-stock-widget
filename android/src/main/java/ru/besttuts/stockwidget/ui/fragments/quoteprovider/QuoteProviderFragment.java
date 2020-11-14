@@ -5,26 +5,23 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.fragment.app.Fragment;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.provider.QuoteContract;
-import ru.besttuts.stockwidget.provider.model.Quote;
 import ru.besttuts.stockwidget.provider.model.QuoteProvider;
 import ru.besttuts.stockwidget.ui.fragments.ConfigPreferenceFragment;
-import ru.besttuts.stockwidget.ui.fragments.quotes.QuoteLoader;
-import ru.besttuts.stockwidget.ui.fragments.quotes.QuotesAdapter;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
@@ -39,7 +36,7 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
  * interface.
  */
 public class QuoteProviderFragment extends Fragment
-        implements LoaderCallbacks<List<QuoteProvider>> {
+        implements LoaderManager.LoaderCallbacks<List<QuoteProvider>> {
 
     private static final String TAG = makeLogTag(QuoteProviderFragment.class);
 
@@ -214,7 +211,6 @@ public class QuoteProviderFragment extends Fragment
 
         void showAcceptItem(boolean isVisible);
     }
-
 
 
     public void setSelectedBgView(View view) {

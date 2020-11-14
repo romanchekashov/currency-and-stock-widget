@@ -50,12 +50,21 @@ ext {
 }
 
 dependencies {
-    def room_version = "1.1.1"
+    def room_version = "2.2.5"
+    def robolectric_version = "4.4"
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     compileOnly 'org.projectlombok:lombok:1.18.2'
     annotationProcessor 'org.projectlombok:lombok:1.18.2'
-    implementation "android.arch.persistence.room:runtime:$room_version"
-    annotationProcessor "android.arch.persistence.room:compiler:$room_version"
+
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+    // optional - RxJava support for Room
+    implementation "androidx.room:room-rxjava2:$room_version"
+    // optional - Guava support for Room, including Optional and ListenableFuture
+    implementation "androidx.room:room-guava:$room_version"
+    // optional - Test helpers
+    testImplementation "androidx.room:room-testing:$room_version"
+
     // use kapt for Kotlin
     implementation 'com.android.support:support-v4:' + ANDROID_SUPPORT_LIB_VERSION
     implementation 'com.android.support:appcompat-v7:' + ANDROID_SUPPORT_LIB_VERSION
@@ -73,12 +82,13 @@ dependencies {
     //    }
     implementation 'net.danlew:android.joda:2.9.7'
     implementation 'com.android.volley:volley:1.0.0'
+
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-all:1.10.19'
-    testImplementation 'org.robolectric:robolectric:3.1.4'
-    testImplementation 'org.robolectric:shadows-multidex:3.1.4'
-    testImplementation "android.arch.persistence.room:testing:$room_version"
+    testImplementation "org.robolectric:robolectric:$robolectric_version"
+    testImplementation "org.robolectric:shadows-multidex:$robolectric_version"
     androidTestImplementation 'com.android.support:support-annotations:' + ANDROID_SUPPORT_LIB_VERSION
+
     androidTestImplementation 'com.android.support.test:runner:0.4.1'
     androidTestImplementation 'com.android.support.test:rules:0.4.1'
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {

@@ -3,14 +3,15 @@ package ru.besttuts.stockwidget.ui.fragments.quotes;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,7 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
  * interface.
  */
 public class GoodsItemFragment extends AbsQuoteSelectionFragment
-        implements LoaderCallbacks<List<Quote>> {
+        implements LoaderManager.LoaderCallbacks<List<Quote>> {
 
     private static final String TAG = makeLogTag(GoodsItemFragment.class);
 

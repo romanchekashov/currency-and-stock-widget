@@ -1,7 +1,6 @@
 package ru.besttuts.stockwidget.ui.fragments;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +8,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import androidx.fragment.app.Fragment;
 
 import ru.besttuts.stockwidget.R;
 
@@ -105,7 +106,7 @@ public class CurrencyExchangeFragment extends Fragment implements IQuoteTypeFrag
                 mCurrencyFromPosition = position;
                 String str = (String) adapter.getItem(position);
                 mCurrencyFrom = str.substring(str.length() - 4, str.length() - 1);
-                tvCurrency.setText(mCurrencyFrom +"/"+ mCurrencyTo);
+                tvCurrency.setText(mCurrencyFrom + "/" + mCurrencyTo);
 
                 LOGD(TAG, "onItemSelected: " + mCurrencyFrom);
             }
@@ -130,9 +131,9 @@ public class CurrencyExchangeFragment extends Fragment implements IQuoteTypeFrag
                 mCurrencyToPosition = position;
                 String str = (String) adapter1.getItem(position);
                 mCurrencyTo = str.substring(str.length() - 4, str.length() - 1);
-                tvCurrency.setText(mCurrencyFrom +"/"+ mCurrencyTo);
+                tvCurrency.setText(mCurrencyFrom + "/" + mCurrencyTo);
 
-                LOGD(TAG, "onItemSelected: "+ mCurrencyTo);
+                LOGD(TAG, "onItemSelected: " + mCurrencyTo);
             }
 
             @Override

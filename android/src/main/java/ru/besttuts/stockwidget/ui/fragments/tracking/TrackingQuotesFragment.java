@@ -10,11 +10,6 @@ import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -28,6 +23,13 @@ import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -88,6 +90,7 @@ public class TrackingQuotesFragment extends Fragment
     private GridView gridView;
 
     private volatile boolean isQuotesFetched = false;
+
     /**
      * Используйте этот фабричный метод для создания
      * нового объекта этого фрагмента с предоставляемыми параметрами.
@@ -178,7 +181,7 @@ public class TrackingQuotesFragment extends Fragment
         updateSettings();
     }
 
-    private void onSettingsUpdated(List<ModelSetting> result){
+    private void onSettingsUpdated(List<ModelSetting> result) {
 //        if(null == result || 0 >= result.getCount()){
 //            // Удаляем ссылку на Cursor в адаптере. Это предотвращает утечку памяти.
 //            mSimpleCursorAdapter.changeCursor(null);
@@ -312,10 +315,10 @@ public class TrackingQuotesFragment extends Fragment
         view.setBackgroundColor(Color.parseColor("#33ffffff"));
 
         PopupWindow popupWindow = popupWindowDogs(position);
-            if (0 == (position + 1) % gridView.getNumColumns()) {
-                popupWindow.showAsDropDown(view, -popupWindow.getWidth(), -view.getHeight());
-                return;
-            }
+        if (0 == (position + 1) % gridView.getNumColumns()) {
+            popupWindow.showAsDropDown(view, -popupWindow.getWidth(), -view.getHeight());
+            return;
+        }
         // show the list view as dropdown
         popupWindow.showAsDropDown(view, view.getWidth(), -view.getHeight());
 
@@ -327,11 +330,11 @@ public class TrackingQuotesFragment extends Fragment
 
     }
 
-    private void clearGridViewCellSelection(){
-        if(null == gridView) return;
+    private void clearGridViewCellSelection() {
+        if (null == gridView) return;
         LOGD(TAG, "(clearGridViewCellSelection):");
         View view;
-        for (int i = 0, count = gridView.getChildCount(); i < count; i++){
+        for (int i = 0, count = gridView.getChildCount(); i < count; i++) {
             view = gridView.getChildAt(i);
             if (null != view) view.setBackgroundColor(Color.TRANSPARENT);
         }
@@ -463,13 +466,13 @@ public class TrackingQuotesFragment extends Fragment
 
             List<String> symbols = new ArrayList<>(settingsWithoutModel.size());
 
-            for (Setting setting: settingsWithoutModel) {
+            for (Setting setting : settingsWithoutModel) {
                 symbols.add(setting.getQuoteSymbol());
             }
 
             try {
                 List<QuoteDto> quoteDtos = new MyFinanceWS(mContext).getQuotes(symbols);
-                for (QuoteDto dto: quoteDtos) {
+                for (QuoteDto dto : quoteDtos) {
                     Model model = CustomConverter.toModel(dto);
                     mDbProvider.addModelRec(model);
                     models.add(model);
@@ -566,9 +569,9 @@ public class TrackingQuotesFragment extends Fragment
         WindowManager windowManager = (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
         Display display = windowManager.getDefaultDisplay();
         int popupWidth;
-            Point windowSize = new Point();
-            display.getSize(windowSize);
-            popupWidth = windowSize.x / 2;
+        Point windowSize = new Point();
+        display.getSize(windowSize);
+        popupWidth = windowSize.x / 2;
 
         if (350 < popupWidth) {
             popupWindow.setWidth(350);

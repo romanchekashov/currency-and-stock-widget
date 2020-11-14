@@ -10,11 +10,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 
 import ru.besttuts.stockwidget.R;
 
@@ -79,7 +80,8 @@ public class AppRater {
     }
 
     public static class RateDialogFragment extends DialogFragment {
-        public RateDialogFragment() {}
+        public RateDialogFragment() {
+        }
 
         @NonNull
         @Override

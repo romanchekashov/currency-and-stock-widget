@@ -24,7 +24,7 @@ import static org.junit.Assert.assertNull;
  *         created on 11.03.2017
  */
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = 23)
+@Config(sdk = 23)
 public class DbBackendAdapterTest implements DbContract {
 
     private static final int[] WIDGET_IDS = new int[]{1, 2};

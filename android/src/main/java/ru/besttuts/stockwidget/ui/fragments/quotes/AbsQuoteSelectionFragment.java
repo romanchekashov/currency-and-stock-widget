@@ -6,11 +6,12 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+
+import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -42,7 +43,8 @@ public abstract class AbsQuoteSelectionFragment extends Fragment implements IQuo
     // цвет для выделенного элемента списка
     private int mColor;
 
-    public AbsQuoteSelectionFragment() {}
+    public AbsQuoteSelectionFragment() {
+    }
 
     @Override
     public int getWidgetItemPosition() {

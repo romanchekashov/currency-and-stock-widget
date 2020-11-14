@@ -2,14 +2,15 @@ package ru.besttuts.stockwidget.ui.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.ui.activities.EconomicWidgetConfigureActivity;
@@ -29,13 +30,13 @@ public class SlidingTabsFragment extends Fragment
     private static final String TAG = makeLogTag(SlidingTabsFragment.class);
 
     /**
-     * A custom {@link android.support.v4.view.ViewPager} CtryNm strip which looks much like Tabs present in Android v4.0 and
+     * A custom {@link androidx.viewpager.widget.ViewPager} CtryNm strip which looks much like Tabs present in Android v4.0 and
      * above, but is designed to give continuous feedback to the user when scrolling.
      */
     private SlidingTabLayout mSlidingTabLayout;
 
     /**
-     * A {@link android.support.v4.view.ViewPager} which will be used in conjunction with the {@link SlidingTabLayout} above.
+     * A {@link androidx.viewpager.widget.ViewPager} which will be used in conjunction with the {@link SlidingTabLayout} above.
      */
     private ViewPager mViewPager;
 
@@ -115,7 +116,17 @@ public class SlidingTabsFragment extends Fragment
         // it's PagerAdapter set.
         mSlidingTabLayout = view.findViewById(R.id.sliding_tabs);
         mSlidingTabLayout.setViewPager(mViewPager);
-        mSlidingTabLayout.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+        mSlidingTabLayout.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+
             @Override
             public void onPageSelected(int position) {
                 if (0 == position) {

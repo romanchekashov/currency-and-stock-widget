@@ -24,16 +24,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.app.NavUtils;
-import android.support.v4.app.TaskStackBuilder;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v4.widget.SimpleCursorAdapter;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -44,6 +34,17 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NavUtils;
+import androidx.core.app.TaskStackBuilder;
+import androidx.core.view.MenuItemCompat;
+import androidx.cursoradapter.widget.SimpleCursorAdapter;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.CursorLoader;
+import androidx.loader.content.Loader;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.io.model.Result;
@@ -211,7 +212,7 @@ public class SearchableQuoteActivity extends AppCompatActivity
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
 
         if (null == searchView) {
-            LOGE(TAG, "searchView is "+ searchView);
+            LOGE(TAG, "searchView is " + searchView);
             return super.onCreateOptionsMenu(menu);
         }
 
@@ -251,7 +252,7 @@ public class SearchableQuoteActivity extends AppCompatActivity
                     TaskStackBuilder.create(this)
                             // Add all of this activity's parents to the back stack
                             .addNextIntentWithParentStack(upIntent)
-                                    // Navigate up to the closest parent
+                            // Navigate up to the closest parent
                             .startActivities();
                 } else {
                     // This activity is part of this app's task, so simply

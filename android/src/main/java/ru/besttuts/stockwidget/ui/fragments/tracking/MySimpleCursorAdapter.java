@@ -2,7 +2,6 @@ package ru.besttuts.stockwidget.ui.fragments.tracking;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +9,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.cursoradapter.widget.SimpleCursorAdapter;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.provider.QuoteContract;
@@ -23,6 +24,7 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 @Deprecated
 public class MySimpleCursorAdapter extends SimpleCursorAdapter {
     private static final String TAG = makeLogTag(MySimpleCursorAdapter.class);
+    private Context context;
 
     /**
      * http://developer.android.com/training/improving-layouts/smooth-scrolling.html#ViewHolder
@@ -41,25 +43,26 @@ public class MySimpleCursorAdapter extends SimpleCursorAdapter {
 
     MySimpleCursorAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
         super(context, layout, c, from, to, flags);
+        this.context = context;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
         ViewHolder holder = null;
-        if(row == null) {
-            LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        if (row == null) {
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             row = inflater.inflate(R.layout.configure_quote_grid_item, parent, false);
             //Now create the ViewHolder
             holder = new ViewHolder();
             holder.progressBar = (ProgressBar) row.findViewById(R.id.progressBar2);
             holder.linearLayout = (LinearLayout) row.findViewById(R.id.lLayoutRate);
-            holder.quoteName =  (TextView) row.findViewById(R.id.quoteName);
-            holder.tvRate =  (TextView) row.findViewById(R.id.tvRate);
-            holder.tvChange =  (TextView) row.findViewById(R.id.tvChange);
-            holder.tvChangePercentage =  (TextView) row.findViewById(R.id.tvChangePercentage);
-            holder.tvCurrency =  (TextView) row.findViewById(R.id.tvCurrency);
-            holder.tvPosition =  (TextView) row.findViewById(R.id.tvPosition);
+            holder.quoteName = (TextView) row.findViewById(R.id.quoteName);
+            holder.tvRate = (TextView) row.findViewById(R.id.tvRate);
+            holder.tvChange = (TextView) row.findViewById(R.id.tvChange);
+            holder.tvChangePercentage = (TextView) row.findViewById(R.id.tvChangePercentage);
+            holder.tvCurrency = (TextView) row.findViewById(R.id.tvCurrency);
+            holder.tvPosition = (TextView) row.findViewById(R.id.tvPosition);
             holder.imageView = (ImageView) row.findViewById(R.id.imageView);
             //and store it as the 'tag' of our view
             row.setTag(holder);
@@ -78,7 +81,7 @@ public class MySimpleCursorAdapter extends SimpleCursorAdapter {
             symbol = cursor.getString(cursor.getColumnIndexOrThrow(
                     QuoteContract.SettingColumns.SETTING_QUOTE_SYMBOL));
             holder.quoteName.setText(
-                    Utils.getModelNameFromResourcesBySymbol(mContext, quoteType, symbol));
+                    Utils.getModelNameFromResourcesBySymbol(context, quoteType, symbol));
 
 
             holder.linearLayout.setVisibility(View.GONE);
@@ -105,17 +108,17 @@ public class MySimpleCursorAdapter extends SimpleCursorAdapter {
         LOGD(TAG, "getView: symbol = " + symbol + " quotePosition = " + quotePosition);
 
         Model model = QuoteDataSource.transformCursorToModel(cursor);
-        holder.quoteName.setText(Utils.getModelNameFromResourcesBySymbol(mContext, model));
+        holder.quoteName.setText(Utils.getModelNameFromResourcesBySymbol(context, model));
         holder.tvRate.setText(model.getRateToString());
         holder.tvChange.setText(model.getChangeToString());
         holder.tvChangePercentage.setText(model.getPercentChange());
 
-        int color = mContext.getResources().getColor(R.color.arrow_green);
+        int color = context.getResources().getColor(R.color.arrow_green);
         if (0 < model.getChange()) {
             holder.imageView.setImageResource(R.drawable.ic_widget_green_arrow_up);
         } else {
             holder.imageView.setImageResource(R.drawable.ic_widget_green_arrow_down);
-            color = mContext.getResources().getColor(R.color.arrow_red);
+            color = context.getResources().getColor(R.color.arrow_red);
         }
         holder.tvChange.setTextColor(color);
         holder.tvChangePercentage.setTextColor(color);

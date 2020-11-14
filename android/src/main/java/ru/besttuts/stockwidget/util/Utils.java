@@ -6,7 +6,8 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBar;
+
+import androidx.appcompat.app.ActionBar;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
@@ -17,7 +18,6 @@ import ru.besttuts.stockwidget.provider.model.Model;
 import ru.besttuts.stockwidget.provider.model.QuoteType;
 import ru.besttuts.stockwidget.ui.fragments.ConfigPreferenceFragment;
 
-import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.LOGE;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
@@ -33,7 +33,7 @@ public class Utils {
         if (null == model) return "-";
         if (null == model.getId()) return model.getName();
 
-        if (QuoteType.COMMODITY == model.getQuoteType()){
+        if (QuoteType.COMMODITY == model.getQuoteType()) {
             String symbol = model.getId();
             String field = symbol.toLowerCase().substring(0, symbol.length() - 7);
             try {
@@ -60,7 +60,7 @@ public class Utils {
             return symbol.substring(0, 3) + "/" + symbol.substring(3);
         }
 
-        if(QuoteType.COMMODITY != quoteType){
+        if (QuoteType.COMMODITY != quoteType) {
             return symbol;
         }
 
@@ -94,11 +94,11 @@ public class Utils {
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor(color)));
     }
 
-    public static String getNYSEInfo(Context context){
+    public static String getNYSEInfo(Context context) {
         DateTimeZone nyTZ = DateTimeZone.forID("America/New_York");
         DateTime now = new DateTime(nyTZ);
         int[] daysHoursMinutes;
-        switch (now.getDayOfWeek()){
+        switch (now.getDayOfWeek()) {
             case DateTimeConstants.SATURDAY:
                 DateTime temp = now.plusDays(2);
                 DateTime nextTradeStart = new DateTime(temp.getYear(), temp.getMonthOfYear(),
@@ -120,13 +120,13 @@ public class Utils {
                         now.getDayOfMonth(), 9, 30, nyTZ);
                 DateTime nextTradeEnd = new DateTime(now.getYear(), now.getMonthOfYear(),
                         now.getDayOfMonth(), 16, 0, nyTZ);
-                if(now.isBefore(nextTradeStart.getMillis())){
+                if (now.isBefore(nextTradeStart.getMillis())) {
                     temp = nextTradeStart.minus(now.getMillis());
                     daysHoursMinutes = getDaysHoursMinutes(temp.getMillis());
                     return String.format(context.getString(R.string.nyse_is_closed), daysHoursMinutes[0],
                             daysHoursMinutes[1], daysHoursMinutes[2]);
                 }
-                if (now.isAfter(nextTradeEnd.getMillis())){
+                if (now.isAfter(nextTradeEnd.getMillis())) {
                     temp = nextTradeStart.plusDays(1).minus(now.getMillis());
                     daysHoursMinutes = getDaysHoursMinutes(temp.getMillis());
                     return String.format(context.getString(R.string.nyse_is_closed), daysHoursMinutes[0],
@@ -139,7 +139,7 @@ public class Utils {
         }
     }
 
-    public static String encodeYahooApiQuery(String query){
+    public static String encodeYahooApiQuery(String query) {
         String encoded = query.replace(" ", "%20");
         encoded = encoded.replace("\"", "%22");
         encoded = encoded.replace("=", "%3D");
@@ -147,7 +147,7 @@ public class Utils {
         return encoded.replace(",", "%2C");
     }
 
-    private static int[] getDaysHoursMinutes(long time){
+    private static int[] getDaysHoursMinutes(long time) {
         int[] dhm = new int[3];
         time /= 1000;
         time /= 60; // time in min

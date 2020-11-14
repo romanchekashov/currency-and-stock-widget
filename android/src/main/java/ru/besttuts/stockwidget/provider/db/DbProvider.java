@@ -3,7 +3,8 @@ package ru.besttuts.stockwidget.provider.db;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.VisibleForTesting;
+
+import androidx.annotation.VisibleForTesting;
 
 import java.io.IOException;
 import java.util.ArrayList;

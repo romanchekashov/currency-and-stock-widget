@@ -1,6 +1,5 @@
 package ru.besttuts.stockwidget.ui.activities;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -9,6 +8,8 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageButton;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.ui.fragments.tracking.TrackingQuotesFragment;
