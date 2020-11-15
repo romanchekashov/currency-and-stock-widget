@@ -28,21 +28,15 @@ public class QuoteProvider {
         this.name = name;
     }
 
+    static final int AlFA_DIRECT_QUIK = 0;
     static final int AlFA_BANK = 1;
-
-    public static int getProvider(String provider) {
-        if (provider == null) return 0;
-
-        switch (provider) {
-            case "ALFA_BANK": return AlFA_BANK;
-            default: return 0;
-        }
-    }
 
     public static int getDrawableId(int provider) {
         switch (provider) {
-            case AlFA_BANK: return R.drawable.alfabank;
-            default: return -1;
+            case AlFA_BANK:
+                return R.drawable.alfabank;
+            default:
+                return -1;
         }
     }
 }

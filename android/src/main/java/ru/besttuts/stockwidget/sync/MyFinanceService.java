@@ -3,26 +3,22 @@ package ru.besttuts.stockwidget.sync;
 import java.util.List;
 
 import retrofit2.Call;
-import retrofit2.http.GET;
-import retrofit2.http.Query;
-import ru.besttuts.stockwidget.model.QuoteLastTradeDate;
-import ru.besttuts.stockwidget.sync.sparklab.dto.InitDataDto;
-import ru.besttuts.stockwidget.sync.sparklab.dto.QuoteDto;
+import retrofit2.http.Body;
+import retrofit2.http.POST;
+import ru.besttuts.stockwidget.sync.sparklab.dto.MobileQuoteFilter;
+import ru.besttuts.stockwidget.sync.sparklab.dto.MobileQuoteShort;
 
 /**
  * @author rchekashov
- *         created on 04.10.2016
+ * created on 04.10.2016
  */
 
 public interface MyFinanceService {
 
-    @GET("api/quote-last-trade-dates")
-    Call<List<QuoteLastTradeDate>> quotesWithLastTradeDate();
+    @POST("/api/quotes")
+    Call<List<MobileQuoteShort>> quotes(@Body MobileQuoteFilter filter);
 
-    @GET("api/quotes")
-    Call<List<QuoteDto>> quotes(@Query(value = "symbols") String symbols);
-
-    @GET("api/supported-data")
-    Call<InitDataDto> supportedData();
+    @POST("/api/quotes")
+    Call<List<MobileQuoteShort>> quotes();
 
 }

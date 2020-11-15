@@ -32,6 +32,7 @@
     <string name="action_settings">Настройки</string>
     <string name="action_search">Поиск</string>
 
+    <string name="configure_menu_item_future">Фьючерсы</string>
     <string name="configure_menu_item_currency">Валюты</string>
     <string name="configure_menu_item_goods">Товары</string>
     <string name="configure_menu_item_indices">Индексы</string>
@@ -58,10 +59,11 @@
     <string name="search_label">Котировки из Yahoo</string>
 
     <array name="quotes_type_array">
+        <item>Акции</item>
+        <item>Фьючерсы</item>
         <item>Валюты</item>
         <item>Товары</item>
         <item>Индексы</item>
-        <item>Акции</item>
         <item>Мои ценные бумаги</item>
     </array>
 

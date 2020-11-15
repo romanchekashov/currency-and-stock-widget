@@ -8,6 +8,7 @@ import ru.besttuts.stockwidget.model.Good;
 import ru.besttuts.stockwidget.provider.model.Model;
 import ru.besttuts.stockwidget.provider.model.QuoteProvider;
 import ru.besttuts.stockwidget.sync.model.YahooMultiQueryData;
+import ru.besttuts.stockwidget.sync.sparklab.dto.MobileQuoteShort;
 import ru.besttuts.stockwidget.sync.sparklab.dto.QuoteDto;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
@@ -75,15 +76,15 @@ public class CustomConverter {
         return good;
     }
 
-    public static Model toModel(QuoteDto dto) {
+    public static Model toModel(MobileQuoteShort dto) {
         Model model = new Model();
-        model.setId(dto.getSymbol());
-        model.setChange(dto.getChange());
-        model.setRate(dto.getRate());
-        model.setCurrency(dto.getCurrency());
-        model.setName(dto.getName());
-        model.setQuoteType(dto.getType());
-        model.setQuoteProvider(QuoteProvider.getProvider(dto.getProvider()));
+        if (dto.getS() != null) model.setId(dto.getS());
+        if (dto.getC() != null) model.setChange(dto.getC());
+        if (dto.getR() != null) model.setRate(dto.getR());
+        if (dto.getCu() != null) model.setCurrency(ru.besttuts.stockwidget.provider.model.Currency.values()[dto.getCu()].toString());
+        if (dto.getN() != null) model.setName(dto.getN());
+        if (dto.getQt() != null) model.setQuoteType(dto.getQt());
+        if (dto.getQp() != null) model.setQuoteProvider(dto.getQp());
         return model;
     }
 }

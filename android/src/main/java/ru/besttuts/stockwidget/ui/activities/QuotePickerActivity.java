@@ -72,11 +72,13 @@ public class QuotePickerActivity extends AppCompatActivity
 
             Fragment fragment = null;
             switch (mQuoteTypeValue) {
-                case QuoteType.CURRENCY:
-                    fragment = CurrencyExchangeFragment.newInstance(mWidgetItemPosition, mQuoteTypeValue);
-                    break;
+//                case QuoteType.CURRENCY:
+//                    fragment = CurrencyExchangeFragment.newInstance(mWidgetItemPosition, mQuoteTypeValue);
+//                    break;
                 case QuoteType.COMMODITY:
                 case QuoteType.INDICES:
+                case QuoteType.CURRENCY:
+                case QuoteType.FUTURE:
                 case QuoteType.STOCK:
                     fragment = GoodsItemFragment.newInstance(mWidgetItemPosition, mQuoteTypeValue);
                     break;
@@ -102,6 +104,12 @@ public class QuotePickerActivity extends AppCompatActivity
         }
 
         switch (mQuoteTypeValue) {
+            case QuoteType.STOCK:
+                getSupportActionBar().setTitle(R.string.configure_menu_item_stock);
+                break;
+            case QuoteType.FUTURE:
+                getSupportActionBar().setTitle(R.string.configure_menu_item_future);
+                break;
             case QuoteType.CURRENCY:
                 getSupportActionBar().setTitle(R.string.configure_menu_item_currency);
                 break;
@@ -110,9 +118,6 @@ public class QuotePickerActivity extends AppCompatActivity
                 break;
             case QuoteType.INDICES:
                 getSupportActionBar().setTitle(R.string.configure_menu_item_indices);
-                break;
-            case QuoteType.STOCK:
-                getSupportActionBar().setTitle(R.string.configure_menu_item_stock);
                 break;
             case QuoteType.QUOTES:
                 getSupportActionBar().setTitle(R.string.configure_menu_my_quotes);

@@ -18,9 +18,10 @@ import ru.besttuts.stockwidget.provider.db.DbProvider;
 import ru.besttuts.stockwidget.provider.model.Model;
 import ru.besttuts.stockwidget.provider.model.Setting;
 import ru.besttuts.stockwidget.sync.MyFinanceWS;
-import ru.besttuts.stockwidget.sync.sparklab.dto.QuoteDto;
+import ru.besttuts.stockwidget.sync.sparklab.dto.MobileQuoteShort;
 import ru.besttuts.stockwidget.ui.EconomicWidget;
 import ru.besttuts.stockwidget.util.CustomConverter;
+import ru.besttuts.stockwidget.util.SharedPreferencesHelper;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.LOGE;
@@ -80,22 +81,25 @@ public class UpdateService extends JobIntentService {
             String symbol = setting.getQuoteSymbol();
             symbols.add(symbol);
             if (symbolWidgetId.get(symbol) == null) {
-                symbolWidgetId.put(symbol, new ArrayList<Integer>());
+                symbolWidgetId.put(symbol, new ArrayList<>());
             }
             symbolWidgetId.get(symbol).add(setting.getWidgetId());
         }
 
         try {
-            List<QuoteDto> quoteDtos = new MyFinanceWS(this).getQuotes(symbols);
+            List<MobileQuoteShort> quotes = new MyFinanceWS(this)
+                    .getQuotes(SharedPreferencesHelper.getMobileQuoteFilter(this));
             Map<Integer, List<Model>> modelsByWidgetId = new HashMap<>();
-            for (QuoteDto dto : quoteDtos) {
+            for (MobileQuoteShort dto : quotes) {
                 Model model = CustomConverter.toModel(dto);
-                List<Integer> widgetIds = symbolWidgetId.get(dto.getSymbol());
-                for (Integer i : widgetIds) {
-                    if (modelsByWidgetId.get(i) == null) {
-                        modelsByWidgetId.put(i, new ArrayList<Model>());
+                List<Integer> widgetIds = symbolWidgetId.get(model.getId());
+                if (widgetIds != null) {
+                    for (Integer i : widgetIds) {
+                        if (modelsByWidgetId.get(i) == null) {
+                            modelsByWidgetId.put(i, new ArrayList<>());
+                        }
+                        modelsByWidgetId.get(i).add(model);
                     }
-                    modelsByWidgetId.get(i).add(model);
                 }
             }
 

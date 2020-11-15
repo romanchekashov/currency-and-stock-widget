@@ -40,15 +40,15 @@ import ru.besttuts.stockwidget.provider.QuoteContract;
 import ru.besttuts.stockwidget.provider.db.DbNotificationManager;
 import ru.besttuts.stockwidget.provider.db.DbProvider;
 import ru.besttuts.stockwidget.provider.model.Model;
-import ru.besttuts.stockwidget.provider.model.QuoteType;
 import ru.besttuts.stockwidget.provider.model.Setting;
 import ru.besttuts.stockwidget.provider.model.wrap.ModelSetting;
 import ru.besttuts.stockwidget.sync.MyFinanceWS;
-import ru.besttuts.stockwidget.sync.sparklab.dto.QuoteDto;
+import ru.besttuts.stockwidget.sync.sparklab.dto.MobileQuoteShort;
 import ru.besttuts.stockwidget.ui.activities.DynamicWebViewActivity;
 import ru.besttuts.stockwidget.ui.activities.EconomicWidgetConfigureActivity;
 import ru.besttuts.stockwidget.util.CustomConverter;
 import ru.besttuts.stockwidget.util.NotificationManager;
+import ru.besttuts.stockwidget.util.SharedPreferencesHelper;
 import ru.besttuts.stockwidget.util.Utils;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
@@ -136,7 +136,7 @@ public class TrackingQuotesFragment extends Fragment
 
         FloatingActionButton fab = mMainView.findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
-            mListener.showQuotePickerActivity(QuoteType.COMMODITY, trackingQuotesAdapter.getCount());
+//            mListener.showQuotePickerActivity(QuoteType.COMMODITY, trackingQuotesAdapter.getCount());
 //            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                    .setAction("Action", null).show();
         });
@@ -215,7 +215,7 @@ public class TrackingQuotesFragment extends Fragment
                 onSettingsUpdated(result);
             }
         };
-        mDbProvider.getSettingsWithModelByWidgetId(mWidgetId, mUpdateCallback);
+//        mDbProvider.getSettingsWithModelByWidgetId(mWidgetId, mUpdateCallback);
     }
 
     private void cancelUpdateSettings() {
@@ -471,15 +471,18 @@ public class TrackingQuotesFragment extends Fragment
             }
 
             try {
-                List<QuoteDto> quoteDtos = new MyFinanceWS(mContext).getQuotes(symbols);
-                for (QuoteDto dto : quoteDtos) {
-                    Model model = CustomConverter.toModel(dto);
-                    mDbProvider.addModelRec(model);
-                    models.add(model);
-                }
-
                 LOGD(TAG, "FetchQuote.doInBackground: currentThread = " + Thread.currentThread());
 
+                List<MobileQuoteShort> quoteDtos = new MyFinanceWS(mContext)
+                        .getQuotes(SharedPreferencesHelper.getMobileQuoteFilter(mContext));
+                mDbProvider.saveQuotes(quoteDtos);
+                LOGD(TAG, "saveQuotes size = " + quoteDtos.size());
+
+//                for (MobileQuoteShort dto : quoteDtos) {
+//                    Model model = CustomConverter.toModel(dto);
+//                    mDbProvider.addModelRec(model);
+//                    models.add(model);
+//                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

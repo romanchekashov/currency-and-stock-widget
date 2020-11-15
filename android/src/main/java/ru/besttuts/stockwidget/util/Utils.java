@@ -13,6 +13,10 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.DateTimeZone;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.provider.model.Model;
 import ru.besttuts.stockwidget.provider.model.QuoteType;
@@ -158,5 +162,20 @@ public class Utils {
         dhm[0] = (int) time;
 
         return dhm;
+    }
+
+    public static <T> String join(String delimiter, Collection<T> elements) {
+        if (elements == null || elements.size() == 0) return null;
+        StringBuilder sb = new StringBuilder();
+        for (T t : elements) sb.append(t).append(delimiter);
+        return sb.substring(0, sb.length() - 1);
+    }
+
+    public static Set<Integer> split(String delimiter, String elements) {
+        if (elements == null || elements.length() == 0) return null;
+        String[] arr = elements.split(delimiter);
+        Set<Integer> collection = new HashSet<>(arr.length);
+        for (String el : arr) collection.add(Integer.parseInt(el));
+        return collection;
     }
 }

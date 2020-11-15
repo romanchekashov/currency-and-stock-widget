@@ -148,11 +148,6 @@ public class DbBackendAdapterImpl implements DbBackendAdapter {
     }
 
     @Override
-    public List<Quote> getQuotesByType(int quoteType) {
-        return database.quoteDao().getAllByQuoteType(quoteType);
-    }
-
-    @Override
     public List<QuoteProvider> getQuoteProviders() {
         return database.quoteProviderDao().getAll();
     }

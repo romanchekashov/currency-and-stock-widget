@@ -3,6 +3,7 @@ package ru.besttuts.stockwidget.provider.model;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 import lombok.Data;
@@ -10,7 +11,8 @@ import lombok.Data;
 /**
  * Created by roman on 25.08.2018.
  */
-@Entity(tableName = "quotes")
+@Entity(tableName = "quotes",
+        indices = {@Index(value = {"quote_symbol", "quote_type"}, unique = true)})
 @Data
 public class Quote {
 

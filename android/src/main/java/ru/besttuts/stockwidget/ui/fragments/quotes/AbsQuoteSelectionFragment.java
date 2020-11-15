@@ -93,7 +93,7 @@ public abstract class AbsQuoteSelectionFragment extends Fragment implements IQuo
     public void onDestroy() {
         super.onDestroy();
 //        if (null != mDataSource) mDataSource.close();
-        LOGD(TAG, "onDestroy: ");
+//        LOGD(TAG, "onDestroy: ");
     }
 
     public void setSelectedBgView(View view) {

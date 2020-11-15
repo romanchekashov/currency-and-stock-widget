@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "2241c1b9439f378a9d60bae0d94d03f6",
+    "identityHash": "2340c07b8eda947b11acd664223a0da5",
     "entities": [
       {
         "tableName": "settings",
@@ -157,7 +157,17 @@
           ],
           "autoGenerate": true
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_quotes_quote_symbol_quote_type",
+            "unique": true,
+            "columnNames": [
+              "quote_symbol",
+              "quote_type"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_quotes_quote_symbol_quote_type` ON `${TABLE_NAME}` (`quote_symbol`, `quote_type`)"
+          }
+        ],
         "foreignKeys": []
       },
       {
@@ -225,9 +235,10 @@
         "foreignKeys": []
       }
     ],
+    "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"2241c1b9439f378a9d60bae0d94d03f6\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2340c07b8eda947b11acd664223a0da5')"
     ]
   }
 }

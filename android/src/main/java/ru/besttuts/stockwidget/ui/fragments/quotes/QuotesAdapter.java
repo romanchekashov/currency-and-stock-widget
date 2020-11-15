@@ -14,7 +14,11 @@ import java.util.Set;
 import ru.besttuts.stockwidget.provider.model.Quote;
 import ru.besttuts.stockwidget.util.Utils;
 
+import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
+import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
+
 public class QuotesAdapter extends BaseAdapter {
+    private static String TAG = makeLogTag(QuotesAdapter.class);
 
     Context context;
     List<Quote> data;
@@ -65,22 +69,25 @@ public class QuotesAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View view = convertView;
-        if (view == null) {
-            view = lInflater.inflate(layout, parent, false);
-        }
+        View view = lInflater.inflate(layout, parent, false);
 
-        String symbol = String.valueOf(((TextView) view.findViewById(android.R.id.text2)).getText());
-        if (symbols.contains(symbol)) {
-            fragment.setSelectedBgView(view);
-        } else {
-            view.setBackgroundColor(Color.TRANSPARENT);
-        }
-
-        String name = Utils.getModelNameFromResourcesBySymbol(context, quoteType, symbol);
-        if (!symbol.equals(name)) {
-            ((TextView) view.findViewById(android.R.id.text1)).setText(name);
-        }
+        Quote quote = data.get(position);
+//        LOGD(TAG, String.format("%d %s %s", position, quote.getQuoteSymbol(), quote.getQuoteName()));
+        TextView text1 = (TextView) view.findViewById(android.R.id.text1);
+        TextView text2 = (TextView) view.findViewById(android.R.id.text2);
+        text1.setText(quote.getQuoteSymbol());
+        text2.setText(quote.getQuoteName());
+//        String symbol = String.valueOf(text2.getText());
+//        if (symbols.contains(symbol)) {
+//            fragment.setSelectedBgView(view);
+//        } else {
+//            view.setBackgroundColor(Color.TRANSPARENT);
+//        }
+//
+//        String name = Utils.getModelNameFromResourcesBySymbol(context, quoteType, symbol);
+//        if (!symbol.equals(name)) {
+//            ((TextView) view.findViewById(android.R.id.text1)).setText(name);
+//        }
 
         return view;
     }

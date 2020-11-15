@@ -16,24 +16,27 @@ import java.util.concurrent.TimeUnit;
 import ru.besttuts.stockwidget.provider.AppDatabase;
 import ru.besttuts.stockwidget.provider.db.impl.DbBackendAdapterImpl;
 import ru.besttuts.stockwidget.provider.model.Model;
+import ru.besttuts.stockwidget.provider.model.Quote;
 import ru.besttuts.stockwidget.provider.model.Setting;
 import ru.besttuts.stockwidget.provider.model.wrap.ModelSetting;
 import ru.besttuts.stockwidget.sync.MyFinanceWS;
-import ru.besttuts.stockwidget.sync.sparklab.dto.QuoteDto;
+import ru.besttuts.stockwidget.sync.sparklab.dto.MobileQuoteShort;
 import ru.besttuts.stockwidget.util.CustomConverter;
+import ru.besttuts.stockwidget.util.SharedPreferencesHelper;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
 /**
  * @author rchekashov
- *         created on 1/24/2017.
+ * created on 1/24/2017.
  */
 
 public class DbProvider {
     private static final String TAG = makeLogTag(DbProvider.class);
 
     private static int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
+
     class CustomExecutor extends ThreadPoolExecutor {
         CustomExecutor() {
             super(NUMBER_OF_CORES, NUMBER_OF_CORES, 0, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
@@ -77,7 +80,7 @@ public class DbProvider {
     }
 
     public static DbProvider getInstance() {
-        if(null == sDbProviderInstance){
+        if (null == sDbProviderInstance) {
             throw new RuntimeException("before use call DbProvider.init(context) from Application.onCreate()");
         }
         return sDbProviderInstance;
@@ -94,18 +97,18 @@ public class DbProvider {
         mExecutor = executor;
     }
 
-    public List<Setting> getAllSettings(){
+    public List<Setting> getAllSettings() {
         return mDbBackendAdapter.getAllSettings();
     }
 
-    public List<Setting> getAllSettingsWithCheck(){
+    public List<Setting> getAllSettingsWithCheck() {
         List<Setting> settings = getAllSettings();
 //        syncQuotesWithLastTradeDate(settings);
         return settings;
     }
 
     public void addSettingsRec(final int mAppWidgetId, final int widgetItemPosition,
-                               final int type, final String[] symbols){
+                               final int type, final String[] symbols) {
         LOGD(TAG, String.format("addSettingsRec: %d %s", type, symbols));
 
         mExecutor.execute(new Runnable() {
@@ -122,7 +125,7 @@ public class DbProvider {
         return true;
     }
 
-    public Model getModelById(String modelId){
+    public Model getModelById(String modelId) {
         return mDbBackendAdapter.getModelById(modelId);
     }
 
@@ -153,11 +156,12 @@ public class DbProvider {
             if (modelSettings.isEmpty()) {
                 List<Setting> settings = mDbBackendAdapter.getSettingsByWidgetId(widgetId);
                 List<String> symbols = new ArrayList<>(settings.size());
-                for (Setting setting: settings) symbols.add(setting.getQuoteSymbol());
+                for (Setting setting : settings) symbols.add(setting.getQuoteSymbol());
 
                 try {
-                    List<QuoteDto> quoteDtos = new MyFinanceWS(mContext).getQuotes(symbols);
-                    for (QuoteDto dto: quoteDtos) {
+                    List<MobileQuoteShort> quoteDtos = new MyFinanceWS(mContext)
+                            .getQuotes(SharedPreferencesHelper.getMobileQuoteFilter(mContext));
+                    for (MobileQuoteShort dto : quoteDtos) {
                         database.modelDao().insertAll(CustomConverter.toModel(dto));
                     }
                 } catch (IOException e) {
@@ -193,11 +197,11 @@ public class DbProvider {
 //        });
     }
 
-    public List<Setting> getCursorSettingsWithoutModelByWidgetId(int widgetId){
+    public List<Setting> getCursorSettingsWithoutModelByWidgetId(int widgetId) {
         return mDbBackendAdapter.getSettingsWithoutModelByWidgetId(widgetId);
     }
 
-    public void deleteSettingsByWidgetId(final int widgetId){
+    public void deleteSettingsByWidgetId(final int widgetId) {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
@@ -218,7 +222,7 @@ public class DbProvider {
         });
     }
 
-    public void deleteAll(){
+    public void deleteAll() {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
@@ -281,4 +285,18 @@ public class DbProvider {
 //
 //        cursor.close();
 //    }
+
+    public boolean saveQuotes(List<MobileQuoteShort> quoteShorts) {
+        Quote[] quotes = new Quote[quoteShorts.size()];
+        int i = 0;
+        for (MobileQuoteShort q: quoteShorts) {
+            Quote quote = new Quote();
+            quote.setQuoteSymbol(q.getS());
+            quote.setQuoteName(q.getN());
+            quote.setQuoteType(String.valueOf(q.getQt()));
+            quotes[i++] = quote;
+        }
+        database.quoteDao().insertAll(quotes);
+        return true;
+    }
 }

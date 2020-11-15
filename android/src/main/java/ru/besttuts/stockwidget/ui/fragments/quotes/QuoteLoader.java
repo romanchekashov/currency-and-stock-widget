@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.loader.content.AsyncTaskLoader;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ru.besttuts.stockwidget.provider.db.DbProvider;
@@ -27,12 +28,12 @@ public class QuoteLoader extends AsyncTaskLoader<List<Quote>> {
     @Nullable
     @Override
     public List<Quote> loadInBackground() {
-        List<Quote> quotes = DbProvider.getInstance().getDatabaseAdapter()
-                .getQuotesByType(mQuoteType);
+//        List<Quote> quotes = DbProvider.getInstance().getDatabaseAdapter()
+//                .getQuotesByType(mQuoteType);
 
-        LOGD(TAG, String.format("loadInBackground: quoteType = %s, count = %d",
-                mQuoteType, quotes.size()));
+//        LOGD(TAG, String.format("loadInBackground: quoteType = %s, count = %d",
+//                mQuoteType, quotes.size()));
 
-        return quotes;
+        return new ArrayList<>();
     }
 }

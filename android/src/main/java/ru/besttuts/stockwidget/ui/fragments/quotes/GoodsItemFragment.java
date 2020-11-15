@@ -10,17 +10,18 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
-
 import java.util.ArrayList;
-import java.util.List;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.provider.QuoteContract;
+import ru.besttuts.stockwidget.provider.db.DbProvider;
 import ru.besttuts.stockwidget.provider.model.Quote;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
+import static ru.besttuts.stockwidget.util.LogUtils.LOGE;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
 /**
@@ -32,8 +33,7 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class GoodsItemFragment extends AbsQuoteSelectionFragment
-        implements LoaderManager.LoaderCallbacks<List<Quote>> {
+public class GoodsItemFragment extends AbsQuoteSelectionFragment {
 
     private static final String TAG = makeLogTag(GoodsItemFragment.class);
 
@@ -49,6 +49,8 @@ public class GoodsItemFragment extends AbsQuoteSelectionFragment
     private OnFragmentInteractionListener mListener;
 
     private QuotesAdapter quotesAdapter;
+
+    private final CompositeDisposable mDisposable = new CompositeDisposable();
 
 
     // Идентификатор загрузчика используемый в данном компоненте
@@ -86,13 +88,13 @@ public class GoodsItemFragment extends AbsQuoteSelectionFragment
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         LOGD(TAG, "onCreate");
-
     }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        LOGD(TAG, "onCreateView: mQuoteType = " + mQuoteType);
 
         View view = inflater.inflate(R.layout.fragment_my_quotes, container, false);
 
@@ -131,7 +133,15 @@ public class GoodsItemFragment extends AbsQuoteSelectionFragment
             }
         });
 
-        reload();
+        mDisposable.add(DbProvider.getInstance().getDatabase().quoteDao().getAllByQuoteType(mQuoteType)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(quotes -> {
+                    quotesAdapter.setData(quotes);
+                    quotesAdapter.notifyDataSetChanged();
+                    LOGD(TAG, "quotes: " + quotes.size());
+                }, throwable -> LOGE(TAG, "Unable to get quotes", throwable)));
+
 
         return view;
     }
@@ -145,7 +155,6 @@ public class GoodsItemFragment extends AbsQuoteSelectionFragment
             if (null != mListener) mListener.showAcceptItem(false);
         }
         LOGD(TAG, "onResume: currentThread = " + Thread.currentThread());
-        reload();
     }
 
     @Override
@@ -165,33 +174,6 @@ public class GoodsItemFragment extends AbsQuoteSelectionFragment
         getActivity().getSupportLoaderManager().destroyLoader(URL_LOADER);
         mListener = null;
         LOGD(TAG, "onDetach");
-    }
-
-    private void reload() {
-        // создаем лоадер для чтения данных
-        Loader loader = getActivity().getSupportLoaderManager().getLoader(URL_LOADER);
-        if (null == loader) {
-            LOGD(TAG, "Loader is null");
-            getActivity().getSupportLoaderManager().initLoader(URL_LOADER, null, this);
-        } else {
-            LOGD(TAG, "Loader is " + loader);
-            loader.forceLoad();
-        }
-    }
-
-    @Override
-    public Loader<List<Quote>> onCreateLoader(int id, Bundle args) {
-        return new QuoteLoader(getActivity(), mQuoteType);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<List<Quote>> loader, List<Quote> data) {
-        quotesAdapter.setData(data);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<List<Quote>> loader) {
-        quotesAdapter.setData(new ArrayList<Quote>());
     }
 
     /**

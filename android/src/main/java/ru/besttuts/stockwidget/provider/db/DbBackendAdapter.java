@@ -25,7 +25,6 @@ public interface DbBackendAdapter {
     List<ModelSetting> getSettingsWithModelByWidgetId(int widgetId);
 
     void deleteQuotesByIds(String[] symbols);
-    List<Quote> getQuotesByType(int quoteType);
 
     List<QuoteProvider> getQuoteProviders();
 }
