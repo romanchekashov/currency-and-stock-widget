@@ -38,7 +38,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import ru.besttuts.stockwidget.R;
-import ru.besttuts.stockwidget.provider.db.DbNotificationManager;
 import ru.besttuts.stockwidget.provider.db.DbProvider;
 import ru.besttuts.stockwidget.provider.model.Model;
 import ru.besttuts.stockwidget.provider.model.wrap.ModelSetting;
@@ -73,13 +72,6 @@ public class TrackingQuotesFragment extends Fragment
 
 
     private DbProvider mDbProvider;
-    private DbNotificationManager mNotifier;
-    private DbNotificationManager.Listener mDbListener = new DbNotificationManager.Listener() {
-        @Override
-        public void onDataUpdated() {
-            updateSettings();
-        }
-    };
     private DbProvider.ResultCallback<List<ModelSetting>> mUpdateCallback = null;
 
     private OnFragmentInteractionListener mListener;
@@ -155,8 +147,6 @@ public class TrackingQuotesFragment extends Fragment
         button.setOnClickListener(v -> showQuoteTypeDialog());
 
         mDbProvider = DbProvider.getInstance();
-        mNotifier = DbNotificationManager.getInstance();
-        mNotifier.addListener(mDbListener);
         updateSettings();
 
         if (!isQuotesFetched) {
@@ -223,7 +213,6 @@ public class TrackingQuotesFragment extends Fragment
 
         NotificationManager.removeListener(this);
         cancelUpdateSettings();
-        mNotifier.removeListener(mDbListener);
     }
 
     @Override

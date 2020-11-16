@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.besttuts.stockwidget.provider.AppDatabase;
-import ru.besttuts.stockwidget.provider.db.impl.DbBackendAdapterImpl;
 import ru.besttuts.stockwidget.provider.model.QuoteType;
 import ru.besttuts.stockwidget.provider.model.Setting;
 import ru.besttuts.stockwidget.util.UtilsTest;

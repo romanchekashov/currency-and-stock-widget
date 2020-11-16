@@ -1,4 +1,4 @@
-package ru.besttuts.stockwidget.provider.db.impl;
+package ru.besttuts.stockwidget.provider.db;
 
 import android.content.Context;
 
@@ -12,7 +12,6 @@ import java.util.Set;
 import ru.besttuts.stockwidget.provider.AppDatabase;
 import ru.besttuts.stockwidget.provider.dao.ModelDao;
 import ru.besttuts.stockwidget.provider.dao.SettingDao;
-import ru.besttuts.stockwidget.provider.db.DbBackendAdapter;
 import ru.besttuts.stockwidget.provider.model.Model;
 import ru.besttuts.stockwidget.provider.model.Quote;
 import ru.besttuts.stockwidget.provider.model.QuoteProvider;
@@ -24,10 +23,10 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
 /**
  * @author rchekashov
- *         created on 1/24/2017.
+ * created on 1/24/2017.
  */
 
-public class DbBackendAdapterImpl implements DbBackendAdapter {
+class DbBackendAdapterImpl implements DbBackendAdapter {
     private static final String TAG = makeLogTag(DbBackendAdapterImpl.class);
 
     private AppDatabase database;
@@ -61,10 +60,10 @@ public class DbBackendAdapterImpl implements DbBackendAdapter {
         List<Setting> settings = database.settingDao().allByWidgetId(widgetId);
         List<Model> models = getModelsByWidgetId(widgetId);
         Set<String> symbols = new HashSet<>();
-        for (Model model: models) symbols.add(model.getSymbol());
+        for (Model model : models) symbols.add(model.getSymbol());
 
         List<Setting> settingsWithoutModel = new ArrayList<>();
-        for (Setting setting: settings) {
+        for (Setting setting : settings) {
             if (!symbols.contains(setting.getQuoteSymbol())) {
                 settingsWithoutModel.add(setting);
             }
@@ -75,7 +74,7 @@ public class DbBackendAdapterImpl implements DbBackendAdapter {
 
     @Override
     public void addSettingsRec(int mAppWidgetId, int widgetItemPosition,
-                        int type, String[] symbols) {
+                               int type, String[] symbols) {
         for (int i = 0; i < symbols.length; i++) {
             String symbol = symbols[i];
             int position = widgetItemPosition + i;
@@ -113,7 +112,7 @@ public class DbBackendAdapterImpl implements DbBackendAdapter {
         List<Setting> settings = database.settingDao().allByWidgetId(widgetId);
         List<String> symbols = new ArrayList<>(settings.size());
 
-        for (Setting setting: settings) symbols.add(setting.getQuoteSymbol());
+        for (Setting setting : settings) symbols.add(setting.getQuoteSymbol());
 
         return database.modelDao().allByIds(symbols);
     }
@@ -127,16 +126,16 @@ public class DbBackendAdapterImpl implements DbBackendAdapter {
         List<Setting> settings = database.settingDao().allByWidgetId(widgetId);
         Map<String, Model> symbolModel = new HashMap<>();
 
-        for (Model model: models) {
+        for (Model model : models) {
             symbolModel.put(model.getSymbol(), model);
         }
 
-        for (Setting setting: settings) {
+        for (Setting setting : settings) {
             modelSettings.add(new ModelSetting(
                     setting, symbolModel.get(setting.getQuoteSymbol())));
         }
 
-        for (ModelSetting modelSetting: modelSettings) LOGD(TAG, modelSetting.toString());
+        for (ModelSetting modelSetting : modelSettings) LOGD(TAG, modelSetting.toString());
 
         return modelSettings;
     }

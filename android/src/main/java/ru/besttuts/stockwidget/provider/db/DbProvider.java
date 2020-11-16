@@ -14,7 +14,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import ru.besttuts.stockwidget.provider.AppDatabase;
-import ru.besttuts.stockwidget.provider.db.impl.DbBackendAdapterImpl;
 import ru.besttuts.stockwidget.provider.model.Model;
 import ru.besttuts.stockwidget.provider.model.Quote;
 import ru.besttuts.stockwidget.provider.model.Setting;
@@ -49,7 +48,6 @@ public class DbProvider {
 
     private AppDatabase database;
     private final DbBackendAdapter mDbBackendAdapter;
-    private final DbNotificationManager mDbNotificationManager;
     private final CustomExecutor mExecutor;
     private final Handler mHandler = new Handler(Looper.getMainLooper());
 
@@ -61,7 +59,6 @@ public class DbProvider {
         mContext = context;
         database = AppDatabase.getInstance(context);
         mDbBackendAdapter = new DbBackendAdapterImpl(database);
-        mDbNotificationManager = DbNotificationManager.getInstance();
         mExecutor = new CustomExecutor();
     }
 
@@ -89,11 +86,9 @@ public class DbProvider {
     @VisibleForTesting
     DbProvider(AppDatabase dbBackend,
                DbBackendAdapterImpl dbBackendAdapter,
-               DbNotificationManager dbNotificationManager,
                CustomExecutor executor) {
         database = dbBackend;
         mDbBackendAdapter = dbBackendAdapter;
-        mDbNotificationManager = dbNotificationManager;
         mExecutor = executor;
     }
 
@@ -115,7 +110,6 @@ public class DbProvider {
             @Override
             public void run() {
                 mDbBackendAdapter.addSettingsRec(mAppWidgetId, widgetItemPosition, type, symbols);
-                mDbNotificationManager.notifyListeners();
             }
         });
     }
@@ -206,7 +200,6 @@ public class DbProvider {
             @Override
             public void run() {
                 mDbBackendAdapter.deleteSettingsByWidgetId(widgetId);
-                mDbNotificationManager.notifyListeners();
             }
         });
     }
@@ -217,7 +210,6 @@ public class DbProvider {
             @Override
             public void run() {
                 mDbBackendAdapter.deleteSettingsByIdAndUpdatePositions(settingId, position);
-                mDbNotificationManager.notifyListeners();
             }
         });
     }
@@ -227,7 +219,6 @@ public class DbProvider {
             @Override
             public void run() {
                 mDbBackendAdapter.deleteAll();
-                mDbNotificationManager.notifyListeners();
             }
         });
     }
@@ -260,7 +251,6 @@ public class DbProvider {
 //        if (null == cursor || 0 == cursor.getCount()){
 //            try {
 //                MyFinanceWS ws = new MyFinanceWS(mContext);
-//                List<QuoteLastTradeDate> quoteLastTradeDates = ws.getQuotesWithLastTradeDate();
 //
 //                mDbBackend.insertQuoteLastTradeDate(quoteLastTradeDates);
 //
@@ -285,7 +275,7 @@ public class DbProvider {
     public boolean saveQuotes(List<MobileQuoteShort> quoteShorts) {
         Quote[] quotes = new Quote[quoteShorts.size()];
         int i = 0;
-        for (MobileQuoteShort q: quoteShorts) {
+        for (MobileQuoteShort q : quoteShorts) {
             Quote quote = new Quote();
             quote.setQuoteSymbol(q.getS());
             quote.setQuoteName(q.getN());
