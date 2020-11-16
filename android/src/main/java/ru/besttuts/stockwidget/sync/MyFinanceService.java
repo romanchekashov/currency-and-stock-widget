@@ -1,11 +1,11 @@
 package ru.besttuts.stockwidget.sync;
 
 import java.util.List;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
-import ru.besttuts.stockwidget.sync.sparklab.dto.MobileQuoteFilter;
 import ru.besttuts.stockwidget.sync.sparklab.dto.MobileQuoteShort;
 
 /**
@@ -16,7 +16,7 @@ import ru.besttuts.stockwidget.sync.sparklab.dto.MobileQuoteShort;
 public interface MyFinanceService {
 
     @POST("/api/quotes")
-    Call<List<MobileQuoteShort>> quotes(@Body MobileQuoteFilter filter);
+    Call<List<MobileQuoteShort>> quotes(@Body Set<Integer> ids);
 
     @POST("/api/quotes")
     Call<List<MobileQuoteShort>> quotes();

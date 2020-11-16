@@ -46,7 +46,6 @@ import ru.besttuts.stockwidget.sync.sparklab.dto.MobileQuoteShort;
 import ru.besttuts.stockwidget.ui.activities.DynamicWebViewActivity;
 import ru.besttuts.stockwidget.ui.activities.EconomicWidgetConfigureActivity;
 import ru.besttuts.stockwidget.util.NotificationManager;
-import ru.besttuts.stockwidget.util.SharedPreferencesHelper;
 import ru.besttuts.stockwidget.util.Utils;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
@@ -413,8 +412,7 @@ public class TrackingQuotesFragment extends Fragment
             LOGD(TAG, "fetchQuotes START: currentThread = " + Thread.currentThread());
             try {
                 List<Model> models = DbProvider.modelDao().allByWidgetId(widgetId);
-                List<MobileQuoteShort> quoteDtos = new MyFinanceWS(context)
-                        .getQuotes(SharedPreferencesHelper.getMobileQuoteFilter(context));
+                List<MobileQuoteShort> quoteDtos = new MyFinanceWS(context).getQuotes(null);
                 DbProvider.getInstance().saveQuotes(quoteDtos);
                 LOGD(TAG, "fetchQuotes: saveQuotes size = " + quoteDtos.size());
                 emitter.onNext(models);

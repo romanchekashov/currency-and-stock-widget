@@ -12,7 +12,7 @@ import ru.besttuts.stockwidget.provider.AppDatabase;
 
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
-public abstract class DbProviderAbs implements DbProviderFunctions {
+public abstract class DbProviderAbs {
     protected static final String TAG = makeLogTag(DbProvider.class);
 
     protected static int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
@@ -40,8 +40,8 @@ public abstract class DbProviderAbs implements DbProviderFunctions {
     }
 
     protected DbProviderAbs(AppDatabase dbBackend,
-                         DbBackendAdapterImpl dbBackendAdapter,
-                         CustomExecutor executor) {
+                            DbBackendAdapterImpl dbBackendAdapter,
+                            CustomExecutor executor) {
         database = dbBackend;
         mDbBackendAdapter = dbBackendAdapter;
         mExecutor = executor;

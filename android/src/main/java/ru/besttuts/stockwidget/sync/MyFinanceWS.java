@@ -5,13 +5,13 @@ import android.content.Context;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import ru.besttuts.stockwidget.provider.model.QuoteType;
 import ru.besttuts.stockwidget.sync.sparklab.dto.InitDataDto;
-import ru.besttuts.stockwidget.sync.sparklab.dto.MobileQuoteFilter;
 import ru.besttuts.stockwidget.sync.sparklab.dto.MobileQuoteShort;
 import ru.besttuts.stockwidget.sync.sparklab.dto.QuoteDto;
 
@@ -36,9 +36,9 @@ public class MyFinanceWS {
         mContext = context;
     }
 
-    public List<MobileQuoteShort> getQuotes(MobileQuoteFilter filter) throws IOException {
+    public List<MobileQuoteShort> getQuotes(Set<Integer> ids) throws IOException {
 //        return testData(symbols);
-        Call<List<MobileQuoteShort>> call = filter != null ? getService().quotes(filter) : getService().quotes();
+        Call<List<MobileQuoteShort>> call = ids != null ? getService().quotes(ids) : getService().quotes();
         List<MobileQuoteShort> quotes = call.execute().body();
         LOGD(TAG, "[getQuotes]: quotes fetched = " + quotes.size());
         return quotes;

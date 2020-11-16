@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
 
-import ru.besttuts.stockwidget.sync.sparklab.dto.MobileQuoteFilter;
 import ru.besttuts.stockwidget.ui.fragments.ConfigPreferenceFragment;
 
 /**
@@ -58,29 +57,5 @@ public class SharedPreferencesHelper {
                 ConfigPreferenceFragment.KEY_PREF_BG_COLOR,
                 ConfigPreferenceFragment.KEY_PREF_BG_COLOR_DEFAULT_VALUE)
                 .substring(1));
-    }
-
-    public static MobileQuoteFilter getMobileQuoteFilter(Context context) {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        String currencies = sharedPref.getString("currencies", null);
-        String stocks = sharedPref.getString("stocks", null);
-        String futures = sharedPref.getString("futures", null);
-        MobileQuoteFilter filter = null;
-        if (currencies != null || stocks != null || futures != null) {
-            filter = new MobileQuoteFilter();
-            filter.setCurrencies(Utils.split(",", currencies));
-            filter.setStocks(Utils.split(",", stocks));
-            filter.setFutures(Utils.split(",", futures));
-        }
-        return filter;
-    }
-
-    public static void saveMobileQuoteFilter(Context context, MobileQuoteFilter filter) {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor prefs = sharedPref.edit();
-        prefs.putString("currencies", Utils.join(",", filter.getCurrencies()));
-        prefs.putString("stocks", Utils.join(",", filter.getStocks()));
-        prefs.putString("futures", Utils.join(",", filter.getFutures()));
-        prefs.apply();
     }
 }
