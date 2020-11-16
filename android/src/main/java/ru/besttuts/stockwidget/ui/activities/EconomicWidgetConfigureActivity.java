@@ -155,7 +155,7 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
         Intent intent = new Intent(context.getApplicationContext(), UpdateService.class);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[]{mAppWidgetId});
         // Update the widgets via the service
-        context.startService(intent);
+        UpdateService.enqueueWork(context, intent);
 
         // Make sure we pass back the original appWidgetId
         Intent resultValue = new Intent();

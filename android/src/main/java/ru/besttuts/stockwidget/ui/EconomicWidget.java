@@ -519,18 +519,18 @@ public class EconomicWidget extends AppWidgetProvider {
     }
 
     private static void calcPaddingsGridView(RemoteViews rv, Context context) {
-//        int rows = SharedPreferencesUtils.Rows.load(context);
-//        switch (rows) {
-//            case 1:
-//                rv.setViewPadding(R.id.gridView2, dip(10, context), dip(8, context), 0, dip(8, context));
-//                break;
-//            case 2:
-//                rv.setViewPadding(R.id.gridView2, dip(10, context), 0, dip(10, context), dip(6, context));
-//                break;
-//            case 3:
-//                rv.setViewPadding(R.id.gridView2, dip(10, context), 0, dip(10, context), dip(6, context));
-//                break;
-//        }
+        int rows = SharedPreferencesUtils.Rows.load(context);
+        switch (rows) {
+            case 1:
+                rv.setViewPadding(R.id.gridView2, dip(10, context), dip(8, context), 0, dip(8, context));
+                break;
+            case 2:
+                rv.setViewPadding(R.id.gridView2, dip(10, context), 0, dip(10, context), dip(6, context));
+                break;
+            case 3:
+                rv.setViewPadding(R.id.gridView2, dip(10, context), 0, dip(10, context), dip(6, context));
+                break;
+        }
 
     }
 
