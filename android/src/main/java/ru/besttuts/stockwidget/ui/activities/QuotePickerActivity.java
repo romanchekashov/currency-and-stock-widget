@@ -176,12 +176,12 @@ public class QuotePickerActivity extends AppCompatActivity
         // Обработка нажатий на элемент ActionBar
         switch (item.getItemId()) {
             case R.id.action_show_search:
-                Intent intent = new Intent(this, SearchableQuoteActivity.class);
-                Bundle b = new Bundle();
-                b.putInt(EconomicWidgetConfigureActivity.ARG_WIDGET_ID, mAppWidgetId);
-                b.putInt(EconomicWidgetConfigureActivity.ARG_QUOTE_TYPE_VALUE, mQuoteTypeValue);
-                intent.putExtras(b);
-                startActivity(intent);
+//                Intent intent = new Intent(this, SearchableQuoteActivity.class);
+//                Bundle b = new Bundle();
+//                b.putInt(EconomicWidgetConfigureActivity.ARG_WIDGET_ID, mAppWidgetId);
+//                b.putInt(EconomicWidgetConfigureActivity.ARG_QUOTE_TYPE_VALUE, mQuoteTypeValue);
+//                intent.putExtras(b);
+//                startActivity(intent);
                 return true;
             case R.id.action_accept:
                 Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.second_cont);

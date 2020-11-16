@@ -1,10 +1,7 @@
 package ru.besttuts.stockwidget.ui.fragments.quoteprovider;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,9 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.besttuts.stockwidget.R;
-import ru.besttuts.stockwidget.provider.QuoteContract;
 import ru.besttuts.stockwidget.provider.model.QuoteProvider;
-import ru.besttuts.stockwidget.ui.fragments.ConfigPreferenceFragment;
 import ru.besttuts.stockwidget.util.SharedPreferencesHelper;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
@@ -99,12 +94,6 @@ public class QuoteProviderFragment extends Fragment
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_quote_provider, container, false);
-
-        // формируем столбцы сопоставления
-        String[] from = new String[]{QuoteContract.QuoteColumns.QUOTE_NAME,
-                QuoteContract.QuoteColumns.QUOTE_SYMBOL};
-
-        int[] to = new int[]{android.R.id.text1, android.R.id.text2};
 
         // создааем адаптер и настраиваем список
         quoteProviderAdapter = new QuoteProviderAdapter(getActivity(), android.R.layout.simple_list_item_2, new ArrayList<>());

@@ -275,10 +275,6 @@ public class DbProvider {
 //
 //        cursor.moveToFirst();
 //
-//        String newSymbol = cursor.getString(cursor.getColumnIndexOrThrow(
-//                QuoteContract.QuoteLastTradeDateColumns.SYMBOL));
-//        long newLastTradeDate = cursor.getLong(cursor.getColumnIndexOrThrow(
-//                QuoteContract.QuoteLastTradeDateColumns.LAST_TRADE_DATE));
 //
 //        setting.setQuoteSymbol(newSymbol);
 //        setting.setLastTradeDate(newLastTradeDate);

@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Set;
 
 import ru.besttuts.stockwidget.R;
-import ru.besttuts.stockwidget.provider.QuoteContract;
 import ru.besttuts.stockwidget.provider.db.DbProvider;
 import ru.besttuts.stockwidget.provider.model.Quote;
 
@@ -136,12 +135,6 @@ public class MyQuotesFragment extends AbsQuoteSelectionFragment
         // Вызываем и заполняем отображение для этого фрагмента
         mMainView = inflater.inflate(R.layout.fragment_my_quotes, container, false);
 
-        // формируем столбцы сопоставления
-        String[] from = new String[]{QuoteContract.QuoteColumns.QUOTE_NAME,
-                QuoteContract.QuoteColumns.QUOTE_SYMBOL};
-
-        int[] to = new int[]{android.R.id.text1, android.R.id.text2};
-
         // создааем адаптер и настраиваем список
         quotesAdapter = new QuotesAdapter(getActivity(), android.R.layout.simple_list_item_2, new ArrayList<Quote>());
         quotesAdapter.setSymbols(mSymbols);
@@ -230,9 +223,6 @@ public class MyQuotesFragment extends AbsQuoteSelectionFragment
 
     private void deleteItem(int pos) {
 //        Cursor cursor = (Cursor) mSimpleCursorAdapter.getItem(pos - 1);
-//        // извлекаем id записи и удаляем соответствующую запись в БД
-//        QuotePickerActivity.mDataSource.deleteSettingsByIdAndUpdatePositions(cursor.getString(
-//                cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_ID)), pos);
 //        // получаем новый курсор с данными
 //        getActivity().getSupportLoaderManager().getLoader(URL_LOADER).forceLoad();
     }

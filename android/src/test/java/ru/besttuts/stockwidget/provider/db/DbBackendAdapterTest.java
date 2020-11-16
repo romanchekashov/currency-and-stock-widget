@@ -10,24 +10,21 @@ import org.robolectric.annotation.Config;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.besttuts.stockwidget.BuildConfig;
+import ru.besttuts.stockwidget.provider.AppDatabase;
+import ru.besttuts.stockwidget.provider.db.impl.DbBackendAdapterImpl;
 import ru.besttuts.stockwidget.provider.model.QuoteType;
 import ru.besttuts.stockwidget.provider.model.Setting;
-import ru.besttuts.stockwidget.provider.AppDatabase;
-import ru.besttuts.stockwidget.provider.QuoteDatabaseHelper;
-import ru.besttuts.stockwidget.provider.db.impl.DbBackendAdapterImpl;
 import ru.besttuts.stockwidget.util.UtilsTest;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 /**
  * @author rchekashov
- *         created on 11.03.2017
+ * created on 11.03.2017
  */
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 23)
-public class DbBackendAdapterTest implements DbContract {
+public class DbBackendAdapterTest {
 
     private static final int[] WIDGET_IDS = new int[]{1, 2};
     private static final String[] DEFAULT_COMMODITIES = new String[]{"BZF16.NYM", "NGZ15.NYM", "GCX15.CMX"};
@@ -37,8 +34,6 @@ public class DbBackendAdapterTest implements DbContract {
 
     @Before
     public void setUp() throws Exception {
-        QuoteDatabaseHelper helper = new QuoteDatabaseHelper(RuntimeEnvironment.application);
-
         database = AppDatabase.getInstance(RuntimeEnvironment.application);
         dbBackendAdapter = new DbBackendAdapterImpl(database);
     }

@@ -115,11 +115,6 @@
             android:name=".service.UpdateService"
             android:permission="android.permission.BIND_JOB_SERVICE">
         </service>
-<!--
-        <provider
-            android:name=".provider.SymbolProvider"
-            android:authorities="ru.besttuts.stockwidget.provider.SymbolProvider" />
--->
 
         <activity
             android:name=".ui.activities.DynamicWebViewActivity"

@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -27,7 +26,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -40,11 +38,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import ru.besttuts.stockwidget.R;
-import ru.besttuts.stockwidget.provider.QuoteContract;
 import ru.besttuts.stockwidget.provider.db.DbNotificationManager;
 import ru.besttuts.stockwidget.provider.db.DbProvider;
 import ru.besttuts.stockwidget.provider.model.Model;
-import ru.besttuts.stockwidget.provider.model.Setting;
 import ru.besttuts.stockwidget.provider.model.wrap.ModelSetting;
 import ru.besttuts.stockwidget.sync.MyFinanceWS;
 import ru.besttuts.stockwidget.sync.sparklab.dto.MobileQuoteShort;
@@ -145,18 +141,6 @@ public class TrackingQuotesFragment extends Fragment
 //            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                    .setAction("Action", null).show();
         });
-
-        // формируем столбцы сопоставления
-        String[] from = new String[]{
-                QuoteContract.ModelColumns.MODEL_NAME,
-                QuoteContract.ModelColumns.MODEL_RATE,
-                QuoteContract.ModelColumns.MODEL_CURRENCY,
-                QuoteContract.ModelColumns.MODEL_CHANGE,
-                QuoteContract.ModelColumns.MODEL_PERCENT_CHANGE,
-                QuoteContract.SettingColumns.SETTING_QUOTE_POSITION};
-
-        int[] to = new int[]{R.id.quoteName, R.id.tvRate, R.id.tvCurrency, R.id.tvChange,
-                R.id.tvChangePercentage, R.id.tvPosition};
 
         // создааем адаптер и настраиваем список
         trackingQuotesAdapter = new TrackingQuotesAdapter(getActivity(), R.layout.configure_quote_grid_item, new ArrayList<ModelSetting>());
@@ -481,12 +465,6 @@ public class TrackingQuotesFragment extends Fragment
                     case 0:
 //                        Cursor cursor = (Cursor) mSimpleCursorAdapter.getItem(position);
                         String url = "http://finance.yahoo.com/q";
-//                        String symbol = cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_ID));
-//                        if(QuoteType.CURRENCY == cursor.getInt(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_QUOTE_TYPE))) {
-//                            url += String.format("?s=%s=X&ql=1", symbol);
-//                        } else {
-//                            url += String.format("?s=%s&ql=1", symbol);
-//                        }
 
                         Intent intent = new Intent(getActivity(), DynamicWebViewActivity.class);
                         intent.putExtra(ARG_URL, url);

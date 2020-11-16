@@ -39,7 +39,6 @@ public abstract class AbsQuoteSelectionFragment extends Fragment implements IQuo
     protected Set<String> mSymbols;
 
     // подключение к БД (DAO)
-//    protected QuoteDataSource mDataSource;
 
     // цвет для выделенного элемента списка
     private int mColor;
@@ -75,8 +74,6 @@ public abstract class AbsQuoteSelectionFragment extends Fragment implements IQuo
         if (null != savedInstanceState) {
             mSymbols.addAll(savedInstanceState.getStringArrayList(ARG_SYMBOLS));
         }
-//        mDataSource = new QuoteDataSource(getActivity());
-//        mDataSource.open();
 
         LOGD(TAG, "onCreate: ");
     }

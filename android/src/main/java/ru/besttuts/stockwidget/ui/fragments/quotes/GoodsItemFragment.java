@@ -16,7 +16,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import ru.besttuts.stockwidget.R;
-import ru.besttuts.stockwidget.provider.QuoteContract;
 import ru.besttuts.stockwidget.provider.db.DbProvider;
 import ru.besttuts.stockwidget.provider.model.Quote;
 
@@ -97,12 +96,6 @@ public class GoodsItemFragment extends AbsQuoteSelectionFragment {
         LOGD(TAG, "onCreateView: mQuoteType = " + mQuoteType);
 
         View view = inflater.inflate(R.layout.fragment_my_quotes, container, false);
-
-        // формируем столбцы сопоставления
-        String[] from = new String[]{QuoteContract.QuoteColumns.QUOTE_NAME,
-                QuoteContract.QuoteColumns.QUOTE_SYMBOL};
-
-        int[] to = new int[]{android.R.id.text1, android.R.id.text2};
 
         // создааем адаптер и настраиваем список
         quotesAdapter = new QuotesAdapter(getActivity(), android.R.layout.simple_list_item_2, new ArrayList<Quote>());

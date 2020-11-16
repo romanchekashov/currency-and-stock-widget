@@ -13,8 +13,6 @@ import android.widget.TextView;
 import androidx.cursoradapter.widget.SimpleCursorAdapter;
 
 import ru.besttuts.stockwidget.R;
-import ru.besttuts.stockwidget.provider.QuoteContract;
-import ru.besttuts.stockwidget.provider.QuoteDataSource;
 import ru.besttuts.stockwidget.provider.model.Model;
 import ru.besttuts.stockwidget.util.Utils;
 
@@ -72,14 +70,11 @@ public class MySimpleCursorAdapter extends SimpleCursorAdapter {
         }
 
         Cursor cursor = (Cursor) getItem(position);
-        String symbol = cursor.getString(cursor.getColumnIndexOrThrow(
-                QuoteContract.ModelColumns.MODEL_ID));
+        String symbol = "";
 
         if (null == symbol || symbol.isEmpty()) {
-            int quoteType = cursor.getInt(cursor.getColumnIndexOrThrow(
-                    QuoteContract.SettingColumns.SETTING_QUOTE_TYPE));
-            symbol = cursor.getString(cursor.getColumnIndexOrThrow(
-                    QuoteContract.SettingColumns.SETTING_QUOTE_SYMBOL));
+            int quoteType = 0;
+            symbol = "";
             holder.quoteName.setText(
                     Utils.getModelNameFromResourcesBySymbol(context, quoteType, symbol));
 
@@ -101,13 +96,12 @@ public class MySimpleCursorAdapter extends SimpleCursorAdapter {
         holder.progressBar.setVisibility(View.GONE);
         holder.linearLayout.setVisibility(View.VISIBLE);
 
-        String quotePosition = String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(
-                QuoteContract.SettingColumns.SETTING_QUOTE_POSITION)));
+        String quotePosition = "0";
         holder.tvPosition.setText(quotePosition);
 
         LOGD(TAG, "getView: symbol = " + symbol + " quotePosition = " + quotePosition);
 
-        Model model = QuoteDataSource.transformCursorToModel(cursor);
+        Model model = new Model();
         holder.quoteName.setText(Utils.getModelNameFromResourcesBySymbol(context, model));
         holder.tvRate.setText(model.getRateToString());
         holder.tvChange.setText(model.getChangeToString());
