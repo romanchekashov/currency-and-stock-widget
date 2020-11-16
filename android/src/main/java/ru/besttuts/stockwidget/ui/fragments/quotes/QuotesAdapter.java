@@ -75,8 +75,8 @@ public class QuotesAdapter extends BaseAdapter {
 //        LOGD(TAG, String.format("%d %s %s", position, quote.getQuoteSymbol(), quote.getQuoteName()));
         TextView text1 = (TextView) view.findViewById(android.R.id.text1);
         TextView text2 = (TextView) view.findViewById(android.R.id.text2);
-        text1.setText(quote.getQuoteSymbol());
-        text2.setText(quote.getQuoteName());
+        text1.setText(quote.getSymbol());
+        text2.setText(quote.getName());
 //        String symbol = String.valueOf(text2.getText());
 //        if (symbols.contains(symbol)) {
 //            fragment.setSelectedBgView(view);

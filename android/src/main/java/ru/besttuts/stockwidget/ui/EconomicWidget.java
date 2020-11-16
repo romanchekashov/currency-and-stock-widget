@@ -270,7 +270,6 @@ public class EconomicWidget extends AppWidgetProvider {
                                        int appWidgetId, List<Model> models, boolean hasInternet) {
 
         if (null == models) models = new ArrayList<>();
-        LOGD(TAG, "updateAppWidget: minHeight = " + appWidgetManager.getAppWidgetInfo(appWidgetId).minHeight);
 
         // Создаем объект RemoteViews для взаимодействи с отображением виджета
         RemoteViews views = new RemoteViews(context.getPackageName(), getWidgetLayoutId(context, appWidgetId));
@@ -307,8 +306,8 @@ public class EconomicWidget extends AppWidgetProvider {
         // для 11-ой и поздней версии оповещаем менеджер виджетов о изменении данных для GridView
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.gridView2);
 
-        LOGD(TAG, "updateAppWidget: appWidgetId = " + appWidgetId);
-
+//        LOGD(TAG, "updateAppWidget: minHeight = " + appWidgetManager.getAppWidgetInfo(appWidgetId).minHeight);
+        LOGD(TAG, String.format("updateAppWidget: appWidgetId = %d, models.size = %d", appWidgetId, models.size()));
     }
 
     // Обновление виджета (вторая зона)

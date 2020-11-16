@@ -2,23 +2,15 @@ package ru.besttuts.stockwidget.provider.db;
 
 import android.content.Context;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import ru.besttuts.stockwidget.provider.AppDatabase;
-import ru.besttuts.stockwidget.provider.dao.ModelDao;
 import ru.besttuts.stockwidget.provider.dao.SettingDao;
 import ru.besttuts.stockwidget.provider.model.Model;
 import ru.besttuts.stockwidget.provider.model.Quote;
 import ru.besttuts.stockwidget.provider.model.QuoteProvider;
 import ru.besttuts.stockwidget.provider.model.Setting;
-import ru.besttuts.stockwidget.provider.model.wrap.ModelSetting;
 
-import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
 /**
@@ -54,23 +46,6 @@ class DbBackendAdapterImpl implements DbBackendAdapter {
     }
 
     @Override
-    public List<Setting> getSettingsWithoutModelByWidgetId(int widgetId) {
-        List<Setting> settings = database.settingDao().allByWidgetId(widgetId);
-        List<Model> models = getModelsByWidgetId(widgetId);
-        Set<String> symbols = new HashSet<>();
-        for (Model model : models) symbols.add(model.getSymbol());
-
-        List<Setting> settingsWithoutModel = new ArrayList<>();
-        for (Setting setting : settings) {
-            if (!symbols.contains(setting.getQuoteSymbol())) {
-                settingsWithoutModel.add(setting);
-            }
-        }
-
-        return settingsWithoutModel;
-    }
-
-    @Override
     public void deleteSettingsByWidgetId(int widgetId) {
         List<Setting> settings = database.settingDao().allByWidgetId(widgetId);
         database.settingDao().deleteAll(settings.toArray(new Setting[settings.size()]));
@@ -87,41 +62,8 @@ class DbBackendAdapterImpl implements DbBackendAdapter {
     }
 
     @Override
-    public List<Model> getModelsByWidgetId(int widgetId) {
-        List<Setting> settings = database.settingDao().allByWidgetId(widgetId);
-        List<String> symbols = new ArrayList<>(settings.size());
-
-        for (Setting setting : settings) symbols.add(setting.getQuoteSymbol());
-
-        return database.modelDao().allByIds(symbols);
-    }
-
-    @Override
-    public List<ModelSetting> getSettingsWithModelByWidgetId(int widgetId) {
-        List<ModelSetting> modelSettings = new ArrayList<>();
-        List<Model> models = getModelsByWidgetId(widgetId);
-        if (models.isEmpty()) return modelSettings;
-
-        List<Setting> settings = database.settingDao().allByWidgetId(widgetId);
-        Map<String, Model> symbolModel = new HashMap<>();
-
-        for (Model model : models) {
-            symbolModel.put(model.getSymbol(), model);
-        }
-
-        for (Setting setting : settings) {
-            modelSettings.add(new ModelSetting(
-                    setting, symbolModel.get(setting.getQuoteSymbol())));
-        }
-
-        for (ModelSetting modelSetting : modelSettings) LOGD(TAG, modelSetting.toString());
-
-        return modelSettings;
-    }
-
-    @Override
     public void deleteQuotesByIds(String[] symbols) {
-        List<Quote> quotes = database.quoteDao().getAllByWidgetId(symbols);
+        List<Quote> quotes = database.quoteDao().getAllBySymbols(symbols);
         database.quoteDao().deleteAll(quotes.toArray(new Quote[quotes.size()]));
     }
 

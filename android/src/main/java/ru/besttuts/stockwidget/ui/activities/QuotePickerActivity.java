@@ -12,6 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.provider.db.DbProvider;
 import ru.besttuts.stockwidget.provider.model.QuoteType;
@@ -20,6 +23,7 @@ import ru.besttuts.stockwidget.ui.fragments.quotes.GoodsItemFragment;
 import ru.besttuts.stockwidget.ui.fragments.quotes.MyQuotesFragment;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
+import static ru.besttuts.stockwidget.util.LogUtils.LOGE;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
 /**
@@ -34,6 +38,7 @@ public class QuotePickerActivity extends AppCompatActivity
     private int mAppWidgetId;
     private int mQuoteTypeValue;
     private int mWidgetItemPosition;
+    private final CompositeDisposable mDisposable = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -185,7 +190,12 @@ public class QuotePickerActivity extends AppCompatActivity
 //                    mDbProvider.addSettingsRec(mAppWidgetId, mWidgetItemPosition,
 //                            quoteTypeFragment.getQuoteType(), quoteTypeFragment.getSelectedSymbols());
                 }
-                finish();
+
+                mDisposable.add(DbProvider.getInstance().saveTempQuotes(mAppWidgetId)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(this::finish));
+
                 return true;
             case R.id.action_delete:
                 Fragment fragment1 = getSupportFragmentManager().findFragmentById(R.id.second_cont);

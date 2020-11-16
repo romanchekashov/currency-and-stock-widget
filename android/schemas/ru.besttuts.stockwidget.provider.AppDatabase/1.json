@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "b375e42cf954d7996a69adc530995d74",
+    "identityHash": "293443188e3ac5380a3e023a24ebb02e",
     "entities": [
       {
         "tableName": "settings",
@@ -142,48 +142,72 @@
       },
       {
         "tableName": "quotes",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `quote_symbol` TEXT, `quote_name` TEXT, `quote_type` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `symbol` TEXT, `name` TEXT, `rate` REAL NOT NULL, `change` REAL NOT NULL, `currency` TEXT, `quote_type` INTEGER NOT NULL, `quote_provider` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
-            "fieldPath": "_id",
-            "columnName": "_id",
+            "fieldPath": "id",
+            "columnName": "id",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
-            "fieldPath": "quoteSymbol",
-            "columnName": "quote_symbol",
+            "fieldPath": "symbol",
+            "columnName": "symbol",
             "affinity": "TEXT",
             "notNull": false
           },
           {
-            "fieldPath": "quoteName",
-            "columnName": "quote_name",
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "rate",
+            "columnName": "rate",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "change",
+            "columnName": "change",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "currency",
+            "columnName": "currency",
             "affinity": "TEXT",
             "notNull": false
           },
           {
             "fieldPath": "quoteType",
             "columnName": "quote_type",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "quoteProvider",
+            "columnName": "quote_provider",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
           "columnNames": [
-            "_id"
+            "id"
           ],
-          "autoGenerate": true
+          "autoGenerate": false
         },
         "indices": [
           {
-            "name": "index_quotes_quote_symbol_quote_type",
+            "name": "index_quotes_symbol_quote_type",
             "unique": true,
             "columnNames": [
-              "quote_symbol",
+              "symbol",
               "quote_type"
             ],
-            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_quotes_quote_symbol_quote_type` ON `${TABLE_NAME}` (`quote_symbol`, `quote_type`)"
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_quotes_symbol_quote_type` ON `${TABLE_NAME}` (`symbol`, `quote_type`)"
           }
         ],
         "foreignKeys": []
@@ -256,7 +280,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b375e42cf954d7996a69adc530995d74')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '293443188e3ac5380a3e023a24ebb02e')"
     ]
   }
 }

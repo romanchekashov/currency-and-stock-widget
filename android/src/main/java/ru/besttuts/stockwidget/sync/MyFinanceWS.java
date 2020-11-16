@@ -1,7 +1,5 @@
 package ru.besttuts.stockwidget.sync;
 
-import android.content.Context;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,13 +26,6 @@ public class MyFinanceWS {
 
     private static final String MY_FINANCE_BASE_URL = "https://trader-public.herokuapp.com";
     private static final String PREF_KEY_LAST_CALL_TIME = "MyFinanceWS_getQuotesWithLastTradeDate_lastCallTime";
-
-    private Context mContext;
-
-    public MyFinanceWS(Context context) {
-        LOGD(TAG, "constructor called: " + this);
-        mContext = context;
-    }
 
     public List<MobileQuoteShort> getQuotes(Set<Integer> ids) throws IOException {
 //        return testData(symbols);

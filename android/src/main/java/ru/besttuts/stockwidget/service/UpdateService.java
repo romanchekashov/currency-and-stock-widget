@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.core.app.JobIntentService;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,7 +18,6 @@ import ru.besttuts.stockwidget.provider.model.Model;
 import ru.besttuts.stockwidget.sync.MyFinanceWS;
 import ru.besttuts.stockwidget.sync.sparklab.dto.MobileQuoteShort;
 import ru.besttuts.stockwidget.ui.EconomicWidget;
-import ru.besttuts.stockwidget.util.CustomConverter;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.LOGE;
@@ -72,19 +70,20 @@ public class UpdateService extends JobIntentService {
     private void updateData(final Service service, final AppWidgetManager appWidgetManager,
                             final int[] allWidgetIds, final int startId,
                             final boolean hasInternet) {
-        List<Model> models = DbProvider.modelDao().getAll();
+        // get quotes ids for fetching
+        List<Model> models = DbProvider.modelDao().getAll().blockingGet();
         Set<Integer> ids = new HashSet<>(models.size());
         for (Model model : models) ids.add(model.getId());
 
         try {
-            List<MobileQuoteShort> quotes = new MyFinanceWS(this).getQuotes(ids);
-            models = new ArrayList<>(quotes.size());
-            for (MobileQuoteShort q : quotes) models.add(CustomConverter.toModel(q));
-
+            List<MobileQuoteShort> quotes = new MyFinanceWS().getQuotes(ids);
             // при успешном получении данных, удаляем статус о проблемах соединения
             EconomicWidget.connectionStatus = null;
 
+            DbProvider.getInstance().saveQuotes(quotes);
+
             for (int widgetId : allWidgetIds) {
+                models = DbProvider.getInstance().updateModels(widgetId, quotes);
                 EconomicWidget.updateAppWidget(service.getApplicationContext(), appWidgetManager,
                         widgetId, models, hasInternet);
             }

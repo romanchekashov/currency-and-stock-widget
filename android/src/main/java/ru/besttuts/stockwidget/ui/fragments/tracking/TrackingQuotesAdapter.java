@@ -14,7 +14,6 @@ import java.util.List;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.provider.model.Model;
-import ru.besttuts.stockwidget.provider.model.wrap.ModelSetting;
 import ru.besttuts.stockwidget.util.Utils;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
@@ -39,9 +38,9 @@ public class TrackingQuotesAdapter extends BaseAdapter {
     }
 
     Context context;
-    List<ModelSetting> data;
+    List<Model> data;
 
-    public TrackingQuotesAdapter(Context context, int layout, List<ModelSetting> models) {
+    public TrackingQuotesAdapter(Context context, int layout, List<Model> models) {
         this.context = context;
         this.data = models;
     }
@@ -61,7 +60,7 @@ public class TrackingQuotesAdapter extends BaseAdapter {
         return position;
     }
 
-    public void setData(List<ModelSetting> data) {
+    public void setData(List<Model> data) {
         this.data = data;
     }
 
@@ -76,9 +75,9 @@ public class TrackingQuotesAdapter extends BaseAdapter {
             holder = new ViewHolder();
             holder.progressBar = row.findViewById(R.id.progressBar2);
             holder.linearLayout = row.findViewById(R.id.lLayoutRate);
-            holder.quoteName =  row.findViewById(R.id.quoteName);
-            holder.tvRate =  row.findViewById(R.id.tvRate);
-            holder.tvChange =  row.findViewById(R.id.tvChange);
+            holder.quoteName = row.findViewById(R.id.quoteName);
+            holder.tvRate = row.findViewById(R.id.tvRate);
+            holder.tvChange = row.findViewById(R.id.tvChange);
             holder.tvChangePercentage = row.findViewById(R.id.tvChangePercentage);
             holder.tvCurrency = row.findViewById(R.id.tvCurrency);
             holder.tvPosition = row.findViewById(R.id.tvPosition);
@@ -90,12 +89,12 @@ public class TrackingQuotesAdapter extends BaseAdapter {
             holder = (ViewHolder) row.getTag();
         }
 
-        ModelSetting modelSetting = (ModelSetting) getItem(position);
-        String symbol = modelSetting.getSetting().getQuoteSymbol();
+        Model model = (Model) getItem(position);
+        String symbol = model.getSymbol();
 
         if (null == symbol || symbol.isEmpty()) {
-            int quoteType = modelSetting.getModel().getQuoteType();
-            symbol = modelSetting.getModel().getSymbol();
+            int quoteType = model.getQuoteType();
+            symbol = model.getSymbol();
             holder.quoteName.setText(
                     Utils.getModelNameFromResourcesBySymbol(context, quoteType, symbol));
 
@@ -117,12 +116,10 @@ public class TrackingQuotesAdapter extends BaseAdapter {
         holder.progressBar.setVisibility(View.GONE);
         holder.linearLayout.setVisibility(View.VISIBLE);
 
-        String quotePosition = String.valueOf(modelSetting.getSetting().getQuotePosition());
-        holder.tvPosition.setText(quotePosition);
+        holder.tvPosition.setText(String.valueOf(position));
 
-        LOGD(TAG, "getView: symbol = " + symbol + " quotePosition = " + quotePosition);
+        LOGD(TAG, "getView: symbol = " + symbol + " position = " + position);
 
-        Model model = modelSetting.getModel();
         if (model != null) {
             holder.quoteName.setText(Utils.getModelNameFromResourcesBySymbol(context, model));
             holder.tvRate.setText(model.getRateToString());

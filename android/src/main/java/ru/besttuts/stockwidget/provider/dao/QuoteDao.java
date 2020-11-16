@@ -18,8 +18,8 @@ public interface QuoteDao {
     @Query("SELECT * FROM quotes")
     Flowable<List<Quote>> getAll();
 
-    @Query("SELECT * FROM quotes WHERE quote_symbol IN (:symbols)")
-    List<Quote> getAllByWidgetId(String[] symbols);
+    @Query("SELECT * FROM quotes WHERE symbol IN (:symbols)")
+    List<Quote> getAllBySymbols(String[] symbols);
 
     @Query("SELECT * FROM quotes WHERE quote_type = :type")
     Flowable<List<Quote>> getAllByQuoteType(int type);

@@ -108,21 +108,26 @@ public class GoodsItemFragment extends AbsQuoteSelectionFragment {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                Quote selected = (Quote) quotesAdapter.getItem(position);
                 String symbol = String.valueOf(((TextView) view.findViewById(android.R.id.text2)).getText());
+
                 if (mSymbols.contains(symbol)) {
                     view.setBackgroundColor(Color.TRANSPARENT);
                     mSymbols.remove(symbol);
+                    DbProvider.getInstance().removeTempQuotes(selected);
                 } else {
+                    DbProvider.getInstance().addTempQuotes(selected);
                     mSymbols.add(symbol);
                     setSelectedBgView(view);
                 }
+
                 if (0 < mSymbols.size()) {
                     if (null != mListener) mListener.showAcceptItem(true);
                 } else {
                     if (null != mListener) mListener.showAcceptItem(false);
                 }
-                LOGD(TAG, "onItemClick: " + quotesAdapter.getItem(position));
+
+                LOGD(TAG, "onItemClick: " + selected);
             }
         });
 

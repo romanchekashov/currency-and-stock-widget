@@ -14,17 +14,12 @@ public interface DbBackendAdapter {
 
     List<Setting> getSettingsByWidgetId(int widgetId);
 
-    List<Setting> getSettingsWithoutModelByWidgetId(int widgetId);
-
     void deleteSettingsByWidgetId(int widgetId);
 
     void deleteSettingsByIdAndUpdatePositions(String settingId, int position);
 
     Model getModelById(String modelId);
 
-    List<Model> getModelsByWidgetId(int widgetId);
-
-    List<ModelSetting> getSettingsWithModelByWidgetId(int widgetId);
 
     void deleteQuotesByIds(String[] symbols);
 

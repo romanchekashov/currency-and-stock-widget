@@ -12,11 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.besttuts.stockwidget.R;
+import ru.besttuts.stockwidget.provider.db.DbProvider;
 import ru.besttuts.stockwidget.provider.model.Model;
 import ru.besttuts.stockwidget.provider.model.QuoteProvider;
 import ru.besttuts.stockwidget.provider.model.QuoteType;
-import ru.besttuts.stockwidget.provider.db.DbProvider;
-import ru.besttuts.stockwidget.ui.activities.EconomicWidgetConfigureActivity;
 import ru.besttuts.stockwidget.ui.fragments.tracking.TrackingQuotesFragment;
 import ru.besttuts.stockwidget.util.SharedPreferencesUtils;
 import ru.besttuts.stockwidget.util.Utils;
@@ -80,7 +79,7 @@ public class QuoteRemoteViewsFactory implements RemoteViewsFactory {
         RemoteViews viewItem = new RemoteViews(mContext.getPackageName(), mLayout);
 //        viewItem.setInt(R.id.gridItemInnerLinearLayout, "setBackgroundColor",
 //                Color.BLACK);
-        if(null == models || models.isEmpty()) return viewItem;
+        if (null == models || models.isEmpty()) return viewItem;
 
         Model model = models.get(position);
 //        viewItem.setFloat(R.id.tvName, "setTextSize", 12);
@@ -108,7 +107,7 @@ public class QuoteRemoteViewsFactory implements RemoteViewsFactory {
 
         Intent intent = new Intent();
         String url;
-        if(QuoteType.CURRENCY == model.getQuoteType()) {
+        if (QuoteType.CURRENCY == model.getQuoteType()) {
             url = String.format("http://finance.yahoo.com/q?s=%s=X&ql=1", model.getId());
         } else {
             url = String.format("http://finance.yahoo.com/q?s=%s&ql=1", model.getId());

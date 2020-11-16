@@ -31,8 +31,13 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -45,6 +50,7 @@ import ru.besttuts.stockwidget.sync.MyFinanceWS;
 import ru.besttuts.stockwidget.sync.sparklab.dto.MobileQuoteShort;
 import ru.besttuts.stockwidget.ui.activities.DynamicWebViewActivity;
 import ru.besttuts.stockwidget.ui.activities.EconomicWidgetConfigureActivity;
+import ru.besttuts.stockwidget.util.CustomConverter;
 import ru.besttuts.stockwidget.util.NotificationManager;
 import ru.besttuts.stockwidget.util.Utils;
 
@@ -70,8 +76,6 @@ public class TrackingQuotesFragment extends Fragment
     public static int mWidgetItemsNumber;
 
 
-    private DbProvider.ResultCallback<List<ModelSetting>> mUpdateCallback = null;
-
     private OnFragmentInteractionListener mListener;
 
     private TrackingQuotesAdapter trackingQuotesAdapter;
@@ -79,7 +83,6 @@ public class TrackingQuotesFragment extends Fragment
     private View mMainView;
     private GridView gridView;
 
-    private volatile boolean isQuotesFetched = false;
     private final CompositeDisposable mDisposable = new CompositeDisposable();
 
     /**
@@ -133,7 +136,7 @@ public class TrackingQuotesFragment extends Fragment
         });
 
         // создааем адаптер и настраиваем список
-        trackingQuotesAdapter = new TrackingQuotesAdapter(getActivity(), R.layout.configure_quote_grid_item, new ArrayList<ModelSetting>());
+        trackingQuotesAdapter = new TrackingQuotesAdapter(getActivity(), R.layout.configure_quote_grid_item, new ArrayList<>());
         gridView = mMainView.findViewById(R.id.gridView);
         gridView.setAdapter(trackingQuotesAdapter);
         gridView.setOnItemClickListener(this);
@@ -144,17 +147,7 @@ public class TrackingQuotesFragment extends Fragment
         Button button = mMainView.findViewById(R.id.btnAddQuote);
         button.setOnClickListener(v -> showQuoteTypeDialog());
 
-        updateSettings();
-
-        if (!isQuotesFetched) {
-            mDisposable.add(fetchQuotes(mWidgetId, getActivity())
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(models -> {
-                        isQuotesFetched = true;
-                        LOGD(TAG, "fetchQuotes COMPLETE models: " + models.size());
-                    }, throwable -> LOGE(TAG, "fetchQuotes ERROR Unable to get models", throwable)));
-        }
+        updateViewData(true);
 
         return mMainView;
     }
@@ -163,44 +156,37 @@ public class TrackingQuotesFragment extends Fragment
     public void onResume() {
         super.onResume();
         LOGD(TAG, "onResume: currentThread = " + Thread.currentThread());
-        isQuotesFetched = false;
-        updateSettings();
+        updateViewData(false);
     }
 
-    private void onSettingsUpdated(List<ModelSetting> result) {
-//        if(null == result || 0 >= result.getCount()){
-//            // Удаляем ссылку на Cursor в адаптере. Это предотвращает утечку памяти.
-//            mSimpleCursorAdapter.changeCursor(null);
-//            return;
-//        }
-
-//        mSimpleCursorAdapter.changeCursor(result);
-        trackingQuotesAdapter.setData(result);
-        mWidgetItemsNumber = result.size();
+    private void onSettingsUpdated(List<Model> models) {
+        trackingQuotesAdapter.setData(models);
+        mWidgetItemsNumber = models.size();
         Button button = mMainView.findViewById(R.id.btnAddQuote);
         if (0 < mWidgetItemsNumber) {
             button.setVisibility(View.GONE);
         } else {
             button.setVisibility(View.VISIBLE);
         }
-
-        LOGD(TAG, "swapCursor: cursor.getCount = mWidgetItemsNumber = " + mWidgetItemsNumber);
+        trackingQuotesAdapter.notifyDataSetChanged();
+        LOGD(TAG, "onSettingsUpdated: models = " + models.size());
     }
 
-    private void updateSettings() {
-        cancelUpdateSettings();
-        mUpdateCallback = new DbProvider.ResultCallback<List<ModelSetting>>() {
-            @Override
-            public void onFinished(List<ModelSetting> result) {
-                if (mUpdateCallback != this) return;
-                onSettingsUpdated(result);
-            }
-        };
-//        mDbProvider.getSettingsWithModelByWidgetId(mWidgetId, mUpdateCallback);
+    private void updateViewData(boolean loadAll) {
+        mDisposable.add(fetchQuotes(mWidgetId, getActivity(), loadAll)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::onSettingsUpdated, throwable -> {
+                    LOGE(TAG, "fetchQuotes ERROR Unable to get models", throwable);
+                    updateViewDataFromDb();
+                }));
     }
 
-    private void cancelUpdateSettings() {
-        mUpdateCallback = null;
+    private void updateViewDataFromDb() {
+        mDisposable.add(DbProvider.modelDao().getAll()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::onSettingsUpdated));
     }
 
     @Override
@@ -209,7 +195,6 @@ public class TrackingQuotesFragment extends Fragment
         LOGD(TAG, "onDestroyView");
 
         NotificationManager.removeListener(this);
-        cancelUpdateSettings();
     }
 
     @Override
@@ -407,14 +392,23 @@ public class TrackingQuotesFragment extends Fragment
         }
     }
 
-    static Observable<List<Model>> fetchQuotes(final int widgetId, final Context context) {
+    static Observable<List<Model>> fetchQuotes(final int widgetId, final Context context, boolean loadAll) {
         return Observable.create(emitter -> {
             LOGD(TAG, "fetchQuotes START: currentThread = " + Thread.currentThread());
             try {
+                // get quotes ids for fetching
                 List<Model> models = DbProvider.modelDao().allByWidgetId(widgetId);
-                List<MobileQuoteShort> quoteDtos = new MyFinanceWS(context).getQuotes(null);
-                DbProvider.getInstance().saveQuotes(quoteDtos);
-                LOGD(TAG, "fetchQuotes: saveQuotes size = " + quoteDtos.size());
+                Map<Integer, Model> ids = new HashMap<>(models.size());
+                for (Model model : models) ids.put(model.getId(), model);
+
+                // fetch new data
+                List<MobileQuoteShort> quotes = new MyFinanceWS().getQuotes(loadAll ? null : ids.keySet());
+                LOGD(TAG, "fetchQuotes: saveQuotes size = " + quotes.size());
+                DbProvider.getInstance().saveQuotes(quotes);
+
+                // update models with new data
+                models = DbProvider.getInstance().updateModels(widgetId, quotes);
+
                 emitter.onNext(models);
                 emitter.onComplete();
             } catch (IOException e) {
