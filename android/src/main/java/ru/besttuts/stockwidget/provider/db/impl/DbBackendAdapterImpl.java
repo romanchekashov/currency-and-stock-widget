@@ -61,7 +61,7 @@ public class DbBackendAdapterImpl implements DbBackendAdapter {
         List<Setting> settings = database.settingDao().allByWidgetId(widgetId);
         List<Model> models = getModelsByWidgetId(widgetId);
         Set<String> symbols = new HashSet<>();
-        for (Model model: models) symbols.add(model.getId());
+        for (Model model: models) symbols.add(model.getSymbol());
 
         List<Setting> settingsWithoutModel = new ArrayList<>();
         for (Setting setting: settings) {
@@ -128,7 +128,7 @@ public class DbBackendAdapterImpl implements DbBackendAdapter {
         Map<String, Model> symbolModel = new HashMap<>();
 
         for (Model model: models) {
-            symbolModel.put(model.getId(), model);
+            symbolModel.put(model.getSymbol(), model);
         }
 
         for (Setting setting: settings) {

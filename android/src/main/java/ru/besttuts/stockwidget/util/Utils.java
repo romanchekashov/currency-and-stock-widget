@@ -35,10 +35,10 @@ public class Utils {
     public static String getModelNameFromResourcesBySymbol(Context context, Model model) {
 
         if (null == model) return "-";
-        if (null == model.getId()) return model.getName();
+        if (null == model.getSymbol()) return model.getName();
 
         if (QuoteType.COMMODITY == model.getQuoteType()) {
-            String symbol = model.getId();
+            String symbol = model.getSymbol();
             String field = symbol.toLowerCase().substring(0, symbol.length() - 7);
             try {
                 return context.getString(R.string.class.getDeclaredField(field).getInt(null));

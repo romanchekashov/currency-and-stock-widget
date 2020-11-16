@@ -192,7 +192,7 @@ public class QuoteDataSource {
 
         // Which row to update, based on the ID
         String selection = QuoteContract.ModelColumns.MODEL_ID + " LIKE ?";
-        String[] selectionArgs = { model.getId() };
+//        String[] selectionArgs = { model.getId() };
 
 //        if (null == mDatabase || !mDatabase.isOpen()) return;
 
@@ -642,7 +642,7 @@ public class QuoteDataSource {
 
     public static Model transformCursorToModel(Cursor cursor) {
         Model model = new Model();
-        model.setId(cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_ID)));
+//        model.setId(cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_ID)));
         model.setName(cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_NAME)));
         model.setRate(cursor.getDouble(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_RATE)));
         model.setChange(cursor.getDouble(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_CHANGE)));

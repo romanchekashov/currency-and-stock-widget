@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "2340c07b8eda947b11acd664223a0da5",
+    "identityHash": "b375e42cf954d7996a69adc530995d74",
     "entities": [
       {
         "tableName": "settings",
@@ -62,17 +62,17 @@
       },
       {
         "tableName": "models",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `id` TEXT, `name` TEXT, `rate` REAL NOT NULL, `change` REAL NOT NULL, `currency` TEXT, `quote_type` INTEGER NOT NULL, `quote_provider` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `symbol` TEXT, `name` TEXT, `rate` REAL NOT NULL, `change` REAL NOT NULL, `currency` TEXT, `quote_type` INTEGER NOT NULL, `quote_provider` INTEGER NOT NULL, `widget_id` INTEGER NOT NULL, `sort` INTEGER NOT NULL, `last_trade_date` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
-            "fieldPath": "_id",
-            "columnName": "_id",
+            "fieldPath": "id",
+            "columnName": "id",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
-            "fieldPath": "id",
-            "columnName": "id",
+            "fieldPath": "symbol",
+            "columnName": "symbol",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -111,13 +111,31 @@
             "columnName": "quote_provider",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "widgetId",
+            "columnName": "widget_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sort",
+            "columnName": "sort",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastTradeDate",
+            "columnName": "last_trade_date",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
           "columnNames": [
-            "_id"
+            "id"
           ],
-          "autoGenerate": true
+          "autoGenerate": false
         },
         "indices": [],
         "foreignKeys": []
@@ -238,7 +256,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2340c07b8eda947b11acd664223a0da5')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b375e42cf954d7996a69adc530995d74')"
     ]
   }
 }

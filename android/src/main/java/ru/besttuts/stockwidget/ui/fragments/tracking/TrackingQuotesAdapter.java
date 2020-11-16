@@ -95,7 +95,7 @@ public class TrackingQuotesAdapter extends BaseAdapter {
 
         if (null == symbol || symbol.isEmpty()) {
             int quoteType = modelSetting.getModel().getQuoteType();
-            symbol = modelSetting.getModel().getId();
+            symbol = modelSetting.getModel().getSymbol();
             holder.quoteName.setText(
                     Utils.getModelNameFromResourcesBySymbol(context, quoteType, symbol));
 

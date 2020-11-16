@@ -15,14 +15,13 @@ import lombok.ToString;
 @ToString
 public class Model {
 
-    @PrimaryKey(autoGenerate = true)
-    @Getter
-    @Setter
-    private int _id;
-
-    @ColumnInfo(name = "id")
+    @PrimaryKey
     @Getter @Setter
-    protected String id; // symbol
+    private int id;
+
+    @ColumnInfo(name = "symbol")
+    @Getter @Setter
+    private String symbol;
 
     @ColumnInfo(name = "name")
     @Getter @Setter
@@ -47,6 +46,18 @@ public class Model {
     @ColumnInfo(name = "quote_provider")
     @Getter @Setter
     private int quoteProvider;
+
+    @ColumnInfo(name = "widget_id")
+    @Getter @Setter
+    private int widgetId;
+
+    @ColumnInfo(name = "sort")
+    @Getter @Setter
+    private int sort;
+
+    @ColumnInfo(name = "last_trade_date")
+    @Getter @Setter
+    private long lastTradeDate;
 
     public String getRateToString() {
         return String.valueOf((float)Math.round(rate*100)/100);

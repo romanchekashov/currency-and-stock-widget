@@ -78,7 +78,8 @@ public class CustomConverter {
 
     public static Model toModel(MobileQuoteShort dto) {
         Model model = new Model();
-        if (dto.getS() != null) model.setId(dto.getS());
+        if (dto.getI() != null) model.setId(dto.getI());
+        if (dto.getS() != null) model.setSymbol(dto.getS());
         if (dto.getC() != null) model.setChange(dto.getC());
         if (dto.getR() != null) model.setRate(dto.getR());
         if (dto.getCu() != null) model.setCurrency(ru.besttuts.stockwidget.provider.model.Currency.values()[dto.getCu()].toString());

@@ -35,6 +35,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.provider.QuoteContract;
 import ru.besttuts.stockwidget.provider.db.DbNotificationManager;
@@ -46,12 +50,12 @@ import ru.besttuts.stockwidget.sync.MyFinanceWS;
 import ru.besttuts.stockwidget.sync.sparklab.dto.MobileQuoteShort;
 import ru.besttuts.stockwidget.ui.activities.DynamicWebViewActivity;
 import ru.besttuts.stockwidget.ui.activities.EconomicWidgetConfigureActivity;
-import ru.besttuts.stockwidget.util.CustomConverter;
 import ru.besttuts.stockwidget.util.NotificationManager;
 import ru.besttuts.stockwidget.util.SharedPreferencesHelper;
 import ru.besttuts.stockwidget.util.Utils;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
+import static ru.besttuts.stockwidget.util.LogUtils.LOGE;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
 /**
@@ -90,6 +94,7 @@ public class TrackingQuotesFragment extends Fragment
     private GridView gridView;
 
     private volatile boolean isQuotesFetched = false;
+    private final CompositeDisposable mDisposable = new CompositeDisposable();
 
     /**
      * Используйте этот фабричный метод для создания
@@ -170,6 +175,16 @@ public class TrackingQuotesFragment extends Fragment
         mNotifier.addListener(mDbListener);
         updateSettings();
 
+        if (!isQuotesFetched) {
+            mDisposable.add(fetchQuotes(mWidgetId, getActivity())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(models -> {
+                        isQuotesFetched = true;
+                        LOGD(TAG, "fetchQuotes COMPLETE models: " + models.size());
+                    }, throwable -> LOGE(TAG, "fetchQuotes ERROR Unable to get models", throwable)));
+        }
+
         return mMainView;
     }
 
@@ -191,16 +206,11 @@ public class TrackingQuotesFragment extends Fragment
 //        mSimpleCursorAdapter.changeCursor(result);
         trackingQuotesAdapter.setData(result);
         mWidgetItemsNumber = result.size();
-        mFetchQuote = null;
         Button button = mMainView.findViewById(R.id.btnAddQuote);
         if (0 < mWidgetItemsNumber) {
             button.setVisibility(View.GONE);
         } else {
             button.setVisibility(View.VISIBLE);
-        }
-
-        if (!isQuotesFetched) {
-            new FetchQuote(getActivity()).execute(String.valueOf(mWidgetId));
         }
 
         LOGD(TAG, "swapCursor: cursor.getCount = mWidgetItemsNumber = " + mWidgetItemsNumber);
@@ -359,8 +369,6 @@ public class TrackingQuotesFragment extends Fragment
 
     }
 
-    FetchQuote mFetchQuote;
-
     public static class StockItemTypeDialogFragment extends DialogFragment {
 
         private static final String ARG_POSITION = "position";
@@ -429,80 +437,23 @@ public class TrackingQuotesFragment extends Fragment
         }
     }
 
-    private class FetchQuote extends AsyncTask<String, Void, List<Model>> {
-
-        private final String TAG = makeLogTag(FetchQuote.class);
-
-        private final Context mContext;
-
-        private FetchQuote(Context context) {
-            mContext = context;
-        }
-
-        @Override
-        protected List<Model> doInBackground(String... params) { //TODO: Написать Unit-тесты!!!
-
-            int widgetId = Integer.parseInt(params[0]);
-
-            List<Model> models = mDbProvider.getModelsByWidgetId(widgetId);
-
-//            try {
-//                List<String> symbols = new ArrayList<>(models.size());
-//                for (Model model: models) symbols.add(model.getId());
-//                List<QuoteDto> dtos = new MyFinanceWS(mContext).getQuotes(symbols);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-
-
-            List<Setting> settingsWithoutModel = mDbProvider.getDatabaseAdapter()
-                    .getSettingsWithoutModelByWidgetId(widgetId);
-
-            LOGD(TAG, String.format("[doInBackground]: cursor.getCount() = %d", settingsWithoutModel.size()));
-
-            if (settingsWithoutModel.isEmpty()) {
-                return models;
-            }
-
-            List<String> symbols = new ArrayList<>(settingsWithoutModel.size());
-
-            for (Setting setting : settingsWithoutModel) {
-                symbols.add(setting.getQuoteSymbol());
-            }
-
+    static Observable<List<Model>> fetchQuotes(final int widgetId, final Context context) {
+        return Observable.create(emitter -> {
+            LOGD(TAG, "fetchQuotes START: currentThread = " + Thread.currentThread());
             try {
-                LOGD(TAG, "FetchQuote.doInBackground: currentThread = " + Thread.currentThread());
-
-                List<MobileQuoteShort> quoteDtos = new MyFinanceWS(mContext)
-                        .getQuotes(SharedPreferencesHelper.getMobileQuoteFilter(mContext));
-                mDbProvider.saveQuotes(quoteDtos);
-                LOGD(TAG, "saveQuotes size = " + quoteDtos.size());
-
-//                for (MobileQuoteShort dto : quoteDtos) {
-//                    Model model = CustomConverter.toModel(dto);
-//                    mDbProvider.addModelRec(model);
-//                    models.add(model);
-//                }
+                DbProvider dbProvider = DbProvider.getInstance();
+                List<Model> models = dbProvider.getModelsByWidgetId(widgetId);
+                List<MobileQuoteShort> quoteDtos = new MyFinanceWS(context)
+                        .getQuotes(SharedPreferencesHelper.getMobileQuoteFilter(context));
+                dbProvider.saveQuotes(quoteDtos);
+                LOGD(TAG, "fetchQuotes: saveQuotes size = " + quoteDtos.size());
+                emitter.onNext(models);
+                emitter.onComplete();
             } catch (IOException e) {
                 e.printStackTrace();
+                emitter.onError(e);
             }
-
-            return models;
-        }
-
-        @Override
-        protected void onPostExecute(List<Model> models) {
-
-            if (0 == models.size()) return;
-
-            FragmentActivity activity = getActivity();
-            if (null == activity) return;
-
-            LOGD(TAG, "FetchQuote.onPostExecute: currentThread = " + Thread.currentThread());
-            updateSettings();
-
-            isQuotesFetched = true;
-        }
+        });
     }
 
     public PopupWindow popupWindowDogs(final int position) {
