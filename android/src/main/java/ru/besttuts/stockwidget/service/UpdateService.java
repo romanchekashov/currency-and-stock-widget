@@ -9,18 +9,15 @@ import androidx.annotation.NonNull;
 import androidx.core.app.JobIntentService;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import ru.besttuts.stockwidget.provider.db.DbProvider;
 import ru.besttuts.stockwidget.provider.model.Model;
-import ru.besttuts.stockwidget.provider.model.Setting;
 import ru.besttuts.stockwidget.sync.MyFinanceWS;
 import ru.besttuts.stockwidget.sync.sparklab.dto.MobileQuoteShort;
 import ru.besttuts.stockwidget.ui.EconomicWidget;
-import ru.besttuts.stockwidget.util.CustomConverter;
 import ru.besttuts.stockwidget.util.SharedPreferencesHelper;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
@@ -74,56 +71,24 @@ public class UpdateService extends JobIntentService {
     private void updateData(final Service service, final AppWidgetManager appWidgetManager,
                             final int[] allWidgetIds, final int startId,
                             final boolean hasInternet) {
-        final List<Setting> settings = DbProvider.getInstance().getAllSettingsWithCheck();
-        List<String> symbols = new ArrayList<>(settings.size());
-        Map<String, List<Integer>> symbolWidgetId = new HashMap<>();
-        for (Setting setting : settings) {
-            String symbol = setting.getQuoteSymbol();
-            symbols.add(symbol);
-            if (symbolWidgetId.get(symbol) == null) {
-                symbolWidgetId.put(symbol, new ArrayList<>());
-            }
-            symbolWidgetId.get(symbol).add(setting.getWidgetId());
-        }
+        final List<Model> models = DbProvider.modelDao().getAll();
+        Set<Integer> ids = new HashSet<>(models.size());
+        for (Model model : models) ids.add(model.getId());
 
         try {
             List<MobileQuoteShort> quotes = new MyFinanceWS(this)
                     .getQuotes(SharedPreferencesHelper.getMobileQuoteFilter(this));
-            Map<Integer, List<Model>> modelsByWidgetId = new HashMap<>();
-            for (MobileQuoteShort dto : quotes) {
-                Model model = CustomConverter.toModel(dto);
-                List<Integer> widgetIds = symbolWidgetId.get(model.getId());
-                if (widgetIds != null) {
-                    for (Integer i : widgetIds) {
-                        if (modelsByWidgetId.get(i) == null) {
-                            modelsByWidgetId.put(i, new ArrayList<>());
-                        }
-                        modelsByWidgetId.get(i).add(model);
-                    }
-                }
-            }
 
             // при успешном получении данных, удаляем статус о проблемах соединения
             EconomicWidget.connectionStatus = null;
 
-            updateWidget(modelsByWidgetId, service, appWidgetManager,
-                    allWidgetIds, startId, hasInternet);
+            for (int widgetId : allWidgetIds) {
+                EconomicWidget.updateAppWidget(service.getApplicationContext(), appWidgetManager,
+                        widgetId, models, hasInternet);
+            }
         } catch (IOException e) {
             e.printStackTrace();
             LOGE(TAG, "That didn't work!");
         }
-    }
-
-    private void updateWidget(Map<Integer, List<Model>> map, Service service, AppWidgetManager appWidgetManager,
-                              int[] allWidgetIds, int startId, boolean hasInternet) {
-
-        for (int widgetId : allWidgetIds) {
-            EconomicWidget.updateAppWidget(service.getApplicationContext(), appWidgetManager,
-                    widgetId, map.get(widgetId), hasInternet);
-        }
-
-//        boolean serviceStopped = (null != service) && service.stopSelfResult(startId);
-//        LOGD(TAG, "Load Yahoo Finance Thread#" + startId + " end, can be stopped: " + serviceStopped);
-        LOGD(TAG, "onPostExecute: Current thread: " + Thread.currentThread().getName());
     }
 }

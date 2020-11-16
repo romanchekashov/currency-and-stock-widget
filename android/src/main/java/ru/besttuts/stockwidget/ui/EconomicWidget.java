@@ -137,7 +137,7 @@ public class EconomicWidget extends AppWidgetProvider {
     public void onDeleted(Context context, int[] appWidgetIds) {
         // Удаляем все данные ассоциированные с удаляемым виджетом.
         for (int widgetId : appWidgetIds) {
-            DbProvider.getInstance().deleteSettingsByWidgetId(widgetId);
+            DbProvider.modelDao().deleteAllByWidgetId(widgetId);
             SharedPreferencesUtils.LastUpdateTime.delete(context, widgetId);
             SharedPreferencesUtils.WidgetLayout.delete(context, widgetId);
             SharedPreferencesUtils.WidgetLayoutGridItem.delete(context, widgetId);
@@ -218,7 +218,6 @@ public class EconomicWidget extends AppWidgetProvider {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         final int appWidgetIds[] = appWidgetManager.getAppWidgetIds(thisAppWidget);
 
-        DbProvider dataSource = DbProvider.getInstance();
         String lng = Config.getInstance().getLanguage();
         // TODO Install default model on first widget add
 //        final String[] defaultCommodities = new String[]{"BZF16.NYM", "NGZ15.NYM", "GCX15.CMX"};

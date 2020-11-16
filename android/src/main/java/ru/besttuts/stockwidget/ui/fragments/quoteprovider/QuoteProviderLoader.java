@@ -23,8 +23,6 @@ public class QuoteProviderLoader extends AsyncTaskLoader<List<QuoteProvider>> {
     @Nullable
     @Override
     public List<QuoteProvider> loadInBackground() {
-        List<QuoteProvider> providers = DbProvider.getInstance().getDatabaseAdapter()
-                .getQuoteProviders();
-        return providers;
+        return DbProvider.quoteProviderDao().getAll();
     }
 }

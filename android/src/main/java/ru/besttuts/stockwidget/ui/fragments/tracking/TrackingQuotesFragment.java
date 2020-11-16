@@ -71,7 +71,6 @@ public class TrackingQuotesFragment extends Fragment
     public static int mWidgetItemsNumber;
 
 
-    private DbProvider mDbProvider;
     private DbProvider.ResultCallback<List<ModelSetting>> mUpdateCallback = null;
 
     private OnFragmentInteractionListener mListener;
@@ -146,7 +145,6 @@ public class TrackingQuotesFragment extends Fragment
         Button button = mMainView.findViewById(R.id.btnAddQuote);
         button.setOnClickListener(v -> showQuoteTypeDialog());
 
-        mDbProvider = DbProvider.getInstance();
         updateSettings();
 
         if (!isQuotesFetched) {
@@ -249,8 +247,8 @@ public class TrackingQuotesFragment extends Fragment
         LOGD(TAG, String.format("deleteItem: pos = %d, settingId = %s, _id = %d",
                 pos, modelSetting.getSetting().getId(), modelSetting.getSetting().get_id()));
         // извлекаем id записи и удаляем соответствующую запись в БД
-        mDbProvider.deleteSettingsByIdAndUpdatePositions(
-                modelSetting.getSetting().getId(), pos);
+//        mDbProvider.deleteSettingsByIdAndUpdatePositions(
+//                modelSetting.getSetting().getId(), pos);
 
 //        updateSettings();
     }
@@ -414,11 +412,10 @@ public class TrackingQuotesFragment extends Fragment
         return Observable.create(emitter -> {
             LOGD(TAG, "fetchQuotes START: currentThread = " + Thread.currentThread());
             try {
-                DbProvider dbProvider = DbProvider.getInstance();
-                List<Model> models = dbProvider.getModelsByWidgetId(widgetId);
+                List<Model> models = DbProvider.modelDao().allByWidgetId(widgetId);
                 List<MobileQuoteShort> quoteDtos = new MyFinanceWS(context)
                         .getQuotes(SharedPreferencesHelper.getMobileQuoteFilter(context));
-                dbProvider.saveQuotes(quoteDtos);
+                DbProvider.getInstance().saveQuotes(quoteDtos);
                 LOGD(TAG, "fetchQuotes: saveQuotes size = " + quoteDtos.size());
                 emitter.onNext(models);
                 emitter.onComplete();

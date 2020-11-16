@@ -126,7 +126,7 @@ public class GoodsItemFragment extends AbsQuoteSelectionFragment {
             }
         });
 
-        mDisposable.add(DbProvider.getInstance().getDatabase().quoteDao().getAllByQuoteType(mQuoteType)
+        mDisposable.add(DbProvider.quoteDao().getAllByQuoteType(mQuoteType)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(quotes -> {

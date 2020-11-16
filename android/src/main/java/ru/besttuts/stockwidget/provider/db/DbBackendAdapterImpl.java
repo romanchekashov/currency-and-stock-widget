@@ -45,9 +45,7 @@ class DbBackendAdapterImpl implements DbBackendAdapter {
         List<Setting> settings = settingDao.getAll();
         settingDao.deleteAll(settings.toArray(new Setting[settings.size()]));
 
-        ModelDao modelDao = database.modelDao();
-        List<Model> models = modelDao.getAll();
-        modelDao.deleteAll(models.toArray(new Model[models.size()]));
+        database.modelDao().deleteAll();
     }
 
     @Override

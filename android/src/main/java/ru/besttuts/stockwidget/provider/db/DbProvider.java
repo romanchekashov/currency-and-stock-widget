@@ -14,6 +14,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import ru.besttuts.stockwidget.provider.AppDatabase;
+import ru.besttuts.stockwidget.provider.dao.ModelDao;
+import ru.besttuts.stockwidget.provider.dao.QuoteDao;
+import ru.besttuts.stockwidget.provider.dao.QuoteProviderDao;
 import ru.besttuts.stockwidget.provider.model.Model;
 import ru.besttuts.stockwidget.provider.model.Quote;
 import ru.besttuts.stockwidget.provider.model.Setting;
@@ -31,43 +34,21 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
  * created on 1/24/2017.
  */
 
-public class DbProvider {
-    private static final String TAG = makeLogTag(DbProvider.class);
-
-    private static int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
-
-    class CustomExecutor extends ThreadPoolExecutor {
-        CustomExecutor() {
-            super(NUMBER_OF_CORES, NUMBER_OF_CORES, 0, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
-        }
-    }
-
-    private static DbProvider sDbProviderInstance;
-
-    private Context mContext;
-
-    private AppDatabase database;
-    private final DbBackendAdapter mDbBackendAdapter;
-    private final CustomExecutor mExecutor;
-    private final Handler mHandler = new Handler(Looper.getMainLooper());
+public class DbProvider extends DbProviderAbs {
 
     public interface ResultCallback<T> {
         void onFinished(T result);
     }
 
     private DbProvider(Context context) {
-        mContext = context;
-        database = AppDatabase.getInstance(context);
-        mDbBackendAdapter = new DbBackendAdapterImpl(database);
-        mExecutor = new CustomExecutor();
+        super(context);
     }
 
-    public AppDatabase getDatabase() {
-        return database;
-    }
-
-    public DbBackendAdapter getDatabaseAdapter() {
-        return mDbBackendAdapter;
+    @VisibleForTesting
+    DbProvider(AppDatabase dbBackend,
+               DbBackendAdapterImpl dbBackendAdapter,
+               CustomExecutor executor) {
+        super(dbBackend, dbBackendAdapter, executor);
     }
 
     public static void init(Context context) {
@@ -83,13 +64,20 @@ public class DbProvider {
         return sDbProviderInstance;
     }
 
-    @VisibleForTesting
-    DbProvider(AppDatabase dbBackend,
-               DbBackendAdapterImpl dbBackendAdapter,
-               CustomExecutor executor) {
-        database = dbBackend;
-        mDbBackendAdapter = dbBackendAdapter;
-        mExecutor = executor;
+    public static AppDatabase getDatabase() {
+        return getInstance().database;
+    }
+
+    public static ModelDao modelDao() {
+        return getDatabase().modelDao();
+    }
+
+    public static QuoteDao quoteDao() {
+        return getDatabase().quoteDao();
+    }
+
+    public static QuoteProviderDao quoteProviderDao() {
+        return getDatabase().quoteProviderDao();
     }
 
     public List<Setting> getAllSettings() {
@@ -202,15 +190,6 @@ public class DbProvider {
         });
     }
 
-    public void deleteAll() {
-        mExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                mDbBackendAdapter.deleteAll();
-            }
-        });
-    }
-
 //    private synchronized void syncQuotesWithLastTradeDate(List<Setting> settings){
 //        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 //        calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -270,7 +249,7 @@ public class DbProvider {
             quote.setQuoteType(String.valueOf(q.getQt()));
             quotes[i++] = quote;
         }
-        database.quoteDao().insertAll(quotes);
+        quoteDao().insertAll(quotes);
         return true;
     }
 }

@@ -83,7 +83,7 @@ public class MyQuotesFragment extends AbsQuoteSelectionFragment
 
     public void deleteSelectedSymbols() {
         String[] symbols = getSelectedSymbols();
-        DbProvider.getInstance().getDatabaseAdapter().deleteQuotesByIds(symbols);
+//        DbProvider.getInstance().getDatabaseAdapter().deleteQuotesByIds(symbols);
         mSymbols = new HashSet<>();
         Toast.makeText(getActivity(), String.format("%d quotes deleted!", symbols.length),
                 Toast.LENGTH_SHORT).show();

@@ -27,7 +27,7 @@ public class DataCleanPreferenceDialog extends PreferenceDialogFragmentCompat {
     @Override
     public void onDialogClosed(boolean positiveResult) {
         if (positiveResult) {
-            DbProvider.getInstance().deleteAll();
+            DbProvider.modelDao().deleteAll();
             TrackingQuotesFragment.mWidgetItemsNumber = 0;
             LOGD(TAG, "Data cleaned!");
         }

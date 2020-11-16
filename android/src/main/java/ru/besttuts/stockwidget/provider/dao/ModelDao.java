@@ -23,6 +23,9 @@ public interface ModelDao {
     @Query("SELECT * FROM models WHERE id IN (:ids)")
     List<Model> allByIds(List<String> ids);
 
+    @Query("SELECT * FROM models WHERE widget_id = :widgetId")
+    List<Model> allByWidgetId(int widgetId);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(Model... models);
 
@@ -30,5 +33,11 @@ public interface ModelDao {
     void updateAll(Model... models);
 
     @Delete
-    void deleteAll(Model... models);
+    void delete(Model... models);
+
+    @Query("DELETE FROM models")
+    void deleteAll();
+
+    @Query("DELETE FROM models WHERE widget_id = :widgetId")
+    void deleteAllByWidgetId(int widgetId);
 }

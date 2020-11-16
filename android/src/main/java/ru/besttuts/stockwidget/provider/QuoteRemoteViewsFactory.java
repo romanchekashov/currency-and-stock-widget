@@ -61,7 +61,7 @@ public class QuoteRemoteViewsFactory implements RemoteViewsFactory {
             models.clear();
         }
 
-        models.addAll(DbProvider.getInstance().getModelsByWidgetId(mAppWidgetId));
+        models.addAll(DbProvider.modelDao().allByWidgetId(mAppWidgetId));
 //        models.forEach(m -> System.out.println(m.toString()));
     }
 

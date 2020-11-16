@@ -1,6 +1,5 @@
 package ru.besttuts.stockwidget.ui.activities;
 
-import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,11 +13,10 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import ru.besttuts.stockwidget.R;
-import ru.besttuts.stockwidget.provider.model.QuoteType;
 import ru.besttuts.stockwidget.provider.db.DbProvider;
-import ru.besttuts.stockwidget.ui.fragments.CurrencyExchangeFragment;
-import ru.besttuts.stockwidget.ui.fragments.quotes.GoodsItemFragment;
+import ru.besttuts.stockwidget.provider.model.QuoteType;
 import ru.besttuts.stockwidget.ui.fragments.IQuoteTypeFragment;
+import ru.besttuts.stockwidget.ui.fragments.quotes.GoodsItemFragment;
 import ru.besttuts.stockwidget.ui.fragments.quotes.MyQuotesFragment;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
@@ -33,7 +31,6 @@ public class QuotePickerActivity extends AppCompatActivity
 
     private static final String TAG = makeLogTag(QuotePickerActivity.class);
 
-    private DbProvider mDbProvider;
     private int mAppWidgetId;
     private int mQuoteTypeValue;
     private int mWidgetItemPosition;
@@ -55,7 +52,6 @@ public class QuotePickerActivity extends AppCompatActivity
         }
         getSupportActionBar().setBackgroundDrawable(
                 new ColorDrawable(EconomicWidgetConfigureActivity.getColor(this, true)));
-
 
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -124,8 +120,6 @@ public class QuotePickerActivity extends AppCompatActivity
                 break;
         }
 
-        // создаем объект для создания и управления версиями БД
-        mDbProvider = DbProvider.getInstance();
         LOGD(TAG, "onCreate");
 
     }
@@ -215,9 +209,6 @@ public class QuotePickerActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (null != mDbProvider && null != mDbProvider.getDatabase()) {
-            mDbProvider.getDatabase().close(); // закрываем соединение с БД
-        }
         LOGD(TAG, "onDestroy");
     }
 
@@ -228,7 +219,7 @@ public class QuotePickerActivity extends AppCompatActivity
 
     @Override
     public void showDeleteItem(boolean isVisible) {
-        if(null != mMenu) {
+        if (null != mMenu) {
             mMenu.findItem(R.id.action_delete).setVisible(isVisible);
             mMenu.findItem(R.id.action_accept).setVisible(isVisible);
         }
@@ -236,7 +227,7 @@ public class QuotePickerActivity extends AppCompatActivity
 
     @Override
     public void showAcceptItem(boolean isVisible) {
-        if(null != mMenu) {
+        if (null != mMenu) {
             mMenu.findItem(R.id.action_accept).setVisible(isVisible);
         }
     }
@@ -244,7 +235,7 @@ public class QuotePickerActivity extends AppCompatActivity
     @Override
     public void deleteQuote(String[] symbols) {
         LOGD(TAG, "[deleteQuote]: " + symbols);
-        mDbProvider.getDatabaseAdapter().deleteQuotesByIds(symbols);
+//        DbProvider.quoteDao().deleteQuotesByIds(symbols);
     }
 
 }
