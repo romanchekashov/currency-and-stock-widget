@@ -16,9 +16,6 @@ public interface DbBackendAdapter {
 
     List<Setting> getSettingsWithoutModelByWidgetId(int widgetId);
 
-    void addSettingsRec(int mAppWidgetId, int widgetItemPosition,
-                        int type, String[] symbols);
-
     void deleteSettingsByWidgetId(int widgetId);
 
     void deleteSettingsByIdAndUpdatePositions(String settingId, int position);

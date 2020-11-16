@@ -102,18 +102,6 @@ public class DbProvider {
         return settings;
     }
 
-    public void addSettingsRec(final int mAppWidgetId, final int widgetItemPosition,
-                               final int type, final String[] symbols) {
-        LOGD(TAG, String.format("addSettingsRec: %d %s", type, symbols));
-
-        mExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                mDbBackendAdapter.addSettingsRec(mAppWidgetId, widgetItemPosition, type, symbols);
-            }
-        });
-    }
-
     public boolean addModelRec(Model model) {
         database.modelDao().insertAll(model);
         return true;

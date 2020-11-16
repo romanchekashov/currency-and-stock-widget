@@ -188,8 +188,8 @@ public class QuotePickerActivity extends AppCompatActivity
                 LOGD(TAG, "onOptionsItemSelected: fragment: " + fragment.getClass().getName());
                 if (fragment instanceof IQuoteTypeFragment) {
                     IQuoteTypeFragment quoteTypeFragment = (IQuoteTypeFragment) fragment;
-                    mDbProvider.addSettingsRec(mAppWidgetId, mWidgetItemPosition,
-                            quoteTypeFragment.getQuoteType(), quoteTypeFragment.getSelectedSymbols());
+//                    mDbProvider.addSettingsRec(mAppWidgetId, mWidgetItemPosition,
+//                            quoteTypeFragment.getQuoteType(), quoteTypeFragment.getSelectedSymbols());
                 }
                 finish();
                 return true;

@@ -73,25 +73,6 @@ class DbBackendAdapterImpl implements DbBackendAdapter {
     }
 
     @Override
-    public void addSettingsRec(int mAppWidgetId, int widgetItemPosition,
-                               int type, String[] symbols) {
-        for (int i = 0; i < symbols.length; i++) {
-            String symbol = symbols[i];
-            int position = widgetItemPosition + i;
-            String id = mAppWidgetId + "_" + position;
-
-            Setting setting = new Setting();
-            setting.setId(id);
-            setting.setWidgetId(mAppWidgetId);
-            setting.setQuotePosition(position);
-            setting.setQuoteType(type);
-            setting.setQuoteSymbol(symbol);
-
-            database.settingDao().insertAll(setting);
-        }
-    }
-
-    @Override
     public void deleteSettingsByWidgetId(int widgetId) {
         List<Setting> settings = database.settingDao().allByWidgetId(widgetId);
         database.settingDao().deleteAll(settings.toArray(new Setting[settings.size()]));

@@ -220,20 +220,21 @@ public class EconomicWidget extends AppWidgetProvider {
 
         DbProvider dataSource = DbProvider.getInstance();
         String lng = Config.getInstance().getLanguage();
-        final String[] defaultCommodities = new String[]{"BZF16.NYM", "NGZ15.NYM", "GCX15.CMX"};
-        if ("ru".equals(lng)) {
-            dataSource.addSettingsRec(appWidgetIds[0], 1, QuoteType.CURRENCY,
-                    new String[]{"EURUSD", "USDRUB", "EURRUB"});
-            dataSource.addSettingsRec(appWidgetIds[0], 4, QuoteType.COMMODITY, defaultCommodities);
-        } else if ("uk".equals(lng)) {
-            dataSource.addSettingsRec(appWidgetIds[0], 1, QuoteType.CURRENCY,
-                    new String[]{"EURUSD", "USDUAH", "EURUAH"});
-            dataSource.addSettingsRec(appWidgetIds[0], 4, QuoteType.COMMODITY, defaultCommodities);
-        } else {
-            dataSource.addSettingsRec(appWidgetIds[0], 1, QuoteType.CURRENCY,
-                    new String[]{"EURUSD"});
-            dataSource.addSettingsRec(appWidgetIds[0], 2, QuoteType.COMMODITY, defaultCommodities);
-        }
+        // TODO Install default model on first widget add
+//        final String[] defaultCommodities = new String[]{"BZF16.NYM", "NGZ15.NYM", "GCX15.CMX"};
+//        if ("ru".equals(lng)) {
+//            dataSource.addSettingsRec(appWidgetIds[0], 1, QuoteType.CURRENCY,
+//                    new String[]{"EURUSD", "USDRUB", "EURRUB"});
+//            dataSource.addSettingsRec(appWidgetIds[0], 4, QuoteType.COMMODITY, defaultCommodities);
+//        } else if ("uk".equals(lng)) {
+//            dataSource.addSettingsRec(appWidgetIds[0], 1, QuoteType.CURRENCY,
+//                    new String[]{"EURUSD", "USDUAH", "EURUAH"});
+//            dataSource.addSettingsRec(appWidgetIds[0], 4, QuoteType.COMMODITY, defaultCommodities);
+//        } else {
+//            dataSource.addSettingsRec(appWidgetIds[0], 1, QuoteType.CURRENCY,
+//                    new String[]{"EURUSD"});
+//            dataSource.addSettingsRec(appWidgetIds[0], 2, QuoteType.COMMODITY, defaultCommodities);
+//        }
     }
 
     /**
