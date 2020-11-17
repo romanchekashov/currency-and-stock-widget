@@ -84,6 +84,7 @@ public class TrackingQuotesFragment extends Fragment
     private GridView gridView;
 
     private final CompositeDisposable mDisposable = new CompositeDisposable();
+    private boolean isFirstFetch;
 
     /**
      * Используйте этот фабричный метод для создания
@@ -112,7 +113,7 @@ public class TrackingQuotesFragment extends Fragment
         }
 
         NotificationManager.addListener(this);
-
+        isFirstFetch = true;
         LOGD(TAG, String.format("onCreate: mWidgetId = %d, mWidgetItemsNumber = %d",
                 mWidgetId, mWidgetItemsNumber));
 
@@ -147,8 +148,6 @@ public class TrackingQuotesFragment extends Fragment
         Button button = mMainView.findViewById(R.id.btnAddQuote);
         button.setOnClickListener(v -> showQuoteTypeDialog());
 
-        updateViewData(true);
-
         return mMainView;
     }
 
@@ -156,7 +155,7 @@ public class TrackingQuotesFragment extends Fragment
     public void onResume() {
         super.onResume();
         LOGD(TAG, "onResume: currentThread = " + Thread.currentThread());
-        updateViewData(false);
+        updateViewData(isFirstFetch);
     }
 
     private void onSettingsUpdated(List<Model> models) {
@@ -176,7 +175,10 @@ public class TrackingQuotesFragment extends Fragment
         mDisposable.add(fetchQuotes(mWidgetId, getActivity(), loadAll)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::onSettingsUpdated, throwable -> {
+                .subscribe(models -> {
+                    isFirstFetch = false;
+                    onSettingsUpdated(models);
+                }, throwable -> {
                     LOGE(TAG, "fetchQuotes ERROR Unable to get models", throwable);
                     updateViewDataFromDb();
                 }));
