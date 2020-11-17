@@ -156,8 +156,6 @@ public class EconomicWidget extends AppWidgetProvider {
     }
 
     public static void setAlarm(Context context) {
-        FirebaseMessaging.getInstance().subscribeToTopic(FIREBASE_TOPIC);
-
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(context);
         long interval = Integer.parseInt(sharedPreferences.getString(
@@ -313,7 +311,6 @@ public class EconomicWidget extends AppWidgetProvider {
         // для 11-ой и поздней версии оповещаем менеджер виджетов о изменении данных для GridView
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.gridView2);
 
-        FirebaseMessaging.getInstance().subscribeToTopic(FIREBASE_TOPIC);
 //        LOGD(TAG, "updateAppWidget: minHeight = " + appWidgetManager.getAppWidgetInfo(appWidgetId).minHeight);
         LOGD(TAG, String.format("updateAppWidget: appWidgetId = %d, models.size = %d", appWidgetId, models.size()));
     }
@@ -544,17 +541,17 @@ public class EconomicWidget extends AppWidgetProvider {
     private static MediaPlayer mMediaPlayer = null;
     private static TextToSpeech textToSpeech = null;
 
-    public static void startMusic(Context context, String msg) {
-        if (msg != null) {
+    public static void startMusic(Context context, String... msgs) {
+        if (msgs != null) {
             if (textToSpeech == null) {
                 textToSpeech = new TextToSpeech(context, status -> {
                     if (status != TextToSpeech.ERROR) {
                         textToSpeech.setLanguage(context.getResources().getConfiguration().locale);
-                        textToSpeech.speak(msg, TextToSpeech.QUEUE_FLUSH, null);
+                        for (String msg: msgs) textToSpeech.speak(msg, TextToSpeech.QUEUE_FLUSH, null);
                     }
                 });
             } else {
-                textToSpeech.speak(msg, TextToSpeech.QUEUE_FLUSH, null);
+                for (String msg: msgs) textToSpeech.speak(msg, TextToSpeech.QUEUE_FLUSH, null);
             }
         } else {
             if (mMediaPlayer == null) {

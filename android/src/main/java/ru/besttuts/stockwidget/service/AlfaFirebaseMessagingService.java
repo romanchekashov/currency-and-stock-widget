@@ -11,10 +11,16 @@ import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import org.joda.time.DateTime;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import ru.besttuts.stockwidget.provider.db.DbProvider;
+import ru.besttuts.stockwidget.provider.model.Notification;
 import ru.besttuts.stockwidget.ui.EconomicWidget;
 import ru.besttuts.stockwidget.util.LogUtils;
 import ru.besttuts.stockwidget.util.SharedPreferencesHelper;
@@ -151,11 +157,27 @@ public class AlfaFirebaseMessagingService extends FirebaseMessagingService {
      */
     private void handleNow(Map<String, String> map) {
         LOGD(TAG, "Short lived task is done.");
+        List<String> msgs = new ArrayList<>(map.size());
+
         for (Map.Entry<String, String> me : map.entrySet()) {
             LOGD(TAG, me.getKey() + " : " + me.getValue());
+            if (me.getKey().startsWith("msg")) msgs.add(me.getValue());
         }
 
-        EconomicWidget.startMusic(getApplicationContext(), map.get("msg"));
+        if (!msgs.isEmpty()) {
+            Notification[] notifications = new Notification[msgs.size()];
+            int i = 0;
+
+            for (String msg: msgs) {
+                Notification n = new Notification();
+                n.setText(msg);
+                n.setTimestamp(DateTime.now().toInstant().getMillis());
+                notifications[i++] = n;
+            }
+
+            DbProvider.notificationDao().insertAll(notifications).blockingAwait();
+            EconomicWidget.startMusic(getApplicationContext(), msgs.toArray(new String[0]));
+        }
 
         Intent intent = new Intent(getApplicationContext(), EconomicWidget.class);
         intent.setAction(EconomicWidget.UPDATE_ALL_WIDGETS);

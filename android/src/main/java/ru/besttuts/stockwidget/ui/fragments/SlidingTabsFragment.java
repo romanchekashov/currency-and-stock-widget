@@ -14,6 +14,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.ui.activities.EconomicWidgetConfigureActivity;
+import ru.besttuts.stockwidget.ui.fragments.notifications.NotificationsFragment;
 import ru.besttuts.stockwidget.ui.fragments.tracking.TrackingQuotesFragment;
 import ru.besttuts.stockwidget.ui.view.SlidingTabLayout;
 import ru.besttuts.stockwidget.util.NotificationManager;
@@ -70,11 +71,11 @@ public class SlidingTabsFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        LOGD(TAG, "savedInstanceState = "+ savedInstanceState);
-        LOGD(TAG, "getArguments() = "+ getArguments());
+        LOGD(TAG, "savedInstanceState = " + savedInstanceState);
+        LOGD(TAG, "getArguments() = " + getArguments());
 
         mWidgetId = getArguments().getInt(ARG_WIDGET_ID);
-        LOGD(TAG, "mWidgetId = "+ mWidgetId);
+        LOGD(TAG, "mWidgetId = " + mWidgetId);
 
         NotificationManager.addListener(this);
 
@@ -184,6 +185,9 @@ public class SlidingTabsFragment extends Fragment
                     fragment = TrackingQuotesFragment.newInstance(mWidgetId);
                     break;
                 case 1:
+                    fragment = NotificationsFragment.newInstance(mWidgetId);
+                    break;
+                case 2:
                     fragment = new ConfigPreferenceFragment();
                     break;
             }
@@ -192,7 +196,7 @@ public class SlidingTabsFragment extends Fragment
 
         @Override
         public int getCount() {
-            return 2;
+            return 3;
         }
 
         @Override
@@ -203,6 +207,9 @@ public class SlidingTabsFragment extends Fragment
                     title = getString(R.string.action_quotes);
                     break;
                 case 1:
+                    title = getString(R.string.action_notifications);
+                    break;
+                case 2:
                     title = getString(R.string.action_settings);
                     break;
             }

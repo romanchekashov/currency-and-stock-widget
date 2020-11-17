@@ -12,6 +12,7 @@ import java.util.Map;
 import io.reactivex.Completable;
 import ru.besttuts.stockwidget.provider.AppDatabase;
 import ru.besttuts.stockwidget.provider.dao.ModelDao;
+import ru.besttuts.stockwidget.provider.dao.NotificationDao;
 import ru.besttuts.stockwidget.provider.dao.QuoteDao;
 import ru.besttuts.stockwidget.provider.dao.QuoteProviderDao;
 import ru.besttuts.stockwidget.provider.model.Model;
@@ -68,6 +69,10 @@ public class DbProvider extends DbProviderAbs {
 
     public static QuoteProviderDao quoteProviderDao() {
         return getDatabase().quoteProviderDao();
+    }
+
+    public static NotificationDao notificationDao() {
+        return getDatabase().notificationDao();
     }
 
     public boolean saveQuotes(List<MobileQuoteShort> quoteShorts) {

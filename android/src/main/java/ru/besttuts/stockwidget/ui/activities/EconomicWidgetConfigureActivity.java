@@ -171,6 +171,7 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FirebaseMessaging.getInstance().subscribeToTopic(FIREBASE_TOPIC);
 
         // Set the result to CANCELED.  This will cause the widget host to cancel
         // out of the widget placement if the user presses the back button.
@@ -377,7 +378,6 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-        FirebaseMessaging.getInstance().subscribeToTopic(FIREBASE_TOPIC);
         if (Config.IS_DEV_MODE) {
             //Get an Analytics tracker to report app starts & uncaught exceptions etc.
             GoogleAnalytics.getInstance(this).reportActivityStart(this);

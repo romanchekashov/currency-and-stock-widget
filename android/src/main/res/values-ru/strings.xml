@@ -30,6 +30,7 @@
     <string name="action_quotes">Мои Котировки</string>
     <string name="action_display">Отображение</string>
     <string name="action_settings">Настройки</string>
+    <string name="action_notifications">Уведомления</string>
     <string name="action_search">Поиск</string>
 
     <string name="configure_menu_item_future">Фьючерсы</string>
