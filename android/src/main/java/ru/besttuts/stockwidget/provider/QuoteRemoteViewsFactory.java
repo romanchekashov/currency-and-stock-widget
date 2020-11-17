@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
+import android.text.Html;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService.RemoteViewsFactory;
@@ -91,19 +92,6 @@ public class QuoteRemoteViewsFactory implements RemoteViewsFactory {
             viewItem.setViewVisibility(R.id.quoteIcon, View.GONE);
         }
         viewItem.setTextViewText(R.id.quoteName, Utils.getModelNameFromResourcesBySymbol(mContext, model));
-        viewItem.setTextViewText(R.id.tvRate, model.getRateToString());
-        viewItem.setTextViewText(R.id.tvChange, model.getChangeToString());
-        viewItem.setTextViewText(R.id.tvChangePercentage, model.getPercentChange());
-
-        int color = mContext.getResources().getColor(R.color.arrow_green);
-        if (0 < model.getChange()) {
-            viewItem.setImageViewResource(R.id.imageView, R.drawable.ic_widget_green_arrow_up);
-        } else {
-            viewItem.setImageViewResource(R.id.imageView, R.drawable.ic_widget_green_arrow_down);
-            color = mContext.getResources().getColor(R.color.arrow_red);
-        }
-        viewItem.setTextColor(R.id.tvChange, color);
-        viewItem.setTextColor(R.id.tvChangePercentage, color);
 
         Intent intent = new Intent();
         String url;
@@ -113,10 +101,44 @@ public class QuoteRemoteViewsFactory implements RemoteViewsFactory {
             url = String.format("http://finance.yahoo.com/q?s=%s&ql=1", model.getId());
         }
         intent.putExtra(TrackingQuotesFragment.ARG_URL, url);
-        viewItem.setOnClickFillInIntent(R.id.quoteName, intent);
-        viewItem.setOnClickFillInIntent(R.id.tvRate, intent);
-        viewItem.setOnClickFillInIntent(R.id.tvChange, intent);
-        viewItem.setOnClickFillInIntent(R.id.tvChangePercentage, intent);
+
+        if (model.getBuyPrice() == null && model.getSellPrice() == null) {
+            viewItem.setViewVisibility(R.id.tvSell, View.GONE);
+            viewItem.setViewVisibility(R.id.linearLayoutChange, View.VISIBLE);
+
+            viewItem.setTextViewText(R.id.tvRate, model.getRateToString());
+            viewItem.setTextViewText(R.id.tvChange, model.getChangeToString());
+            viewItem.setTextViewText(R.id.tvChangePercentage, model.getPercentChange());
+
+            int color = mContext.getResources().getColor(R.color.arrow_green);
+            if (0 < model.getChange()) {
+                viewItem.setImageViewResource(R.id.imageView, R.drawable.ic_widget_green_arrow_up);
+            } else {
+                viewItem.setImageViewResource(R.id.imageView, R.drawable.ic_widget_green_arrow_down);
+                color = mContext.getResources().getColor(R.color.arrow_red);
+            }
+            viewItem.setTextColor(R.id.tvChange, color);
+            viewItem.setTextColor(R.id.tvChangePercentage, color);
+
+            viewItem.setOnClickFillInIntent(R.id.quoteName, intent);
+            viewItem.setOnClickFillInIntent(R.id.tvRate, intent);
+            viewItem.setOnClickFillInIntent(R.id.tvChange, intent);
+            viewItem.setOnClickFillInIntent(R.id.tvChangePercentage, intent);
+        } else {
+            viewItem.setViewVisibility(R.id.linearLayoutChange, View.GONE);
+            viewItem.setViewVisibility(R.id.tvSell, View.VISIBLE);
+
+            viewItem.setTextViewText(
+                    R.id.tvRate,
+                    Html.fromHtml("<font color='#00dd00'>B</font> " + Utils.getRateToString(model.getBuyPrice()))
+            );
+            viewItem.setTextViewText(
+                    R.id.tvSell,
+                    Html.fromHtml("<font color='#dd0000'>S</font> " + Utils.getRateToString(model.getSellPrice()))
+            );
+
+            viewItem.setOnClickFillInIntent(R.id.tvSell, intent);
+        }
 
         return viewItem;
     }

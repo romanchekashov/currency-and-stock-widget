@@ -40,6 +40,12 @@ public class Quote {
     @ColumnInfo(name = "quote_provider")
     private int quoteProvider;
 
+    @ColumnInfo(name = "buy_price")
+    private Double buyPrice;
+
+    @ColumnInfo(name = "sell_price")
+    private Double sellPrice;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

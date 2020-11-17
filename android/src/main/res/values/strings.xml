@@ -33,7 +33,7 @@
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
 
-    <string name="action_quotes">Quotes NYSE</string>
+    <string name="action_quotes">My Quotes</string>
     <string name="action_display">Display</string>
     <string name="action_settings">Settings</string>
     <string name="action_search">Search</string>

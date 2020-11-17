@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "293443188e3ac5380a3e023a24ebb02e",
+    "identityHash": "9f2f2072f2d1d379dad6c1b3844efbfa",
     "entities": [
       {
         "tableName": "settings",
@@ -62,7 +62,7 @@
       },
       {
         "tableName": "models",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `symbol` TEXT, `name` TEXT, `rate` REAL NOT NULL, `change` REAL NOT NULL, `currency` TEXT, `quote_type` INTEGER NOT NULL, `quote_provider` INTEGER NOT NULL, `widget_id` INTEGER NOT NULL, `sort` INTEGER NOT NULL, `last_trade_date` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `symbol` TEXT, `name` TEXT, `rate` REAL NOT NULL, `change` REAL NOT NULL, `currency` TEXT, `quote_type` INTEGER NOT NULL, `quote_provider` INTEGER NOT NULL, `buy_price` REAL, `sell_price` REAL, `widget_id` INTEGER NOT NULL, `sort` INTEGER NOT NULL, `last_trade_date` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -111,6 +111,18 @@
             "columnName": "quote_provider",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "buyPrice",
+            "columnName": "buy_price",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sellPrice",
+            "columnName": "sell_price",
+            "affinity": "REAL",
+            "notNull": false
           },
           {
             "fieldPath": "widgetId",
@@ -142,7 +154,7 @@
       },
       {
         "tableName": "quotes",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `symbol` TEXT, `name` TEXT, `rate` REAL NOT NULL, `change` REAL NOT NULL, `currency` TEXT, `quote_type` INTEGER NOT NULL, `quote_provider` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `symbol` TEXT, `name` TEXT, `rate` REAL NOT NULL, `change` REAL NOT NULL, `currency` TEXT, `quote_type` INTEGER NOT NULL, `quote_provider` INTEGER NOT NULL, `buy_price` REAL, `sell_price` REAL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -191,6 +203,18 @@
             "columnName": "quote_provider",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "buyPrice",
+            "columnName": "buy_price",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sellPrice",
+            "columnName": "sell_price",
+            "affinity": "REAL",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -280,7 +304,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '293443188e3ac5380a3e023a24ebb02e')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9f2f2072f2d1d379dad6c1b3844efbfa')"
     ]
   }
 }

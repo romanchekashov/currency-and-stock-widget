@@ -1,83 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <ImageView
+            android:id="@+id/quoteIcon"
             android:layout_width="15dp"
             android:layout_height="15dp"
-            android:id="@+id/quoteIcon"
-            android:src="@drawable/ic_widget_green_arrow_up"
+            android:layout_gravity="center_vertical"
             android:background="#00ffffff"
-            android:layout_gravity="center_vertical" />
+            android:src="@drawable/ic_widget_green_arrow_up" />
 
         <TextView
+            android:id="@+id/quoteName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:singleLine="true"
             android:text="Name"
-            android:id="@+id/quoteName"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#ffffff"
-            android:textSize="@dimen/widget_grid_item_name_text_size_row2"
-            android:singleLine="true" />
+            android:textSize="@dimen/widget_grid_item_name_text_size_row2" />
     </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Rate"
-            android:id="@+id/tvRate"
-            android:textColor="#ffffff"
-            android:textSize="@dimen/widget_grid_item_rate_text_size_row2"
-            android:textStyle="bold|italic"
-            android:singleLine="true" />
+    <TextView
+        android:id="@+id/tvRate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:text="Rate"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#ffffff"
+        android:textSize="@dimen/widget_grid_item_rate_text_size_row2"
+        android:textStyle="bold|italic" />
+
+    <TextView
+        android:id="@+id/tvSell"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:text="Sell"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#ffffff"
+        android:textSize="@dimen/widget_grid_item_rate_text_size_row2"
+        android:textStyle="bold|italic" />
+
+    <LinearLayout
+        android:id="@+id/linearLayoutChange"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_gravity="center_vertical"
+            android:background="#00ffffff"
+            android:src="@drawable/ic_widget_green_arrow_up" />
 
         <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <ImageView
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:id="@+id/imageView"
-                android:src="@drawable/ic_widget_green_arrow_up"
-                android:background="#00ffffff"
-                android:layout_gravity="center_vertical" />
-
-            <LinearLayout
-                android:orientation="vertical"
+            <TextView
+                android:id="@+id/tvChange"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="change"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#00ff00"
+                android:textSize="@dimen/widget_grid_item_change_text_size_row2" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="change"
-                    android:id="@+id/tvChange"
-                    android:textColor="#00ff00"
-                    android:textSize="@dimen/widget_grid_item_change_text_size_row2"
-                    android:singleLine="true" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="%change"
-                    android:id="@+id/tvChangePercentage"
-                    android:textColor="#00ff00"
-                    android:textSize="@dimen/widget_grid_item_change_percentage_text_size_row2"
-                    android:singleLine="true" />
-            </LinearLayout>
-
+            <TextView
+                android:id="@+id/tvChangePercentage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="%change"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#00ff00"
+                android:textSize="@dimen/widget_grid_item_change_percentage_text_size_row2" />
         </LinearLayout>
+
+    </LinearLayout>
 
 </LinearLayout>

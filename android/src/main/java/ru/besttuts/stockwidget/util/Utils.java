@@ -178,4 +178,9 @@ public class Utils {
         for (String el : arr) collection.add(Integer.parseInt(el));
         return collection;
     }
+
+    public static String getRateToString(Double rate) {
+        if (rate == null) return "";
+        return String.valueOf((float) Math.round(rate * 100) / 100);
+    }
 }

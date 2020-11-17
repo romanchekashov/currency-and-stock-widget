@@ -24,6 +24,8 @@ public class CustomConverter {
         if (dto.getN() != null) model.setName(dto.getN());
         if (dto.getQt() != null) model.setQuoteType(dto.getQt());
         if (dto.getQp() != null) model.setQuoteProvider(dto.getQp());
+        if (dto.getBp() != null) model.setBuyPrice(dto.getBp());
+        if (dto.getSp() != null) model.setSellPrice(dto.getSp());
         return model;
     }
 
@@ -37,6 +39,8 @@ public class CustomConverter {
         model.setName(dto.getName());
         model.setQuoteType(dto.getQuoteType());
         model.setQuoteProvider(dto.getQuoteProvider());
+        model.setBuyPrice(dto.getBuyPrice());
+        model.setSellPrice(dto.getSellPrice());
         return model;
     }
 
@@ -51,6 +55,8 @@ public class CustomConverter {
         if (dto.getN() != null) model.setName(dto.getN());
         if (dto.getQt() != null) model.setQuoteType(dto.getQt());
         if (dto.getQp() != null) model.setQuoteProvider(dto.getQp());
+        if (dto.getBp() != null) model.setBuyPrice(dto.getBp());
+        if (dto.getSp() != null) model.setSellPrice(dto.getSp());
         return model;
     }
 }

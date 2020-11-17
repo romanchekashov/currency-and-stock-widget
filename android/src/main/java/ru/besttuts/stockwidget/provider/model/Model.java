@@ -25,19 +25,19 @@ public class Model {
 
     @ColumnInfo(name = "name")
     @Getter @Setter
-    protected String name;
+    private String name;
 
     @ColumnInfo(name = "rate")
     @Getter @Setter
-    protected double rate = 0.0;
+    private double rate = 0.0;
 
     @ColumnInfo(name = "change")
     @Getter
-    protected double change = 0.0;
+    private double change = 0.0;
 
     @ColumnInfo(name = "currency")
     @Getter @Setter
-    protected String currency;
+    private String currency;
 
     @ColumnInfo(name = "quote_type")
     @Getter @Setter
@@ -46,6 +46,14 @@ public class Model {
     @ColumnInfo(name = "quote_provider")
     @Getter @Setter
     private int quoteProvider;
+
+    @ColumnInfo(name = "buy_price")
+    @Getter @Setter
+    private Double buyPrice;
+
+    @ColumnInfo(name = "sell_price")
+    @Getter @Setter
+    private Double sellPrice;
 
     @ColumnInfo(name = "widget_id")
     @Getter @Setter

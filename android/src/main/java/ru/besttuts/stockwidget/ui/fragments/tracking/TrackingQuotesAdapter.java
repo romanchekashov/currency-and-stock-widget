@@ -1,6 +1,7 @@
 package ru.besttuts.stockwidget.ui.fragments.tracking;
 
 import android.content.Context;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import java.util.List;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.provider.model.Model;
+import ru.besttuts.stockwidget.provider.model.QuoteProvider;
 import ru.besttuts.stockwidget.util.Utils;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
@@ -28,8 +30,11 @@ public class TrackingQuotesAdapter extends BaseAdapter {
     static class ViewHolder {
         ProgressBar progressBar;
         LinearLayout linearLayout;
+        ImageView quoteIcon;
         TextView quoteName;
         TextView tvRate;
+        TextView tvSell;
+        LinearLayout linearLayoutChange;
         TextView tvChange;
         TextView tvChangePercentage;
         TextView tvCurrency;
@@ -76,7 +81,10 @@ public class TrackingQuotesAdapter extends BaseAdapter {
             holder.progressBar = row.findViewById(R.id.progressBar2);
             holder.linearLayout = row.findViewById(R.id.lLayoutRate);
             holder.quoteName = row.findViewById(R.id.quoteName);
+            holder.quoteIcon = row.findViewById(R.id.quoteIcon);
             holder.tvRate = row.findViewById(R.id.tvRate);
+            holder.tvSell = row.findViewById(R.id.tvSell);
+            holder.linearLayoutChange = row.findViewById(R.id.linearLayoutChange);
             holder.tvChange = row.findViewById(R.id.tvChange);
             holder.tvChangePercentage = row.findViewById(R.id.tvChangePercentage);
             holder.tvCurrency = row.findViewById(R.id.tvCurrency);
@@ -116,12 +124,24 @@ public class TrackingQuotesAdapter extends BaseAdapter {
         holder.progressBar.setVisibility(View.GONE);
         holder.linearLayout.setVisibility(View.VISIBLE);
 
-        holder.tvPosition.setText(String.valueOf(position));
+        holder.tvPosition.setText(String.valueOf(position + 1));
 
         LOGD(TAG, "getView: symbol = " + symbol + " position = " + position);
 
-        if (model != null) {
-            holder.quoteName.setText(Utils.getModelNameFromResourcesBySymbol(context, model));
+        int quoteIcon = QuoteProvider.getDrawableId(model.getQuoteProvider());
+        if (quoteIcon >= 0) {
+            holder.quoteIcon.setImageResource(quoteIcon);
+            holder.quoteIcon.setVisibility(View.VISIBLE);
+        } else {
+            holder.quoteIcon.setVisibility(View.GONE);
+        }
+        holder.quoteName.setText(Utils.getModelNameFromResourcesBySymbol(context, model));
+        holder.tvCurrency.setText(model.getCurrency());
+
+        if (model.getBuyPrice() == null && model.getSellPrice() == null) {
+            holder.linearLayoutChange.setVisibility(View.VISIBLE);
+            holder.tvSell.setVisibility(View.GONE);
+
             holder.tvRate.setText(model.getRateToString());
             holder.tvChange.setText(model.getChangeToString());
             holder.tvChangePercentage.setText(model.getPercentChange());
@@ -135,8 +155,12 @@ public class TrackingQuotesAdapter extends BaseAdapter {
             }
             holder.tvChange.setTextColor(color);
             holder.tvChangePercentage.setTextColor(color);
+        } else {
+            holder.linearLayoutChange.setVisibility(View.GONE);
+            holder.tvSell.setVisibility(View.VISIBLE);
 
-            holder.tvCurrency.setText(model.getCurrency());
+            holder.tvRate.setText(Html.fromHtml("<font color='#00dd00'>B</font> " + Utils.getRateToString(model.getBuyPrice())));
+            holder.tvSell.setText(Html.fromHtml("<font color='#dd0000'>S</font> " + Utils.getRateToString(model.getSellPrice())));
         }
         return row;
     }
