@@ -19,6 +19,7 @@ package ru.besttuts.stockwidget.ui;
 import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.firebase.FirebaseApp;
 
 import android.app.Application;
 
@@ -67,5 +68,6 @@ public class App extends Application {
         JodaTimeAndroid.init(getApplicationContext());
         Config.init(getApplicationContext());
         DbProvider.init(getApplicationContext());
+        FirebaseApp.initializeApp(this);
     }
 }

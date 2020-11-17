@@ -12,7 +12,15 @@ import ru.besttuts.stockwidget.ui.fragments.ConfigPreferenceFragment;
  * created on 10/7/2016.
  */
 public class SharedPreferencesHelper {
-    private static final String PREFS_NAME = "ru.besttuts.stockwidget.ui.EconomicWidget";
+    public static final String PREFS_NAME = "ru.besttuts.stockwidget.ui.EconomicWidget";
+
+    public static SharedPreferences.Editor getWriter(Context context) {
+        return context.getSharedPreferences(PREFS_NAME, 0).edit();
+    }
+
+    public static SharedPreferences getReader(Context context) {
+        return context.getSharedPreferences(PREFS_NAME, 0);
+    }
 
     public static void delete(String preferenceKey, Object value, Context context) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
@@ -32,6 +40,7 @@ public class SharedPreferencesHelper {
     }
 
     public static Object get(String preferenceKey, Object defaultValue, Context context) {
+        if (defaultValue == null) return null;
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
         if (defaultValue instanceof String) {
             return prefs.getString(preferenceKey, (String) defaultValue);

@@ -10,6 +10,7 @@ import android.widget.RemoteViews;
 import android.widget.RemoteViewsService.RemoteViewsFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import ru.besttuts.stockwidget.R;
@@ -32,7 +33,7 @@ public class QuoteRemoteViewsFactory implements RemoteViewsFactory {
 
     private static final String TAG = makeLogTag(QuoteRemoteViewsFactory.class);
 
-    List<Model> models;
+    private List<Model> models = Collections.emptyList();
     private Context mContext;
     private int mAppWidgetId;
     private int mLayout = R.layout.economic_widget_item_row_4;
@@ -43,7 +44,6 @@ public class QuoteRemoteViewsFactory implements RemoteViewsFactory {
                 AppWidgetManager.INVALID_APPWIDGET_ID);
 
         LOGD(TAG, "QuoteRemoteViewsFactory initialized");
-
     }
 
     @Override
@@ -54,14 +54,7 @@ public class QuoteRemoteViewsFactory implements RemoteViewsFactory {
     @Override
     public void onDataSetChanged() {
         mLayout = SharedPreferencesUtils.WidgetLayoutGridItem.load(mContext, mAppWidgetId);
-
-        if (null == models) {
-            models = new ArrayList<>();
-        } else {
-            models.clear();
-        }
-
-        models.addAll(DbProvider.modelDao().allByWidgetId(mAppWidgetId));
+        models = DbProvider.modelDao().allByWidgetId(mAppWidgetId);
 //        models.forEach(m -> System.out.println(m.toString()));
     }
 
@@ -80,7 +73,10 @@ public class QuoteRemoteViewsFactory implements RemoteViewsFactory {
         RemoteViews viewItem = new RemoteViews(mContext.getPackageName(), mLayout);
 //        viewItem.setInt(R.id.gridItemInnerLinearLayout, "setBackgroundColor",
 //                Color.BLACK);
-        if (null == models || models.isEmpty()) return viewItem;
+        if (null == models || models.isEmpty()) {
+            LOGD(TAG, "[getViewAt]: models.isEmpty");
+            return viewItem;
+        }
 
         Model model = models.get(position);
 //        viewItem.setFloat(R.id.tvName, "setTextSize", 12);

@@ -26,11 +26,14 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import ru.besttuts.stockwidget.Config;
 import ru.besttuts.stockwidget.PrivateConstants;
 import ru.besttuts.stockwidget.R;
+import ru.besttuts.stockwidget.service.AlfaFirebaseMessagingService;
 import ru.besttuts.stockwidget.service.UpdateService;
 import ru.besttuts.stockwidget.ui.App;
 import ru.besttuts.stockwidget.ui.EconomicWidget;
@@ -41,6 +44,7 @@ import ru.besttuts.stockwidget.util.AppRater;
 import ru.besttuts.stockwidget.util.NotificationManager;
 import ru.besttuts.stockwidget.util.SharedPreferencesUtils;
 
+import static ru.besttuts.stockwidget.service.AlfaFirebaseMessagingService.FIREBASE_TOPIC;
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.LOGE;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
@@ -265,6 +269,7 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
             LOGD(TAG, "[createAds]: NO ADS cause in DEV mode!");
             return;
         }
+        MobileAds.initialize(this);
         LOGD(TAG, "[createAds]: creating...");
 
         // Создание экземпляра adView.
@@ -367,6 +372,8 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
+        FirebaseMessaging.getInstance().subscribeToTopic(FIREBASE_TOPIC);
+        AlfaFirebaseMessagingService.IS_SUBSCRIBED = true;
         if (Config.IS_DEV_MODE) {
             //Get an Analytics tracker to report app starts & uncaught exceptions etc.
             GoogleAnalytics.getInstance(this).reportActivityStart(this);

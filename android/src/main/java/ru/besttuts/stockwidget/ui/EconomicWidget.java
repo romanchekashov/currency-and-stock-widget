@@ -11,13 +11,17 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.speech.tts.TextToSpeech;
 import android.view.View;
 import android.widget.RemoteViews;
+
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,9 +31,8 @@ import java.util.List;
 import ru.besttuts.stockwidget.BuildConfig;
 import ru.besttuts.stockwidget.Config;
 import ru.besttuts.stockwidget.R;
-import ru.besttuts.stockwidget.provider.db.DbProvider;
 import ru.besttuts.stockwidget.provider.model.Model;
-import ru.besttuts.stockwidget.provider.model.QuoteType;
+import ru.besttuts.stockwidget.service.AlfaFirebaseMessagingService;
 import ru.besttuts.stockwidget.service.QuoteWidgetService;
 import ru.besttuts.stockwidget.service.UpdateService;
 import ru.besttuts.stockwidget.ui.activities.DynamicWebViewActivity;
@@ -38,6 +41,7 @@ import ru.besttuts.stockwidget.ui.fragments.ConfigPreferenceFragment;
 import ru.besttuts.stockwidget.util.SharedPreferencesHelper;
 import ru.besttuts.stockwidget.util.SharedPreferencesUtils;
 
+import static ru.besttuts.stockwidget.service.AlfaFirebaseMessagingService.FIREBASE_TOPIC;
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
@@ -47,13 +51,10 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
  * App Widget Configuration implemented in {@link EconomicWidgetConfigureActivity EconomicWidgetConfigureActivity}
  */
 public class EconomicWidget extends AppWidgetProvider {
-
     private static final String TAG = makeLogTag(EconomicWidget.class);
 
     public static final String ARG_HAS_INTERNET = "hasInternet";
-
-    private static final String UPDATE_ALL_WIDGETS = "update_all_widgets";
-
+    public static final String UPDATE_ALL_WIDGETS = "update_all_widgets";
     public final static String BROADCAST_ACTION = "ru.besttuts.stockwidget";
 
     @Override
@@ -63,6 +64,10 @@ public class EconomicWidget extends AppWidgetProvider {
 
         onUpdate(context, appWidgetManager, appWidgetIds, isSyncAllowed(context, false));
 
+        if (!AlfaFirebaseMessagingService.IS_SUBSCRIBED) {
+            FirebaseMessaging.getInstance().subscribeToTopic(FIREBASE_TOPIC);
+            AlfaFirebaseMessagingService.IS_SUBSCRIBED = true;
+        }
     }
 
     private void onUpdate(Context context, AppWidgetManager appWidgetManager,
@@ -137,7 +142,7 @@ public class EconomicWidget extends AppWidgetProvider {
     public void onDeleted(Context context, int[] appWidgetIds) {
         // Удаляем все данные ассоциированные с удаляемым виджетом.
         for (int widgetId : appWidgetIds) {
-            DbProvider.modelDao().deleteAllByWidgetId(widgetId);
+//            DbProvider.modelDao().deleteAllByWidgetId(widgetId);
             SharedPreferencesUtils.LastUpdateTime.delete(context, widgetId);
             SharedPreferencesUtils.WidgetLayout.delete(context, widgetId);
             SharedPreferencesUtils.WidgetLayoutGridItem.delete(context, widgetId);
@@ -153,6 +158,8 @@ public class EconomicWidget extends AppWidgetProvider {
     }
 
     public static void setAlarm(Context context) {
+        FirebaseMessaging.getInstance().subscribeToTopic(FIREBASE_TOPIC);
+        AlfaFirebaseMessagingService.IS_SUBSCRIBED = true;
 
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(context);
@@ -252,6 +259,9 @@ public class EconomicWidget extends AppWidgetProvider {
                 PackageManager.DONT_KILL_APP);
 
         cancelAlarm(context);
+
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(FIREBASE_TOPIC);
+        AlfaFirebaseMessagingService.IS_SUBSCRIBED = false;
 
         LOGD(TAG, "onDisabled");
 
@@ -531,7 +541,42 @@ public class EconomicWidget extends AppWidgetProvider {
                 rv.setViewPadding(R.id.gridView2, dip(10, context), 0, dip(10, context), dip(6, context));
                 break;
         }
+    }
 
+    private static MediaPlayer mMediaPlayer = null;
+    private static TextToSpeech textToSpeech = null;
+
+    public static void startMusic(Context context, String msg) {
+        if (msg != null) {
+            if (textToSpeech == null) {
+                textToSpeech = new TextToSpeech(context, status -> {
+                    if (status != TextToSpeech.ERROR) {
+                        textToSpeech.setLanguage(context.getResources().getConfiguration().locale);
+                        textToSpeech.speak(msg, TextToSpeech.QUEUE_FLUSH, null);
+                    }
+                });
+            } else {
+                textToSpeech.speak(msg, TextToSpeech.QUEUE_FLUSH, null);
+            }
+        } else {
+            if (mMediaPlayer == null) {
+                mMediaPlayer = MediaPlayer.create(context, R.raw.bensound_anewbeginning);
+                mMediaPlayer.start();
+            }
+        }
+    }
+
+    public static void stopMusic(Context context) {
+        if (mMediaPlayer != null) {
+            mMediaPlayer.stop();
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+        }
+        if (textToSpeech != null) {
+            textToSpeech.stop();
+            textToSpeech.shutdown();
+            textToSpeech = null;
+        }
     }
 
 }

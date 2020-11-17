@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "457272517858",
+    "firebase_url": "https://alfastock-ef9d8.firebaseio.com",
+    "project_id": "alfastock-ef9d8",
+    "storage_bucket": "alfastock-ef9d8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:457272517858:android:c9ad57428d21dfb0f2eabb",
+        "android_client_info": {
+          "package_name": "ru.besttuts.stockwidget"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "457272517858-t1rav42atrilkcir5v2ri5at6g0psvhc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZ77K3vnTOr-tEU1C97vnD_NLLY2EehoY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "457272517858-t1rav42atrilkcir5v2ri5at6g0psvhc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:457272517858:android:06dac957c2ff27a2",
+        "android_client_info": {
+          "package_name": "ru.sparklab.finance.alfastock"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "457272517858-t1rav42atrilkcir5v2ri5at6g0psvhc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZ77K3vnTOr-tEU1C97vnD_NLLY2EehoY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "457272517858-t1rav42atrilkcir5v2ri5at6g0psvhc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
