@@ -13,6 +13,11 @@ import ru.besttuts.stockwidget.ui.fragments.ConfigPreferenceFragment;
  */
 public class SharedPreferencesHelper {
     public static final String PREFS_NAME = "ru.besttuts.stockwidget.ui.EconomicWidget";
+    private static Context appContext;
+
+    public static void init(Context context) {
+        appContext = context;
+    }
 
     public static SharedPreferences.Editor getWriter(Context context) {
         return context.getSharedPreferences(PREFS_NAME, 0).edit();
@@ -22,13 +27,13 @@ public class SharedPreferencesHelper {
         return context.getSharedPreferences(PREFS_NAME, 0);
     }
 
-    public static void delete(String preferenceKey, Object value, Context context) {
-        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
+    public static void delete(String preferenceKey) {
+        SharedPreferences.Editor prefs = appContext.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.remove(preferenceKey).apply();
     }
 
-    public static void update(String preferenceKey, Object value, Context context) {
-        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
+    public static void update(String preferenceKey, Object value) {
+        SharedPreferences.Editor prefs = appContext.getSharedPreferences(PREFS_NAME, 0).edit();
         if (value instanceof String) {
             prefs.putString(preferenceKey, (String) value);
         } else if (value instanceof Integer) {
@@ -39,9 +44,9 @@ public class SharedPreferencesHelper {
         prefs.apply();
     }
 
-    public static Object get(String preferenceKey, Object defaultValue, Context context) {
+    public static Object get(String preferenceKey, Object defaultValue) {
         if (defaultValue == null) return null;
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences prefs = appContext.getSharedPreferences(PREFS_NAME, 0);
         if (defaultValue instanceof String) {
             return prefs.getString(preferenceKey, (String) defaultValue);
         } else if (defaultValue instanceof Integer) {

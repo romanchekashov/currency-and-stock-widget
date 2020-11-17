@@ -32,7 +32,6 @@ import ru.besttuts.stockwidget.BuildConfig;
 import ru.besttuts.stockwidget.Config;
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.provider.model.Model;
-import ru.besttuts.stockwidget.service.AlfaFirebaseMessagingService;
 import ru.besttuts.stockwidget.service.QuoteWidgetService;
 import ru.besttuts.stockwidget.service.UpdateService;
 import ru.besttuts.stockwidget.ui.activities.DynamicWebViewActivity;
@@ -53,6 +52,7 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 public class EconomicWidget extends AppWidgetProvider {
     private static final String TAG = makeLogTag(EconomicWidget.class);
 
+    public static final String FIRST_WIDGET_ID_KEY = "widgetId";
     public static final String ARG_HAS_INTERNET = "hasInternet";
     public static final String UPDATE_ALL_WIDGETS = "update_all_widgets";
     public final static String BROADCAST_ACTION = "ru.besttuts.stockwidget";
@@ -61,13 +61,11 @@ public class EconomicWidget extends AppWidgetProvider {
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 
         LOGD(TAG, "[onUpdate]: appWidgetIds = " + appWidgetIds.toString());
+        if (appWidgetIds.length > 0) {
+            SharedPreferencesHelper.update(FIRST_WIDGET_ID_KEY, appWidgetIds[appWidgetIds.length - 1]);
+        }
 
         onUpdate(context, appWidgetManager, appWidgetIds, isSyncAllowed(context, false));
-
-        if (!AlfaFirebaseMessagingService.IS_SUBSCRIBED) {
-            FirebaseMessaging.getInstance().subscribeToTopic(FIREBASE_TOPIC);
-            AlfaFirebaseMessagingService.IS_SUBSCRIBED = true;
-        }
     }
 
     private void onUpdate(Context context, AppWidgetManager appWidgetManager,
@@ -159,7 +157,6 @@ public class EconomicWidget extends AppWidgetProvider {
 
     public static void setAlarm(Context context) {
         FirebaseMessaging.getInstance().subscribeToTopic(FIREBASE_TOPIC);
-        AlfaFirebaseMessagingService.IS_SUBSCRIBED = true;
 
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(context);
@@ -261,8 +258,8 @@ public class EconomicWidget extends AppWidgetProvider {
         cancelAlarm(context);
 
         FirebaseMessaging.getInstance().unsubscribeFromTopic(FIREBASE_TOPIC);
-        AlfaFirebaseMessagingService.IS_SUBSCRIBED = false;
 
+        SharedPreferencesHelper.delete(FIRST_WIDGET_ID_KEY);
         LOGD(TAG, "onDisabled");
 
     }
@@ -316,6 +313,7 @@ public class EconomicWidget extends AppWidgetProvider {
         // для 11-ой и поздней версии оповещаем менеджер виджетов о изменении данных для GridView
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.gridView2);
 
+        FirebaseMessaging.getInstance().subscribeToTopic(FIREBASE_TOPIC);
 //        LOGD(TAG, "updateAppWidget: minHeight = " + appWidgetManager.getAppWidgetInfo(appWidgetId).minHeight);
         LOGD(TAG, String.format("updateAppWidget: appWidgetId = %d, models.size = %d", appWidgetId, models.size()));
     }

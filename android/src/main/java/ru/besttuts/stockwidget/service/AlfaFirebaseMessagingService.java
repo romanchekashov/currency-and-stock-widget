@@ -28,7 +28,6 @@ public class AlfaFirebaseMessagingService extends FirebaseMessagingService {
 
     //    public static final String FIREBASE_TOPIC = "alfa";
     public static final String FIREBASE_TOPIC = "alfatest";
-    public static volatile boolean IS_SUBSCRIBED = false;
 
     @Override
     public void onNewToken(String token) {
@@ -212,14 +211,14 @@ public class AlfaFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void saveFcmTokenPref(String token) {
-        SharedPreferencesHelper.update(PREF_PREFIX_KEY + "_fcmToken", token, getApplicationContext());
+        SharedPreferencesHelper.update(PREF_PREFIX_KEY + "_fcmToken", token);
     }
 
     private String getUsernamePref() {
-        return (String) SharedPreferencesHelper.get(PREF_PREFIX_KEY + "_username", null, getApplicationContext());
+        return (String) SharedPreferencesHelper.get(PREF_PREFIX_KEY + "_username", null);
     }
 
     private void saveUsernamePref(String username) {
-        SharedPreferencesHelper.update(PREF_PREFIX_KEY + "_username", username, getApplicationContext());
+        SharedPreferencesHelper.update(PREF_PREFIX_KEY + "_username", username);
     }
 }

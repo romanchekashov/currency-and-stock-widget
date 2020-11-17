@@ -30,6 +30,7 @@ import java.util.HashMap;
 import ru.besttuts.stockwidget.Config;
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.provider.db.DbProvider;
+import ru.besttuts.stockwidget.util.SharedPreferencesHelper;
 
 public class App extends Application {
 
@@ -65,6 +66,7 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        SharedPreferencesHelper.init(getApplicationContext());
         JodaTimeAndroid.init(getApplicationContext());
         Config.init(getApplicationContext());
         DbProvider.init(getApplicationContext());

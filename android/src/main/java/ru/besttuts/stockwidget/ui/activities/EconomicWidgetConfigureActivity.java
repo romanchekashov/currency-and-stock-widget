@@ -33,7 +33,6 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import ru.besttuts.stockwidget.Config;
 import ru.besttuts.stockwidget.PrivateConstants;
 import ru.besttuts.stockwidget.R;
-import ru.besttuts.stockwidget.service.AlfaFirebaseMessagingService;
 import ru.besttuts.stockwidget.service.UpdateService;
 import ru.besttuts.stockwidget.ui.App;
 import ru.besttuts.stockwidget.ui.EconomicWidget;
@@ -42,6 +41,7 @@ import ru.besttuts.stockwidget.ui.fragments.SlidingTabsFragment;
 import ru.besttuts.stockwidget.ui.fragments.tracking.TrackingQuotesFragment;
 import ru.besttuts.stockwidget.util.AppRater;
 import ru.besttuts.stockwidget.util.NotificationManager;
+import ru.besttuts.stockwidget.util.SharedPreferencesHelper;
 import ru.besttuts.stockwidget.util.SharedPreferencesUtils;
 
 import static ru.besttuts.stockwidget.service.AlfaFirebaseMessagingService.FIREBASE_TOPIC;
@@ -204,8 +204,13 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
 
         // If this activity was started with an intent without an app widget ID, finish with an error.
         if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
-            finish();
-            return;
+            Object widgetIdVal = SharedPreferencesHelper.get(EconomicWidget.FIRST_WIDGET_ID_KEY, AppWidgetManager.INVALID_APPWIDGET_ID);
+            LOGD(TAG, "[onCreate]: widgetIdVal = " + widgetIdVal);
+            if (widgetIdVal == null || AppWidgetManager.INVALID_APPWIDGET_ID == (int) widgetIdVal) {
+                finish();
+                return;
+            }
+            mAppWidgetId = (int) widgetIdVal;
         }
 
         if (savedInstanceState == null) {
@@ -373,7 +378,6 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
     protected void onStart() {
         super.onStart();
         FirebaseMessaging.getInstance().subscribeToTopic(FIREBASE_TOPIC);
-        AlfaFirebaseMessagingService.IS_SUBSCRIBED = true;
         if (Config.IS_DEV_MODE) {
             //Get an Analytics tracker to report app starts & uncaught exceptions etc.
             GoogleAnalytics.getInstance(this).reportActivityStart(this);
