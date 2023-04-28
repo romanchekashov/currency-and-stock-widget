@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ru.besttuts.stockwidget"
     android:installLocation="internalOnly" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
     <application
         android:name=".ui.App"
@@ -33,14 +33,16 @@
         -->
         <receiver
             android:name=".ui.BootReceiver"
-            android:enabled="false" >
+            android:enabled="false"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
         <!-- Broadcast Receiver that will process AppWidget updates -->
-        <receiver android:name=".ui.EconomicWidget" >
+        <receiver android:name=".ui.EconomicWidget"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -54,7 +56,8 @@
         <activity
             android:screenOrientation="portrait"
             android:name=".ui.activities.EconomicWidgetConfigureActivity"
-            android:theme="@style/AppTheme.Light" >
+            android:theme="@style/AppTheme.Light"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
@@ -78,7 +81,8 @@
             android:name=".ui.activities.SearchableQuoteActivity"
             android:launchMode="singleInstance"
             android:parentActivityName=".ui.activities.QuotePickerActivity"
-            android:theme="@style/AppTheme.Light" >
+            android:theme="@style/AppTheme.Light"
+            android:exported="true">
 
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
@@ -94,7 +98,7 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
-        !-- Points to searchable activity so the whole app can invoke search. -->
+        <!-- Points to searchable activity so the whole app can invoke search. -->
         <meta-data
             android:name="android.app.default_searchable"
             android:value=".ui.QuotePickerActivity" />

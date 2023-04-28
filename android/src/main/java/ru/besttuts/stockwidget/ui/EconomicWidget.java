@@ -1,5 +1,7 @@
 package ru.besttuts.stockwidget.ui;
 
+import static android.app.PendingIntent.FLAG_IMMUTABLE;
+
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -84,10 +86,10 @@ public class EconomicWidget extends AppWidgetProvider {
 //            return;
 //        }
 
-        if(BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             StringBuilder widgetIdStrBuilder = new StringBuilder();
-            for (int i: allWidgetIds) {
-                widgetIdStrBuilder.append(i+",");
+            for (int i : allWidgetIds) {
+                widgetIdStrBuilder.append(i + ",");
             }
             LOGD(TAG, String.format("onUpdate: context(%s), appWidgetManager(%s), allWidgetIds(%s), hasInternet(%s)",
                     context, appWidgetManager, widgetIdStrBuilder.toString(), hasInternet));
@@ -99,7 +101,7 @@ public class EconomicWidget extends AppWidgetProvider {
     private void update(Context context, AppWidgetManager appWidgetManager,
                         int[] appWidgetIds, boolean hasInternet) {
 
-        for (int widgetId: appWidgetIds) {
+        for (int widgetId : appWidgetIds) {
             RemoteViews views = new RemoteViews(context.getPackageName(),
                     getWidgetLayoutId(context, widgetId));
             views.setViewVisibility(R.id.ibRefresh, View.GONE);
@@ -121,7 +123,11 @@ public class EconomicWidget extends AppWidgetProvider {
         intent.putExtra(ARG_HAS_INTERNET, hasInternet);
 
         // Обновляем виджеты через сервис
-        context.startService(intent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(intent);
+        } else {
+            context.startService(intent);
+        }
 
 
         // Возможно активны несколько виджетов, поэтому обновляем их все
@@ -138,17 +144,17 @@ public class EconomicWidget extends AppWidgetProvider {
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
         // Удаляем все данные ассоциированные с удаляемым виджетом.
-        for (int widgetId: appWidgetIds) {
+        for (int widgetId : appWidgetIds) {
             DbProvider.getInstance().deleteSettingsByWidgetId(widgetId);
             EconomicWidgetConfigureActivity.deleteLastUpdateTimePref(context, widgetId);
             EconomicWidgetConfigureActivity.deleteWidgetLayoutPref(context, widgetId);
             EconomicWidgetConfigureActivity.deleteWidgetLayoutGridItemPref(context, widgetId);
         }
 
-        if(BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             StringBuilder widgetIdStrBuilder = new StringBuilder();
-            for (int i: appWidgetIds) {
-                widgetIdStrBuilder.append(i+",");
+            for (int i : appWidgetIds) {
+                widgetIdStrBuilder.append(i + ",");
             }
             LOGD(TAG, "[onDeleted]: appWidgetIds: " + widgetIdStrBuilder.toString());
         }
@@ -170,7 +176,7 @@ public class EconomicWidget extends AppWidgetProvider {
         // Enter relevant functionality for when the first widget is created
         Intent intent = new Intent(context, EconomicWidget.class);
         intent.setAction(UPDATE_ALL_WIDGETS);
-        PendingIntent pIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+        PendingIntent pIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_MUTABLE);
         AlarmManager alarmManager = (AlarmManager) context
                 .getSystemService(Context.ALARM_SERVICE);
 
@@ -186,11 +192,11 @@ public class EconomicWidget extends AppWidgetProvider {
 
         Intent intent = new Intent(context, EconomicWidget.class);
         intent.setAction(UPDATE_ALL_WIDGETS);
-        PendingIntent pIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+        PendingIntent pIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_MUTABLE);
         AlarmManager alarmManager = (AlarmManager) context
                 .getSystemService(Context.ALARM_SERVICE);
 
-        if (alarmManager!= null) {
+        if (alarmManager != null) {
             alarmManager.cancel(pIntent);
         }
 
@@ -199,6 +205,7 @@ public class EconomicWidget extends AppWidgetProvider {
 
     /**
      * Вызывается при создании первого экземпляра виджета.
+     *
      * @param context
      */
     @Override
@@ -239,6 +246,7 @@ public class EconomicWidget extends AppWidgetProvider {
 
     /**
      * Вызывается при удалении последнего экземпляра виджета.
+     *
      * @param context
      */
     @Override
@@ -259,10 +267,11 @@ public class EconomicWidget extends AppWidgetProvider {
 
     /**
      * Обновляем отображение и данные виджета
+     *
      * @param context
      * @param appWidgetManager
-     * @param appWidgetId идентификатор виджета
-     * @param models новые данные
+     * @param appWidgetId      идентификатор виджета
+     * @param models           новые данные
      * @param hasInternet
      */
     public static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
@@ -289,7 +298,7 @@ public class EconomicWidget extends AppWidgetProvider {
             views.setTextViewText(R.id.tvSyncTime, time);
             views.setTextColor(R.id.tvSyncTime, Color.WHITE);
             EconomicWidgetConfigureActivity.saveLastUpdateTimePref(context, appWidgetId, time);
-        } else if(null != connectionStatus) {
+        } else if (null != connectionStatus) {
             String time = EconomicWidgetConfigureActivity.loadLastUpdateTimePref(context, appWidgetId);
             views.setTextViewText(R.id.tvSyncTime, time + " - " + connectionStatus);
             int color = context.getResources().getColor(R.color.arrow_red);
@@ -323,8 +332,8 @@ public class EconomicWidget extends AppWidgetProvider {
         Intent updateIntent = new Intent(context, EconomicWidget.class);
         updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
         updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,
-                new int[] { appWidgetId });
-        PendingIntent pIntent = PendingIntent.getBroadcast(context, appWidgetId, updateIntent, 0);
+                new int[]{appWidgetId});
+        PendingIntent pIntent = PendingIntent.getBroadcast(context, appWidgetId, updateIntent, PendingIntent.FLAG_MUTABLE);
         views.setOnClickPendingIntent(R.id.ibRefresh, pIntent);
     }
 
@@ -334,7 +343,7 @@ public class EconomicWidget extends AppWidgetProvider {
         configIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_CONFIGURE);
         configIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         PendingIntent pIntent = PendingIntent.getActivity(context, appWidgetId,
-                configIntent, 0);
+                configIntent, PendingIntent.FLAG_MUTABLE);
         views.setOnClickPendingIntent(R.id.ibSettings, pIntent);
     }
 
@@ -342,7 +351,7 @@ public class EconomicWidget extends AppWidgetProvider {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         String sVisibility = sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_VISIBILITY,
                 ConfigPreferenceFragment.KEY_PREF_BG_VISIBILITY_DEFAULT_VALUE);
-        if (2 != sVisibility.length()){
+        if (2 != sVisibility.length()) {
             sVisibility = "0" + sVisibility;
         }
         String bgColor = "#" + sVisibility + sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_COLOR,
@@ -360,14 +369,14 @@ public class EconomicWidget extends AppWidgetProvider {
         adapter.setData(data);
 
         int currentapiVersion = android.os.Build.VERSION.SDK_INT;
-        if (currentapiVersion >= Build.VERSION_CODES.ICE_CREAM_SANDWICH){
+        if (currentapiVersion >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             rv.setRemoteAdapter(R.id.gridView2, adapter);
         } else if (currentapiVersion >= Build.VERSION_CODES.HONEYCOMB) {
             rv.setRemoteAdapter(appWidgetId, R.id.gridView2, adapter);
         }
 
         Intent intent = new Intent(context, DynamicWebViewActivity.class);
-        PendingIntent viewPendingIntent = PendingIntent.getActivity(context, appWidgetId, intent, 0);
+        PendingIntent viewPendingIntent = PendingIntent.getActivity(context, appWidgetId, intent, PendingIntent.FLAG_MUTABLE);
         rv.setPendingIntentTemplate(R.id.gridView2, viewPendingIntent);
 
     }
@@ -376,7 +385,7 @@ public class EconomicWidget extends AppWidgetProvider {
         int i = 0;
         int viewId = R.id.firstLinearLayout;
         views.removeAllViews(viewId);
-        for (Model model: models) {
+        for (Model model : models) {
             if (null == model) continue;
 
             RemoteViews viewItem = new RemoteViews(context.getPackageName(), R.layout.economic_widget_item);
@@ -449,7 +458,7 @@ public class EconomicWidget extends AppWidgetProvider {
         int widgetSpanX = intent.getIntExtra("widgetspanx", 0);
         int widgetSpanY = intent.getIntExtra("widgetspany", 0);
 
-        if(appWidgetId > 0 && widgetSpanX > 0 && widgetSpanY > 0) {
+        if (appWidgetId > 0 && widgetSpanX > 0 && widgetSpanY > 0) {
             newOptions.putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, widgetSpanY * 74);
             newOptions.putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, widgetSpanX * 74);
         }

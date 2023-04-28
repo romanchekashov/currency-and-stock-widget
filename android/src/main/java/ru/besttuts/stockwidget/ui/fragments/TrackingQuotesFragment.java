@@ -252,13 +252,9 @@ public class TrackingQuotesFragment extends Fragment
     @Override
     public void onOptionsItemSelectedInActivity(MenuItem item) {
         // Обработка нажатий на элемент ActionBar
-        switch (item.getItemId()) {
-            case R.id.action_add_quote:
-                LOGD(TAG, "onOptionsItemSelectedInActivity: " + item);
-                showQuoteTypeDialog();
-                break;
-            default:
-                break;
+        if (item.getItemId() == R.id.action_add_quote) {
+            LOGD(TAG, "onOptionsItemSelectedInActivity: " + item);
+            showQuoteTypeDialog();
         }
     }
 

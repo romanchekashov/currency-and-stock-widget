@@ -171,42 +171,41 @@ public class QuotePickerActivity extends ActionBarActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Обработка нажатий на элемент ActionBar
-        switch (item.getItemId()) {
-            case R.id.action_show_search:
-                Intent intent = new Intent(this, SearchableQuoteActivity.class);
-                Bundle b = new Bundle();
-                b.putInt(EconomicWidgetConfigureActivity.ARG_WIDGET_ID, mAppWidgetId);
-                b.putInt(EconomicWidgetConfigureActivity.ARG_QUOTE_TYPE_VALUE, mQuoteTypeValue);
-                intent.putExtras(b);
-                startActivity(intent);
-                return true;
-            case R.id.action_accept:
-                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.second_cont);
-                LOGD(TAG, "onOptionsItemSelected: fragment: " + fragment.getClass().getName());
-                if (fragment instanceof IQuoteTypeFragment) {
-                    IQuoteTypeFragment quoteTypeFragment = (IQuoteTypeFragment) fragment;
-                    mDbProvider.addSettingsRec(mAppWidgetId, mWidgetItemPosition,
-                            quoteTypeFragment.getQuoteType(), quoteTypeFragment.getSelectedSymbols());
-                }
-                finish();
-                return true;
-            case R.id.action_delete:
-                Fragment fragment1 = getSupportFragmentManager().findFragmentById(R.id.second_cont);
+        int itemId = item.getItemId();
+        if (itemId == R.id.action_show_search) {
+            Intent intent = new Intent(this, SearchableQuoteActivity.class);
+            Bundle b = new Bundle();
+            b.putInt(EconomicWidgetConfigureActivity.ARG_WIDGET_ID, mAppWidgetId);
+            b.putInt(EconomicWidgetConfigureActivity.ARG_QUOTE_TYPE_VALUE, mQuoteTypeValue);
+            intent.putExtras(b);
+            startActivity(intent);
+            return true;
+        } else if (itemId == R.id.action_accept) {
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.second_cont);
+            LOGD(TAG, "onOptionsItemSelected: fragment: " + fragment.getClass().getName());
+            if (fragment instanceof IQuoteTypeFragment) {
+                IQuoteTypeFragment quoteTypeFragment = (IQuoteTypeFragment) fragment;
+                mDbProvider.addSettingsRec(mAppWidgetId, mWidgetItemPosition,
+                        quoteTypeFragment.getQuoteType(), quoteTypeFragment.getSelectedSymbols());
+            }
+            finish();
+            return true;
+        } else if (itemId == R.id.action_delete) {
+            Fragment fragment1 = getSupportFragmentManager().findFragmentById(R.id.second_cont);
 
-                if (fragment1 instanceof MyQuotesFragment) {
-                    ((MyQuotesFragment) fragment1).deleteSelectedSymbols();
-                }
-                return true;
-            case android.R.id.home: // Respond to the action bar's Up/Home button
+            if (fragment1 instanceof MyQuotesFragment) {
+                ((MyQuotesFragment) fragment1).deleteSelectedSymbols();
+            }
+            return true;
+        } else if (itemId == android.R.id.home) { // Respond to the action bar's Up/Home button
 //                Intent upIntent = new Intent(this, EconomicWidgetConfigureActivity.class);
 //                upIntent.setAction("android.appwidget.action.APPWIDGET_CONFIGURE");
 //                upIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
 //                NavUtils.navigateUpTo(this, upIntent);
-                finish();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+            finish();
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

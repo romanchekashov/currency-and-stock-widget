@@ -125,21 +125,20 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Обработка нажатий на элемент ActionBar
-        switch (item.getItemId()) {
-            case R.id.action_accept:
-                acceptBtnPressed();
-                return true;
-            case R.id.action_add_quote:
-                NotificationManager.notifyOptionsItemSelected(item);
-                return true;
+        int itemId = item.getItemId();
+        if (itemId == R.id.action_accept) {
+            acceptBtnPressed();
+            return true;
+        } else if (itemId == R.id.action_add_quote) {
+            NotificationManager.notifyOptionsItemSelected(item);
+            return true;
 //            case R.id.action_github:
 //                Intent browserIntent = new Intent(Intent.ACTION_VIEW,
 //                        Uri.parse("https://github.com/romanchekashov/currency-and-stock-widget"));
 //                startActivity(browserIntent);
 //                return true;
-            default:
-                return super.onOptionsItemSelected(item);
         }
+        return super.onOptionsItemSelected(item);
     }
 
     private void acceptBtnPressed() {

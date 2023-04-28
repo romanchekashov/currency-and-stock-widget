@@ -235,32 +235,31 @@ public class SearchableQuoteActivity extends ActionBarActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_search:
-                onSearchRequested();
-                return true;
-            case android.R.id.home: // Respond to the action bar's Up/Home button
-                Intent upIntent = NavUtils.getParentActivityIntent(this);
-                upIntent.putExtra(EconomicWidgetConfigureActivity.ARG_WIDGET_ID, mAppWidgetId);
-                upIntent.putExtra(EconomicWidgetConfigureActivity.ARG_QUOTE_TYPE_VALUE, mQuoteTypeValue);
+        int itemId = item.getItemId();
+        if (itemId == R.id.action_search) {
+            onSearchRequested();
+            return true;
+        } else if (itemId == android.R.id.home) { // Respond to the action bar's Up/Home button
+            Intent upIntent = NavUtils.getParentActivityIntent(this);
+            upIntent.putExtra(EconomicWidgetConfigureActivity.ARG_WIDGET_ID, mAppWidgetId);
+            upIntent.putExtra(EconomicWidgetConfigureActivity.ARG_QUOTE_TYPE_VALUE, mQuoteTypeValue);
 
-                if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
-                    // This activity is NOT part of this app's task, so create a new task
-                    // when navigating up, with a synthesized back stack.
-                    TaskStackBuilder.create(this)
-                            // Add all of this activity's parents to the back stack
-                            .addNextIntentWithParentStack(upIntent)
-                                    // Navigate up to the closest parent
-                            .startActivities();
-                } else {
-                    // This activity is part of this app's task, so simply
-                    // navigate up to the logical parent activity.
-                    NavUtils.navigateUpTo(this, upIntent);
-                }
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+            if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+                // This activity is NOT part of this app's task, so create a new task
+                // when navigating up, with a synthesized back stack.
+                TaskStackBuilder.create(this)
+                        // Add all of this activity's parents to the back stack
+                        .addNextIntentWithParentStack(upIntent)
+                        // Navigate up to the closest parent
+                        .startActivities();
+            } else {
+                // This activity is part of this app's task, so simply
+                // navigate up to the logical parent activity.
+                NavUtils.navigateUpTo(this, upIntent);
+            }
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
