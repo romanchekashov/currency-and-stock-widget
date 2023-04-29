@@ -170,7 +170,7 @@ public class EconomicWidget extends AppWidgetProvider {
         // Enter relevant functionality for when the first widget is created
         Intent intent = new Intent(context, EconomicWidget.class);
         intent.setAction(UPDATE_ALL_WIDGETS);
-        PendingIntent pIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+        PendingIntent pIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_MUTABLE);
         AlarmManager alarmManager = (AlarmManager) context
                 .getSystemService(Context.ALARM_SERVICE);
 
@@ -186,7 +186,7 @@ public class EconomicWidget extends AppWidgetProvider {
 
         Intent intent = new Intent(context, EconomicWidget.class);
         intent.setAction(UPDATE_ALL_WIDGETS);
-        PendingIntent pIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+        PendingIntent pIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_MUTABLE);
         AlarmManager alarmManager = (AlarmManager) context
                 .getSystemService(Context.ALARM_SERVICE);
 
@@ -321,7 +321,7 @@ public class EconomicWidget extends AppWidgetProvider {
         updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
         updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,
                 new int[]{appWidgetId});
-        PendingIntent pIntent = PendingIntent.getBroadcast(context, appWidgetId, updateIntent, 0);
+        PendingIntent pIntent = PendingIntent.getBroadcast(context, appWidgetId, updateIntent, PendingIntent.FLAG_MUTABLE);
         views.setOnClickPendingIntent(R.id.ibRefresh, pIntent);
     }
 
@@ -331,7 +331,7 @@ public class EconomicWidget extends AppWidgetProvider {
         configIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_CONFIGURE);
         configIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         PendingIntent pIntent = PendingIntent.getActivity(context, appWidgetId,
-                configIntent, 0);
+                configIntent, PendingIntent.FLAG_MUTABLE);
         views.setOnClickPendingIntent(R.id.ibSettings, pIntent);
     }
 
@@ -352,7 +352,7 @@ public class EconomicWidget extends AppWidgetProvider {
         calcPaddingsGridView(rv, context);
 
         Intent intent = new Intent(context, DynamicWebViewActivity.class);
-        PendingIntent viewPendingIntent = PendingIntent.getActivity(context, appWidgetId, intent, 0);
+        PendingIntent viewPendingIntent = PendingIntent.getActivity(context, appWidgetId, intent, PendingIntent.FLAG_MUTABLE);
         rv.setPendingIntentTemplate(R.id.gridView2, viewPendingIntent);
 
     }

@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -25,8 +26,10 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.firebase.messaging.FirebaseMessaging;
 
@@ -74,7 +77,7 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
     /**
      * The interstitial ad.
      */
-    private InterstitialAd interstitialAd;
+    private InterstitialAd mInterstitialAd;
 
     public static final String ARG_WIDGET_ID = "widgetId";
     public static final String ARG_QUOTE_TYPE_VALUE = "quoteTypeValue";
@@ -130,21 +133,20 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Обработка нажатий на элемент ActionBar
-        switch (item.getItemId()) {
-            case R.id.action_accept:
-                acceptBtnPressed();
-                return true;
-            case R.id.action_add_quote:
-                NotificationManager.notifyOptionsItemSelected(item);
-                return true;
+        int itemId = item.getItemId();
+        if (itemId == R.id.action_accept) {
+            acceptBtnPressed();
+            return true;
+        } else if (itemId == R.id.action_add_quote) {
+            NotificationManager.notifyOptionsItemSelected(item);
+            return true;
 //            case R.id.action_github:
 //                Intent browserIntent = new Intent(Intent.ACTION_VIEW,
 //                        Uri.parse("https://github.com/romanchekashov/currency-and-stock-widget"));
 //                startActivity(browserIntent);
 //                return true;
-            default:
-                return super.onOptionsItemSelected(item);
         }
+        return super.onOptionsItemSelected(item);
     }
 
     private void acceptBtnPressed() {
@@ -171,6 +173,7 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LOGD(TAG, "onCreate");
         FirebaseMessaging.getInstance().subscribeToTopic(FIREBASE_TOPIC);
 
         // Set the result to CANCELED.  This will cause the widget host to cancel
@@ -299,31 +302,32 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
         // Загрузка adView с объявлением.
         adView.loadAd(adRequest);
 
-        // Create an ad.
-        interstitialAd = new InterstitialAd(this);
-        interstitialAd.setAdUnitId(INTERSTITIAL_AD_UNIT_ID);
-        // Set the AdListener.
-        interstitialAd.setAdListener(new AdListener() {
-            @Override
-            public void onAdLoaded() {
-                LOGD(TAG, "onAdLoaded");
-            }
+        createAd();
+    }
 
-            @Override
-            public void onAdFailedToLoad(int errorCode) {
-                String message = String.format("onAdFailedToLoad (%s)", getErrorReason(errorCode));
-                LOGD(TAG, message);
-            }
-        });
-
+    private void createAd() {
         // Check the logcat output for your hashed device ID to get test ads on a physical device.
         AdRequest interstitialAdRequest = new AdRequest.Builder()
 //                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
 //                .addTestDevice(HASHED_DEVICE_ID)
                 .build();
 
-        // Load the interstitial ad.
-        interstitialAd.loadAd(interstitialAdRequest);
+        InterstitialAd.load(this, INTERSTITIAL_AD_UNIT_ID, interstitialAdRequest, new InterstitialAdLoadCallback() {
+            @Override
+            public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                super.onAdFailedToLoad(loadAdError);
+                mInterstitialAd = null;
+//                String message = String.format("onAdFailedToLoad (%s)", getErrorReason(errorCode));
+                LOGD(TAG, String.format("onAdFailedToLoad (%s)", loadAdError));
+            }
+
+            @Override
+            public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                super.onAdLoaded(interstitialAd);
+                mInterstitialAd = interstitialAd;
+                LOGD(TAG, "onAdLoaded");
+            }
+        });
     }
 
     /**
@@ -334,12 +338,8 @@ public class EconomicWidgetConfigureActivity extends AppCompatActivity
             return;
         }
 
-        if (null == interstitialAd) {
-            LOGE(TAG, "interstitialAd = " + interstitialAd);
-            return;
-        }
-        if (interstitialAd.isLoaded()) {
-            interstitialAd.show();
+        if (mInterstitialAd != null) {
+            mInterstitialAd.show(EconomicWidgetConfigureActivity.this);
         } else {
             LOGD(TAG, "Interstitial ad was not ready to be shown.");
         }
