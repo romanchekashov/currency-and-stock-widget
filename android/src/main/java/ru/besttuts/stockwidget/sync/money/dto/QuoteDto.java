@@ -66,4 +66,17 @@ public class QuoteDto {
     public void setType(SecurityType type) {
         this.type = type;
     }
+
+    @Override
+    public String toString() {
+        return "QuoteDto{" +
+                "symbol='" + symbol + '\'' +
+                ", name='" + name + '\'' +
+                ", lastPrice=" + lastPrice +
+                ", change=" + change +
+                ", changeInPercent='" + changeInPercent + '\'' +
+                ", currency='" + currency + '\'' +
+                ", type=" + type +
+                '}';
+    }
 }

@@ -1,25 +1,21 @@
 package ru.besttuts.stockwidget.service;
 
+import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.Setting;
 import ru.besttuts.stockwidget.model.TickerConverter;
 import ru.besttuts.stockwidget.provider.db.DbProvider;
-import ru.besttuts.stockwidget.sync.RemoteYahooFinanceDataFetcher;
-import ru.besttuts.stockwidget.sync.model.YahooMultiQueryData;
 import ru.besttuts.stockwidget.sync.money.MoneyRemoteService;
 import ru.besttuts.stockwidget.sync.money.dto.QuoteDto;
 import ru.besttuts.stockwidget.sync.money.dto.TickerFilterDto;
 import ru.besttuts.stockwidget.ui.EconomicWidget;
-import ru.besttuts.stockwidget.util.CustomConverter;
-
-import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
 /**
  * @author rchekashov

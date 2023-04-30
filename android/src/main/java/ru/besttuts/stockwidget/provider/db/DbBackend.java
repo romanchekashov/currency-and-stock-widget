@@ -1,5 +1,9 @@
 package ru.besttuts.stockwidget.provider.db;
 
+import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
+import static ru.besttuts.stockwidget.util.LogUtils.LOGE;
+import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -7,10 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 import android.support.annotation.VisibleForTesting;
 
-import java.io.IOException;
-import java.util.Calendar;
 import java.util.List;
-import java.util.TimeZone;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.io.model.Result;
@@ -18,13 +19,7 @@ import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.QuoteLastTradeDate;
 import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.model.Setting;
-import ru.besttuts.stockwidget.provider.QuoteContract.*;
 import ru.besttuts.stockwidget.provider.QuoteDatabaseHelper;
-import ru.besttuts.stockwidget.sync.MyFinanceWS;
-
-import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
-import static ru.besttuts.stockwidget.util.LogUtils.LOGE;
-import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
 /**
  * @author rchekashov
@@ -233,7 +228,7 @@ public class DbBackend implements DbContract {
         final SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
 
         if (null == model || !model.isValid()) {
-            LOGE(TAG, "Model is NULL");
+            LOGE(TAG, "Model is " + model);
             return false;
         }
 

@@ -1,6 +1,7 @@
 package ru.besttuts.stockwidget.ui;
 
-import static android.app.PendingIntent.FLAG_IMMUTABLE;
+import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
+import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
@@ -22,27 +23,24 @@ import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.RemoteViews;
 
-import ru.besttuts.stockwidget.BuildConfig;
-import ru.besttuts.stockwidget.Config;
-import ru.besttuts.stockwidget.R;
-import ru.besttuts.stockwidget.model.Model;
-import ru.besttuts.stockwidget.model.QuoteType;
-import ru.besttuts.stockwidget.provider.QuoteDataSource;
-import ru.besttuts.stockwidget.provider.db.DbProvider;
-import ru.besttuts.stockwidget.service.QuoteWidgetService;
-import ru.besttuts.stockwidget.service.UpdateService;
-import ru.besttuts.stockwidget.ui.activities.DynamicWebViewActivity;
-import ru.besttuts.stockwidget.ui.activities.EconomicWidgetConfigureActivity;
-import ru.besttuts.stockwidget.ui.fragments.ConfigPreferenceFragment;
-import ru.besttuts.stockwidget.util.Utils;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
-import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
+import ru.besttuts.stockwidget.BuildConfig;
+import ru.besttuts.stockwidget.Config;
+import ru.besttuts.stockwidget.R;
+import ru.besttuts.stockwidget.model.Model;
+import ru.besttuts.stockwidget.model.QuoteType;
+import ru.besttuts.stockwidget.provider.db.DbProvider;
+import ru.besttuts.stockwidget.service.QuoteWidgetService;
+import ru.besttuts.stockwidget.service.UpdateJobService;
+import ru.besttuts.stockwidget.service.UpdateService;
+import ru.besttuts.stockwidget.ui.activities.DynamicWebViewActivity;
+import ru.besttuts.stockwidget.ui.activities.EconomicWidgetConfigureActivity;
+import ru.besttuts.stockwidget.ui.fragments.ConfigPreferenceFragment;
+import ru.besttuts.stockwidget.util.Utils;
 
 
 /**
@@ -117,14 +115,15 @@ public class EconomicWidget extends AppWidgetProvider {
 //        }
 
         // Создаем intent для вызова сервиса
-        Intent intent = new Intent(context.getApplicationContext(),
-                UpdateService.class);
+        Intent intent = new Intent(context.getApplicationContext(), UpdateService.class);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
         intent.putExtra(ARG_HAS_INTERNET, hasInternet);
 
         // Обновляем виджеты через сервис
+
+        LOGD(TAG, "update: intent.getAction = " + intent.getAction());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.startForegroundService(intent);
+            UpdateJobService.scheduleJob(context, intent);
         } else {
             context.startService(intent);
         }

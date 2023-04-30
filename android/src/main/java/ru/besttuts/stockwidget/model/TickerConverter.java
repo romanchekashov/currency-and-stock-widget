@@ -1,5 +1,6 @@
 package ru.besttuts.stockwidget.model;
 
+import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
 import java.util.HashMap;
@@ -16,7 +17,8 @@ public class TickerConverter {
     public static synchronized Map<String, Model> convertToModelMap(List<QuoteDto> quotes){
         Map<String, Model> symbolModelMap = new HashMap<>();
 
-        for (QuoteDto quote: quotes){
+        for (QuoteDto quote: quotes) {
+            LOGD(TAG, quote.toString());
             if (SecurityType.CURRENCY.equals(quote.getType())) {
                 symbolModelMap.put(quote.getSymbol(), readCurrency(quote));
             } else {
@@ -40,11 +42,12 @@ public class TickerConverter {
 
         if(null == rate.getChange()){
             currency.setChange(0.0);
+            currency.setPercentChange("0.0%");
         } else {
             currency.setChange(rate.getChange().doubleValue());
+            currency.setPercentChange(rate.getChangeInPercent());
         }
 
-        currency.setPercentChange(rate.getChangeInPercent());
         currency.setCurrency(rate.getCurrency());
 
         return currency;
@@ -64,11 +67,12 @@ public class TickerConverter {
 
         if(null == quote.getChange()){
             good.setChange(0.0);
+            good.setPercentChange("0.0%");
         } else {
             good.setChange(quote.getChange().doubleValue());
+            good.setPercentChange(quote.getChangeInPercent());
         }
 
-        good.setPercentChange(quote.getChangeInPercent());
         good.setCurrency(quote.getCurrency());
 
         return good;

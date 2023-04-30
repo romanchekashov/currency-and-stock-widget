@@ -1,5 +1,8 @@
 package ru.besttuts.stockwidget.ui.fragments;
 
+import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
+import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -36,28 +39,25 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.QuoteType;
+import ru.besttuts.stockwidget.model.TickerConverter;
 import ru.besttuts.stockwidget.provider.QuoteContract;
 import ru.besttuts.stockwidget.provider.QuoteContract.Settings;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
 import ru.besttuts.stockwidget.provider.db.DbNotificationManager;
 import ru.besttuts.stockwidget.provider.db.DbProvider;
-import ru.besttuts.stockwidget.sync.RemoteYahooFinanceDataFetcher;
+import ru.besttuts.stockwidget.sync.money.MoneyRemoteService;
+import ru.besttuts.stockwidget.sync.money.dto.TickerFilterDto;
 import ru.besttuts.stockwidget.ui.activities.DynamicWebViewActivity;
 import ru.besttuts.stockwidget.ui.activities.EconomicWidgetConfigureActivity;
-import ru.besttuts.stockwidget.util.CustomConverter;
 import ru.besttuts.stockwidget.util.NotificationManager;
 import ru.besttuts.stockwidget.util.Utils;
-
-import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
-import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
 /**
  * Фрагмет с отслеживаемыми котировками.
@@ -555,7 +555,7 @@ public class TrackingQuotesFragment extends Fragment
 
             List<Model> models = mDbProvider.getModelsByWidgetId(widgetId);
 
-            RemoteYahooFinanceDataFetcher dataFetcher = new RemoteYahooFinanceDataFetcher();
+            MoneyRemoteService dataFetcher = new MoneyRemoteService(mContext);
 
             Cursor cursor = mDbProvider.getCursorSettingsWithoutModelByWidgetId(widgetId);
 
@@ -566,7 +566,7 @@ public class TrackingQuotesFragment extends Fragment
                 return models;
             }
 
-            Set<String> symbolSet = new HashSet<>(cursor.getCount());
+            List<String> symbols = new ArrayList<>(cursor.getCount());
 
             cursor.moveToFirst();
             do {
@@ -577,17 +577,17 @@ public class TrackingQuotesFragment extends Fragment
 
                 LOGD(TAG, String.format("FetchQuote.doInBackground: quoteType = %s, symbol = %s", quoteType, symbol));
 
-                dataFetcher.populateQuoteSet(quoteType, symbol);
+//                dataFetcher.populateQuoteSet(quoteType, symbol);
 
-                symbolSet.add(symbol);
+                symbols.add(symbol);
             } while (cursor.moveToNext());
             cursor.close();
 
             try {
-                Map<String, Model> symbolModelMap = CustomConverter.convertToModelMap(
-                        dataFetcher.getYahooMultiQueryData());
+                Map<String, Model> symbolModelMap = TickerConverter.convertToModelMap(
+                        dataFetcher.tickerTape(new TickerFilterDto().setSymbols(symbols)));
 
-                for (String symbol : symbolSet) {
+                for (String symbol: symbols) {
                     Model model = symbolModelMap.get(symbol);
                     if (model == null) {
                         model = new Model();

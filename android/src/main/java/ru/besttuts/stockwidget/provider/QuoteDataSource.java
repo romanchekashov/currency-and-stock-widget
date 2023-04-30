@@ -176,7 +176,7 @@ public class QuoteDataSource {
         final SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         if (null == model) {
-            LOGE(TAG, "Model is NULL");
+            LOGE(TAG, "Model is " + model);
             return;
         }
 

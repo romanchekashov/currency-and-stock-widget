@@ -6,17 +6,13 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 import android.content.Context;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import ru.besttuts.stockwidget.model.QuoteLastTradeDate;
-import ru.besttuts.stockwidget.sync.MyFinanceService;
 import ru.besttuts.stockwidget.sync.money.dto.QuoteDto;
 import ru.besttuts.stockwidget.sync.money.dto.TickerFilterDto;
 import ru.besttuts.stockwidget.sync.money.dto.TickerSymbolsDto;
@@ -31,7 +27,8 @@ public class MoneyRemoteService {
     private static final String TAG = makeLogTag(MoneyRemoteService.class);
 
     private static final String MY_FINANCE_BASE_URL = "http://money.look.ovh";
-    private static final String PREF_KEY_LAST_CALL_TIME = "MyFinanceWS_getQuotesWithLastTradeDate_lastCallTime";
+    private static final String PREF_KEY_LAST_CALL_TIME_TICKER_SYMBOLS = "MoneyRemoteService_tickerSymbols_lastCallTime";
+    private static final String PREF_KEY_LAST_CALL_TIME_TICKER_TAPE = "MoneyRemoteService_tickerTape_lastCallTime";
 
     private Context mContext;
 
@@ -42,12 +39,13 @@ public class MoneyRemoteService {
 
     public TickerSymbolsDto tickerSymbols() throws IOException {
         long currentTimeInMillis = Calendar.getInstance().getTimeInMillis();
-        long lastCallTime = (long) SharedPreferencesHelper.get(PREF_KEY_LAST_CALL_TIME, 0L, mContext);
+        long lastCallTime = (long) SharedPreferencesHelper.get(PREF_KEY_LAST_CALL_TIME_TICKER_SYMBOLS, 0L, mContext);
+        boolean needRefresh = currentTimeInMillis - lastCallTime > TimeUnit.MILLISECONDS.convert(5, TimeUnit.SECONDS);
 
-        LOGD(TAG, "[getQuotesWithLastTradeDate]: lastCallTime = " + lastCallTime);
+        LOGD(TAG, String.format("[tickerSymbols]: lastCallTime = %s, needRefresh = %s", lastCallTime, needRefresh));
 
-        if (currentTimeInMillis - lastCallTime > TimeUnit.MILLISECONDS.convert(5, TimeUnit.SECONDS)) {
-            SharedPreferencesHelper.update(PREF_KEY_LAST_CALL_TIME, currentTimeInMillis, mContext);
+        if (needRefresh) {
+            SharedPreferencesHelper.update(PREF_KEY_LAST_CALL_TIME_TICKER_SYMBOLS, currentTimeInMillis, mContext);
 
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(MY_FINANCE_BASE_URL)
@@ -58,7 +56,7 @@ public class MoneyRemoteService {
 
             TickerSymbolsDto symbolsDto = service.tickerSymbols().execute().body();
 
-            LOGD(TAG, "[getQuotesWithLastTradeDate]: TickerSymbolsDto fetched = " + symbolsDto);
+            LOGD(TAG, "[tickerSymbols]: TickerSymbolsDto fetched = " + symbolsDto);
 
             return symbolsDto;
         }
@@ -68,12 +66,13 @@ public class MoneyRemoteService {
 
     public List<QuoteDto> tickerTape(TickerFilterDto filter) throws IOException {
         long currentTimeInMillis = Calendar.getInstance().getTimeInMillis();
-        long lastCallTime = (long) SharedPreferencesHelper.get(PREF_KEY_LAST_CALL_TIME, 0L, mContext);
+        long lastCallTime = (long) SharedPreferencesHelper.get(PREF_KEY_LAST_CALL_TIME_TICKER_TAPE, 0L, mContext);
+        boolean needRefresh = currentTimeInMillis - lastCallTime > TimeUnit.MILLISECONDS.convert(5, TimeUnit.SECONDS);
 
-        LOGD(TAG, "[getQuotesWithLastTradeDate]: lastCallTime = " + lastCallTime);
+        LOGD(TAG, String.format("[tickerTape]: lastCallTime = %s, needRefresh = %s", lastCallTime, needRefresh));
 
-        if (currentTimeInMillis - lastCallTime > TimeUnit.MILLISECONDS.convert(5, TimeUnit.SECONDS)) {
-            SharedPreferencesHelper.update(PREF_KEY_LAST_CALL_TIME, currentTimeInMillis, mContext);
+        if (needRefresh) {
+            SharedPreferencesHelper.update(PREF_KEY_LAST_CALL_TIME_TICKER_TAPE, currentTimeInMillis, mContext);
 
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(MY_FINANCE_BASE_URL)
@@ -84,7 +83,7 @@ public class MoneyRemoteService {
 
             List<QuoteDto> quotes = service.tickerTape(filter).execute().body();
 
-            LOGD(TAG, "[getQuotesWithLastTradeDate]: quotes fetched = " + quotes);
+            LOGD(TAG, "[tickerTape]: quotes fetched = " + quotes.size());
 
             return quotes;
         }
