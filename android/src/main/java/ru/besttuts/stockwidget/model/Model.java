@@ -51,15 +51,17 @@ public class Model implements Validable {
     }
 
     public String getChangeToString() {
-        return String.valueOf((float)Math.round(change*10000)/10000);
+        return String.valueOf(change);
+//        return String.valueOf((float)Math.round(change*10000)/10000);
     }
 
     public void setChange(double change) {
-        this.change = (double)Math.round(change * 10000) / 10000;
-        if (0 != (int)(rate * 10000)) {
-            double pChange = change * 100 / rate;
-            percentChange = String.valueOf((float)Math.round(pChange * 10000) / 10000) + "%";
-        }
+        this.change = change;
+//        this.change = (double)Math.round(change * 10000) / 10000;
+//        if (0 != (int)(rate * 10000)) {
+//            double pChange = change * 100 / rate;
+//            percentChange = String.valueOf((float)Math.round(pChange * 10000) / 10000) + "%";
+//        }
     }
 
     public String getPercentChange() {

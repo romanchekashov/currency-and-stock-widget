@@ -9,9 +9,13 @@ import java.util.concurrent.TimeUnit;
 
 import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.Setting;
+import ru.besttuts.stockwidget.model.TickerConverter;
 import ru.besttuts.stockwidget.provider.db.DbProvider;
 import ru.besttuts.stockwidget.sync.RemoteYahooFinanceDataFetcher;
 import ru.besttuts.stockwidget.sync.model.YahooMultiQueryData;
+import ru.besttuts.stockwidget.sync.money.MoneyRemoteService;
+import ru.besttuts.stockwidget.sync.money.dto.QuoteDto;
+import ru.besttuts.stockwidget.sync.money.dto.TickerFilterDto;
 import ru.besttuts.stockwidget.ui.EconomicWidget;
 import ru.besttuts.stockwidget.util.CustomConverter;
 
@@ -27,10 +31,10 @@ public class FetchStockData {
 
     private int[] allWidgetIds;
     private boolean hasInternet;
-    private RemoteYahooFinanceDataFetcher dataFetcher;
+    private MoneyRemoteService dataFetcher;
     private DbProvider dbProvider;
 
-    public FetchStockData(int[] allWidgetIds, boolean hasInternet, RemoteYahooFinanceDataFetcher dataFetcher,
+    public FetchStockData(int[] allWidgetIds, boolean hasInternet, MoneyRemoteService dataFetcher,
                    DbProvider dbProvider) {
         this.allWidgetIds = allWidgetIds;
         this.hasInternet = hasInternet;
@@ -64,19 +68,7 @@ public class FetchStockData {
 
         if (0 == settings.size()) return map;
 
-        dataFetcher.populateQuoteSet(settings);
-
-        YahooMultiQueryData yahooMultiQueryData;
-        int requestNumber = 0;
-        do {
-            yahooMultiQueryData = dataFetcher.getYahooMultiQueryData();
-            try {
-                if (null == yahooMultiQueryData.created) TimeUnit.SECONDS.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        } while (requestNumber++ < 3 && null == yahooMultiQueryData.created);
-        Map<String, Model> symbolModelMap = CustomConverter.convertToModelMap(yahooMultiQueryData);
+        Map<String, Model> symbolModelMap = getSymbolModelMap(settings);
 
         for (Setting setting : settings) {
             int widgetId = setting.getWidgetId();
@@ -102,5 +94,16 @@ public class FetchStockData {
         EconomicWidget.connectionStatus = null;
 
         return map;
+    }
+
+    private Map<String, Model> getSymbolModelMap(List<Setting> settings) throws IOException {
+        List<String> symbols = new ArrayList<>();
+        for (Setting setting: settings) symbols.add(setting.getQuoteSymbol());
+
+        List<QuoteDto> quotes = dataFetcher.tickerTape(new TickerFilterDto().setSymbols(symbols));
+
+        Map<String, Model> symbolModelMap = TickerConverter.convertToModelMap(quotes);
+
+        return symbolModelMap;
     }
 }

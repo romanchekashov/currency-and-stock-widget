@@ -14,6 +14,7 @@ import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.provider.db.DbProvider;
 import ru.besttuts.stockwidget.service.FetchStockData;
 import ru.besttuts.stockwidget.sync.RemoteYahooFinanceDataFetcher;
+import ru.besttuts.stockwidget.sync.money.MoneyRemoteService;
 import ru.besttuts.stockwidget.ui.EconomicWidget;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
@@ -49,7 +50,7 @@ public class FetchStockDataAsyncTask extends AsyncTask<Void, Void, Map<Integer, 
     protected Map<Integer, List<Model>> doInBackground(Void... params) { //TODO: Написать Unit-тесты!!!
 
         FetchStockData fetchStockData = new FetchStockData(allWidgetIds, hasInternet,
-                new RemoteYahooFinanceDataFetcher(), DbProvider.getInstance());
+                new MoneyRemoteService(mContext), DbProvider.getInstance());
 
         try {
             return fetchStockData.fetch();
