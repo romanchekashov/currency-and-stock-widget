@@ -1,17 +1,20 @@
 package ru.besttuts.stockwidget.ui.fragments;
 
+import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
+import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
+
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
+import android.preference.PreferenceManager;
 
 import com.github.machinarius.preferencefragment.PreferenceFragment;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.ui.EconomicWidget;
 import ru.besttuts.stockwidget.util.NotificationManager;
-
-import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
-import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
+import ru.besttuts.stockwidget.util.SharedPreferencesHelper;
 
 /**
  * Created by roman on 22.01.2015.
@@ -24,6 +27,7 @@ public class ConfigPreferenceFragment extends PreferenceFragment
     public static final String KEY_PREF_UPDATE_VIA = "pref_listUpdateVia";
     public static final String KEY_PREF_UPDATE_VIA_DEFAULT_VALUE_WI_FI = "wi-fi";
 
+    public static final int KEY_PREF_UPDATE_INTERVAL_MIN_VALUE = 900000;
     public static final String KEY_PREF_UPDATE_INTERVAL = "pref_listUpdateInterval";
     public static final String KEY_PREF_UPDATE_INTERVAL_DEFAULT_VALUE = "1800000";
 
@@ -39,6 +43,12 @@ public class ConfigPreferenceFragment extends PreferenceFragment
         addPreferencesFromResource(R.xml.preference_config);
 
         ListPreference listPreference = (ListPreference) findPreference(KEY_PREF_UPDATE_INTERVAL);
+        if (listPreference.getEntry() == null) {
+            listPreference.setValue("" + KEY_PREF_UPDATE_INTERVAL_MIN_VALUE);
+            listPreference.setSummary(listPreference.getEntry());
+            SharedPreferencesHelper.update(KEY_PREF_UPDATE_INTERVAL, "" + KEY_PREF_UPDATE_INTERVAL_MIN_VALUE, getActivity());
+            EconomicWidget.setAlarm(getActivity());
+        }
         listPreference.setSummary(listPreference.getEntry());
 
         listPreference = (ListPreference) findPreference(KEY_PREF_BG_COLOR);
@@ -93,5 +103,19 @@ public class ConfigPreferenceFragment extends PreferenceFragment
 
             return;
         }
+    }
+
+    public static long getUpdateInterval(Context context) {
+        SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(context);
+        long interval = Integer.parseInt(sharedPreferences.getString(
+                ConfigPreferenceFragment.KEY_PREF_UPDATE_INTERVAL,
+                ConfigPreferenceFragment.KEY_PREF_UPDATE_INTERVAL_DEFAULT_VALUE));
+
+        if (interval > 0 && interval < KEY_PREF_UPDATE_INTERVAL_MIN_VALUE) {
+            interval = KEY_PREF_UPDATE_INTERVAL_MIN_VALUE;
+        }
+
+        return interval;
     }
 }

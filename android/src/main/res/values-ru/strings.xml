@@ -155,8 +155,6 @@
     <string name="no">Нет</string>
 
     <string-array name="update_interval_entries">
-        <item>1 минута</item>
-        <item>5 минут</item>
         <item>15 минут</item>
         <item>30 минут</item>
         <item>1 час</item>
@@ -169,8 +167,6 @@
         <item>Никогда</item>
     </string-array>
     <string-array name="update_interval_entry_values">
-        <item>60000</item>
-        <item>300000</item>
         <item>900000</item>
         <item>1800000</item>
         <item>3600000</item>

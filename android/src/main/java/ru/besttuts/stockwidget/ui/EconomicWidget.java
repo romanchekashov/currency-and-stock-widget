@@ -160,12 +160,7 @@ public class EconomicWidget extends AppWidgetProvider {
     }
 
     public static void setAlarm(Context context) {
-
-        SharedPreferences sharedPreferences = PreferenceManager
-                .getDefaultSharedPreferences(context);
-        long interval = Integer.parseInt(sharedPreferences.getString(
-                ConfigPreferenceFragment.KEY_PREF_UPDATE_INTERVAL,
-                ConfigPreferenceFragment.KEY_PREF_UPDATE_INTERVAL_DEFAULT_VALUE));
+        long interval = ConfigPreferenceFragment.getUpdateInterval(context);
 
         if (0 == interval) {
             cancelAlarm(context);
