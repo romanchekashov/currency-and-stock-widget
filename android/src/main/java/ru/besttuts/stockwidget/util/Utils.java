@@ -64,7 +64,11 @@ public class Utils {
             return symbol;
         }
 
-        String field = symbol.toLowerCase().substring(0, symbol.length() - 7);
+        String field = symbol.toLowerCase();
+        int endIndex = field.length() - 7;
+        if (endIndex > 0) {
+            field = field.substring(0, endIndex);
+        }
         try {
             return context.getString(R.string.class.getDeclaredField(field).getInt(null));
         } catch (IllegalAccessException e) {

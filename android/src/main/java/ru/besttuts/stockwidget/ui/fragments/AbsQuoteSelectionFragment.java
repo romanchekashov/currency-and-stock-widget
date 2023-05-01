@@ -1,5 +1,8 @@
 package ru.besttuts.stockwidget.ui.fragments;
 
+import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
+import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -7,7 +10,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +19,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import ru.besttuts.stockwidget.provider.QuoteDataSource;
 import ru.besttuts.stockwidget.util.Utils;
-
-import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
-import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
 /**
  * Created by roman on 10.02.2015.
@@ -128,30 +126,6 @@ public abstract class AbsQuoteSelectionFragment extends Fragment implements IQuo
 
             return view;
         }
-    }
-
-    protected static class MyCursorLoader extends CursorLoader {
-
-        QuoteDataSource mDataSource;
-        private int mQuoteType;
-
-        public MyCursorLoader(Context context, QuoteDataSource dataSource,
-                              int quoteType) {
-            super(context);
-            mDataSource = dataSource;
-            mQuoteType = quoteType;
-        }
-
-        @Override
-        public Cursor loadInBackground() {
-            Cursor cursor = mDataSource.getQuoteCursor(mQuoteType);
-
-            LOGD(TAG, String.format("loadInBackground: quoteType = %s, count = %d",
-                    mQuoteType, cursor.getCount()));
-
-            return cursor;
-        }
-
     }
 
 }

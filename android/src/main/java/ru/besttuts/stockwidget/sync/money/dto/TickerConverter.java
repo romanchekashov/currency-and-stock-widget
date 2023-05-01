@@ -1,4 +1,4 @@
-package ru.besttuts.stockwidget.model;
+package ru.besttuts.stockwidget.sync.money.dto;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
 import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
@@ -7,8 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ru.besttuts.stockwidget.sync.money.dto.QuoteDto;
-import ru.besttuts.stockwidget.sync.money.dto.SecurityType;
+import ru.besttuts.stockwidget.model.Currency;
+import ru.besttuts.stockwidget.model.Good;
+import ru.besttuts.stockwidget.model.Model;
 
 
 public class TickerConverter {
@@ -19,7 +20,7 @@ public class TickerConverter {
 
         for (QuoteDto quote: quotes) {
             LOGD(TAG, quote.toString());
-            if (SecurityType.CURRENCY.equals(quote.getType())) {
+            if (QuoteType.CURRENCY.equals(quote.getType())) {
                 symbolModelMap.put(quote.getSymbol(), readCurrency(quote));
             } else {
                 symbolModelMap.put(quote.getSymbol(), readGood(quote));
@@ -29,8 +30,8 @@ public class TickerConverter {
         return symbolModelMap;
     }
 
-    private static Currency readCurrency(QuoteDto rate) {
-        Currency currency = new Currency();
+    private static ru.besttuts.stockwidget.model.Currency readCurrency(QuoteDto rate) {
+        ru.besttuts.stockwidget.model.Currency currency = new Currency();
         currency.setId(rate.getSymbol());
         currency.setName(rate.getName());
 

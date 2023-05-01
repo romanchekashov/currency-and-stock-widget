@@ -6,7 +6,7 @@ import java.util.List;
 public class TickerSymbolsDto {
     private List<Currency> currenciesFrom = Collections.emptyList();
     private List<Currency> currenciesTo = Collections.emptyList();
-    private List<String> shares = Collections.emptyList();
+    private List<QuoteDto> quotes = Collections.emptyList();
 
     public List<Currency> getCurrenciesFrom() {
         return currenciesFrom;
@@ -24,11 +24,11 @@ public class TickerSymbolsDto {
         this.currenciesTo = currenciesTo;
     }
 
-    public List<String> getShares() {
-        return shares;
+    public List<QuoteDto> getQuotes() {
+        return quotes;
     }
 
-    public void setShares(List<String> shares) {
-        this.shares = shares;
+    public void setQuotes(List<QuoteDto> quotes) {
+        this.quotes = quotes;
     }
 }

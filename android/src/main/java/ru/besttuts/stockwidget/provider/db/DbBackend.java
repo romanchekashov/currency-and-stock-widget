@@ -19,6 +19,7 @@ import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.QuoteLastTradeDate;
 import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.model.Setting;
+import ru.besttuts.stockwidget.provider.QuoteContract;
 import ru.besttuts.stockwidget.provider.QuoteDatabaseHelper;
 
 /**
@@ -222,6 +223,17 @@ public class DbBackend implements DbContract {
         }
 
         return true;
+    }
+
+    void addQuote(String symbol, String name, int quoteType) {
+        final SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(QuoteContract.QuoteColumns.QUOTE_SYMBOL, symbol);
+        values.put(QuoteContract.QuoteColumns.QUOTE_NAME, name);
+        values.put(QuoteContract.QuoteColumns.QUOTE_TYPE, quoteType);
+
+        db.insertWithOnConflict(QuoteDatabaseHelper.Tables.QUOTES, null, values, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
     boolean addModelRec(Model model) {

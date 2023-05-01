@@ -10,7 +10,7 @@ import java.util.Map;
 
 import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.Setting;
-import ru.besttuts.stockwidget.model.TickerConverter;
+import ru.besttuts.stockwidget.sync.money.dto.TickerConverter;
 import ru.besttuts.stockwidget.provider.db.DbProvider;
 import ru.besttuts.stockwidget.sync.money.MoneyRemoteService;
 import ru.besttuts.stockwidget.sync.money.dto.QuoteDto;

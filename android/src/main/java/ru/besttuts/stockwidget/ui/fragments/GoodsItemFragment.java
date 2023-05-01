@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.provider.QuoteContract;
+import ru.besttuts.stockwidget.provider.loaders.MyCursorLoader;
 import ru.besttuts.stockwidget.ui.activities.QuotePickerActivity;
 
 import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
@@ -177,6 +178,7 @@ public class GoodsItemFragment extends AbsQuoteSelectionFragment implements Load
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        LOGD(TAG, "onCreateLoader: currentThread = " + Thread.currentThread());
         return new MyCursorLoader(getActivity(), QuotePickerActivity.mDataSource, mQuoteType);
     }
 

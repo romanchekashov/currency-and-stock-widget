@@ -8,5 +8,7 @@ public interface QuoteType {
     int GOODS = 1;
     int INDICES = 2;
     int STOCK = 3;
-    int QUOTES = 4;
+    int BOND = 4;
+    int CRYPTO = 5;
+    int QUOTES = 6;
 }

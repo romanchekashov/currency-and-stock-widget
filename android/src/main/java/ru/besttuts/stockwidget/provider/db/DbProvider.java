@@ -118,6 +118,10 @@ public class DbProvider {
         return mDbBackend.addModelRec(model);
     }
 
+    public void addQuote(String symbol, String name, int quoteType) {
+        mDbBackend.addQuote(symbol, name, quoteType);
+    }
+
     public Model getModelById(String modelId){
         return mDbBackendAdapter.getModelById(modelId);
     }

@@ -45,8 +45,7 @@ import java.util.Map;
 
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.model.Model;
-import ru.besttuts.stockwidget.model.QuoteType;
-import ru.besttuts.stockwidget.model.TickerConverter;
+import ru.besttuts.stockwidget.sync.money.dto.TickerConverter;
 import ru.besttuts.stockwidget.provider.QuoteContract;
 import ru.besttuts.stockwidget.provider.QuoteContract.Settings;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;

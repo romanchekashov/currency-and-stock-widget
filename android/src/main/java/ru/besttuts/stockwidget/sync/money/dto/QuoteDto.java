@@ -9,7 +9,7 @@ public class QuoteDto {
     private BigDecimal change;
     private String changeInPercent;
     private String currency;
-    private SecurityType type;
+    private QuoteType type;
 
     public String getSymbol() {
         return symbol;
@@ -59,11 +59,11 @@ public class QuoteDto {
         this.currency = currency;
     }
 
-    public SecurityType getType() {
+    public QuoteType getType() {
         return type;
     }
 
-    public void setType(SecurityType type) {
+    public void setType(QuoteType type) {
         this.type = type;
     }
 
