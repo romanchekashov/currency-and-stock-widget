@@ -14,7 +14,7 @@ I hereby state, to the best of my knowledge and belief, that I have not programm
 
 The list of permissions required by the app can be found in the `AndroidManifest.xml` file:
 
-https://github.com/romanchekashov/currency-and-stock-widget/blob/master/android/src/main/AndroidManifest.xml#L5-L9
+https://github.com/romanchekashov/currency-and-stock-widget/blob/86e1953ddc750e59a37ae51e5982749c33fb0545/android/src/main/AndroidManifest.xml#L5-L9
 
 <br/>
 
