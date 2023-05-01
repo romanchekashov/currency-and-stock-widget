@@ -39,6 +39,7 @@ public class QuoteContract {
     }
 
     public interface QuoteColumns {
+        String _ID = "_id";
         String QUOTE_SYMBOL = "quote_symbol";
         String QUOTE_NAME = "quote_name";
         String QUOTE_TYPE = "quote_type";

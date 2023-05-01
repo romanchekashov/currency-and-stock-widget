@@ -9,10 +9,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.content.CursorLoader;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import ru.besttuts.stockwidget.R;
-import ru.besttuts.stockwidget.provider.QuoteDataSource;
+import ru.besttuts.stockwidget.model.Quote;
 import ru.besttuts.stockwidget.provider.db.DbProvider;
 import ru.besttuts.stockwidget.sync.money.MoneyRemoteService;
 import ru.besttuts.stockwidget.sync.money.dto.QuoteDto;
@@ -29,26 +32,22 @@ public class MyCursorLoader extends CursorLoader {
     private static boolean isBondSaved;
     private static boolean isCryptoSaved;
 
-    QuoteDataSource mDataSource;
     private int mQuoteType;
 
     private Context mContext;
 
-    public MyCursorLoader(Context context, QuoteDataSource dataSource,
-                          int quoteType) {
+    public MyCursorLoader(Context context, int quoteType) {
         super(context);
         mContext = context;
-        mDataSource = dataSource;
         mQuoteType = quoteType;
     }
 
     @Override
     public Cursor loadInBackground() {
-
         checkToFetchQuotes();
         checkQuotesToSave(mQuoteType);
 
-        Cursor cursor = mDataSource.getQuoteCursor(mQuoteType);
+        Cursor cursor = DbProvider.getInstance().db().getQuoteCursor(mQuoteType);
 
         LOGD(TAG, String.format("loadInBackground: quoteType = %s, count = %d",
                 mQuoteType, cursor.getCount()));
@@ -75,34 +74,60 @@ public class MyCursorLoader extends CursorLoader {
     private void checkQuotesToSave(int quoteType) {
 
         if (quoteType == QuoteType.COMMODITY.getNumVal() && !isCommoditiesSaved) {
-            saveQuotes(quoteType);
+            deleteAndSaveQuotes(quoteType);
             isCommoditiesSaved = true;
         }
 
         if (quoteType == QuoteType.STOCK_INDEX.getNumVal() && !isStockIndexSaved) {
-            saveQuotes(quoteType);
+            deleteAndSaveQuotes(quoteType);
             isStockIndexSaved = true;
         }
 
         if (quoteType == QuoteType.BOND.getNumVal() && !isBondSaved) {
-            saveQuotes(quoteType);
+            deleteAndSaveQuotes(quoteType);
             isBondSaved = true;
         }
 
         if (quoteType == QuoteType.CRYPTO.getNumVal() && !isCryptoSaved) {
-            saveQuotes(quoteType);
+            deleteAndSaveQuotes(quoteType);
             isCryptoSaved = true;
         }
 
     }
 
-    private void saveQuotes(int quoteType) {
+    private void deleteAndSaveQuotes(int quoteType) {
+        List<QuoteDto> quotes = filterQuotes(quoteType);
+
+        deleteNonExistingQuotes(quotes);
+
+        for (QuoteDto quote: quotes) {
+            DbProvider.getInstance().addQuote(quote.getSymbol(), quote.getName(), quote.getType().getNumVal());
+        }
+    }
+
+    private void deleteNonExistingQuotes(List<QuoteDto> quotes) {
+        int quoteType = quotes.get(0).getType().getNumVal();
+        List<Quote> models = DbProvider.getInstance().getQuotes(quoteType);
+
+        Set<String> existingSymbols = new HashSet<>();
+        for (Quote q: models) existingSymbols.add(q.getSymbol());
+
+        for (QuoteDto quote: quotes) existingSymbols.remove(quote.getSymbol());
+
+        DbProvider.getInstance().deleteQuotesByIds(new ArrayList<>(existingSymbols));
+    }
+
+    private List<QuoteDto> filterQuotes(int quoteType) {
+        List<QuoteDto> filtered = new ArrayList<>();
+
         List<QuoteDto> quotes = mTickerSymbolsDto.getQuotes();
 
         for (QuoteDto quote: quotes) {
             if (quoteType == quote.getType().getNumVal()) {
-                DbProvider.getInstance().addQuote(quote.getSymbol(), quote.getName(), quote.getType().getNumVal());
+                filtered.add(quote);
             }
         }
+
+        return filtered;
     }
 }

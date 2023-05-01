@@ -1,5 +1,8 @@
 package ru.besttuts.stockwidget.ui.fragments;
 
+import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
+import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
+
 import android.app.Activity;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -17,10 +20,6 @@ import android.widget.TextView;
 import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.provider.QuoteContract;
 import ru.besttuts.stockwidget.provider.loaders.MyCursorLoader;
-import ru.besttuts.stockwidget.ui.activities.QuotePickerActivity;
-
-import static ru.besttuts.stockwidget.util.LogUtils.LOGD;
-import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
 /**
  * A fragment representing a list of Items.
@@ -179,7 +178,7 @@ public class GoodsItemFragment extends AbsQuoteSelectionFragment implements Load
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         LOGD(TAG, "onCreateLoader: currentThread = " + Thread.currentThread());
-        return new MyCursorLoader(getActivity(), QuotePickerActivity.mDataSource, mQuoteType);
+        return new MyCursorLoader(getActivity(), mQuoteType);
     }
 
     @Override

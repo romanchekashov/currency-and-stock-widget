@@ -196,46 +196,6 @@ public class DbBackend implements DbContract {
         return true;
     }
 
-    boolean addQuoteRec(Result result) {
-        final SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
-
-        if(null == result || null == result.symbol || null == result.name) return false;
-
-        // New value for one column
-        ContentValues values = new ContentValues();
-        values.put(QuoteColumns.QUOTE_SYMBOL, result.symbol);
-        values.put(QuoteColumns.QUOTE_NAME, result.name);
-        values.put(QuoteColumns.QUOTE_TYPE, QuoteType.QUOTES);
-
-        // Which row to update, based on the ID
-        String selection = QuoteColumns.QUOTE_SYMBOL + " LIKE ?";
-        String[] selectionArgs = { result.symbol };
-
-        long count = db.insert(
-                QuoteDatabaseHelper.Tables.QUOTES,
-                null,
-                values);
-        LOGD(TAG, "addQuoteRec: insert rows count = " + count);
-
-        if (-1 == count) {
-            throw new IllegalArgumentException(result.symbol + " " +
-                    mContext.getString(R.string.exc_already_exists));
-        }
-
-        return true;
-    }
-
-    void addQuote(String symbol, String name, int quoteType) {
-        final SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(QuoteContract.QuoteColumns.QUOTE_SYMBOL, symbol);
-        values.put(QuoteContract.QuoteColumns.QUOTE_NAME, name);
-        values.put(QuoteContract.QuoteColumns.QUOTE_TYPE, quoteType);
-
-        db.insertWithOnConflict(QuoteDatabaseHelper.Tables.QUOTES, null, values, SQLiteDatabase.CONFLICT_REPLACE);
-    }
-
     boolean addModelRec(Model model) {
         final SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
 
@@ -362,5 +322,82 @@ public class DbBackend implements DbContract {
 
         db.delete(QuoteDatabaseHelper.Tables.SETTINGS, null, null);
         db.delete(QuoteDatabaseHelper.Tables.MODELS, null, null);
+    }
+
+    // Quotes
+    boolean addQuoteRec(Result result) {
+        final SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
+
+        if(null == result || null == result.symbol || null == result.name) return false;
+
+        // New value for one column
+        ContentValues values = new ContentValues();
+        values.put(QuoteColumns.QUOTE_SYMBOL, result.symbol);
+        values.put(QuoteColumns.QUOTE_NAME, result.name);
+        values.put(QuoteColumns.QUOTE_TYPE, QuoteType.QUOTES);
+
+        // Which row to update, based on the ID
+        String selection = QuoteColumns.QUOTE_SYMBOL + " LIKE ?";
+        String[] selectionArgs = { result.symbol };
+
+        long count = db.insert(
+                QuoteDatabaseHelper.Tables.QUOTES,
+                null,
+                values);
+        LOGD(TAG, "addQuoteRec: insert rows count = " + count);
+
+        if (-1 == count) {
+            throw new IllegalArgumentException(result.symbol + " " +
+                    mContext.getString(R.string.exc_already_exists));
+        }
+
+        return true;
+    }
+
+    void addQuote(String symbol, String name, int quoteType) {
+        final SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(QuoteContract.QuoteColumns.QUOTE_SYMBOL, symbol);
+        values.put(QuoteContract.QuoteColumns.QUOTE_NAME, name);
+        values.put(QuoteContract.QuoteColumns.QUOTE_TYPE, quoteType);
+
+        db.insertWithOnConflict(QuoteDatabaseHelper.Tables.QUOTES, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+    }
+
+    void deleteQuotesByIds(List<String> symbols) {
+        final SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
+
+        for (String s: symbols) {
+            db.delete(QuoteDatabaseHelper.Tables.QUOTES,
+                    QuoteContract.QuoteColumns.QUOTE_SYMBOL + " = '" + s + "'", null);
+        }
+    }
+
+    public Cursor getQuoteCursor(int quoteType) {
+        final SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
+
+        // Define a projection that specifies which columns from the database
+        // you will actually use after this query.
+        String[] projection = {
+                BaseColumns._ID,
+                QuoteContract.QuoteColumns.QUOTE_SYMBOL,
+                QuoteContract.QuoteColumns.QUOTE_NAME,
+                QuoteContract.QuoteColumns.QUOTE_TYPE
+        };
+
+        // How you want the results sorted in the resulting Cursor
+        String sortOrder = QuoteContract.QuoteColumns.QUOTE_NAME + " ASC";
+        String where = String.format("%s = %d", QuoteContract.QuoteColumns.QUOTE_TYPE, quoteType);
+
+        return db.query(
+                QuoteDatabaseHelper.Tables.QUOTES,  // The table to query
+                projection,                               // The columns to return
+                where, // The columns for the WHERE clause
+                null,                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                sortOrder                                 // The sort order
+        );
     }
 }

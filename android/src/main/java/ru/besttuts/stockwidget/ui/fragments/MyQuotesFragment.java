@@ -207,7 +207,7 @@ public class MyQuotesFragment extends AbsQuoteSelectionFragment implements Loade
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         LOGD(TAG, "onCreateLoader: currentThread = " + Thread.currentThread());
-        return new MyCursorLoader(getActivity(), QuotePickerActivity.mDataSource, mQuoteType);
+        return new MyCursorLoader(getActivity(), mQuoteType);
     }
 
     @Override

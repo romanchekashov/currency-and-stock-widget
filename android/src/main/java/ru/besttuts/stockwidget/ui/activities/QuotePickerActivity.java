@@ -78,12 +78,13 @@ public class QuotePickerActivity extends ActionBarActivity
                     break;
                 case QuoteType.GOODS:
                 case QuoteType.INDICES:
-                case QuoteType.STOCK:
+                case QuoteType.BOND:
+                case QuoteType.CRYPTO:
                     fragment = GoodsItemFragment.newInstance(mWidgetItemPosition, mQuoteTypeValue);
                     break;
-                case QuoteType.QUOTES:
-                    fragment = MyQuotesFragment.newInstance(mAppWidgetId, mQuoteTypeValue);
-                    break;
+//                case QuoteType.QUOTES:
+//                    fragment = MyQuotesFragment.newInstance(mAppWidgetId, mQuoteTypeValue);
+//                    break;
             }
 
             if (null == fragment) {
@@ -106,17 +107,17 @@ public class QuotePickerActivity extends ActionBarActivity
             case QuoteType.CURRENCY:
                 getSupportActionBar().setTitle(R.string.configure_menu_item_currency);
                 break;
-            case QuoteType.GOODS:
-                getSupportActionBar().setTitle(R.string.configure_menu_item_goods);
-                break;
             case QuoteType.INDICES:
                 getSupportActionBar().setTitle(R.string.configure_menu_item_indices);
                 break;
-            case QuoteType.STOCK:
-                getSupportActionBar().setTitle(R.string.configure_menu_item_stock);
+            case QuoteType.GOODS:
+                getSupportActionBar().setTitle(R.string.configure_menu_item_goods);
                 break;
-            case QuoteType.QUOTES:
-                getSupportActionBar().setTitle(R.string.configure_menu_my_quotes);
+            case QuoteType.BOND:
+                getSupportActionBar().setTitle(R.string.configure_menu_item_bonds);
+                break;
+            case QuoteType.CRYPTO:
+                getSupportActionBar().setTitle(R.string.configure_menu_item_crypto);
                 break;
         }
 

@@ -32,11 +32,13 @@
     <string name="action_settings">Settings</string>
     <string name="action_search">Search</string>
 
-    <string name="configure_menu_item_currency">Currency</string>
-    <string name="configure_menu_item_goods">Goods</string>
-    <string name="configure_menu_item_indices">Indices</string>
-    <string name="configure_menu_item_stock">Stock</string>
+    <string name="configure_menu_item_currency">Currencies</string>
+    <string name="configure_menu_item_indices">Stock Indices</string>
+    <string name="configure_menu_item_goods">Commodities</string>
+    <string name="configure_menu_item_bonds">Bonds</string>
+    <string name="configure_menu_item_crypto">Crypto</string>
     <string name="configure_menu_my_quotes">My Quotes</string>
+    <string name="configure_menu_item_stock">Stock</string>
 
     <string name="goods_copper">Copper</string>
     <string name="goods_gold">Gold</string>
@@ -60,11 +62,12 @@
     <string name="exc_already_exists">already exists!</string>
 
     <array name="quotes_type_array">
-        <item>Currency</item>
-        <item>Goods</item>
-        <item>Indices</item>
-        <item>Stock</item>
-        <item>My Quotes</item>
+        <item>Currencies</item>
+        <item>Stock Indices</item>
+        <item>Commodities</item>
+        <item>Bonds</item>
+        <item>Crypto</item>
+<!--        <item>Shares</item>-->
     </array>
 
     <string name="gc">Gold</string>

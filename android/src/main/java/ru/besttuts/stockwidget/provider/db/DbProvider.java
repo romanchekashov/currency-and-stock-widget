@@ -7,6 +7,7 @@ import android.os.Looper;
 import android.support.annotation.VisibleForTesting;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
@@ -16,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 import ru.besttuts.stockwidget.io.model.Result;
 import ru.besttuts.stockwidget.model.Model;
+import ru.besttuts.stockwidget.model.Quote;
 import ru.besttuts.stockwidget.model.QuoteLastTradeDate;
 import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.model.Setting;
@@ -87,6 +89,10 @@ public class DbProvider {
         mExecutor = executor;
     }
 
+    public DbBackend db() {
+        return mDbBackend;
+    }
+
     public List<Setting> getAllSettings(){
         return mDbBackendAdapter.getAllSettings();
     }
@@ -110,16 +116,8 @@ public class DbProvider {
         });
     }
 
-    public void addQuoteRec(Result result){
-        mDbBackend.addQuoteRec(result);
-    }
-
     public boolean addModelRec(Model model){
         return mDbBackend.addModelRec(model);
-    }
-
-    public void addQuote(String symbol, String name, int quoteType) {
-        mDbBackend.addQuote(symbol, name, quoteType);
     }
 
     public Model getModelById(String modelId){
@@ -272,5 +270,31 @@ public class DbProvider {
         setting.setLastTradeDate(newLastTradeDate);
 
         cursor.close();
+    }
+
+    // Quotes
+    public void addQuoteRec(Result result){
+        mDbBackend.addQuoteRec(result);
+    }
+
+    public void addQuote(String symbol, String name, int quoteType) {
+        mDbBackend.addQuote(symbol, name, quoteType);
+    }
+
+    public void deleteQuotesByIds(List<String> symbols) {
+        mDbBackend.deleteQuotesByIds(symbols);
+    }
+
+    public List<Quote> getQuotes(int quoteType) {
+        Cursor cursor = mDbBackend.getQuoteCursor(quoteType);
+        if (0 >= cursor.getCount()) return new ArrayList<>();
+
+        List<Quote> list = new ArrayList<>(cursor.getCount());
+        cursor.moveToFirst();
+        do {
+            list.add(Quote.map(cursor));
+        } while (cursor.moveToNext());
+
+        return list;
     }
 }

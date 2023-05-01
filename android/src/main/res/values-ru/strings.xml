@@ -33,8 +33,10 @@
     <string name="action_search">Поиск</string>
 
     <string name="configure_menu_item_currency">Валюты</string>
-    <string name="configure_menu_item_goods">Товары</string>
     <string name="configure_menu_item_indices">Индексы</string>
+    <string name="configure_menu_item_goods">Товары</string>
+    <string name="configure_menu_item_bonds">Облигации</string>
+    <string name="configure_menu_item_crypto">Крипта</string>
     <string name="configure_menu_item_stock">Акции</string>
     <string name="configure_menu_my_quotes">Мои ценные бумаги</string>
 
@@ -59,10 +61,11 @@
 
     <array name="quotes_type_array">
         <item>Валюты</item>
-        <item>Товары</item>
         <item>Индексы</item>
-        <item>Акции</item>
-        <item>Мои ценные бумаги</item>
+        <item>Товары</item>
+        <item>Облигации</item>
+        <item>Крипта</item>
+<!--        <item>Акции</item>-->
     </array>
 
     <string name="gc">Золото</string>

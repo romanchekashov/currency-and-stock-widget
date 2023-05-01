@@ -5,10 +5,10 @@ package ru.besttuts.stockwidget.model;
  */
 public interface QuoteType {
     int CURRENCY = 0;
-    int GOODS = 1;
-    int INDICES = 2;
-    int STOCK = 3;
-    int BOND = 4;
-    int CRYPTO = 5;
+    int INDICES = 1;
+    int GOODS = 2;
+    int BOND = 3;
+    int CRYPTO = 4;
+    int STOCK = 5;
     int QUOTES = 6;
 }

@@ -434,7 +434,7 @@ public class QuoteDataSource {
         };
 
         // How you want the results sorted in the resulting Cursor
-        String sortOrder = BaseColumns._ID + " ASC";
+        String sortOrder = QuoteContract.QuoteColumns.QUOTE_NAME + " ASC";
         String where = String.format("%s = %d", QuoteContract.QuoteColumns.QUOTE_TYPE, quoteType);
 
         return db.query(
