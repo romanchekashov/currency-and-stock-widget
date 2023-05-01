@@ -227,7 +227,7 @@ public class EconomicWidget extends AppWidgetProvider {
 
         DbProvider dataSource = DbProvider.getInstance();
         String lng = Config.getInstance().getLanguage();
-        final String[] defaultCommodities = new String[]{"BZF16.NYM", "NGZ15.NYM", "GCX15.CMX"};
+        final String[] defaultCommodities = new String[]{"CO1:COM", "NG1:COM", "XAUUSD:CUR"};
         if ("ru".equals(lng)) {
             dataSource.addSettingsRec(appWidgetIds[0], 1, QuoteType.CURRENCY,
                     new String[]{"EURUSD", "USDRUB", "EURRUB"});
