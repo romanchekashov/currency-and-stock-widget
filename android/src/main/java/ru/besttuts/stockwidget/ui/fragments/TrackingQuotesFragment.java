@@ -52,6 +52,7 @@ import ru.besttuts.stockwidget.provider.QuoteContract.Settings;
 import ru.besttuts.stockwidget.provider.QuoteDataSource;
 import ru.besttuts.stockwidget.provider.db.DbNotificationManager;
 import ru.besttuts.stockwidget.provider.db.DbProvider;
+import ru.besttuts.stockwidget.sync.RemoteYahooFinanceDataFetcher;
 import ru.besttuts.stockwidget.sync.money.MoneyRemoteService;
 import ru.besttuts.stockwidget.sync.money.dto.TickerFilterDto;
 import ru.besttuts.stockwidget.ui.activities.DynamicWebViewActivity;
@@ -645,23 +646,19 @@ public class TrackingQuotesFragment extends Fragment
 
                 switch (pos) {
                     case 0:
-                        Cursor cursor = (Cursor) mSimpleCursorAdapter.getItem(position);
-//                        String url = "http://finance.yahoo.com/quote/";
-                        String url = "http://finance.yahoo.com/q";
-                        String symbol = cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_ID));
-                        if(QuoteType.CURRENCY == cursor.getInt(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_QUOTE_TYPE))) {
-                            url += String.format("?s=%s=X&ql=1", symbol);
-                        } else {
-                            url += String.format("?s=%s&ql=1", symbol);
-                        }
-
-                        Intent intent = new Intent(getActivity(), DynamicWebViewActivity.class);
-                        intent.putExtra(ARG_URL, url);
 
                         popupWindow.dismiss();
                         clearGridViewCellSelection();
 
-                        startActivity(intent);
+                        Cursor cursor = (Cursor) mSimpleCursorAdapter.getItem(position);
+                        String symbol = cursor.getString(cursor.getColumnIndexOrThrow(QuoteContract.ModelColumns.MODEL_ID));
+                        int quoteType = cursor.getInt(cursor.getColumnIndexOrThrow(QuoteContract.SettingColumns.SETTING_QUOTE_TYPE));
+                        String url = RemoteYahooFinanceDataFetcher.getChartPageUrl(symbol, quoteType);
+                        if (url != null) {
+                            Intent intent = new Intent(getActivity(), DynamicWebViewActivity.class);
+                            intent.putExtra(ARG_URL, url);
+                            startActivity(intent);
+                        }
                         break;
                     case 1:
                         StockItemTypeDialogFragment dialog = new StockItemTypeDialogFragment();

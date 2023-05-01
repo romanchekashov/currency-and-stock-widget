@@ -47,6 +47,14 @@ public class RemoteYahooFinanceDataFetcher {
     private Set<String> currencyExchangeSet = new HashSet<>();
     private Set<String> goodSet = new HashSet<>();
 
+    public static String getChartPageUrl(String symbol, int quoteType) {
+        return null;
+//        if(QuoteType.CURRENCY == quoteType) {
+//            return String.format("http://finance.yahoo.com/q?s=%s=X&ql=1", symbol);
+//        }
+//        return String.format("http://finance.yahoo.com/q?s=%s&ql=1", symbol);
+    }
+
     public void populateQuoteSet(int quoteType, String symbol) {
         switch (quoteType) {
             case QuoteType.CURRENCY:

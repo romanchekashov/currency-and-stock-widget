@@ -14,6 +14,7 @@ import ru.besttuts.stockwidget.R;
 import ru.besttuts.stockwidget.model.Model;
 import ru.besttuts.stockwidget.model.QuoteType;
 import ru.besttuts.stockwidget.provider.db.DbProvider;
+import ru.besttuts.stockwidget.sync.RemoteYahooFinanceDataFetcher;
 import ru.besttuts.stockwidget.ui.activities.EconomicWidgetConfigureActivity;
 import ru.besttuts.stockwidget.ui.fragments.TrackingQuotesFragment;
 import ru.besttuts.stockwidget.util.Utils;
@@ -92,18 +93,15 @@ public class QuoteRemoteViewsFactory implements RemoteViewsFactory {
         viewItem.setTextColor(R.id.tvChange, color);
         viewItem.setTextColor(R.id.tvChangePercentage, color);
 
-        Intent intent = new Intent();
-        String url;
-        if(QuoteType.CURRENCY == model.getQuoteType()) {
-            url = String.format("http://finance.yahoo.com/q?s=%s=X&ql=1", model.getId());
-        } else {
-            url = String.format("http://finance.yahoo.com/q?s=%s&ql=1", model.getId());
+        String url = RemoteYahooFinanceDataFetcher.getChartPageUrl(model.getId(), model.getQuoteType());
+        if (url != null) {
+            Intent intent = new Intent();
+            intent.putExtra(TrackingQuotesFragment.ARG_URL, url);
+            viewItem.setOnClickFillInIntent(R.id.tvName, intent);
+            viewItem.setOnClickFillInIntent(R.id.tvRate, intent);
+            viewItem.setOnClickFillInIntent(R.id.tvChange, intent);
+            viewItem.setOnClickFillInIntent(R.id.tvChangePercentage, intent);
         }
-        intent.putExtra(TrackingQuotesFragment.ARG_URL, url);
-        viewItem.setOnClickFillInIntent(R.id.tvName, intent);
-        viewItem.setOnClickFillInIntent(R.id.tvRate, intent);
-        viewItem.setOnClickFillInIntent(R.id.tvChange, intent);
-        viewItem.setOnClickFillInIntent(R.id.tvChangePercentage, intent);
 
         return viewItem;
     }
