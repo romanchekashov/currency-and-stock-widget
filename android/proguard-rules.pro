@@ -45,6 +45,9 @@
 -dontwarn okio.**
 -dontwarn javax.annotation.**
 
+# https://github.com/dlew/joda-time-android/issues/206
+-keep class net.danlew.android.joda.R$raw { *; }
+
 -keep class com.google.ads.** # Don't proguard AdMob classes
 
 -dontwarn com.google.ads.** # Temporary workaround for v6.2.1. It gives a warning that you can ignore
