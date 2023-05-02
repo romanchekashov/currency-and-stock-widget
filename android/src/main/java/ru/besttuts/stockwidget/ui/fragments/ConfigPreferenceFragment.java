@@ -5,6 +5,7 @@ import static ru.besttuts.stockwidget.util.LogUtils.makeLogTag;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.PreferenceManager;
@@ -117,5 +118,28 @@ public class ConfigPreferenceFragment extends PreferenceFragment
         }
 
         return interval;
+    }
+
+    public static String getBackgroundVisibility(Context context) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_VISIBILITY,
+                ConfigPreferenceFragment.KEY_PREF_BG_VISIBILITY_DEFAULT_VALUE);
+    }
+
+    public static String getBackgroundColor(Context context) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_COLOR,
+                ConfigPreferenceFragment.KEY_PREF_BG_COLOR_DEFAULT_VALUE);
+    }
+
+    public static int getBackgroundColorAlpha(Context context) {
+        String sVisibility = getBackgroundVisibility(context);
+
+        if (2 != sVisibility.length()) {
+            sVisibility = "0" + sVisibility;
+        }
+
+        String bgColor = "#" + sVisibility + getBackgroundColor(context).substring(1);
+        return Color.parseColor(bgColor);
     }
 }

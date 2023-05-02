@@ -342,15 +342,7 @@ public class EconomicWidget extends AppWidgetProvider {
     }
 
     private static void readPrefsSettings(Context context, RemoteViews views) {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        String sVisibility = sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_VISIBILITY,
-                ConfigPreferenceFragment.KEY_PREF_BG_VISIBILITY_DEFAULT_VALUE);
-        if (2 != sVisibility.length()) {
-            sVisibility = "0" + sVisibility;
-        }
-        String bgColor = "#" + sVisibility + sharedPref.getString(ConfigPreferenceFragment.KEY_PREF_BG_COLOR,
-                ConfigPreferenceFragment.KEY_PREF_BG_COLOR_DEFAULT_VALUE).substring(1);
-        views.setInt(R.id.bgWidget, "setBackgroundColor", Color.parseColor(bgColor));
+        views.setInt(R.id.bgWidget, "setBackgroundColor", ConfigPreferenceFragment.getBackgroundColorAlpha(context));
     }
 
     @SuppressLint("NewApi")
