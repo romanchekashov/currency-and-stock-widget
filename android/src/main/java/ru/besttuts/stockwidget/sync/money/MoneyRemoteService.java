@@ -26,7 +26,7 @@ import ru.besttuts.stockwidget.util.SharedPreferencesHelper;
 public class MoneyRemoteService {
     private static final String TAG = makeLogTag(MoneyRemoteService.class);
 
-    private static final String MY_FINANCE_BASE_URL = "http://money.look.ovh";
+    private static final String MY_FINANCE_BASE_URL = "https://money.look.ovh";
     private static final String PREF_KEY_LAST_CALL_TIME_TICKER_SYMBOLS = "MoneyRemoteService_tickerSymbols_lastCallTime";
     private static final String PREF_KEY_LAST_CALL_TIME_TICKER_TAPE = "MoneyRemoteService_tickerTape_lastCallTime";
 
@@ -82,6 +82,7 @@ public class MoneyRemoteService {
             MoneyRetrofitService service = retrofit.create(MoneyRetrofitService.class);
 
             List<QuoteDto> quotes = service.tickerTape(filter).execute().body();
+            if (quotes == null) quotes = Collections.emptyList();
 
             LOGD(TAG, "[tickerTape]: quotes fetched = " + quotes.size());
 
