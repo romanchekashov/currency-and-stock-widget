@@ -10,8 +10,8 @@ android {
         applicationId "ru.besttuts.stockwidget"
         minSdkVersion 10
         targetSdkVersion 33
-        versionCode 18
-        versionName "2.1.6"
+        versionCode 19
+        versionName "2.1.7"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
